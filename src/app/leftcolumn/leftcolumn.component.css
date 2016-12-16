@@ -1,0 +1,9 @@
+.filters_area {
+    padding: 10px;
+}
+.corpus_item {
+    cursor: pointer;
+}
+.selected {
+    font-weight: bold;
+}

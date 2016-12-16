@@ -1,0 +1,116 @@
+<div class="docselection">
+
+  <div class="search_area">
+    <div dropdown (onToggle)="toggled($event)" (click)="$event.preventDefault()">
+      Sök på <a href id="simple-dropdown" dropdownToggle>
+        {{searchType}}&nbsp;<i class="fa fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu" dropdownMenu aria-labelledby="simple-dropdown">
+        <li>
+          <a class="dropdown-item" href="#" (click)="searchType='textsträng'">textsträng</a>
+        </li>
+        <li class="divider dropdown-divider"></li>
+        <li *ngFor="let choice of searchableAnnotations">
+          <a class="dropdown-item" href="#" (click)="searchType=choice">{{choice}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="clear"></div>
+    <div class="search_widget" *ngIf="searchType=='textsträng'">
+      <input type="text"
+        class="form-control simple_searchbox"
+        [(ngModel)]="asyncSelected"
+        (keydown.Enter)="simple_search()"/>
+    </div>
+    <div class="search_widget" *ngIf="searchType=='lemgram'">
+      <template #lemgramItemTemplate let-model="item" let-index="index">
+        <span>{{model | lemgram}}</span>
+      </template>
+      <input
+        type="text"
+        class="form-control simple_searchbox"
+        [(ngModel)]="asyncSelected"
+        [typeahead]="dataSource"
+        [typeaheadWaitMs]="300"
+        [typeaheadItemTemplate]="lemgramItemTemplate"
+        (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
+    </div>
+    <button (click)="simple_search(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
+    <i *ngIf="isSearching" class="fa fa-spinner fa-pulse"></i>
+    <div class="clear"></div>
+    <div class="corpora_area">
+      <div class="checkbox" *ngFor="let corpus of availableCorpora">
+        <div class="col-sm-4">
+          <label>
+            <input type="checkbox" value="{{corpus}}" (change)="checkedCorpora[$event.target.getAttribute('value')]=$event.target.checked">
+              &nbsp;{{corpus}}
+          </label>
+        </div>   
+      </div>
+    </div>
+  </div>
+  <div class="clear"></div>
+
+   <div class="no_hits_area" *ngIf="hasSearched && documentsWithHits.length === 0">
+    <alert type="danger" dismissible="true">
+      Inga funna dokument.
+    </alert>
+  </div>
+  <div class="hits_area" *ngIf="documentsWithHits.length > 0">
+    <div class="hits_header">
+      <span>Hittade {{totalNumberOfDocuments}} dokument.</span><br/>
+      <pagination
+        [totalItems]="totalNumberOfDocuments"
+        [itemsPerPage]="10"
+        [maxSize]="10"
+        [(ngModel)]="currentPaginatorPage"
+        (pageChanged)="paginatorPageChanged($event)"
+        class="pagination-sm"></pagination>
+    </div>
+    <div class="hits_left_column">
+      <div class="hits_inner list-group">
+        <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index">
+          <div class="hit_document_header">
+            <span class="hit_document_title">
+              <a
+                pageScroll
+                pageScrollDuration="400"
+                href="#readerAnchor"
+                (click)="openDocument(i)">
+                {{doc.documentTitle}}
+              </a>
+            </span>
+            <!--<span class="badge">
+              {{doc.highlights.length}}
+            </span>-->
+          </div>
+          <div class="clear"></div>
+          <div class="hit_document_body">
+              <span *ngFor="let highlight of doc.highlights; let l = last" [innerHTML]="highlight">
+                <!--<span class="before_highlight">{{highlight.before}}</span>
+                <span class="at_highlight">{{highlight.match}}</span>
+                <span class="after_highlight">{{highlight.after}}</span>-->
+                <br *ngIf="last"/>
+              </span>
+          </div>
+          <div class="hit_appendix">
+            <span class="hit_collection_title">
+              {{doc.collectionTitle}}
+            </span>&nbsp;
+            <span class="hit_open_in_new" (click)="openDocumentInNew(i)">
+              <i class="fa fa-plus-square"></i>
+            </span>&nbsp;
+            <span class="hit_information" (click)="displayCorpusInfo(i)">
+              <i class="fa fa-info-circle"></i>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hits_right_column">
+      <div *ngFor="let attribute of textAttributes">
+        {{attribute.key}}: {{attribute.value}}
+      </div>
+    </div>
+  </div>
+</div>

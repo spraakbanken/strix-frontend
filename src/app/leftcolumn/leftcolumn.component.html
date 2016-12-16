@@ -1,0 +1,19 @@
+<div class="left_column">
+  <div>
+    <img src="assets/logo.png" style="width:95%;margin-top:12px"/>
+  </div>
+  <div class="clear"></div>
+  <!--<div style="margin-left:12px;margin-top:8px">
+    <i class="fa fa-th"></i>&nbsp;Gå till sökresultat<br/>
+    <i class="fa fa-file-text-o"></i>&nbsp;Gå till text
+  </div>-->
+  <div class="clear"></div>
+  <div class="filters_area">
+    <i>Filtrera på material</i>
+    <ul>
+      <li class="corpus_item" [class.selected]="selectedCorpusID === corpusID" *ngFor="let corpusID of availableCorpora" (click)="chooseCorpus(corpusID)">
+        {{corpusID}}
+      </li>
+    </ul>
+  </div>
+</div>

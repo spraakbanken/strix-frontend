@@ -1,0 +1,46 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* General utility styles */
+
+.clear {
+    clear: both;
+}
+
+/* CodeMirror related */
+
+.cm-underlined {
+    color: #337ab7;
+    /* font-weight: bold;
+    text-decoration: underline; */
+}
+.cm-variable-2 {
+    display: none;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+.CodeMirror-cursor {
+    display: none;
+}
+
+.CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  font-family: arial !important;
+  height: 600px !important;
+  width: 800px;
+}
+
+.CodeMirror-focused {
+  outline: auto 5px -webkit-focus-ring-color;
+  outline-offset: 0;
+}
+
+em {
+  font-weight: bold;
+  font-style: normal;
+}
+
+/* textarea {
+    display: none;
+} */

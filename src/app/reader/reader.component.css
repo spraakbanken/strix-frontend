@@ -1,0 +1,96 @@
+/* .all_texts_area {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.text_area {
+  display: table-cell;
+} */
+
+ul {
+  list-style-type: none;
+  list-style-position: outside;
+}
+
+.text_left_column {
+  float: left;
+}
+.text_right_column {
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  border-top-right-radius: 6px;
+  border-bottom-right-radius: 6px;
+  float: left;
+  min-width: 200px;
+  height: 644px;
+  padding: 4px;
+}
+.bookmark {
+  font-size: small;
+  font-style: italic;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.readerArea {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.text_header {
+  width: 100%;
+  height: 22px;
+  background: #f7f7f7;
+  border-bottom: 1px solid #ddd;
+  padding-left: 4px;
+}
+.text_header span {
+  color: gray;
+}
+.right_control {
+  float: right;
+  margin-right: 4px;
+  cursor: pointer;
+}
+.text_footer {
+  width: 100%;
+  height: 22px;
+  background: #f7f7f7;
+  border-top: 1px solid #ddd;
+  padding-left: 4px;
+}
+.text_footer span {
+  color: gray;
+}
+.add_bookmark {
+  cursor: pointer;
+}
+
+
+/* Token Annotations "bubble" */
+
+.tokenAnnotationsList {
+  position: absolute;
+  background-color: rgba(255,255,255,0.94);
+  z-index: 1000;
+  padding: 4px;
+  border: 1px solid #ddd;
+  border-top-right-radius: 8px;
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+.closeBox {
+  float: right;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.goto_left {
+  cursor: pointer;
+}
+.goto_right {
+  cursor: pointer;
+}
