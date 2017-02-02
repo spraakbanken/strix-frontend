@@ -7,7 +7,7 @@
       </a>
       <ul class="dropdown-menu" dropdownMenu aria-labelledby="simple-dropdown">
         <li>
-          <a class="dropdown-item" href="#" (click)="searchType='textsträng'">textsträng</a>
+          <a class="dropdown-item" href="#" (click)="searchType='normal'">textsträng</a>
         </li>
         <li class="divider dropdown-divider"></li>
         <li *ngFor="let choice of searchableAnnotations">
@@ -16,11 +16,11 @@
       </ul>
     </div>
     <div class="clear"></div>
-    <div class="search_widget" *ngIf="searchType=='textsträng'">
+    <div class="search_widget" *ngIf="searchType=='normal'">
       <input type="text"
         class="form-control simple_searchbox"
         [(ngModel)]="asyncSelected"
-        (keydown.Enter)="simple_search()"/>
+        (keydown.Enter)="simpleSearch()"/>
     </div>
     <div class="search_widget" *ngIf="searchType=='lemgram'">
       <template #lemgramItemTemplate let-model="item" let-index="index">
@@ -35,7 +35,7 @@
         [typeaheadItemTemplate]="lemgramItemTemplate"
         (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
     </div>
-    <button (click)="simple_search(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
+    <button (click)="simpleSearch(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
     <i *ngIf="isSearching" class="fa fa-spinner fa-pulse"></i>
     <div class="clear"></div>
     <div class="corpora_area">
@@ -87,9 +87,6 @@
           <div class="clear"></div>
           <div class="hit_document_body">
               <span *ngFor="let highlight of doc.highlights; let l = last" [innerHTML]="highlight">
-                <!--<span class="before_highlight">{{highlight.before}}</span>
-                <span class="at_highlight">{{highlight.match}}</span>
-                <span class="after_highlight">{{highlight.after}}</span>-->
                 <br *ngIf="last"/>
               </span>
           </div>

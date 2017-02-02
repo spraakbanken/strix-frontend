@@ -3,6 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
+import { RouterModule, Routes } from '@angular/router';
+
+import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
          DropdownModule,
          AlertModule,
@@ -21,6 +24,14 @@ import { LemgramPipe } from './lemgram.pipe';
 import { LeftcolumnComponent } from './leftcolumn/leftcolumn.component';
 import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
+import { StartPanelComponent } from './start-panel/start-panel.component';
+import { searchReducer } from './searchreducer';
+
+const appRoutes: Routes = [
+  { path: 'start', component: StartPanelComponent},
+  { path: 'document', component: ReaderComponent },
+  { path: '', redirectTo: '/start', pathMatch: 'full'}
+];
 
 @NgModule({
   declarations: [
@@ -30,7 +41,8 @@ import { MetadataService } from './metadata.service';
     CmComponent,
     ReaderComponent,
     LemgramPipe,
-    LeftcolumnComponent
+    LeftcolumnComponent,
+    StartPanelComponent
   ],
   imports: [
     BrowserModule,
@@ -40,7 +52,9 @@ import { MetadataService } from './metadata.service';
     DropdownModule,
     AlertModule,
     PaginationModule,
-    Ng2PageScrollModule.forRoot()
+    Ng2PageScrollModule.forRoot(),
+    RouterModule.forRoot(appRoutes),
+    StoreModule.provideStore({searchRedux: searchReducer})
   ],
   providers: [DocumentsService,
               CallsService,

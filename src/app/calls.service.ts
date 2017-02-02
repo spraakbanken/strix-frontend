@@ -12,7 +12,7 @@ import * as _ from 'lodash';
 @Injectable()
 export class CallsService {
 
-  private readonly STRIXBACKEND_URL = "http://demosb.spraakdata.gu.se/strix/backend3";
+  private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
 
   constructor(private http : Http) { }
 
