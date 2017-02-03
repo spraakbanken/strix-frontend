@@ -58,10 +58,6 @@ export class DocselectionComponent implements OnInit {
     
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.subscribe((data) => {
-      console.log("query changed!");
-    });
-
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       answer => {
         console.log("answer", answer);
@@ -137,7 +133,7 @@ export class DocselectionComponent implements OnInit {
   private simpleSearch(fromPaginator: boolean) {
     this.store.dispatch({ type: CHANGESEARCHSTRING, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
-    
+
     this.isSearching = true;
   }
 

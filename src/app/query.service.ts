@@ -35,7 +35,7 @@ export class QueryService {
 
     this.searchRedux.subscribe((data) => {
       console.log("new value", data);
-      if (data.latestAction === "SEARCH") { // SEARCH shouldn't be a string but i type, right?
+      if (data.latestAction === "SEARCH") { // SEARCH shouldn't be a string but a type, right?
         // Perform the actual search.
         this.currentQuery = new StrixQuery();
         this.currentQuery.type = data.last_type;

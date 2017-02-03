@@ -26,6 +26,7 @@ import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
 import { searchReducer } from './searchreducer';
+import { RoutingService } from './routing.service';
 
 const appRoutes: Routes = [
   { path: 'start', component: StartPanelComponent},
@@ -60,7 +61,8 @@ const appRoutes: Routes = [
               CallsService,
               KarpService,
               QueryService,
-              MetadataService],
+              MetadataService,
+              RoutingService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
