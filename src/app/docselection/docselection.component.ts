@@ -134,7 +134,7 @@ export class DocselectionComponent implements OnInit {
     this.store.dispatch({ type: CHANGESEARCHSTRING, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
 
-    this.isSearching = true;
+    this.isSearching = true; // This should be dealt with differently
   }
 
   private openDocument(docIndex: number) {

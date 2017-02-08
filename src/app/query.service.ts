@@ -5,6 +5,7 @@ import { StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
+import { SEARCH } from './searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -35,7 +36,7 @@ export class QueryService {
 
     this.searchRedux.subscribe((data) => {
       console.log("new value", data);
-      if (data.latestAction === "SEARCH") { // SEARCH shouldn't be a string but a type, right?
+      if (data.latestAction === SEARCH) {
         // Perform the actual search.
         this.currentQuery = new StrixQuery();
         this.currentQuery.type = data.last_type;
@@ -43,6 +44,7 @@ export class QueryService {
         this.currentQuery.pageIndex = data.last_page;
         this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
         this.currentQuery.corpora = data.last_corpora; // TODO: Get all corpora as default
+        console.log("this.currentQuery", this.currentQuery);
         this.runCurrentQuery();
       }
     });
