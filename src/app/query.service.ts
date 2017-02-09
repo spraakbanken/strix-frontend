@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
 import { SEARCH } from './searchreducer';
+import { StrixEvent } from './strix-event.enum';
 
 interface AppState {
   searchRedux: any;
@@ -25,8 +27,20 @@ export class QueryService {
 
   //private currentQuerySubject = new Subject<StrixQuery>();
   //queryChanged$ = this.currentQuerySubject.asObservable();
+
+  // The searchResult$ stream delivers results after a
+  // finished search:
   private searchResultSubject = new Subject<any>();
   searchResult$ = this.searchResultSubject.asObservable();
+
+  // Components should subscribe to the searchStatus$ stream
+  // to know the *status* of the search (for displaying such 
+  // things as progress bars):
+  // REM: searchStatusSubject needs to be a BehaviorSubject
+  // so that any subscribing components may get the latest 
+  // state directly upon subscribing.
+  private searchStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
+  searchStatus$ = this.searchStatusSubject.asObservable();
 
   private searchRedux: Observable<any>;
 
@@ -39,11 +53,11 @@ export class QueryService {
       if (data.latestAction === SEARCH) {
         // Perform the actual search.
         this.currentQuery = new StrixQuery();
-        this.currentQuery.type = data.last_type;
-        this.currentQuery.queryString = data.last_searchString;
-        this.currentQuery.pageIndex = data.last_page;
+        this.currentQuery.type = data.type;
+        this.currentQuery.queryString = data.query;
+        this.currentQuery.pageIndex = data.page;
         this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-        this.currentQuery.corpora = data.last_corpora; // TODO: Get all corpora as default
+        this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
         console.log("this.currentQuery", this.currentQuery);
         this.runCurrentQuery();
       }
@@ -68,11 +82,20 @@ export class QueryService {
     this.currentQuery.pageIndex = page;
   }
 
+  signalStartedSearch() {
+    this.searchStatusSubject.next(StrixEvent.SEARCHSTART);
+  }
+  signalEndedSearch() {
+    this.searchStatusSubject.next(StrixEvent.SEARCHEND);
+  }
+
   /* The actual calls */
   public runCurrentQuery() : void {
     //return this.runQuery(this.currentQuery);
+    this.signalStartedSearch();
     this.runQuery(this.currentQuery).subscribe((answer) => {
       console.log("ran query with the result", answer);
+      this.signalEndedSearch();
       this.searchResultSubject.next(answer);
     });
     

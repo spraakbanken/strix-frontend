@@ -11,7 +11,8 @@ import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
-import { SEARCH, CHANGESEARCHSTRING } from '../searchreducer';
+import { SEARCH, CHANGENEXTQUERY } from '../searchreducer';
+import { StrixEvent } from '../strix-event.enum';
 
 interface AppState {
   searchRedux: any;
@@ -31,8 +32,8 @@ export class DocselectionComponent implements OnInit {
 
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
   private searchType = "normal"; // TODO: Have something else than the string
-  private hasSearched: boolean = false;
-  private isSearching: boolean = false;
+  private hasSearched = false;
+  private isSearching = false;
   private currentPaginatorPage : number = 1; // Needs to be 1-based because of the paginator widget
 
   private asyncSelected: string = "";
@@ -47,6 +48,8 @@ export class DocselectionComponent implements OnInit {
   private searchRedux: Observable<any>;
 
   private searchResultSubscription: Subscription;
+
+  private searchStatusSubscription: Subscription;
 
   constructor(private documentsService: DocumentsService,
               private callsService: CallsService,
@@ -83,8 +86,23 @@ export class DocselectionComponent implements OnInit {
         }
         this.documentsWithHits = docs;
         this.totalNumberOfDocuments = answer.count;
-        this.isSearching = false;
+        //this.isSearching = false;
         this.hasSearched = true;
+      },
+      error => this.errorMessage = <any>error
+    );
+
+    this.searchStatusSubscription = queryService.searchStatus$.subscribe(
+      answer => {
+        console.log("search status:", answer);
+        switch (answer) { // TODO: Create an enum for this. Or a union type?
+          case StrixEvent.SEARCHSTART:
+            this.isSearching = true;
+            break;
+          case StrixEvent.SEARCHEND:
+            this.isSearching = false;
+            break;
+        }
       },
       error => this.errorMessage = <any>error
     );
@@ -131,10 +149,10 @@ export class DocselectionComponent implements OnInit {
   }
 
   private simpleSearch(fromPaginator: boolean) {
-    this.store.dispatch({ type: CHANGESEARCHSTRING, payload : this.asyncSelected});
+    this.store.dispatch({ type: CHANGENEXTQUERY, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
 
-    this.isSearching = true; // This should be dealt with differently
+    //this.isSearching = true; // This should be dealt with differently
   }
 
   private openDocument(docIndex: number) {
