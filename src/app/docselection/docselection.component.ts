@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, RoutesRecognized } from '@angular/router';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
@@ -56,7 +55,6 @@ export class DocselectionComponent implements OnInit {
               private karpService: KarpService,
               private queryService: QueryService,
               private metadataService: MetadataService,
-              private router: Router,
               private store: Store<AppState>) {
     
     this.searchRedux = this.store.select('searchRedux');
@@ -115,18 +113,7 @@ export class DocselectionComponent implements OnInit {
 
   }
 
-  ngOnInit() {
-    //console.log("this.activatedRoute", this.route);
-    //this.route.params.subscribe((something) => {
-    //  console.log("something happended with the route!", something);
-    //});
-
-    this.router.events.subscribe((data) => {
-      if (data instanceof RoutesRecognized) {
-        console.log("routes recognized", data.state);
-      }
-    });
-  }
+  ngOnInit() {}
 
   /* This should read from the current query (in the query-service)
      and update this component's GUI accordingly. */

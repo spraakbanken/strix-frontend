@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
@@ -28,7 +27,6 @@ export class LeftcolumnComponent implements OnInit {
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
-              private router: Router,
               private store: Store<AppState>) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
@@ -49,19 +47,6 @@ export class LeftcolumnComponent implements OnInit {
     //this.queryService.registerUpdate();
 
     this.store.dispatch({ type: CHANGECORPORA, payload : [corpusID]});
-  }
-
-  private routeMe() {
-    // Test the router
-    console.log("should follow route");
-    console.log("trying to navigate...");
-
-    let navigationExtras: NavigationExtras = {
-      queryParams: _.assign({}, this.router.routerState.snapshot.root.queryParams, { 'banana': 10 }),
-      fragment: "anchor"
-    };
-
-    this.router.navigate(['/document'], navigationExtras);
   }
 
   ngOnInit() {

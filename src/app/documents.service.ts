@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationExtras } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
@@ -36,8 +35,7 @@ export class DocumentsService {
 
   loadedDocument$ = this.loadedDocument.asObservable();
 
-  constructor(private callsService: CallsService,
-              private router: Router) {}
+  constructor(private callsService: CallsService) {}
 
   /* A simple reference counting mechanism for keeping track of
     opened instances a document. The GUI should call this method
@@ -120,13 +118,6 @@ export class DocumentsService {
   public loadDocumentWithQuery(documentID: string, corpusID: string, highlights: any, query: string, newReader = false): void {
 
     console.log("trying to navigate...");
-
-    let navigationExtras: NavigationExtras = {
-      queryParams: { 'session_id': 12 },
-      fragment: 'anchor'
-    };
-
-    this.router.navigate(['/document'], navigationExtras);
 
     if (! newReader) {
       console.log("loading the document in the main reader.")

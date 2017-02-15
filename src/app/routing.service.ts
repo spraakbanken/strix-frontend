@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router, NavigationExtras, ActivatedRoute } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
@@ -23,9 +22,9 @@ export class RoutingService {
 
   private searchRedux: Observable<any>;
 
-  constructor(private router: Router,
-              private store: Store<AppState>,
-              private route: ActivatedRoute) {
+  private urlFields = ["query", "page", "corpora", "nextCorpora", "nextQuery"];
+
+  constructor(private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
 
     
@@ -34,23 +33,14 @@ export class RoutingService {
     this.searchRedux.subscribe((data) => {
       console.log("state change. There is a need to update the URL accordingly!", data);
 
-      let queryParams = {
-        "query" : data.query,
-        "page" : data.page,
-        "corpora" : data.corpora.join(","),
-        "nextCorpora" : data.nextCorpora
-      };
+      console.log("should update url parameters.");
 
-      let navigationExtras: NavigationExtras = {
-        queryParams: _.assign({}, this.router.routerState.snapshot.root.queryParams, queryParams),
-        fragment: "anchor"
-      };
+      let urlString = "?" + this.urlFields.map((field) => {
+        return `${field}=${data[field]}`;
+      }).join("&");
+      console.log("new url string", urlString);
+      window.location.hash = urlString;
 
-      this.router.navigate(['/document'], navigationExtras);
-    });
-
-    this.route.queryParams.subscribe(params => {
-      // MAYBE WE NEED THIS BUT PROBABLY NOT.
     });
 
   }
