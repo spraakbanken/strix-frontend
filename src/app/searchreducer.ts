@@ -15,20 +15,10 @@ export const INITIATE = "INITIATE";
 
 
 export function searchReducer(state: any = {}, action: Action) {
-    let nextState = {
-        nextType: state.nextType || "normal",
-        nextQuery : state.nextQuery || "",
-        nextCorpora : state.nextCorpora || ["vivill"],
-        type : state.type || "",
-        query : state.query || "",
-        corpora : state.corpora || [],
-        page : state.page || 1,
-        latestAction : action.type
-    }
+    let nextState = _.assign({}, state);
     switch (action.type) {
         case INITIATE:
             nextState = _.assign({}, nextState, action.payload);
-            //console.log("new nextState", nextState);
             break;
         case CHANGETYPE:
             nextState.nextType = action.payload;

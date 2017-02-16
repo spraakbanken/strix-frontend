@@ -17,53 +17,82 @@ interface AppState {
   searchRedux: any;
 }
 
+enum FragmentType {
+  STRING, STRINGARRAY, NUMBER
+}
+
 @Injectable()
 export class RoutingService {
 
   private searchRedux: Observable<any>;
 
-  private urlFields = ["query", "page", "corpora", "nextCorpora", "nextQuery"];
+  private readonly urlFields = [
+    {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
+    {tag: "type", type : FragmentType.STRING, default : ""},
+    {tag : "query", type : FragmentType.STRING, default : ""},
+    {tag : "page", type : FragmentType.NUMBER, default : 1},
+    {tag : "nextCorpora", type : FragmentType.STRINGARRAY, default : ["vivill"]},
+    {tag: "nextType", type : FragmentType.STRING, default : "normal"},
+    {tag : "nextQuery", type : FragmentType.STRING, default : ""}
+  ];
 
   constructor(private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
-
-    
     this.initializeStartingParameters();
 
     this.searchRedux.subscribe((data) => {
-      console.log("state change. There is a need to update the URL accordingly!", data);
-
-      console.log("should update url parameters.");
-
-      let urlString = "?" + this.urlFields.map((field) => {
-        return `${field}=${data[field]}`;
+      const urlString = "#?" + this.urlFields.map((field) => {
+        return `${encodeURI(field.tag)}=${encodeURI(this.stringify(field.type, data[field.tag]))}`;
       }).join("&");
-      console.log("new url string", urlString);
       window.location.hash = urlString;
-
     });
 
   }
 
-  initializeStartingParameters() {
-    let urlSearch = window.location.search;
-    if (urlSearch && urlSearch.length > 1) {
-      let urlPart = urlSearch.split("?")[1];
-      let startingParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
-      console.log("starting params", window.location.search, startingParams);
+  private stringify(type: FragmentType, obj): string {
+    if (!obj) return "";
+    switch (type) {
+      case FragmentType.STRING:
+        return obj;
+      case FragmentType.STRINGARRAY:
+        return obj.join(",");
+      case FragmentType.NUMBER:
+        return obj.toString();
+    }
+  }
 
-      let startState = {
-        "nextType" : "normal",
-        "type" : "normal",
-        "query" : startingParams["query"] || "",
-        "page" : parseInt(startingParams["page"], 10) || 1,
-        "corpora" : startingParams["corpora"].split(",") || [],
-        "nextCorpora" : startingParams["nextCorpora"].split(",") || ["vivill"]
-      };
-      console.log("startState.query", startState.query);
-      this.store.dispatch({ type: INITIATE, payload : startState});
+  private destringify(type: FragmentType, str: string): any {
+    switch (type) {
+      case FragmentType.STRING:
+        return str;
+      case FragmentType.STRINGARRAY:
+        return str.split(",");
+      case FragmentType.NUMBER:
+        return parseInt(str, 10);
+    }
+  }
+
+  private initializeStartingParameters() {
+    let urlHash = window.location.hash;
+    let startingParams = {};
+    if (urlHash && urlHash.length > 1) {
+      const urlPart = urlHash.split("?")[1];
+      startingParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
+      console.log("starting params", startingParams);
+    }
+
+    const startState = {};
+    for (let field of this.urlFields) {
+      const item = startingParams[field.tag] ? this.destringify(field.type, startingParams[field.tag]) : field.default;
+      startState[field.tag] = item || null;
+    }
+
+    this.store.dispatch({ type: INITIATE, payload : startState});
+
+    if (startState["query"]) {
       this.store.dispatch({ type: RELOAD, payload : null});
     }
+
   }
 
 }
