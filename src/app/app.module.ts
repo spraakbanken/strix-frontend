@@ -25,6 +25,8 @@ import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
 import { searchReducer } from './searchreducer';
 import { RoutingService } from './routing.service';
+import { SearchComponent } from './search/search.component';
+import { MinidocselectionComponent } from './minidocselection/minidocselection.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { RoutingService } from './routing.service';
     ReaderComponent,
     LemgramPipe,
     LeftcolumnComponent,
-    StartPanelComponent
+    StartPanelComponent,
+    SearchComponent,
+    MinidocselectionComponent
   ],
   imports: [
     BrowserModule,

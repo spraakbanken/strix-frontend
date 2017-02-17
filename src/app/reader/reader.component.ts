@@ -1,10 +1,12 @@
 import { Component, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Subscription }   from 'rxjs/Subscription';
 import * as _ from 'lodash';
+
 import { StrixDocument } from '../strixdocument.model';
 import { StrixSelection } from '../strixselection.model';
+import { StrixEvent } from '../strix-event.enum';
 import { DocumentsService } from '../documents.service';
 import { CmComponent } from './cm/cm.component';
-import { Subscription }   from 'rxjs/Subscription';
 
 @Component({
   selector: 'reader',
@@ -17,6 +19,9 @@ export class ReaderComponent implements AfterViewInit {
   subscription : Subscription;
 
   code = "cool";
+
+  private docLoadStatusSubscription: Subscription;
+  private isLoading = false;
 
   // Each item in cmViews is an index number of the DocumentsService documents.
   // They need not be in order!!
@@ -42,6 +47,21 @@ export class ReaderComponent implements AfterViewInit {
 
   constructor(private documentsService : DocumentsService) {
 
+    this.docLoadStatusSubscription = documentsService.docLoadingStatus$.subscribe(
+      answer => {
+        console.log("load status:", answer);
+        switch (answer) {
+          case StrixEvent.DOCLOADSTART:
+            this.isLoading = true;
+            break;
+          case StrixEvent.DOCLOADEND:
+            this.isLoading = false;
+            break;
+        }
+      },
+      error => null//this.errorMessage = <any>error
+    );
+
     this.subscription = documentsService.loadedDocument$.subscribe(
       message => {
         console.log("A document has been fetched.", message);
@@ -64,6 +84,7 @@ export class ReaderComponent implements AfterViewInit {
             
           }, 0);
         } else {
+          this.clearBookmarks();
           this.cmViews[0] = openedDocument.index;
           this.mirrors.first.codeMirrorInstance.setValue(wholeText);
 
@@ -208,6 +229,10 @@ export class ReaderComponent implements AfterViewInit {
         console.log("call success. the wid is", answer);
         this.selectToken(cmIndex, answer);
       });
+  }
+
+  private clearBookmarks() {
+    this.bookmarks = [];
   }
 
   private addBookmark(index: number) {

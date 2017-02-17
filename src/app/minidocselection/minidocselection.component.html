@@ -1,0 +1,5 @@
+<div class="mini_doc_selection_area" *ngIf="show">
+  <div *ngFor="let doc of documentsWithHits; let i = index">
+    <a (click)="openDocument(i)">{{doc.title}}</a>
+  </div>
+</div>

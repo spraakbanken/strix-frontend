@@ -1,5 +1,7 @@
 export enum StrixEvent {
     INIT,
     SEARCHSTART,
-    SEARCHEND
+    SEARCHEND,
+    DOCLOADSTART,
+    DOCLOADEND
 }

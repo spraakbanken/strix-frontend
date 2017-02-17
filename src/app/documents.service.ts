@@ -1,11 +1,22 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
+
 import { CallsService } from './calls.service';
+import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
 import { StrixResult } from './strixresult.model';
 import { StrixMessage } from './strixmessage.model';
+import { StrixEvent } from './strix-event.enum';
+import { OPENDOCUMENT } from './searchreducer';
+
+interface AppState {
+  searchRedux: any;
+}
 
 /**
  * The DocumentsService is responsible for collecting a document and making sure that all
@@ -19,6 +30,8 @@ import { StrixMessage } from './strixmessage.model';
 
 @Injectable()
 export class DocumentsService {
+
+  private searchRedux: Observable<any>;
 
   private loadedDocument = new Subject<StrixMessage>();
   private errorMessage: string;
@@ -35,7 +48,19 @@ export class DocumentsService {
 
   loadedDocument$ = this.loadedDocument.asObservable();
 
-  constructor(private callsService: CallsService) {}
+  private docLoadingStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
+  docLoadingStatus$ = this.docLoadingStatusSubject.asObservable();
+
+  constructor(private callsService: CallsService,
+              private queryService: QueryService,
+              private store: Store<AppState>) {
+
+    this.searchRedux = this.store.select('searchRedux');
+    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+      console.log("open document with", data);
+      this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());
+    });
+  }
 
   /* A simple reference counting mechanism for keeping track of
     opened instances a document. The GUI should call this method
@@ -115,12 +140,13 @@ export class DocumentsService {
         );
   }
 
-  public loadDocumentWithQuery(documentID: string, corpusID: string, highlights: any, query: string, newReader = false): void {
+  public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, newReader = false): void {
 
     console.log("trying to navigate...");
 
     if (! newReader) {
       console.log("loading the document in the main reader.")
+      this.signalStartedDocumentLoading();
       // Decrease the count (and possibly delete) the old main document
       if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
       this.mainReaderDocumentID = documentID;
@@ -159,6 +185,9 @@ export class DocumentsService {
             /* Inform other components that the document has been opened: */
             let message = new StrixMessage(index, newReader);
             this.loadedDocument.next(message);
+            if (!newReader) {
+              this.signalEndedDocumentLoading();
+            }
 
           },
           error => this.errorMessage = <any>error
@@ -232,6 +261,13 @@ export class DocumentsService {
       console.log("the real answer", answer);
       return answer.highlight[0].attrs.wid;
     });
+  }
+
+  private signalStartedDocumentLoading() {
+    this.docLoadingStatusSubject.next(StrixEvent.DOCLOADSTART);
+  }
+  private signalEndedDocumentLoading() {
+    this.docLoadingStatusSubject.next(StrixEvent.DOCLOADEND);
   }
 
 }

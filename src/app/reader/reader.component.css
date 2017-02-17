@@ -9,6 +9,13 @@
   display: table-cell;
 } */
 
+.readerLoading {
+  background-color: #f7f7f7;
+  padding: 20px;
+  width: 800px;
+  /* height: 640px; */
+}
+
 ul {
   list-style-type: none;
   list-style-position: outside;

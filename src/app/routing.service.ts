@@ -3,15 +3,13 @@ import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
+
 import { INITIATE, RELOAD } from './searchreducer';
 
-/** The Routing Service is responsible for keeping the Angular Router and 
-   the ngrx-store app store. It is the only piece of code that is allowed
-   to talk to the router, and components should only communicate with this
-   service by dispatching to the ngrx store.
-   
-   We should however remove the Angular router a.s.a.p. since it's too
-   heavy weight and doesn't really fit our needs anyway. */
+/** The Routing Service is responsible for keeping the web browser URL and 
+   the ngrx-store app store in sync. It is the only piece of code that is allowed
+   to change the browser's URL, and components should only communicate with this
+   service by dispatching to the ngrx store. */
 
 interface AppState {
   searchRedux: any;
@@ -28,12 +26,14 @@ export class RoutingService {
 
   private readonly urlFields = [
     {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
-    {tag: "type", type : FragmentType.STRING, default : ""},
+    {tag : "type", type : FragmentType.STRING, default : ""},
     {tag : "query", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
     {tag : "nextCorpora", type : FragmentType.STRINGARRAY, default : ["vivill"]},
-    {tag: "nextType", type : FragmentType.STRING, default : "normal"},
-    {tag : "nextQuery", type : FragmentType.STRING, default : ""}
+    {tag : "nextType", type : FragmentType.STRING, default : "normal"},
+    {tag : "nextQuery", type : FragmentType.STRING, default : ""},
+    {tag : "documentID", type : FragmentType.STRING, default : ""},
+    {tag : "documentCorpus", type : FragmentType.STRING, default : ""}
   ];
 
   constructor(private store: Store<AppState>) {
@@ -73,17 +73,17 @@ export class RoutingService {
   }
 
   private initializeStartingParameters() {
-    let urlHash = window.location.hash;
-    let startingParams = {};
+    const urlHash = window.location.hash;
+    let startParams = {};
     if (urlHash && urlHash.length > 1) {
       const urlPart = urlHash.split("?")[1];
-      startingParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
-      console.log("starting params", startingParams);
+      startParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
+      console.log("starting params", startParams);
     }
 
     const startState = {};
     for (let field of this.urlFields) {
-      const item = startingParams[field.tag] ? this.destringify(field.type, startingParams[field.tag]) : field.default;
+      const item = startParams[field.tag] ? this.destringify(field.type, startParams[field.tag]) : field.default;
       startState[field.tag] = item || null;
     }
 

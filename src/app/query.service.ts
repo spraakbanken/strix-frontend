@@ -48,19 +48,17 @@ export class QueryService {
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.subscribe((data) => {
+    this.searchRedux.filter((d) => {console.log("d", d); return d.latestAction === SEARCH}).subscribe((data) => {
       console.log("new value", data);
-      if (data.latestAction === SEARCH) {
-        // Perform the actual search.
-        this.currentQuery = new StrixQuery();
-        this.currentQuery.type = data.type;
-        this.currentQuery.queryString = data.query;
-        this.currentQuery.pageIndex = data.page;
-        this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-        this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
-        console.log("this.currentQuery", this.currentQuery);
-        this.runCurrentQuery();
-      }
+      // Perform the actual search.
+      this.currentQuery = new StrixQuery();
+      this.currentQuery.type = data.type;
+      this.currentQuery.queryString = data.query;
+      this.currentQuery.pageIndex = data.page;
+      this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
+      this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
+      console.log("this.currentQuery", this.currentQuery);
+      this.runCurrentQuery();
     });
   }
 
@@ -82,10 +80,10 @@ export class QueryService {
     this.currentQuery.pageIndex = page;
   }
 
-  signalStartedSearch() {
+  private signalStartedSearch() {
     this.searchStatusSubject.next(StrixEvent.SEARCHSTART);
   }
-  signalEndedSearch() {
+  private signalEndedSearch() {
     this.searchStatusSubject.next(StrixEvent.SEARCHEND);
   }
 

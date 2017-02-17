@@ -1,4 +1,7 @@
 <div class="clear"></div>
+<div class="readerLoading" *ngIf="isLoading">
+  <i class="fa fa-spinner fa-pulse"></i>&nbsp;Laddar...
+</div>
 <div class="readerArea">
   <a id="anchor"></a>
   <a id="readerAnchor"></a>
@@ -45,7 +48,7 @@
     <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
     <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
   <div class="tokenAnnotationsList"
-    *ngIf="showBox && singleWordSelection"
+    *ngIf="!isLoading && showBox && singleWordSelection"
     [style.left.px]="annotationsListLeft"
     [style.top.px]="annotationsListTop">
     <div class="closeBox" (click)="closeBox()">

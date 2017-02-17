@@ -1,0 +1,38 @@
+<div class="search_area">
+  <div dropdown (onToggle)="toggled($event)" (click)="$event.preventDefault()">
+      Sök på <a href id="simple-dropdown" dropdownToggle>
+        {{searchType}}&nbsp;<i class="fa fa-caret-down"></i>
+      </a>
+      <ul class="dropdown-menu" dropdownMenu aria-labelledby="simple-dropdown">
+        <li>
+          <a class="dropdown-item" href="#" (click)="searchType='normal'">textsträng</a>
+        </li>
+        <li class="divider dropdown-divider"></li>
+        <li *ngFor="let choice of searchableAnnotations">
+          <a class="dropdown-item" href="#" (click)="searchType=choice">{{choice}}</a>
+        </li>
+      </ul>
+    </div>
+    <div class="clear"></div>
+    <div class="search_widget" *ngIf="searchType=='normal'">
+      <input type="text"
+        class="form-control simple_searchbox"
+        [(ngModel)]="asyncSelected"
+        (keydown.Enter)="simpleSearch()"/>
+    </div>
+    <div class="search_widget" *ngIf="searchType=='lemgram'">
+      <template #lemgramItemTemplate let-model="item" let-index="index">
+        <span>{{model | lemgram}}</span>
+      </template>
+      <input
+        type="text"
+        class="form-control simple_searchbox"
+        [(ngModel)]="asyncSelected"
+        [typeahead]="dataSource"
+        [typeaheadWaitMs]="300"
+        [typeaheadItemTemplate]="lemgramItemTemplate"
+        (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
+  </div>
+  <button (click)="simpleSearch(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
+  <i *ngIf="isSearching" class="fa fa-spinner fa-pulse"></i>
+</div>

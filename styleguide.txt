@@ -1,0 +1,22 @@
+GENERAL
+
+- Use two spaces for indentation
+- Write JavaScript objects as {a : b, c : d}, not {a: b, c: d} or {a:b,c:d}
+- Write TypeScript types like name: string, not name : string
+- 
+
+IMPORTS
+
+- Write imports with spaces padding the {} for readability
+- Have Angular imports on the first lines.
+- Then have other libraries.
+- Then have a blank line and then project internal imports.
+Example:
+
+    import { Component, OnInit } from '@angular/core';
+    import { Observable } from 'rxjs/Observable';
+    import { Store } from '@ngrx/store';
+
+    import { QueryService } from '../query.service';
+    import { CallsService } from '../calls.service';
+

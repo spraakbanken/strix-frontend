@@ -2,9 +2,6 @@
     
 } */
 
-.search_area {
-  padding: 16px;
-}
 .no_hits_area {
   margin-left:16px;
 }
@@ -64,12 +61,6 @@
 }
 .after_highlight {
   font-size: small;
-}
-
-.simple_searchbox {
-  width: 300px;
-  float: left;
-  margin-right: 10px;
 }
 
 .corpora_area {

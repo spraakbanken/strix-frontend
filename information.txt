@@ -1,0 +1,28 @@
+***** WORKING WITH HASH URLS, THE ROUTING-SERVICE AND THE NG/RX-STORE *****
+
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+
+interface AppState {
+  searchRedux: any;
+}
+
+[...] // component boilerplate code here
+
+private searchRedux: Observable<any>;
+
+constructor(private store: Store<AppState>) {
+  this.searchRedux = this.store.select('searchRedux');
+
+  this.searchRedux.subscribe((data) => {
+      // Here we can listen to changes to the data
+  });
+
+  this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+      // Here we can listen to changes to the filtered data
+  });
+}
+
+private alterSomething() {
+  this.store.dispatch({type: SEARCH, payload : "abcdefg"});
+}

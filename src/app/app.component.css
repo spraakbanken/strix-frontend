@@ -1,5 +1,6 @@
 .left_column {
     background-color: #d9edf7;
+    border-right: 1px solid grey;
     width: 200px;
     min-height: 100vh;
     float: left;
