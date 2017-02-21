@@ -53,26 +53,22 @@ export class StrixDocument {
     // Calculate the distance to the token from the start of the line
     let line = this.dump[lineNumber].slice(12); // TODO: Get rid of magic number
     let firstTokenOfLine = this.lines[lineNumber][0];
-    console.log("first token of line", firstTokenOfLine, this.token_lookup[firstTokenOfLine].word);
     // Consume each token until the current token-index has been reached
     let charsConsumed = 0;
     let currentToken = firstTokenOfLine;
     while (currentToken < tokenID) {
       // Consume all whitespace:
       while ( /^\s$/.test(line[charsConsumed]) ) {
-        console.log("ate whitespace char.");
         charsConsumed++;
       }
       // Consume the next token
       let token = this.token_lookup[currentToken];
       let tokenText = token.word;
       charsConsumed += tokenText.length;
-      console.log("consumed", tokenText);
       currentToken++;
     }
     // Consume trailing whitespace
     while ( /^\s$/.test(line[charsConsumed]) ) {
-      console.log("ate whitespace char.");
       charsConsumed++;
     }
 

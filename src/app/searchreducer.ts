@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 export const CHANGETYPE = "CHANGETYPE";
 export const CHANGENEXTQUERY = "CHANGENEXTQUERY";
 export const CHANGECORPORA = "CHANGECORPORA";
+export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
 export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
@@ -30,6 +31,9 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGECORPORA:
       nextState.nextCorpora = action.payload;
+      break;
+    case CHANGEPAGE:
+      nextState.page = action.payload;
       break;
     case OPENDOCUMENT:
       nextState.documentID = action.payload.es_id;

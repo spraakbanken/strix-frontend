@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT } from './searchreducer';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
    the ngrx-store app store in sync. It is the only piece of code that is allowed
@@ -41,6 +42,7 @@ export class RoutingService {
     this.initializeStartingParameters();
 
     this.searchRedux.subscribe((data) => {
+      console.log("the data", data);
       const urlString = "#?" + this.urlFields.map((field) => {
         return `${encodeURI(field.tag)}=${encodeURI(this.stringify(field.type, data[field.tag]))}`;
       }).join("&");
@@ -87,11 +89,23 @@ export class RoutingService {
       startState[field.tag] = item || null;
     }
 
-    this.store.dispatch({ type: INITIATE, payload : startState});
+    this.store.dispatch({ type : INITIATE, payload : startState});
 
     if (startState["query"]) {
-      this.store.dispatch({ type: RELOAD, payload : null});
+      this.store.dispatch({ type : RELOAD, payload : null});
     }
+
+    // We need to make this "wait" for the query to be sent (NB: not *received*!)
+    const timer = TimerObservable.create(0);
+    timer.subscribe(() => {
+      if (startState["documentID"] && startState["documentCorpus"]) {
+        console.log("autoopening document", startState["documentID"], startState["documentCorpus"]);
+        this.store.dispatch({
+          type : OPENDOCUMENT,
+          payload : {es_id : startState["documentID"], corpus : startState["documentCorpus"]}
+        });
+      }
+    });
 
   }
 

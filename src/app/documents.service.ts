@@ -56,8 +56,9 @@ export class DocumentsService {
               private store: Store<AppState>) {
 
     this.searchRedux = this.store.select('searchRedux');
+    console.log("in documents constructor");
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
-      console.log("open document with", data);
+      console.log("open document with", data, this.queryService);
       this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());
     });
   }

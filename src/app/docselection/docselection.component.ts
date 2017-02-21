@@ -9,7 +9,7 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
-import { OPENDOCUMENT } from '../searchreducer';
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -89,7 +89,9 @@ export class DocselectionComponent implements OnInit {
 
   private paginatorPageChanged(event: any) {
     console.log("Changed paginator page", event);
-    this.queryService.setPage(event.page); // Should probably be a dispatch to the store
+    //this.queryService.setPage(event.page); // Should probably be a dispatch to the store
+    this.store.dispatch({type : CHANGEPAGE, payload: event.page});
+    this.store.dispatch({type : RELOAD, payload : null});
     //this.simpleSearch(true);
   }
 

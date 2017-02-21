@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { Component } from '@angular/core';
 import { RoutingService } from './routing.service';
+import { DocumentsService } from './documents.service';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import { RoutingService } from './routing.service';
 export class AppComponent {
   
   constructor(private routingService: RoutingService) {
+    // documentsService must load first!
     console.log(_.add(1, 3)); // Just to test lodash
   }
 

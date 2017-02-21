@@ -14,3 +14,11 @@
 a {
     cursor: pointer;
 }
+
+.button_previous {
+    cursor: pointer;
+}
+
+.button_next {
+    cursor: pointer;
+}

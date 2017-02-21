@@ -1,5 +1,14 @@
 <div class="mini_doc_selection_area" *ngIf="show">
+  <div class="button_previous" *ngIf="page !== 1" (click)="previousPage()">
+    <i class="fa fa-arrow-left"></i>
+  </div>
   <div *ngFor="let doc of documentsWithHits; let i = index">
     <a (click)="openDocument(i)">{{doc.title}}</a>
+  </div>
+  <div *ngIf="documentsWithHits.length === 0">
+    <i class="fa fa-spinner fa-pulse"></i>
+  </div>
+  <div class="button_next" *ngIf="page < totalNumberOfDocuments*10" (click)="nextPage()">
+    <i class="fa fa-arrow-right"></i>
   </div>
 </div>
