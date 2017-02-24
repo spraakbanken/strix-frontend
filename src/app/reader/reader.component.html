@@ -12,8 +12,8 @@
           <div class="text_left_column">
             <div class="text_header">
               <span class="text_title">{{titles[i]}}</span>
-              <div class="right_control" (click)="showSidebar = ! showSidebar">
-                <i class="fa fa-bars"></i>
+              <div class="close_box" (click)="closeDocument()">
+                <i class="fa fa-times"></i>
               </div>
             </div>
             <cm
@@ -26,6 +26,9 @@
               <span class="add_bookmark" (click)="addBookmark(i)">
                 <i class="fa fa-underline"></i>
               </span>
+              <div class="right_control" (click)="showSidebar = ! showSidebar;resizeReader()">
+                <i class="fa fa-bars"></i>
+              </div>
               <!--<span class="selection_info">
                 Markering av token {{selectionStartTokenID}} till {{selectionEndTokenID}}. 
               </span>-->
@@ -34,8 +37,8 @@
           <div class="text_right_column" *ngIf="showSidebar">
             <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(i, bookmark)">
               <!--{{bookmark.style}}-->
-              <i *ngIf="bookmark.type == 'user'" class="fa fa-bookmark"></i>
-              <i *ngIf="bookmark.type == 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
+              <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
+              <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
               &nbsp;{{bookmark.text}}
             </div>
           </div>

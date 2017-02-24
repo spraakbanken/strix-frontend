@@ -41,7 +41,7 @@ export class ReaderComponent implements AfterViewInit {
   private annotationsListLeft: number = 0;
   private annotationsListTop: number = 0;
 
-  private showSidebar: boolean = false;
+  private showSidebar = true;
   private bookmarks: any = [];
 
 
@@ -299,6 +299,14 @@ export class ReaderComponent implements AfterViewInit {
       "style" : "bgcolor",
       "text" : text
     });
+  }
+
+  private resizeReader() {
+    console.log("should now resize the reader area.");
+  }
+
+  private closeDocument() {
+    console.log("should close the document now.");
   }
 
 }

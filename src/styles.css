@@ -34,12 +34,10 @@
   outline-offset: 0;
 }
 
-/* Because Firefox otherwise destroys empty lines.
-   Maybe instead add a &nbsp; in some way to empty lines,
-   because now 20px is sort of a magic value which need
-   to be updated if the font style is changed later on. */
-.CodeMirror-line {
-  min-height: 20px; 
+/* Because Firefox otherwise destroys empty lines. */
+.CodeMirror-line::after {
+  content : '.';
+  visibility: hidden;
 }
 
 em {
