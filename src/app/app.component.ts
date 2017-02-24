@@ -11,7 +11,6 @@ import { DocumentsService } from './documents.service';
 export class AppComponent {
   
   constructor(private routingService: RoutingService) {
-    // documentsService must load first!
     console.log(_.add(1, 3)); // Just to test lodash
   }
 
