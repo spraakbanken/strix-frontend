@@ -1,6 +1,7 @@
-import { Component, AfterViewInit, ViewChildren, QueryList } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import * as _ from 'lodash';
+
 
 import { StrixDocument } from '../strixdocument.model';
 import { StrixSelection } from '../strixselection.model';
@@ -307,6 +308,27 @@ export class ReaderComponent implements AfterViewInit {
 
   private closeDocument() {
     console.log("should close the document now.");
+  }
+
+  @HostListener('window:resize', ['$event.target']) 
+  onResize() { 
+    console.log("ON THE RISE");
+    if (this.mirrors.first) {
+      //this.mirrors.first.codeMirrorInstance.setSize("100%", "100%");
+    }
+  }
+
+  private _onResize(event) {
+    console.log("$event", event);
+    //const newWidth = window.innerWidth - 220;
+    const elem = document.getElementsByClassName("readerArea")[0];
+    //console.log("elem.clientTop", elem, elem.clientTop);
+    //const newHeight = window.innerHeight - elem.clientTop - 20;
+    //const.
+    //console.log("-----", this.elHeight);
+    //if (this.mirrors.first) {
+    //  this.mirrors.first.codeMirrorInstance.setSize(newWidth, newHeight);
+    //}
   }
 
 }

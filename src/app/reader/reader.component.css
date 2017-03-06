@@ -5,9 +5,11 @@
   border-collapse: collapse;
 }
 
+*/
+
 .text_area {
-  display: table-cell;
-} */
+  position: relative;
+} 
 
 .readerLoading {
   background-color: #f7f7f7;
@@ -22,7 +24,9 @@ ul {
 }
 
 .text_left_column {
-  float: left;
+  /* float: left; */
+  width: auto;
+  margin-right: 200px;
 }
 .text_right_column {
   border-top: 1px solid #ddd;
@@ -31,10 +35,14 @@ ul {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
   background-color: #f7f7f7;
-  float: left;
-  min-width: 200px;
+  /* float: left; */
+  /* float: right; */
+  width: 200px;
   height: 644px;
   padding: 4px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
 }
 .bookmark {
   font-size: small;
@@ -46,6 +54,7 @@ ul {
 .readerArea {
   overflow-x: auto;
   width: 100%;
+  height: 800px;
 }
 
 .text_header {

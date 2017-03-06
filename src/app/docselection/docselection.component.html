@@ -30,7 +30,7 @@
           </div>
           <div class="clear"></div>
           <div class="hit_document_body">
-              <span *ngFor="let highlight of doc.highlights; let l = last" [innerHTML]="highlight">
+              <span *ngFor="let highlight of doc.highlight.highlight; let l = last" [innerHTML]="highlight">
                 <br *ngIf="last"/> <!-- ??? -->
               </span>
           </div>

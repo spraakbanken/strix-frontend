@@ -25,8 +25,8 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: arial !important;
-  height: 600px !important;
-  width: 800px;
+  /* height: 600px !important; */
+  /* width: 800px; */
 }
 
 .CodeMirror-focused {

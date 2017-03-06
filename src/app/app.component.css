@@ -1,12 +1,32 @@
 .left_column {
-    background-color: #d9edf7;
-    border-right: 1px solid grey;
-    width: 200px;
-    min-height: 100vh;
-    float: left;
+  background-color: #d9edf7;
+  border-right: 1px solid grey;
+  width: 200px;
+  height: 100vh;
+  float: left;
 }
 
 .right_column {
-    margin-left: 200px;
-    overflow: hidden;
+  overflow: auto;
+  height: 100vh;
 }
+
+
+/* Desktop */
+@media screen and (min-width: 601px) {
+  .right_column {
+    margin-left: 200px;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 600px) {
+  .left_column {
+    display: none;
+  }
+
+  .right_column {
+    margin-left: 0px;
+  }
+}
+
