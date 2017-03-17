@@ -27,6 +27,7 @@ import { searchReducer } from './searchreducer';
 import { RoutingService } from './routing.service';
 import { SearchComponent } from './search/search.component';
 import { MinidocselectionComponent } from './minidocselection/minidocselection.component';
+import { HeaderComponent } from './header/header.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { MinidocselectionComponent } from './minidocselection/minidocselection.c
     LeftcolumnComponent,
     StartPanelComponent,
     SearchComponent,
-    MinidocselectionComponent
+    MinidocselectionComponent,
+    HeaderComponent
   ],
   imports: [
     BrowserModule,

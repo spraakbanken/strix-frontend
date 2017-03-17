@@ -1,5 +1,7 @@
 import { Component, AfterViewInit, ViewChildren, QueryList, HostListener } from '@angular/core';
-import { Subscription }   from 'rxjs/Subscription';
+import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
 
@@ -8,6 +10,12 @@ import { StrixSelection } from '../strixselection.model';
 import { StrixEvent } from '../strix-event.enum';
 import { DocumentsService } from '../documents.service';
 import { CmComponent } from './cm/cm.component';
+import { CLOSEDOCUMENT } from '../searchreducer';
+
+interface AppState {
+  searchRedux: any;
+}
+
 
 @Component({
   selector: 'reader',
@@ -18,8 +26,6 @@ export class ReaderComponent implements AfterViewInit {
   //@ViewChild(CmComponent) mirror: CmComponent;
   @ViewChildren(CmComponent) mirrors: QueryList<CmComponent>;
   subscription : Subscription;
-
-  code = "cool";
 
   private docLoadStatusSubscription: Subscription;
   private isLoading = false;
@@ -39,15 +45,36 @@ export class ReaderComponent implements AfterViewInit {
 
   private showBox: boolean = false;
   private singleWordSelection: boolean = false;
-  private annotationsListLeft: number = 0;
-  private annotationsListTop: number = 0;
+  private annotationsListLeft = "inherit";
+  private annotationsListTop = "inherit";
+  private annotationsListRight = "inherit";
+  private annotationsListBottom = "inherit";
 
   private showSidebar = true;
   private bookmarks: any = [];
 
+  private searchRedux: Observable<any>;
 
-  constructor(private documentsService : DocumentsService) {
+  /*
+    this.showBox = false;
+    this.cmViews.splice(0);
+    break;
+  */
 
+
+  constructor(private documentsService : DocumentsService, private store: Store<AppState>) {
+
+    // If the user closes the main document:
+    this.searchRedux = this.store.select('searchRedux');
+    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+      this.showBox = false;
+      this.singleWordSelection = false;
+      //this.mirrors.first.codeMirrorInstance.setValue("");
+      this.removeView(0);
+      //this.cmViews.splice(0);
+    });
+
+    // When a document starts loading and when it is fully loaded:
     this.docLoadStatusSubscription = documentsService.docLoadingStatus$.subscribe(
       answer => {
         console.log("load status:", answer);
@@ -148,8 +175,9 @@ export class ReaderComponent implements AfterViewInit {
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
       }
 
-      this.annotationsListLeft = selection.realCoordinates.left;
-      this.annotationsListTop = selection.realCoordinates.bottom;
+      console.log("–––", selection.realCoordinates);
+      this.annotationsListLeft = selection.realCoordinates.left + "px";
+      this.annotationsListTop = selection.realCoordinates.bottom + "px";
 
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
     }
@@ -267,6 +295,7 @@ export class ReaderComponent implements AfterViewInit {
   }
 
   private gotoBookmark(index: number, bookmark: any) {
+    console.log("got index", index);
     let mirrorsArray = this.mirrors.toArray();
     let cmInstance = mirrorsArray[index].codeMirrorInstance;
     cmInstance.setSelection(bookmark.from);
@@ -314,7 +343,7 @@ export class ReaderComponent implements AfterViewInit {
   onResize() { 
     console.log("ON THE RISE");
     if (this.mirrors.first) {
-      //this.mirrors.first.codeMirrorInstance.setSize("100%", "100%");
+      //this.mirrors.first.codeMirrorInstance.setSize(null, "100%");
     }
   }
 

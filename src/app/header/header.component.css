@@ -1,0 +1,9 @@
+.doc_header {
+  padding-left: 8px;
+}
+.close_box {
+  border: 1px solid black;
+  display: inline-block;
+  padding: 2px;
+  cursor: pointer;
+}

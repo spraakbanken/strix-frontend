@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import { Component } from '@angular/core';
+import * as _ from 'lodash';
+
 import { RoutingService } from './routing.service';
 import { DocumentsService } from './documents.service';
 
@@ -9,7 +10,7 @@ import { DocumentsService } from './documents.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  
+
   constructor(private routingService: RoutingService) {
     console.log(_.add(1, 3)); // Just to test lodash
   }

@@ -6,6 +6,7 @@ export const CHANGENEXTQUERY = "CHANGENEXTQUERY";
 export const CHANGECORPORA = "CHANGECORPORA";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
+export const CLOSEDOCUMENT = "CLOSEDOCUMENT";
 export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
@@ -38,6 +39,10 @@ export function searchReducer(state: any = {}, action: Action) {
     case OPENDOCUMENT:
       nextState.documentID = action.payload.es_id;
       nextState.documentCorpus = action.payload.corpus;
+      break;
+    case CLOSEDOCUMENT:
+      nextState.documentID = null;
+      nextState.documentCorpus = null;
       break;
     case SEARCH:
       nextState.type = nextState.nextType;

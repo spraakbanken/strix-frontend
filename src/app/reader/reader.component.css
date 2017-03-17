@@ -24,9 +24,7 @@ ul {
 }
 
 .text_left_column {
-  /* float: left; */
   width: auto;
-  margin-right: 200px;
 }
 .text_right_column {
   border-top: 1px solid #ddd;
@@ -35,15 +33,38 @@ ul {
   border-top-right-radius: 6px;
   border-bottom-right-radius: 6px;
   background-color: #f7f7f7;
-  /* float: left; */
-  /* float: right; */
   width: 200px;
-  height: 644px;
+  height: 100%;
   padding: 4px;
   position: absolute;
   top: 0px;
   right: 0px;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
+
+/* Desktop */
+@media screen and (min-width: 601px) {
+  .text_left_column {
+    margin-right: 200px;
+  }
+  .CodeMirror {
+    margin-right: 200px;
+  }
+}
+/* Mobile */
+@media screen and (max-width: 600px) {
+  .text_left_column {
+    margin-right: 0px;
+  }
+  .text_right_column {
+    display: none;
+  }
+  .CodeMirror {
+    margin-right: 0px;
+  }
+}
+
 .bookmark {
   font-size: small;
   font-style: italic;
@@ -54,7 +75,9 @@ ul {
 .readerArea {
   overflow-x: auto;
   width: 100%;
-  height: 800px;
+  height: 100%;
+  position: relative;
+  /* height: 800px; */
 }
 
 .text_header {
@@ -100,7 +123,7 @@ ul {
 /* Token Annotations "bubble" */
 
 .tokenAnnotationsList {
-  position: absolute;
+  position: fixed;
   background-color: rgba(255,255,255,0.94);
   z-index: 1000;
   padding: 4px;

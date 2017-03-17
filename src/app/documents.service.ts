@@ -13,6 +13,7 @@ import { StrixResult } from './strixresult.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
 import { OPENDOCUMENT } from './searchreducer';
+import { CLOSEDOCUMENT } from './searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -74,6 +75,13 @@ export class DocumentsService {
     if (this.referencesToDocuments[documentID] === 0) {
       this.unloadDocument(documentID);
     }
+  }
+  public closeMainDocument() {
+    // Unload the document
+    this.letGoOfDocumentReference(this.documents[0].doc_id); // Is [0] always the main document?
+    // Notify the GUI
+    this.store.dispatch({type: CLOSEDOCUMENT, payload : ""});
+    //this.signalClosedMainDocument()
   }
 
   private addDocumentReference(documentID): void {
@@ -270,5 +278,8 @@ export class DocumentsService {
   private signalEndedDocumentLoading() {
     this.docLoadingStatusSubject.next(StrixEvent.DOCLOADEND);
   }
+  /* private signalClosedMainDocument() {
+    this.docLoadingStatusSubject.next(StrixEvent.CLOSED_MAIN_DOCUMENT);
+  } */
 
 }

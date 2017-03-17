@@ -57,7 +57,7 @@ export class CmComponent implements OnInit {
         var lastLine = selections[0].head.line;
         var lastChar = selections[0].head.ch;
         var strixSelection = new StrixSelection(firstLine, firstChar - padding, lastLine, lastChar - padding - 1);
-        strixSelection.realCoordinates = instance.cursorCoords(true, "page") // REM: Second param culd be "local" or "window" also
+        strixSelection.realCoordinates = instance.cursorCoords(true, "window") // REM: Second param could be "page", "local" or "window"
         this.emitSelectionChange(strixSelection);
       }
     });

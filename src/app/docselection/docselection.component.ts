@@ -47,7 +47,10 @@ export class DocselectionComponent implements OnInit {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
-      this.show = false;
+      this.documentsWithHits = [];
+      this.totalNumberOfDocuments = 0;
+      this.hasSearched = false;
+      //this.show = false;
     });
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(

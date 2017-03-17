@@ -1,9 +1,8 @@
-<div class="clear"></div>
 <div class="readerLoading" *ngIf="isLoading">
   <i class="fa fa-spinner fa-pulse"></i>&nbsp;Laddar...
 </div>
 <div class="readerArea">
-  <table>
+  <!--<table>
     <tbody>
       <tr>
         <td *ngFor="let m of cmViews;let i = index" class="text_area">
@@ -28,14 +27,13 @@
               <div class="right_control" (click)="showSidebar = ! showSidebar;resizeReader()">
                 <i class="fa fa-bars"></i>
               </div>
-              <!--<span class="selection_info">
+              <span class="selection_info">
                 Markering av token {{selectionStartTokenID}} till {{selectionEndTokenID}}. 
-              </span>-->
+              </span>
             </div>
           </div>
           <div class="text_right_column" *ngIf="showSidebar">
             <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(i, bookmark)">
-              <!--{{bookmark.style}}-->
               <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
               <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
               &nbsp;{{bookmark.text}}
@@ -45,14 +43,31 @@
         </td>
       </tr>
     </tbody>
-  </table>
+  </table>-->
+  <cm *ngIf="cmViews.length !== 0"
+    [style.width.px]="width"
+    (onSelectionChange)="onSelectionChange($event)"
+    (onFocus)="onFocus($event)"
+    (onScrollInDocument)="onScrollInDocument($event)"
+    (onKeydown)="onKeydown($event)"
+    [index]="0"></cm>
+  <div class="text_right_column" *ngIf="showSidebar && cmViews.length !== 0">
+    <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
+      <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
+      <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
+      &nbsp;{{bookmark.text}}
+    </div>
+  </div>
     <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
     <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
     <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
-  <div class="tokenAnnotationsList"
+  <div
+    class="tokenAnnotationsList"
     *ngIf="!isLoading && showBox && singleWordSelection"
-    [style.left.px]="annotationsListLeft"
-    [style.top.px]="annotationsListTop">
+    [style.left]="annotationsListLeft"
+    [style.top]="annotationsListTop"
+    [style.right]="annotationsListRight"
+    [style.bottom]="annotationsListBottom">
     <div class="closeBox" (click)="closeBox()">
       <i class="fa fa-window-close-o"></i>
     </div>
