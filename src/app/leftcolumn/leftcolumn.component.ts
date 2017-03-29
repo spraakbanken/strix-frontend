@@ -38,7 +38,6 @@ export class LeftcolumnComponent implements OnInit {
         }
     });
 
-    this.searchRedux = this.store.select('searchRedux');
   }
 
   private chooseCorpus(corpusID: string) {

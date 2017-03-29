@@ -104,7 +104,7 @@ export class CmDirective {
             }
 
             let documentIndex = state.documentIndex;
-            console.log("documentIndex", documentIndex);
+            //console.log("documentIndex", documentIndex, window['CodeMirrorStrixControl'][documentIndex]);
 
             if (window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType) {
               let currentAnnotationType : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;

@@ -47,8 +47,9 @@
   <cm *ngIf="cmViews.length !== 0"
     [style.width.px]="width"
     (onSelectionChange)="onSelectionChange($event)"
+    (onViewportChange)="onViewportChange($event)"
     (onFocus)="onFocus($event)"
-    (onScrollInDocument)="onScrollInDocument($event)"
+    (onScrollInDocument)="onScrollInDocument(0)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
   <div class="text_right_column" *ngIf="showSidebar && cmViews.length !== 0">

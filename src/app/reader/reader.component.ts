@@ -197,8 +197,16 @@ export class ReaderComponent implements AfterViewInit {
     mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head, {"scroll" : true})
   }
 
-  private onScrollInDocument() {
+  private onScrollInDocument(event) {
+    //console.log("onScrollInDocument", event);
     this.singleWordSelection = false;
+  }
+
+  private onViewportChange(event) {
+    console.log("viewportChange", event);
+    // First check if we have token information for the current viewport already
+    let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to); // Returns observable
+
   }
 
   private onKeydown(event: any): void {
@@ -303,32 +311,35 @@ export class ReaderComponent implements AfterViewInit {
 
   /* Highlights is a special case of bookmarks */
   private addHighlight(index: number, tokenID: number) {
-    let mirrorsArray = this.mirrors.toArray();
-    let cmInstance = mirrorsArray[index].codeMirrorInstance;
-
     let doc = this.documentsService.getDocument(index);
+    if (doc.token_lookup[tokenID]) {
+      let mirrorsArray = this.mirrors.toArray();
+      let cmInstance = mirrorsArray[index].codeMirrorInstance;
 
-    let fragments: string[] = [];
-    for( let t = tokenID; t < tokenID + 4; t++) {
-      fragments.push(doc.token_lookup[t].word);
+      let fragments: string[] = [];
+      for (let t = tokenID; t < tokenID + 4; t++) {
+        if (doc.token_lookup[t]) {
+          fragments.push(doc.token_lookup[t].word);
+        }
+      }
+      let text = fragments.join(" ");
+
+      let tokenBounds = doc.getTokenBounds(tokenID);
+      let fromCursor = tokenBounds.anchor;
+      let toCursor = tokenBounds.head;
+
+      console.log("addHighlight", fromCursor, toCursor);
+
+      //cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+      cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+      this.bookmarks.push({
+        "from" : fromCursor,
+        "to" : toCursor,
+        "type" : "highlight",
+        "style" : "bgcolor",
+        "text" : text
+      });
     }
-    let text = fragments.join(" ");
-
-    let tokenBounds = doc.getTokenBounds(tokenID);
-    let fromCursor = tokenBounds.anchor;
-    let toCursor = tokenBounds.head;
-
-    console.log("addHighlight", fromCursor, toCursor);
-
-    //cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
-    cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
-    this.bookmarks.push({
-      "from" : fromCursor,
-      "to" : toCursor,
-      "type" : "highlight",
-      "style" : "bgcolor",
-      "text" : text
-    });
   }
 
   private resizeReader() {

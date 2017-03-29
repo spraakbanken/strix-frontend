@@ -13,6 +13,7 @@ import * as _ from 'lodash';
 })
 export class CmComponent implements OnInit {
   @Output() onSelectionChange = new EventEmitter<StrixSelection>();
+  @Output() onViewportChange = new EventEmitter<any>();
   @Output() onFocus = new EventEmitter<number>();
   @Output() onScrollInDocument = new EventEmitter<number>();
   @Output() onKeydown = new EventEmitter<any>();
@@ -72,6 +73,10 @@ export class CmComponent implements OnInit {
 
     this.codeMirrorInstance.on('keydown', (instance, event) => {
       this.onKeydown.emit({"index" : this.index, "event" : event});
+    });
+
+    this.codeMirrorInstance.on('viewportChange', (instance, from, to) => {
+      this.onViewportChange.emit({"index" : this.index, from: from, to: to});
     });
 
   }

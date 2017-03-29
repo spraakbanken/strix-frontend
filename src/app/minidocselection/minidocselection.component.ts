@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
+import { DocumentsService } from '../documents.service';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, SEARCH } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
 
@@ -20,6 +21,8 @@ export class MinidocselectionComponent implements OnInit {
 
   private searchRedux: Observable<any>;
 
+  private subscription: Subscription;
+
   private searchResultSubscription: Subscription;
   private documentsWithHits: StrixDocument[] = [];
   private totalNumberOfDocuments: number = 0;
@@ -29,7 +32,8 @@ export class MinidocselectionComponent implements OnInit {
   private show = false;
 
   constructor(private queryService: QueryService,
-              private store: Store<AppState>) {
+              private store: Store<AppState>,
+              private documentsService: DocumentsService) {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
@@ -42,8 +46,18 @@ export class MinidocselectionComponent implements OnInit {
       this.page = data.page;
     });
 
+    this.subscription = documentsService.loadedDocument$.subscribe(
+      message => {
+        console.log("fetching related data.", message);
+        documentsService.getRelatedDocuments(message.documentIndex).subscribe(
+          answer => {
+            console.log("related data", answer["data"]);
+            this.documentsWithHits = answer["data"];
+          }
+        );
+    });
 
-    this.searchResultSubscription = queryService.searchResult$.subscribe(
+    /* this.searchResultSubscription = queryService.searchResult$.subscribe(
       answer => {
         console.log("answer", answer);
         this.documentsWithHits = answer.data;
@@ -51,7 +65,7 @@ export class MinidocselectionComponent implements OnInit {
         //this.isLoading = false;
       },
       error => null//this.errorMessage = <any>error
-    );
+    ); */
   }
 
   private openDocument(docIndex: number) {

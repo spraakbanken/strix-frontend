@@ -282,4 +282,32 @@ export class DocumentsService {
     this.docLoadingStatusSubject.next(StrixEvent.CLOSED_MAIN_DOCUMENT);
   } */
 
+  public extendTokenInfoIfNecessary(docIndex: number, fromLine: number, toLine: number) {
+    // First convert line numbers to token numbers
+    let doc = this.documents[docIndex];
+    
+    let firstToken = doc.getFirstTokenFromLine(fromLine);
+    let lastToken = doc.getLastTokenFromLine(toLine);
+    
+    console.log("from token ", firstToken, " to ", lastToken);
+
+    // TODO: Only make calls if we don't have the data already!
+
+    this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
+      answer => {
+        //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
+        _.assign(doc.token_lookup, answer.data.token_lookup);
+        console.log( "size:", _.size(doc.token_lookup) );
+      },
+      error => this.errorMessage = <any>error
+      );
+
+    return null;
+  }
+
+  public getRelatedDocuments(docIndex: number) {
+    let doc = this.documents[docIndex];
+    return this.callsService.getRelatedDocuments(doc.doc_id, doc.corpusID);
+  }
+
 }

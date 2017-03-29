@@ -95,7 +95,7 @@ export class CallsService {
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string) : Observable<StrixDocument> {
     let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/doc_id/${documentID}/${query}`;
     console.log('url', url);
-    let paramsString = `simple_highlight=false`;
+    let paramsString = `simple_highlight=false&token_lookup_from=${0}&token_lookup_to=${1000}`;
     let options = new RequestOptions({
       search: new URLSearchParams(paramsString)
     });
@@ -104,17 +104,29 @@ export class CallsService {
                     .catch(this.handleError);
   }
 
+  public getTokenDataFromDocument(documentID: string, corpusID: string, start: number, end: number) {
+    //console.log("running getTokenDataFromDocument");
+    let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
+    let paramsString = `include=token_lookup&token_lookup_from=${start}&token_lookup_to=${end}`;
+    let options = new RequestOptions({
+      search: new URLSearchParams(paramsString)
+    });
+    return this.http.get(url, options)
+                    .map(this.extractTokenData)
+                    .catch(this.handleError);
+  }
+
   private preprocessResult(res: Response) : StrixResult {
     let strixResult = new StrixResult();
     console.log("res", res);
     let body = res.json();
-    console.log("body", body);
+    //console.log("body", body);
     strixResult.count = body.hits;
     strixResult.data = body.data;
     return strixResult;
   }
 
-  private extractDocumentData(res: Response) : StrixDocument { // TODO: Update this
+  private extractDocumentData(res: Response): StrixDocument { // TODO: Update this
     let body = res.json();
     console.log('body', body);
     let strixDocument = new StrixDocument();
@@ -130,11 +142,30 @@ export class CallsService {
     return strixDocument;
   }
 
+  private extractTokenData(res: Response): any {
+    let body = res.json();
+    console.log('body', body);
+    return body;
+  }
+
   private handleError(error: any) {
     let errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
     console.error(errMsg);
     return Observable.throw(errMsg);
+  }
+
+  /* Related documents */
+  public getRelatedDocuments(documentID: string, corpusID: string) : Observable<StrixDocument> {
+    let url = `${this.STRIXBACKEND_URL}/related/${corpusID}/text/${documentID}`;
+    console.log('url', url);
+    let paramsString = `exclude=token_loopkup,dump,lines`;
+    let options = new RequestOptions({
+      search: new URLSearchParams(paramsString)
+    });
+    return this.http.get(url, options)
+                    .map(this.preprocessResult)
+                    .catch(this.handleError);
   }
 
 }
