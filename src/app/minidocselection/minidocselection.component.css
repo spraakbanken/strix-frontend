@@ -1,24 +1,36 @@
 .mini_doc_selection_area {
-    margin-left: 10px;
-    margin-right: -1px;
-    padding: 6px;
-    background-color: #f7f7f7;
-    border-left: 1px solid grey;
-    border-top: 1px solid grey;
-    border-bottom: 1px solid grey;
-    border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-    font-size: small;
+    margin-left : 10px;
+    margin-right : -1px;
+    padding : 6px;
+    background-color : #f7f7f7;
+    border-left : 1px solid grey;
+    border-top : 1px solid grey;
+    border-bottom : 1px solid grey;
+    border-top-left-radius : 6px;
+    border-bottom-left-radius : 6px;
+    font-size : small;
+}
+
+.mini_doc_header {
+    margin-top : 4px;
+    margin-bottom : 4px;
+}
+
+.hit_box {
+    border-bottom : 1px dashed #337ab7;
+}
+.hit_box:last-child {
+    border-bottom : 0px;
 }
 
 a {
-    cursor: pointer;
+    cursor : pointer;
 }
 
 .button_previous {
-    cursor: pointer;
+    cursor : pointer;
 }
 
 .button_next {
-    cursor: pointer;
+    cursor : pointer;
 }

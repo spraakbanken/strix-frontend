@@ -1,9 +1,17 @@
 .filters_area {
-    padding: 10px;
+  padding: 10px;
 }
 .corpus_item {
-    cursor: pointer;
+  cursor: pointer;
 }
 .selected {
-    font-weight: bold;
+  font-weight: bold;
+}
+
+.language_choice {
+  margin-top: 2px;
+  margin-left: 4px;
+}
+.language_choice a {
+  cursor: pointer;
 }

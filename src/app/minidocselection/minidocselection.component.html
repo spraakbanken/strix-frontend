@@ -1,9 +1,11 @@
 <div class="mini_doc_selection_area" *ngIf="show">
-  <b>Relaterade dokument</b>
+  <div class="mini_doc_header">
+    <b>{{'related_documents' | loc}}</b>
+  </div>
   <div class="button_previous" *ngIf="page !== 1" (click)="previousPage()">
     <i class="fa fa-arrow-left"></i>
   </div>
-  <div *ngFor="let doc of documentsWithHits; let i = index">
+  <div *ngFor="let doc of documentsWithHits; let i = index" class="hit_box">
     <a (click)="openDocument(i)">{{doc.title}}</a>
   </div>
   <div *ngIf="documentsWithHits.length === 0">

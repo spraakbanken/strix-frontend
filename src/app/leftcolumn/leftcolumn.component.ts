@@ -6,7 +6,8 @@ import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
-import { CHANGECORPORA } from '../searchreducer';
+import { LocService } from '../loc.service';
+import { CHANGECORPORA, CHANGELANG, INITIATE } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -19,6 +20,9 @@ interface AppState {
 })
 export class LeftcolumnComponent implements OnInit {
 
+  private languages = ["swe", "eng"]; // TODO: Move to some config
+  private selectedLanguage: string = "";
+
   private availableCorpora: string[] = [];
   private selectedCorpusID: string = "vivill"; // TODO: Temporary
   private metadataSubscription: Subscription;
@@ -27,7 +31,8 @@ export class LeftcolumnComponent implements OnInit {
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
-              private store: Store<AppState>) {
+              private store: Store<AppState>,
+              private locService: LocService) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
@@ -38,6 +43,12 @@ export class LeftcolumnComponent implements OnInit {
         }
     });
 
+    this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
+      this.selectedLanguage = data.lang;
+    });
+
   }
 
   private chooseCorpus(corpusID: string) {
@@ -46,6 +57,11 @@ export class LeftcolumnComponent implements OnInit {
     //this.queryService.registerUpdate();
 
     this.store.dispatch({ type: CHANGECORPORA, payload : [corpusID]});
+  }
+
+  private changeLanguageTo(language: string) {
+    this.store.dispatch({ type: CHANGELANG, payload : language});
+    //this.locService.setCurrentLanguage(language);
   }
 
   ngOnInit() {

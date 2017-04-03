@@ -159,7 +159,7 @@ export class CallsService {
   public getRelatedDocuments(documentID: string, corpusID: string) : Observable<StrixDocument> {
     let url = `${this.STRIXBACKEND_URL}/related/${corpusID}/text/${documentID}`;
     console.log('url', url);
-    let paramsString = `exclude=token_loopkup,dump,lines`;
+    let paramsString = `exclude=token_lookup,dump,lines`;
     let options = new RequestOptions({
       search: new URLSearchParams(paramsString)
     });

@@ -10,6 +10,7 @@ export const CLOSEDOCUMENT = "CLOSEDOCUMENT";
 export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
+export const CHANGELANG = "CHANGELANG";
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.
@@ -35,6 +36,9 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGEPAGE:
       nextState.page = action.payload;
+      break;
+    case CHANGELANG:
+      nextState.lang = action.payload;
       break;
     case OPENDOCUMENT:
       nextState.documentID = action.payload.es_id;

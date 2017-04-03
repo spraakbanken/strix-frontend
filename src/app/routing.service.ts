@@ -34,7 +34,8 @@ export class RoutingService {
     {tag : "nextType", type : FragmentType.STRING, default : "normal"},
     {tag : "nextQuery", type : FragmentType.STRING, default : ""},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
-    {tag : "documentCorpus", type : FragmentType.STRING, default : ""}
+    {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
+    {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
 
   constructor(private store: Store<AppState>) {

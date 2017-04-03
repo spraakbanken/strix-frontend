@@ -28,6 +28,8 @@ import { RoutingService } from './routing.service';
 import { SearchComponent } from './search/search.component';
 import { MinidocselectionComponent } from './minidocselection/minidocselection.component';
 import { HeaderComponent } from './header/header.component';
+import { LocService } from './loc.service';
+import { LocPipe } from './loc.pipe';
 
 @NgModule({
   declarations: [
@@ -41,7 +43,8 @@ import { HeaderComponent } from './header/header.component';
     StartPanelComponent,
     SearchComponent,
     MinidocselectionComponent,
-    HeaderComponent
+    HeaderComponent,
+    LocPipe
   ],
   imports: [
     BrowserModule,
@@ -58,7 +61,8 @@ import { HeaderComponent } from './header/header.component';
               KarpService,
               QueryService,
               MetadataService,
-              RoutingService],
+              RoutingService,
+              LocService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
