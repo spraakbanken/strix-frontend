@@ -7,7 +7,7 @@
 }
 
 .right_column {
-  background-color: brown;
+  /*background-color: brown;*/
   overflow: auto;
   height: 100vh;/*100vh;*/
   display: flex;

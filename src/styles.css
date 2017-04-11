@@ -25,6 +25,7 @@
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   font-family: arial !important;
+  height: 100% !important;
   /* height: 600px !important; */
   /* width: 800px; */
 }
@@ -48,3 +49,19 @@ em {
 /* textarea {
     display: none;
 } */
+
+body {
+  height: 100%;
+}
+
+@media screen and (min-width: 601px) {
+  .CodeMirror {
+    margin-right: 200px !important;
+  }
+}
+/* Mobile */
+@media screen and (max-width: 600px) {
+  .CodeMirror {
+    margin-right: 0px !important;
+  }
+}

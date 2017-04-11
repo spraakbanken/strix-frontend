@@ -6,8 +6,9 @@ import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
+import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
-import { CHANGECORPORA, CHANGELANG, INITIATE } from '../searchreducer';
+import { CHANGECORPORA, CHANGELANG, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -23,9 +24,12 @@ export class LeftcolumnComponent implements OnInit {
   private languages = ["swe", "eng"]; // TODO: Move to some config
   private selectedLanguage: string = "";
 
-  private availableCorpora: string[] = [];
+  private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
+  private availableCorporaKeys: string[] = [];
   private selectedCorpusID: string = "vivill"; // TODO: Temporary
   private metadataSubscription: Subscription;
+
+  private openDocument = false;
 
   private searchRedux: Observable<any>;
 
@@ -37,9 +41,11 @@ export class LeftcolumnComponent implements OnInit {
       wasSuccess => {
         if (wasSuccess) {
           this.availableCorpora = metadataService.getAvailableCorpora();
+          this.availableCorporaKeys = _.keys(this.availableCorpora);
           console.log("availableCorpora", this.availableCorpora);
         } else {
-          this.availableCorpora = []; // TODO: Show some error message
+          this.availableCorpora = {}; // TODO: Show some error message
+          this.availableCorporaKeys = [];
         }
     });
 
@@ -47,6 +53,14 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
       this.selectedLanguage = data.lang;
+    });
+
+    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+      this.openDocument = true;
+    });
+
+    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+      this.openDocument = false;
     });
 
   }

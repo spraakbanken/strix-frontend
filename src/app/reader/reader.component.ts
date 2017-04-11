@@ -171,6 +171,7 @@ export class ReaderComponent implements AfterViewInit {
 
       if (this.selectionStartTokenID === this.selectionEndTokenID) {
         let currentToken = activeDocument.token_lookup[this.selectionStartTokenID];
+        console.log("this.currentAnnotations", this.currentAnnotations);
         this.currentAnnotations = currentToken.attrs;
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
       }

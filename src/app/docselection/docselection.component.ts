@@ -9,6 +9,7 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
+import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD } from '../searchreducer';
 
 interface AppState {
@@ -33,7 +34,7 @@ export class DocselectionComponent implements OnInit {
 
   private textAttributes: any[] = [];
 
-  private availableCorpora: string[] = [];
+  private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   private checkedCorpora: any = {};
 
   private show = true;
@@ -77,9 +78,16 @@ export class DocselectionComponent implements OnInit {
             docs.push(doc);
           }
         }*/
+
+        // Do this as late as possible so we know we'll have the data already.
+        this.availableCorpora = this.metadataService.getAvailableCorpora();
+        console.log("soyuz", this.availableCorpora);
+
         this.documentsWithHits = answer.data;
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
+
+        
       },
       error => null//this.errorMessage = <any>error
     );

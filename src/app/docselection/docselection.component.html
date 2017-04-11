@@ -38,7 +38,7 @@
           </div>
           <div class="hit_appendix">
             <span class="hit_collection_title">
-              {{doc.corpus}}
+              {{availableCorpora[doc.corpus]?.name | loc}}
             </span>&nbsp;
             <!--<span class="hit_open_in_new" (click)="openDocumentInNew(i)">
               <i class="fa fa-plus-square"></i>

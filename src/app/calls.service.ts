@@ -16,7 +16,7 @@ export class CallsService {
 
   constructor(private http : Http) { }
 
-  public getCorpora() : Observable<string[]> {
+  /* public getCorpora() : Observable<string[]> {
     let url = `${this.STRIXBACKEND_URL}/config`;
     return this.http.get(url)
                     .map( (res: Response) => {
@@ -25,28 +25,62 @@ export class CallsService {
                       corpora = _.filter(corpora, (corpusID) => ! _.startsWith(corpusID, "littb"));
                       return corpora;
                     }).catch(this.handleError);
-  }
+  } */
 
-  public getCorpusInfo(corpusIDs: string[]) : Observable<StrixCorpusConfig[]> {
-    let url = `${this.STRIXBACKEND_URL}/config/${corpusIDs.join(",")}`;
+  public getCorpusInfo() : Observable<{ [key: string] : StrixCorpusConfig}> {
+    let url = `${this.STRIXBACKEND_URL}/config`;
     return this.http.get(url)
                     .map((res: Response) => {
                       let data = res.json();
 
-                      let strixCorpusConfigs : StrixCorpusConfig[] = [];
+                      //let strixCorpusConfigs : StrixCorpusConfig[] = [];
+                      let strixCorpusConfigs: { [key: string] : StrixCorpusConfig} = {};
 
-                      for (let corpus of corpusIDs) {
+                      for (let corpusID in data) {
                         let corpusConfig = new StrixCorpusConfig();
-                        corpusConfig.corpusID = corpus;
-                        corpusConfig.textAttributes = data[corpus].text_attributes;
-                        corpusConfig.wordAttributes = data[corpus].word_attributes;
-                        strixCorpusConfigs.push(corpusConfig);
+                        corpusConfig.corpusID = corpusID;
+                        let corpusData = data[corpusID];
+                        corpusConfig.textAttributes = corpusData.attributes.text_attributes;
+                        corpusConfig.wordAttributes = corpusData.attributes.word_attributes;
+                        corpusConfig.structAttributes = corpusData.attributes.struct_attributes;
+                        corpusConfig.description = corpusData.description;
+                        corpusConfig.name = corpusData.name;
+                        //strixCorpusConfigs.push(corpusConfig);
+                        strixCorpusConfigs[corpusID] = corpusConfig;
                       }
-
                       return strixCorpusConfigs;
 
                     }).catch(this.handleError);
   }
+
+  /*
+
+  public getCorpusInfo(corpusIDs: string[]) : Observable<StrixCorpusConfig[]> {
+  let url = `${this.STRIXBACKEND_URL}/config/${corpusIDs.join(",")}`;
+  return this.http.get(url)
+                  .map((res: Response) => {
+                    let data = res.json();
+
+                    let strixCorpusConfigs : StrixCorpusConfig[] = [];
+
+                    for (let corpusID of corpusIDs) {
+                      let corpusConfig = new StrixCorpusConfig();
+                      corpusConfig.corpusID = corpusID;
+                      let corpusData = data[corpusID];
+                      corpusConfig.textAttributes = corpusData.attributes.text_attributes;
+                      corpusConfig.wordAttributes = corpusData.attributes.word_attributes;
+                      corpusConfig.structAttributes = corpusData.attributes.struct_attributes;
+                      corpusConfig.description = corpusData.description;
+                      corpusConfig.name = corpusData.name;
+                      strixCorpusConfigs.push(corpusConfig);
+                    }
+
+                    return strixCorpusConfigs;
+
+                  }).catch(this.handleError);
+  }
+
+  */
 
   public searchForString(query: StrixQuery) : Observable<StrixResult> {
     let corpusIDs = query.corpora;

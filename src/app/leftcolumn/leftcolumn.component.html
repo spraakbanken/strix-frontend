@@ -1,7 +1,7 @@
 <div class="left_column">
   <div class="language_choice">
     <span *ngFor="let lang of languages;let f = first">
-      <span *ngIf="!f">|&nbsp;</span><a [ngClass]="{selected: selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang | loc}}</a>
+      <span *ngIf="!f">|&nbsp;</span><a [ngClass]="{selected: selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
     </span>
   </div>
   <div>
@@ -12,13 +12,13 @@
     <i class="fa fa-th"></i>&nbsp;Gå till sökresultat<br/>
     <i class="fa fa-file-text-o"></i>&nbsp;Gå till text
   </div>-->
-  <minidocselection></minidocselection>
+  <minidocselection *ngIf="openDocument"></minidocselection>
   <div class="clear"></div>
-  <div class="filters_area">
+  <div class="filters_area" *ngIf="!openDocument">
     <i>Filtrera på material</i>
     <ul>
-      <li class="corpus_item" [class.selected]="selectedCorpusID === corpusID" *ngFor="let corpusID of availableCorpora" (click)="chooseCorpus(corpusID)">
-        {{corpusID}}
+      <li class="corpus_item" [class.selected]="selectedCorpusID === corpusID" *ngFor="let corpusID of availableCorporaKeys" (click)="chooseCorpus(availableCorpora[corpusID].corpusID)">
+        {{availableCorpora[corpusID].name | loc}}
       </li>
     </ul>
   </div>
