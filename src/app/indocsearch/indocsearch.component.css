@@ -1,0 +1,9 @@
+.search_area {
+  padding: 16px;
+  height: 66px;
+}
+.simple_searchbox {
+  width: 300px;
+  float: left;
+  margin-right: 10px;
+}

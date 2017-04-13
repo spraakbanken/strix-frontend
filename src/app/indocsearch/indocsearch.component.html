@@ -1,0 +1,10 @@
+<div class="search_area">
+  <div class="input-group">
+    <span class="input-group-addon"><i class="fa fa-search"></i>&nbsp;Sök i dokumentet</span>
+    <input
+      type="text"
+      class="form-control simple_searchbox disabled"
+      [(ngModel)]="asyncSelected"
+      (keydown.Enter)="simpleSearch()"/>
+  </div>
+</div>

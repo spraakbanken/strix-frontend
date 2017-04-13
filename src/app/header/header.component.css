@@ -1,8 +1,9 @@
 .doc_header {
   padding-left: 8px;
+  background-color: #f7f7f7;
+  border-top: 1px solid #999;
 }
 .close_box {
-  border: 1px solid black;
   display: inline-block;
   padding: 2px;
   cursor: pointer;

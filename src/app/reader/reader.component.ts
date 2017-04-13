@@ -206,7 +206,7 @@ export class ReaderComponent implements AfterViewInit {
   private onViewportChange(event) {
     console.log("viewportChange", event);
     // First check if we have token information for the current viewport already
-    let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to); // Returns observable
+    let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
 
   }
 

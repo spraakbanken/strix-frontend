@@ -85,13 +85,15 @@ export class StrixDocument {
     // We need to account for the fact that this.lines can have [-1] on empty lines with no tokens
     // We then extend the interval to the first line above with a token
 
+    //console.log(">>>", this.lines);
+
     let firstToken = -1;
     let offset = 0;
     
     while (firstToken === -1) {
        firstToken = this.lines[line-offset][0];
        offset++;
-       if( line - offset <= 0 ) firstToken = 0;
+       if (line - offset <= 0) firstToken = 0;
     }
     
     return firstToken;
@@ -103,12 +105,17 @@ export class StrixDocument {
     
     let lastToken = -1;
     let offset = 0;
+
+    console.log("line|", line, this.lines, this.lines.length);
     
     while (lastToken === -1) {
       if (this.lines[line+offset].length === 2) {
         lastToken = this.lines[line+offset][1];
       }
       offset++;
+      if (line + offset > this.lines.length) {
+        lastToken = 0;
+      }
       // TODO: What happens in the event of an empty line at the end. Is it even possible?
     }
 

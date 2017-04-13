@@ -30,6 +30,7 @@ import { MinidocselectionComponent } from './minidocselection/minidocselection.c
 import { HeaderComponent } from './header/header.component';
 import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
+import { IndocsearchComponent } from './indocsearch/indocsearch.component';
 
 @NgModule({
   declarations: [
@@ -44,7 +45,8 @@ import { LocPipe } from './loc.pipe';
     SearchComponent,
     MinidocselectionComponent,
     HeaderComponent,
-    LocPipe
+    LocPipe,
+    IndocsearchComponent
   ],
   imports: [
     BrowserModule,

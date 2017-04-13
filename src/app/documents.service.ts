@@ -60,7 +60,14 @@ export class DocumentsService {
     console.log("in documents constructor");
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       console.log("open document with", data, this.queryService);
-      this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());
+      if (data.type === "LOCAL") {
+        // Reopen the current document with the new query
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.query);
+      } else {
+        // Open a new document in the ordinary way
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());
+      }
+      
     });
   }
 
@@ -296,7 +303,7 @@ export class DocumentsService {
     this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
       answer => {
         //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
-        _.assign(doc.token_lookup, answer.data.token_lookup);
+        _.assign(doc.token_lookup, doc.token_lookup, answer.data.token_lookup);
         console.log( "size:", _.size(doc.token_lookup) );
       },
       error => this.errorMessage = <any>error

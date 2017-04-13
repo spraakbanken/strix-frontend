@@ -3,6 +3,7 @@ import * as _ from 'lodash';
 
 export const CHANGETYPE = "CHANGETYPE";
 export const CHANGENEXTQUERY = "CHANGENEXTQUERY";
+export const CHANGENEXTTYPE = "CHANGENEXTQUERY";
 export const CHANGECORPORA = "CHANGECORPORA";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
@@ -11,6 +12,7 @@ export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
+export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.
@@ -47,6 +49,12 @@ export function searchReducer(state: any = {}, action: Action) {
     case CLOSEDOCUMENT:
       nextState.documentID = null;
       nextState.documentCorpus = null;
+      break;
+    case SEARCHINDOCUMENT:
+      console.log("RUNNING SEARCHINDOCUMENT");
+      nextState.type = "LOCAL"
+      nextState.query = action.payload;
+      nextState.latestAction = "OPENDOCUMENT";
       break;
     case SEARCH:
       nextState.type = nextState.nextType;

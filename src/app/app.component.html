@@ -2,9 +2,10 @@
   <leftcolumn></leftcolumn>
 </div>
 <div class="right_column">
-  <search style="flex: 0 1 auto"></search>
-  <header style="flex: 0 1 auto"></header>
-  <docselection style="flex: 1 1 auto"></docselection>
+  <search *ngIf="!openDocument" style="flex: 0 1 auto"></search>
+  <docselection *ngIf="!openDocument" style="flex: 1 1 auto"></docselection>
+  <indocsearch *ngIf="openDocument"></indocsearch>
+  <header *ngIf="openDocument" style="flex: 0 1 auto"></header>
   <reader style="flex: 0 1 100%;overflow-y:auto"></reader>
   <start-panel></start-panel>
   <div style="flex: 0 1 50px;background-color:coral;width:100%">&nbsp;</div>
