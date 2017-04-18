@@ -15,8 +15,30 @@ li:last-child {
 .corpus_item {
   cursor: pointer;
 }
+.aggregation_list {
+  margin-top: 10px;
+}
+.aggregation_item {
+  cursor: pointer;
+}
+.purge_aggregation_button {
+  cursor: pointer;
+  display: inline-block;
+}
+.purge_corpus_button {
+  cursor: pointer;
+  display: inline-block;
+}
+
 .selected {
   font-weight: bold;
+}
+.selected_frame {
+  /*border: 1px solid black;*/
+  padding-left: 4px;
+  padding-right: 4px;
+  background-color: #e9fdff;
+  box-shadow: 1px 1px grey;
 }
 
 .language_choice {

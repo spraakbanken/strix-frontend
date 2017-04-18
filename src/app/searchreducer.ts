@@ -5,6 +5,7 @@ export const CHANGETYPE = "CHANGETYPE";
 export const CHANGENEXTQUERY = "CHANGENEXTQUERY";
 export const CHANGENEXTTYPE = "CHANGENEXTQUERY";
 export const CHANGECORPORA = "CHANGECORPORA";
+export const CHANGEFILTERS = "CHANGEFILTERS";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
 export const CLOSEDOCUMENT = "CLOSEDOCUMENT";
@@ -35,6 +36,9 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGECORPORA:
       nextState.nextCorpora = action.payload;
+      break;
+    case CHANGEFILTERS:
+      nextState.filters = action.payload;
       break;
     case CHANGEPAGE:
       nextState.page = action.payload;

@@ -2,4 +2,5 @@
 export class StrixResult {
     count: number;
     data: any[];
+    aggregations: any;
 }

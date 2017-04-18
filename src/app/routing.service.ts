@@ -17,7 +17,7 @@ interface AppState {
 }
 
 enum FragmentType {
-  STRING, STRINGARRAY, NUMBER
+  STRING, STRINGARRAY, NUMBER, BASE64
 }
 
 @Injectable()
@@ -33,6 +33,7 @@ export class RoutingService {
     {tag : "nextCorpora", type : FragmentType.STRINGARRAY, default : ["vivill"]},
     {tag : "nextType", type : FragmentType.STRING, default : "normal"},
     {tag : "nextQuery", type : FragmentType.STRING, default : ""},
+    {tag : "filters", type : FragmentType.BASE64, default : {}},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
@@ -61,6 +62,8 @@ export class RoutingService {
         return obj.join(",");
       case FragmentType.NUMBER:
         return obj.toString();
+      case FragmentType.BASE64:
+        return btoa(JSON.stringify(obj));
     }
   }
 
@@ -72,6 +75,8 @@ export class RoutingService {
         return str.split(",");
       case FragmentType.NUMBER:
         return parseInt(str, 10);
+      case FragmentType.BASE64:
+        return JSON.parse(atob(str));
     }
   }
 

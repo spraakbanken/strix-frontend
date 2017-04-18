@@ -82,7 +82,19 @@ export class CallsService {
 
   */
 
+  private formatFilterObject(filters: any): string {
+    // Maybe we can make this unnecessary by harmonizing the frontend and backend
+    // but as of now, the backend doesn't support multiple values for the filters
+    // and we want to have that in the frontend just for not destroying the future
+    let filterStrings: string[] = [];
+    for (let filter of filters) {
+      filterStrings.push(`"${filter.field}":"${filter.values[0]}"`);
+    }
+    return "{" + filterStrings.join(",") + "}";
+  }
+
   public searchForString(query: StrixQuery) : Observable<StrixResult> {
+    console.log("the query filters are:", query.filters);
     let corpusIDs = query.corpora;
     let searchString = query.queryString;
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
@@ -90,6 +102,9 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/search/${corpusIDs.join(",")}/${searchString}`;
     console.log('url', url);
     let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true`;
+    if (query.filters && _.size(query.filters) > 0) {
+      paramsString += `&text_filter=${this.formatFilterObject(query.filters)}`;
+    }
     let options = new RequestOptions({
       search: new URLSearchParams(paramsString)
     });
@@ -157,6 +172,7 @@ export class CallsService {
     //console.log("body", body);
     strixResult.count = body.hits;
     strixResult.data = body.data;
+    strixResult.aggregations = body.aggregations;
     return strixResult;
   }
 

@@ -57,6 +57,7 @@ export class QueryService {
       this.currentQuery.pageIndex = data.page;
       this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
       this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
+      this.currentQuery.filters = data.filters;
       console.log("this.currentQuery", this.currentQuery);
       this.runCurrentQuery();
     });

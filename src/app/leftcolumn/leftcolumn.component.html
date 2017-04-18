@@ -14,12 +14,33 @@
   </div>-->
   <minidocselection *ngIf="openDocument"></minidocselection>
   <div class="clear"></div>
-  <div class="filters_area" *ngIf="!openDocument">
-    <i>Filtrera på material</i>
-    <ul>
+  <div class="filters_area" *ngIf="!openDocument && gotMetadata">
+    <i>material</i><br/>
+    <div *ngIf="selectedCorpusID" class="purge_corpus_button" (click)="purgeCorpus()">
+      {{availableCorpora[selectedCorpusID].name | loc}}&nbsp;
+      <i class="fa fa-window-close-o"></i>
+    </div>
+    <ul *ngIf="!selectedCorpusID">
       <li class="corpus_item" [class.selected]="selectedCorpusID === corpusID" *ngFor="let corpusID of availableCorporaKeys" (click)="chooseCorpus(availableCorpora[corpusID].corpusID)">
         {{availableCorpora[corpusID].name | loc}}
       </li>
     </ul>
+    <div *ngFor="let aggregationKey of aggregationKeys" class="aggregation_list">
+      <template [ngIf]="!hasFilter(aggregationKey)">
+        <i>{{aggregationKey}}</i>&nbsp;
+        <ul>
+          <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" (click)="chooseBucket(aggregationKey, bucket.key)">
+            {{bucket.key}} ({{bucket.doc_count}})
+          </li>
+        </ul>
+      </template>
+      <template [ngIf]="hasFilter(aggregationKey)">
+        <div class="selected_frame">
+          <i class="selected">{{aggregationKey}}</i>&nbsp;
+          {{aggregations[aggregationKey].buckets[0].key}}&nbsp;
+          <div class="purge_aggregation_button" (click)="purgeFilter(aggregationKey)"><i class="fa fa-window-close-o"></i></div>
+        </div>
+      </template>
+    </div>
   </div>
 </div>

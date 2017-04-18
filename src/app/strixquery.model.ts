@@ -4,4 +4,5 @@ export class StrixQuery {
     corpora: string[];
     pageIndex: number; // 1-based!
     documentsPerPage: number;
+    filters: any;
 }
