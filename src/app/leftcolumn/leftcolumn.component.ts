@@ -123,7 +123,7 @@ export class LeftcolumnComponent implements OnInit {
   private purgeFilter(aggregationKey: string) {
     for (let i = 0; i < this.currentFilters.length; i++) {
       if (this.currentFilters[i].field === aggregationKey) {
-        this.currentFilters.splice(i);
+        this.currentFilters.splice(i, 1);
         break;
       }
     }

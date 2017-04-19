@@ -35,10 +35,14 @@
         </ul>
       </template>
       <template [ngIf]="hasFilter(aggregationKey)">
+        <div
+          class="purge_aggregation_button"
+          (click)="purgeFilter(aggregationKey)">
+          <i class="fa fa-window-close-o"></i>
+        </div>
         <div class="selected_frame">
           <i class="selected">{{aggregationKey}}</i>&nbsp;
           {{aggregations[aggregationKey].buckets[0].key}}&nbsp;
-          <div class="purge_aggregation_button" (click)="purgeFilter(aggregationKey)"><i class="fa fa-window-close-o"></i></div>
         </div>
       </template>
     </div>

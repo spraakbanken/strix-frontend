@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGENEXTQUERY } from '../searchreducer';
+import { SEARCH, CHANGENEXTQUERY, CHANGEFILTERS } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -29,6 +29,12 @@ export class SearchComponent implements OnInit {
   private asyncSelected: string = "";
   private dataSource: Observable<any>;
   private errorMessage: string;
+
+  private currentFilters: any[] = []; // TODO: Make some interface
+  /*
+    field : "fieldname",
+    values : ["value1", "value2"]
+  */
 
   private searchStatusSubscription: Subscription;
   private isSearching = false;
@@ -58,6 +64,12 @@ export class SearchComponent implements OnInit {
       // Runs on every autocompletion search
       observer.next(this.asyncSelected);
     }).mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected));
+
+    this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe((data) => {
+      console.log("picked up filters change", data.filters);
+      this.currentFilters = data.filters; // Not sure we really should overwrite the whole tree.
+
+    });
   }
 
   ngOnInit() {
@@ -81,6 +93,21 @@ export class SearchComponent implements OnInit {
 
   public toggled(open: boolean): void {
     console.log('Dropdown is now: ', open);
+  }
+
+  private purgeFilter(aggregationKey: string) {
+    for (let i = 0; i < this.currentFilters.length; i++) {
+      if (this.currentFilters[i].field === aggregationKey) {
+        this.currentFilters.splice(i, 1);
+        break;
+      }
+    }
+    this.updateFilters();
+  }
+
+  private updateFilters() {
+    this.store.dispatch({ type: CHANGEFILTERS, payload : this.currentFilters});
+    this.store.dispatch({ type: SEARCH, payload : null});
   }
 
 }

@@ -97,6 +97,9 @@ export class CallsService {
     console.log("the query filters are:", query.filters);
     let corpusIDs = query.corpora;
     let searchString = query.queryString;
+    if (searchString === null) {
+      searchString = ""
+    }
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/search/${corpusIDs.join(",")}/${searchString}`;

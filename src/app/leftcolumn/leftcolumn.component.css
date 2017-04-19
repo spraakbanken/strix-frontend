@@ -23,7 +23,9 @@ li:last-child {
 }
 .purge_aggregation_button {
   cursor: pointer;
-  display: inline-block;
+  display: block;
+  position: static;
+  right: 2px;
 }
 .purge_corpus_button {
   cursor: pointer;

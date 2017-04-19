@@ -6,3 +6,20 @@
   float: left;
   margin-right: 10px;
 }
+
+.filters_area {
+  margin-top: 8px;
+}
+
+.filter_box {
+  background-color: #e9fdff;
+  box-shadow: 1px 1px grey;
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px;
+}
+
+.purge_filter_button {
+  display: inline-block;
+  cursor: pointer;
+}
