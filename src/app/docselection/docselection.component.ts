@@ -40,12 +40,24 @@ export class DocselectionComponent implements OnInit {
   private show = true;
 
   private searchResultSubscription: Subscription;
+  private metadataSubscription: Subscription;
+  private gotMetadata = false;
 
   constructor(private documentsService: DocumentsService,
               private queryService: QueryService,
               private metadataService: MetadataService,
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
+
+    this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
+      wasSuccess => {
+        if (wasSuccess) {
+          this.availableCorpora = metadataService.getAvailableCorpora();
+          this.gotMetadata = true;
+        } else {
+          this.availableCorpora = {}; // TODO: Show some error message
+        }
+    });
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       this.documentsWithHits = [];
@@ -78,10 +90,6 @@ export class DocselectionComponent implements OnInit {
             docs.push(doc);
           }
         }*/
-
-        // Do this as late as possible so we know we'll have the data already.
-        this.availableCorpora = this.metadataService.getAvailableCorpora();
-        console.log("soyuz", this.availableCorpora);
 
         this.documentsWithHits = answer.data;
         this.totalNumberOfDocuments = answer.count;

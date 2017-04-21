@@ -27,7 +27,7 @@ export class LeftcolumnComponent implements OnInit {
 
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   private availableCorporaKeys: string[] = [];
-  private selectedCorpusID: string = "vivill"; // TODO: Temporary
+  private selectedCorpusID: string = null; // TODO: Temporary
   private metadataSubscription: Subscription;
   private searchResultSubscription: Subscription;
 
@@ -63,7 +63,7 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
       this.selectedLanguage = data.lang;
-      this.updateFilters();
+      //this.updateFilters();
     });
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
@@ -72,6 +72,12 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.openDocument = false;
+    });
+
+    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
+      // REM: We can't use INITIATE since it's sent before the component loads, hence we use SEARCH
+      console.log("initiate", data.corpora); 
+      this.selectedCorpusID = data.corpora;
     });
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(

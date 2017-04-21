@@ -17,7 +17,7 @@
         (pageChanged)="paginatorPageChanged($event)"
         class="pagination-sm"></pagination>
     </div>
-    <div class="hits_left_column">
+    <div class="hits_left_column" *ngIf="gotMetadata">
       <div class="hits_inner list-group">
         <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index">
           <div class="hit_document_header">

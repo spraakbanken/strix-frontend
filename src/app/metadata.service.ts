@@ -16,20 +16,6 @@ export class MetadataService {
   loadedMetadata$ = this.successfulLoad.asObservable();
 
   constructor(private callsService: CallsService) {
-    /*this.callsService.getCorpora().subscribe(
-      answer => {
-        console.log("the answer", answer);
-        this.availableCorpora = answer;
-        this.callsService.getCorpusInfo(this.availableCorpora).subscribe(
-          answer => {
-            console.log("corpus configs", answer);
-             this.successfulLoad.next(true);
-          },
-          error => this.errorMessage = <any>error
-        );
-      },
-      error => this.errorMessage = <any>error
-    );*/
     this.callsService.getCorpusInfo().subscribe(
       answer => {
         console.log("corpus configs", answer);
