@@ -4,7 +4,7 @@
       <span *ngIf="!f">|&nbsp;</span><a [ngClass]="{selected: selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
     </span>
   </div>
-  <div>
+  <div (click)="reloadStrix()" class="logo_block">
     <img src="assets/logo.png" style="width:95%;margin-top:12px"/>
   </div>
   <div class="clear"></div>

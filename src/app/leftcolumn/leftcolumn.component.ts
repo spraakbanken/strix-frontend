@@ -159,6 +159,10 @@ export class LeftcolumnComponent implements OnInit {
     this.store.dispatch({ type: SEARCH, payload : null});
   }
 
+  private reloadStrix() {
+    window.location.href = '/';
+  }
+
   ngOnInit() {
   }
 

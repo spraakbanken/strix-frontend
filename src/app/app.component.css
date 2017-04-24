@@ -20,6 +20,15 @@ reader {
   height: 100%;
 }
 
+.bottom_bar {
+  flex: 0 1 50px;
+  /*background-color: coral*/
+  width: 100%;
+  border-top: 1px solid #999;
+  background-color: #f7f7f7;
+  padding: 12px;
+}
+
 
 /* Desktop */
 @media screen and (min-width: 801px) {

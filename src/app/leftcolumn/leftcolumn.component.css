@@ -50,3 +50,7 @@ li:last-child {
 .language_choice a {
   cursor: pointer;
 }
+
+.logo_block {
+  cursor: pointer;
+}
