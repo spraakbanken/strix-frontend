@@ -6,9 +6,9 @@ import { CommonModule } from '@angular/common';
 
 import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
-         DropdownModule,
+         BsDropdownModule,
          AlertModule,
-         PaginationModule } from 'ng2-bootstrap/ng2-bootstrap';
+         PaginationModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
 import { DocselectionComponent } from './docselection/docselection.component';
@@ -52,10 +52,10 @@ import { IndocsearchComponent } from './indocsearch/indocsearch.component';
     BrowserModule,
     FormsModule,
     HttpModule,
-    TypeaheadModule,
-    DropdownModule,
-    AlertModule,
-    PaginationModule,
+    TypeaheadModule.forRoot(),
+    BsDropdownModule.forRoot(),
+    AlertModule.forRoot(),
+    PaginationModule.forRoot(),
     StoreModule.provideStore({searchRedux: searchReducer})
   ],
   providers: [DocumentsService,

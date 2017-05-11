@@ -165,7 +165,9 @@ export class ReaderComponent implements AfterViewInit {
       this.selectionStartTokenID = activeDocument.getTokenID(selection.startRow, selection.startChar);
       this.selectionEndTokenID = activeDocument.getTokenID(selection.endRow, selection.endChar);
 
+      console.log("selection from tokens", this.selectionStartTokenID, this.selectionEndTokenID);
       if (this.selectionStartTokenID === -1 || this.selectionEndTokenID === -1) { // TODO: THIS WILL HAVE TO BE THOUGHT OVER!
+        console.log("got -1");
         return;
       }
 
@@ -206,8 +208,11 @@ export class ReaderComponent implements AfterViewInit {
   private onViewportChange(event) {
     console.log("viewportChange", event);
     // First check if we have token information for the current viewport already
+    // NO IDEA WHY WE NEED -1 BELOW
     let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
-
+    // When done we need to do:
+    // <currentMirror>.codeMirrorInstance.setOption("mode", "strix");
+    console.log("documentsProcessing", documentsProcessing);
   }
 
   private onKeydown(event: any): void {
@@ -242,9 +247,12 @@ export class ReaderComponent implements AfterViewInit {
     for (let index = 0; index < this.cmViews.length; index++) {
       if (this.cmViews[index] === selectedDocumentIndex) {
         mirrorsArray[index].codeMirrorInstance.setOption("mode", "strix"); // Refresh highlighting
+        mirrorsArray[index].codeMirrorInstance.focus(); // So the user can use the arrow keys right away
+
         console.log("refreshing highlight on view " + index, this.cmViews);
       }
     }
+
   }
 
   private closeBox() {

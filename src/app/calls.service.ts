@@ -157,7 +157,7 @@ export class CallsService {
   }
 
   public getTokenDataFromDocument(documentID: string, corpusID: string, start: number, end: number) {
-    //console.log("running getTokenDataFromDocument");
+    end++; // Because the API expects python style slicing indices
     let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
     let paramsString = `include=token_lookup&token_lookup_from=${start}&token_lookup_to=${end}`;
     let options = new RequestOptions({
@@ -188,6 +188,11 @@ export class CallsService {
     strixDocument.title = data.title;
     strixDocument.textAttributes = data.text_attributes;
     strixDocument.lines = data.lines;
+    // Temporary until backend fix ----
+    if (strixDocument.lines[strixDocument.lines.length-1].length === 1) {
+      strixDocument.lines[strixDocument.lines.length-1].push(strixDocument.lines[strixDocument.lines.length-1][0]);
+    }
+    // --------------------------------
     strixDocument.dump = data.dump;
     strixDocument.token_lookup = data.token_lookup;
     strixDocument.corpusID = data.corpus;

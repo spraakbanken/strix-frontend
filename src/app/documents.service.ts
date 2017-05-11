@@ -298,18 +298,34 @@ export class DocumentsService {
     
     console.log("from token ", firstToken, " to ", lastToken);
 
-    // TODO: Only make calls if we don't have the data already!
+    // Only make calls if we don't have the data already!
+    let missing = false;
+    for (let i = fromLine; i <= toLine; i++) {
+      let firstTokenOnTheLine = doc.getFirstTokenFromLine(i);
+      console.log("->", i, firstTokenOnTheLine, doc.token_lookup[firstTokenOnTheLine]);
+      if (! doc.token_lookup[firstTokenOnTheLine]) {
+        missing = true;
+        break;
+      }
+    }
 
-    this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
-      answer => {
-        //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
-        _.assign(doc.token_lookup, doc.token_lookup, answer.data.token_lookup);
-        console.log( "size:", _.size(doc.token_lookup) );
-      },
-      error => this.errorMessage = <any>error
-      );
+    if (missing) {
 
-    return null;
+      return this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
+        answer => {
+          //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
+          _.assign(doc.token_lookup, doc.token_lookup, answer.data.token_lookup);
+          console.log( "size:", _.size(doc.token_lookup) );
+        },
+        error => this.errorMessage = <any>error
+        );
+
+    } else {
+      console.log("we're set already!")
+      return null;
+    }
+
+    //return null;
   }
 
   public getRelatedDocuments(docIndex: number) {

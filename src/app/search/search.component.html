@@ -3,7 +3,7 @@
       Sök på <a href id="simple-dropdown" dropdownToggle>
         {{searchType}}&nbsp;<i class="fa fa-caret-down"></i>
       </a>
-      <ul class="dropdown-menu" dropdownMenu aria-labelledby="simple-dropdown">
+      <!--<ul class="dropdown-menu" dropdownMenu aria-labelledby="simple-dropdown">
         <li>
           <a class="dropdown-item" href="#" (click)="searchType='normal'">textsträng</a>
         </li>
@@ -11,7 +11,7 @@
         <li *ngFor="let choice of searchableAnnotations">
           <a class="dropdown-item" href="#" (click)="searchType=choice">{{choice}}</a>
         </li>
-      </ul>
+      </ul>-->
     </div>
     <div class="clear"></div>
     <div class="search_widget" *ngIf="searchType=='normal'">

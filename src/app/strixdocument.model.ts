@@ -21,6 +21,8 @@ export class StrixDocument {
       // Get the real text line as displayed to the user
       let line = this.dump[row].slice(12); // TODO: Get rid of magic number
       // Consume each token until the current char-index has been reached
+      //console.log("passed first guard", line);
+      console.log("widCounter", widCounter, char);
       let charsConsumed = 0;
       while (charsConsumed <= char) {
         // Consume all whitespace:
@@ -29,6 +31,10 @@ export class StrixDocument {
         }
         // Consume the next token
         let token = this.token_lookup[widCounter];
+        console.log("consuming token", token, this.token_lookup, widCounter);
+        if (! token) { // Think this over...
+          return -1;
+        }
         let tokenText = token.word;
         charsConsumed += tokenText.length;
         widCounter++;
@@ -77,15 +83,13 @@ export class StrixDocument {
 
     return {
       "anchor" : {"line" : lineNumber, "ch" : charsConsumed},
-      "head" : {"line" : lineNumber, "ch" : charsConsumed + this.token_lookup[tokenID].word.length}
+      "head" : {"line" : lineNumber, "ch" : charsConsumed + this.token_lookup[tokenID].word.length - 1}
     };
   }
 
   public getFirstTokenFromLine(line: number) {
     // We need to account for the fact that this.lines can have [-1] on empty lines with no tokens
     // We then extend the interval to the first line above with a token
-
-    //console.log(">>>", this.lines);
 
     let firstToken = -1;
     let offset = 0;
