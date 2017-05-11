@@ -1,6 +1,8 @@
 import { Component, AfterViewInit, ViewChildren, QueryList, HostListener } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/debounceTime';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -55,6 +57,9 @@ export class ReaderComponent implements AfterViewInit {
 
   private searchRedux: Observable<any>;
 
+  private viewPortEvent = new Subject<any>();
+  private viewPortChange$: Observable<any> = this.viewPortEvent.asObservable();
+
   /*
     this.showBox = false;
     this.cmViews.splice(0);
@@ -73,6 +78,13 @@ export class ReaderComponent implements AfterViewInit {
       this.removeView(0);
       //this.cmViews.splice(0);
     });
+
+    // When the user changes the viewport, we wait until there is
+    // a period of "radio silence" before we act on only THE LAST change.
+    // This is to spare calls to the backend.
+    this.viewPortChange$.debounceTime(1000).subscribe( (event) =>
+      this.handleViewportChange(event)
+    );
 
     // When a document starts loading and when it is fully loaded:
     this.docLoadStatusSubscription = documentsService.docLoadingStatus$.subscribe(
@@ -207,6 +219,13 @@ export class ReaderComponent implements AfterViewInit {
 
   private onViewportChange(event) {
     console.log("viewportChange", event);
+    // This should start a stream which can be debounced
+    // and then call handleViewportChange();
+    //this.handleViewportChange();
+    this.viewPortEvent.next(event);
+  }
+
+  private handleViewportChange(event) {
     // First check if we have token information for the current viewport already
     // NO IDEA WHY WE NEED -1 BELOW
     let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
