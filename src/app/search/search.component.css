@@ -23,3 +23,8 @@
   display: inline-block;
   cursor: pointer;
 }
+
+.histogram_box {
+  margin-top: 10px;
+  width: 600px;
+}

@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGENEXTQUERY, CHANGEFILTERS } from '../searchreducer';
+import { SEARCH, CHANGENEXTQUERY, CHANGEFILTERS, CHANGECORPORA, INITIATE } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -29,6 +29,8 @@ export class SearchComponent implements OnInit {
   private asyncSelected: string = "";
   private dataSource: Observable<any>;
   private errorMessage: string;
+
+  private histogramData: any;
 
   private currentFilters: any[] = []; // TODO: Make some interface
   /*
@@ -69,6 +71,12 @@ export class SearchComponent implements OnInit {
       console.log("picked up filters change", data.filters);
       this.currentFilters = data.filters; // Not sure we really should overwrite the whole tree.
 
+    });
+
+    this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA || d.latestAction === INITIATE).subscribe((data) => {
+      this.callsService.getDateHistogramData(data.corpora[0]).subscribe((histogramData) => {
+        this.histogramData = histogramData;
+      });
     });
   }
 

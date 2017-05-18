@@ -31,6 +31,8 @@ import { HeaderComponent } from './header/header.component';
 import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
 import { IndocsearchComponent } from './indocsearch/indocsearch.component';
+import { GraphComponent } from './graph/graph.component';
+import { HistogramComponent } from './histogram/histogram.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +48,9 @@ import { IndocsearchComponent } from './indocsearch/indocsearch.component';
     MinidocselectionComponent,
     HeaderComponent,
     LocPipe,
-    IndocsearchComponent
+    IndocsearchComponent,
+    GraphComponent,
+    HistogramComponent
   ],
   imports: [
     BrowserModule,

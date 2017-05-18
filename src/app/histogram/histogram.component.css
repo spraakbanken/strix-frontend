@@ -1,0 +1,14 @@
+.x_tick {
+    border : none;
+}
+.title {
+    bottom : -1.4em;
+}
+            
+.svg {
+    margin-bottom: 2em;
+}
+
+.graph {
+    display: none;
+}

@@ -35,6 +35,10 @@
   </div>
   <button (click)="simpleSearch(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
   <div class="clear"></div>
+  <div class="histogram_box">
+    <histogram [indata]="histogramData"></histogram>
+  </div>
+  <div class="clear"></div>
   <div class="filters_area">
     <div *ngFor="let filter of currentFilters" class="filter_box">
       {{filter.field}} = {{filter.values[0]}}&nbsp;
