@@ -1,6 +1,9 @@
 .search_area {
   padding: 16px;
+  background-color: #d9edf7;
+  border-bottom: 1px solid gray;
 }
+
 .simple_searchbox {
   width: 300px;
   float: left;

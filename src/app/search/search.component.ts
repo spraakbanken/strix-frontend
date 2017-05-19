@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import 'rxjs/add/operator/take';
 import * as _ from 'lodash';
 
 import { QueryService } from '../query.service';
@@ -72,16 +73,25 @@ export class SearchComponent implements OnInit {
       this.currentFilters = data.filters; // Not sure we really should overwrite the whole tree.
 
     });
-
-    this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA || d.latestAction === INITIATE).subscribe((data) => {
-      this.callsService.getDateHistogramData(data.corpora[0]).subscribe((histogramData) => {
-        this.histogramData = histogramData;
-      });
-    });
   }
 
   ngOnInit() {
+    this.searchRedux.take(1).subscribe(data => {
+      this.getHistogramData(data.corpora);
+    });
 
+    this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
+      console.log("acting upon", data.latestAction);
+      this.getHistogramData(data.corpora);
+    });
+  }
+
+  private getHistogramData(corpora: string[]) {
+    console.log("getting histogram data.");
+    this.callsService.getDateHistogramData(corpora[0]).subscribe((histogramData) => {
+      this.histogramData = histogramData;
+      console.log("got histogram data", histogramData);
+    });
   }
 
   private simpleSearch() {

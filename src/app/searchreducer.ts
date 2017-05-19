@@ -26,6 +26,7 @@ export function searchReducer(state: any = {}, action: Action) {
   nextState.latestAction = action.type;
   switch (action.type) {
     case INITIATE:
+      console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload);
       break;
     case CHANGETYPE:
@@ -35,7 +36,8 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.nextQuery = action.payload;
       break;
     case CHANGECORPORA:
-      nextState.nextCorpora = action.payload;
+      nextState.corpora = action.payload;
+      //nextState.nextCorpora = action.payload;
       break;
     case CHANGEFILTERS:
       nextState.filters = action.payload;
@@ -63,7 +65,7 @@ export function searchReducer(state: any = {}, action: Action) {
     case SEARCH:
       nextState.type = nextState.nextType;
       nextState.query = nextState.nextQuery;
-      nextState.corpora = nextState.nextCorpora;
+      //nextState.corpora = nextState.nextCorpora;
       nextState.page = 1;
       break;
     case RELOAD:

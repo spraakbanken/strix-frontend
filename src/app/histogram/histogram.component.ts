@@ -13,14 +13,17 @@ export class HistogramComponent implements OnInit {
   @ViewChild('graph') graphElem: ElementRef;
 
   @Input() set indata(indata: any) {
+    console.log("setting indata to histogram.");
     this.setup(indata);
   };
 
   @Output() from: Date;
   @Output() to: Date;
 
-  graph: any;
-  data: any[];
+  private graph: any;
+  private data: any[] = [];
+
+  private initiated = false;
 
   constructor(private renderer : Renderer) { }
 
@@ -29,9 +32,19 @@ export class HistogramComponent implements OnInit {
   }
 
   private setup(histogramData) {
-      console.log("histogramData", histogramData);
 
-      if (histogramData === undefined) { return; };
+    if (histogramData === undefined || histogramData.length === 0) {
+      console.log("No histogram data available. Hiding the histogram.");
+      return;
+    };
+
+    this.data.length = 0; // Trick to clear the array cheaply while not killing it's pointer
+    for(let item in histogramData) {
+      this.data.push(histogramData[item]);
+    }
+    
+
+    if (! this.initiated) {
 
       let time = new Rickshaw.Fixtures.Time();
 
@@ -40,8 +53,8 @@ export class HistogramComponent implements OnInit {
         renderer : 'area',
         interpolation : "linear",
         series : [{
-          color : '#7A1400',
-          data : histogramData
+          color : '#515377',
+          data : this.data
         }],
         padding : {
           top : 0.1,
@@ -63,8 +76,8 @@ export class HistogramComponent implements OnInit {
 
 
       let preview = new Rickshaw.Graph.RangeSlider.Preview({
-          graph: this.graph,
-          element: this.previewElem.nativeElement
+        graph: this.graph,
+        element: this.previewElem.nativeElement
       });
 
       let hoverDetail = new Rickshaw.Graph.HoverDetail( {
@@ -82,7 +95,6 @@ export class HistogramComponent implements OnInit {
         }
       });
 
-
       this.renderer.listen(this.previewElem.nativeElement, "mouseup", (event : Event) => {
         let target = event.target;
         let {x, y} = this.graph.renderer.domain();
@@ -94,6 +106,14 @@ export class HistogramComponent implements OnInit {
         // then use range query with sigterms aggs
 
       });
+
+      this.initiated = true;
+
+    } else { // If already initiated
+
+      this.graph.update();
+
+    }
   }
 
 }
