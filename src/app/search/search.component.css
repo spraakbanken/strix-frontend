@@ -11,20 +11,23 @@
 }
 
 .filters_area {
-  margin-top: 8px;
+  margin-top: 20px;
 }
 
 .filter_box {
-  background-color: #e9fdff;
-  box-shadow: 1px 1px grey;
+  background-color: #f1f8fc;
+  box-shadow: 1px 1px 2px grey;
   display: inline-block;
   margin-right: 6px;
   padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .purge_filter_button {
   display: inline-block;
   cursor: pointer;
+  margin-right: 2px;
 }
 
 .histogram_box {

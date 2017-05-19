@@ -88,3 +88,25 @@ body {
   height: 44px;
   background-color: #f1f8fc;
 }
+
+/* Filter boxes */
+
+.filter_box {
+  background-color: #f1f8fc;
+  box-shadow: 1px 1px 2px grey;
+  display: inline-block;
+  margin-right: 6px;
+  padding: 2px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.filter_box_corpus {
+  border: 1px solid yellow;
+  text-align: center;
+}
+
+.purge_filter_button {
+  display: inline-block;
+  cursor: pointer;
+  margin-right: 2px;
+}
