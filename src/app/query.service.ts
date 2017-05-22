@@ -6,7 +6,7 @@ import { StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
-import { SEARCH } from './searchreducer';
+import { SEARCH, CLOSEDOCUMENT } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
 
 interface AppState {
@@ -59,6 +59,11 @@ export class QueryService {
       this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
       this.currentQuery.filters = data.filters;
       console.log("this.currentQuery", this.currentQuery);
+      this.runCurrentQuery();
+    });
+
+    // Redo the last query when the user closes the open document
+    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.runCurrentQuery();
     });
   }

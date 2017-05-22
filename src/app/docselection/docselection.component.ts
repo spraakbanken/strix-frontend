@@ -60,6 +60,7 @@ export class DocselectionComponent implements OnInit {
     });
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+      console.log("OPENDOCUMENT");
       this.documentsWithHits = [];
       this.totalNumberOfDocuments = 0;
       this.hasSearched = false;
@@ -68,28 +69,7 @@ export class DocselectionComponent implements OnInit {
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       answer => {
-        console.log("answer", answer);
-        /*let docs = [];
-        if (answer.count > 0) {
-          for (let document of answer.data) {
-            let doc = new StrixDocHit();
-            doc.corpusID = document.corpus;
-            doc.documentID = document.es_id;
-            doc.documentTitle = document.title || "-no title-";
-            doc.collectionTitle = document.corpus; // TODO: Either get the translated title or use corpusID instead
-            //doc.noOfHits = document.highlight.length;
-            doc.textAttributes = document.text_attributes;
-            // The bellow should be done in the documents service!
-            if (document.highlight && document.highlight.highlight) { // In case there is only a hit in the title...
-              doc.highlights = _.map(document.highlight.highlight, (hit, index) => {
-                return hit;
-              });
-            } else {
-              doc.highlights = [];
-            }
-            docs.push(doc);
-          }
-        }*/
+        console.log("answe###r", answer);
 
         this.documentsWithHits = answer.data;
         this.totalNumberOfDocuments = answer.count;
@@ -104,8 +84,6 @@ export class DocselectionComponent implements OnInit {
 
   ngOnInit() {}
 
-  
-
   private paginatorPageChanged(event: any) {
     console.log("Changed paginator page", event);
     //this.queryService.setPage(event.page); // Should probably be a dispatch to the store
@@ -118,7 +96,7 @@ export class DocselectionComponent implements OnInit {
     let doc = this.documentsWithHits[docIndex];
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
   }
-  private openDocumentInNew(docIndex: number) {
+  private openDocumentInNew(docIndex: number) { // <- Not currently in use
     let doc = this.documentsWithHits[docIndex];
     //this.documentsService.loadDocumentWithQuery(doc.doc_id, doc.corpusID, doc.highlights, this.queryService.getSearchString(), true);
   }

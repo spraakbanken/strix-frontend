@@ -76,8 +76,19 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
       // REM: We can't use INITIATE since it's sent before the component loads, hence we use SEARCH
-      console.log("initiate", data.corpora); 
+      /* console.log("initiate", data.corpora); 
       this.selectedCorpusID = data.corpora;
+      // Take any current filters from the store and massage them so they work with the internal data model
+      let filterData = data.filters || {};
+      let newFilters = [];
+      for(let filter of filterData) {
+        console.log("filter:", filter);
+        newFilters.push({
+          "field" : filter.field,
+          "values" : filter.values
+        });
+      }
+      this.currentFilters = newFilters; */
     });
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
@@ -92,6 +103,8 @@ export class LeftcolumnComponent implements OnInit {
       },
       error => null//this.errorMessage = <any>error
     );
+
+
 
   }
 
@@ -126,6 +139,11 @@ export class LeftcolumnComponent implements OnInit {
     
   }
 
+
+  private purgeAllFilters() {
+    this.currentFilters = [];
+    this.updateFilters();
+  }
   private purgeFilter(aggregationKey: string) {
     for (let i = 0; i < this.currentFilters.length; i++) {
       if (this.currentFilters[i].field === aggregationKey) {
@@ -147,6 +165,7 @@ export class LeftcolumnComponent implements OnInit {
 
   private purgeCorpus() {
     this.selectedCorpusID = null;
+    this.purgeAllFilters();
   }
 
   private changeLanguageTo(language: string) {
@@ -164,6 +183,24 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.searchRedux.take(1).subscribe(data => {
+      this.chooseCorpus(data.corpora[0]);
+      // Take any current filters from the store and massage them so they work with the internal data model
+      let filterData = data.filters || {};
+      let newFilters = [];
+      for(let filter of filterData) {
+        newFilters.push({
+          "field" : filter.field,
+          "values" : filter.values
+        });
+      }
+      this.currentFilters = newFilters;
+    });
+
+    /* this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe((data) => {
+      console.log("acting upon", data.latestAction);
+
+    }); */
   }
 
 }

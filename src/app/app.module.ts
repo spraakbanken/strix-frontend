@@ -31,7 +31,6 @@ import { HeaderComponent } from './header/header.component';
 import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
 import { IndocsearchComponent } from './indocsearch/indocsearch.component';
-import { GraphComponent } from './graph/graph.component';
 import { HistogramComponent } from './histogram/histogram.component';
 
 @NgModule({
@@ -49,7 +48,6 @@ import { HistogramComponent } from './histogram/histogram.component';
     HeaderComponent,
     LocPipe,
     IndocsearchComponent,
-    GraphComponent,
     HistogramComponent
   ],
   imports: [
