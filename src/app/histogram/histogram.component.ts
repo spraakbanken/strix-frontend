@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Renderer, Output, Input, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Renderer, Output, Input, ElementRef, EventEmitter } from '@angular/core';
 import * as Rickshaw from "rickshaw";
 import * as moment from "moment";
 import * as _ from 'lodash';
@@ -17,8 +17,16 @@ export class HistogramComponent implements OnInit {
     this.setup(indata);
   };
 
-  @Output() from: Date;
-  @Output() to: Date;
+  @Input() set selection(selection: any) {
+    if (selection) {     
+      console.log("before", this.graph.window.xMin, this.graph.window.xMax);
+      this.graph.window.xMin = undefined;//selection.from+"";
+      this.graph.window.xMax = undefined;//selection.to+"";
+      this.graph.update();
+    }
+  }
+
+  @Output() dates = new EventEmitter<any>();
 
   private graph: any;
   private data: any[] = [];
@@ -39,7 +47,7 @@ export class HistogramComponent implements OnInit {
     };
 
     this.data.length = 0; // Trick to clear the array cheaply while not killing it's pointer
-    for(let item in histogramData) {
+    for (let item in histogramData) {
       this.data.push(histogramData[item]);
     }
     
@@ -64,11 +72,11 @@ export class HistogramComponent implements OnInit {
       this.graph.render();
 
       let xAxis = new Rickshaw.Graph.Axis.Time({
-        graph: this.graph,
-        timeUnit: {
+        graph : this.graph,
+        timeUnit : {
           name : 'semicentennial',
           seconds : 86400 * 365.25 * 50,
-          formatter : (d) => { return (parseInt(String(d.getUTCFullYear() / 50), 10) * 50) }
+          formatter : (d) => { return (parseInt(String(d.getUTCFullYear() / 50), 10) * 50); }
         }
       }); 
 
@@ -87,7 +95,7 @@ export class HistogramComponent implements OnInit {
           return `<span>${m.format('YYYY')}</span>`;
         },
         yFormatter : (y) => {
-          return y
+          return y;
         },
         formatter : (series, x, y, formattedX, formattedY, d) => {
           let i = _.indexOf((_.map(series.data, "x")), x, true);
@@ -99,8 +107,7 @@ export class HistogramComponent implements OnInit {
         let target = event.target;
         let {x, y} = this.graph.renderer.domain();
         let [xFrom, xTo] = x;
-        this.from = xFrom;
-        this.to = xTo;
+        this.dates.emit({"from" : xFrom, "to" : xTo});
 
         // TODO: import moment, use for formatting date
         // then use range query with sigterms aggs

@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 import 'rxjs/add/operator/take';
 import * as _ from 'lodash';
+import * as moment from "moment";
 
 import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
@@ -31,9 +32,38 @@ export class SearchComponent implements OnInit {
   private dataSource: Observable<any>;
   private errorMessage: string;
 
-  private histogramData: any;
+  private currentFilters: any[] = [];
 
-  private currentFilters: any[] = []; // TODO: Make some interface
+  private histogramData: any;
+  private histogramSelection: any;
+
+  private fromYear: number;
+  private toYear: number;
+
+  private changeDates(dates: any) {
+    this.fromYear = moment(dates.from*1000).year();
+    this.toYear = moment(dates.to*1000).year();
+    this.updateInterval();
+  };
+
+  private updateInterval() {
+    console.log("new interval", this.fromYear + "-" + this.toYear);
+    let isSet = false;
+    let value = {"range" : {"gte" : this.fromYear, "lte" : this.toYear}};
+    console.log("currentFilter*", this.currentFilters.length);
+    for (let currentFilter of this.currentFilters) {
+      console.log("currentFilter*", currentFilter);
+      if (currentFilter.field === "datefrom") {
+        currentFilter.values = [value];
+        isSet = true;
+      }
+    }
+    if (!isSet) {
+      this.currentFilters.push({"field" : "datefrom", "values" : [value]});
+    }
+    this.updateFilters();
+  }
+
   /*
     field : "fieldname",
     values : ["value1", "value2"]
@@ -71,7 +101,22 @@ export class SearchComponent implements OnInit {
     this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe((data) => {
       console.log("picked up filters change", data.filters);
       this.currentFilters = data.filters; // Not sure we really should overwrite the whole tree.
-
+      let didFilter = false;
+      for (let filter of this.currentFilters) {
+        if (filter.field === "datefrom") {
+          didFilter = true;
+          let gte = filter.values[0].range.gte;
+          let lte = filter.values[0].range.lte;
+          console.log("control it 1", gte, lte, this.fromYear, this.toYear);
+          if (gte !== this.fromYear || lte !== this.toYear) {
+            console.log("control it 2");
+            this.histogramSelection = {"from" : moment(gte+"", "YYYY"), "to" : moment(lte+"", "YYYY")};
+          }
+        }
+      }
+      if (! didFilter) {
+        this.histogramSelection = {"from" : undefined, "to" : undefined};
+      }
     });
   }
 

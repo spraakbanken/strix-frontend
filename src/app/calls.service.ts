@@ -88,7 +88,14 @@ export class CallsService {
     // and we want to have that in the frontend just for not destroying the future
     let filterStrings: string[] = [];
     for (let filter of filters) {
-      filterStrings.push(`"${filter.field}":"${filter.values[0]}"`);
+      let value = _.cloneDeep(filter.values[0]); // Clone so we don't alter the GUI state
+      if (filter.field === "datefrom") {
+        // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
+        value.range.lte = value.range.lte + "1231";
+        value.range.gte = value.range.gte + "0101";
+      }
+      
+      filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
     return "{" + filterStrings.join(",") + "}";
   }

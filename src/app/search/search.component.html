@@ -36,12 +36,16 @@
   <button (click)="simpleSearch(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
   <div class="clear"></div>
   <div class="histogram_box">
-    <histogram [indata]="histogramData"></histogram>
+    <histogram
+      [indata]="histogramData"
+      [selection]="histogramSelection"
+      (dates)="changeDates($event)"></histogram>
   </div>
   <div class="clear"></div>
   <div class="filters_area">
     <div *ngFor="let filter of currentFilters" class="filter_box">
-      {{filter.field}} = {{filter.values[0]}}&nbsp;
+      <span *ngIf="filter.field !== 'datefrom'">{{filter.field}} = {{filter.values[0]}}&nbsp;</span>
+      <span *ngIf="filter.field === 'datefrom'"><i class="fa fa-calendar"></i>&nbsp;{{filter.values[0].range.gte}} – {{filter.values[0].range.lte}}&nbsp;</span>
       <div class="purge_filter_button" (click)="purgeFilter(filter.field)"><i class="fa fa-times-circle"></i></div>
     </div>
   </div>
