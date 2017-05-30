@@ -18,9 +18,9 @@
     <div *ngIf="selectedCorpusID" class="purge_corpus_button">
       <!--{{availableCorpora[selectedCorpusID].name | loc}}&nbsp;
       <i class="fa fa-window-close-o"></i>-->
-      <div class="filter_box filter_box_corpus">
+      <div class="filter_box filter_box_corpus" (click)="purgeCorpus()">
         {{availableCorpora[selectedCorpusID].name | loc}}&nbsp;
-        <div class="purge_filter_button" (click)="purgeCorpus()"><i class="fa fa-times-circle"></i></div>
+        <div class="purge_filter_button"><i class="fa fa-times-circle"></i></div>
       </div>
     </div>
     <ul *ngIf="!selectedCorpusID">
