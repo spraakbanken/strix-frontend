@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/switchMapTo';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/observable/timer';
 import { StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
@@ -29,7 +32,7 @@ export class QueryService {
   //queryChanged$ = this.currentQuerySubject.asObservable();
 
   // The searchResult$ stream delivers results after a
-  // finished search:
+  // finished search: TODO: We should use a switchMap (flatMapLatest) so we only emit values from the latest call.
   private searchResultSubject = new Subject<any>();
   searchResult$ = this.searchResultSubject.asObservable();
 
@@ -40,7 +43,7 @@ export class QueryService {
   // so that any subscribing components may get the latest 
   // state directly upon subscribing.
   private searchStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
-  searchStatus$ = this.searchStatusSubject.asObservable();
+  searchStatus$ = this.searchStatusSubject.asObservable(); // The INNER observable. Only the LATEST search should generate events here.
 
   private searchRedux: Observable<any>;
 
@@ -66,6 +69,8 @@ export class QueryService {
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.runCurrentQuery();
     });
+
+    this.onInit();
   }
 
   /* A component which makes a change to the query should register it here. */
@@ -93,26 +98,63 @@ export class QueryService {
     this.searchStatusSubject.next(StrixEvent.SEARCHEND);
   }
 
+  private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
+
   /* The actual calls */
   public runCurrentQuery() : void {
     //return this.runQuery(this.currentQuery);
     this.signalStartedSearch();
-    this.runQuery(this.currentQuery).subscribe((answer) => {
+    /* this.runQuery(this.currentQuery).subscribe((answer) => {
       console.log("ran query with the result", answer);
       this.signalEndedSearch();
       this.searchResultSubject.next(answer);
-    });
+    }); */
+    /* this.runQuery(this.currentQuery).switchMapTo(this.searchResult$).subscribe((answer) => {
+      console.log("ran query with the result", answer);
+      this.signalEndedSearch();
+    }); */
+    
+    /* let myObservable = this.runQuery(this.currentQuery);
+    const anotherObservable = Observable.timer(0, 1000);
+    this.startInterval$ = myObservable.switchMap((indata) => anotherObservable);
+    const subscribe = this.startInterval$.subscribe((z) => console.log(z)); */
+    /*this.runQuery(this.currentQuery).subscribe((answer) => {
+      console.log("ran query with the result", answer);
+      this.signalEndedSearch();
+      this.searchResultSubject.next(answer);
+    }); */
+
+    this.runQuery(this.currentQuery);
+
+
     
   }
   private runQuery(query: StrixQuery): Observable<StrixResult> {
-    if (query.type === "normal") {
+    /* if (query.type === "normal") {
       console.log("should search for a text string", query.queryString);
       return this.callsService.searchForString(query);
     } else {
       // Search for an annotation
       
-    }
+    } */
+
+    console.log("adding to stream");
+    this.streamOfStreams.next(this.callsService.searchForString(query));
+
+    return null;
     
+  }
+
+  onInit() {
+    /* switchMap makes sure only the most recently added stream is listened to.
+       All other streams are unsubscribed and the $http request should, as a
+       consequence be cancelled. */
+    this.streamOfStreams.switchMap( obj => {
+      return obj;
+    }).subscribe( value => {
+      this.signalEndedSearch();
+      this.searchResultSubject.next(value);
+    });
   }
 
 }
