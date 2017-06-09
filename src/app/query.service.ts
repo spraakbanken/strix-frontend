@@ -17,10 +17,10 @@ interface AppState {
 }
 
 /**
- * Since the creation of a search query is spread between components,
- * the query service needs to keep track of the different states of
- * the current query and notify each conserned component when something
- * changes.
+ * The Query service handles the main query resulting in
+ * a major state change in the GUI. It should use only
+ * CallsService to do the actual calls. NO calls directly
+ * through $http!
  */
 
 @Injectable()
@@ -28,11 +28,7 @@ export class QueryService {
 
   private currentQuery: StrixQuery;
 
-  //private currentQuerySubject = new Subject<StrixQuery>();
-  //queryChanged$ = this.currentQuerySubject.asObservable();
-
-  // The searchResult$ stream delivers results after a
-  // finished search: TODO: We should use a switchMap (flatMapLatest) so we only emit values from the latest call.
+  // The searchResult$ stream delivers the actual results after a finished search
   private searchResultSubject = new Subject<any>();
   searchResult$ = this.searchResultSubject.asObservable();
 
@@ -40,53 +36,26 @@ export class QueryService {
   // to know the *status* of the search (for displaying such 
   // things as progress bars):
   // REM: searchStatusSubject needs to be a BehaviorSubject
-  // so that any subscribing components may get the latest 
+  // so that any subscribing components can get the latest 
   // state directly upon subscribing.
   private searchStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
-  searchStatus$ = this.searchStatusSubject.asObservable(); // The INNER observable. Only the LATEST search should generate events here.
+  searchStatus$ = this.searchStatusSubject.asObservable();
 
   private searchRedux: Observable<any>;
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.filter((d) => {console.log("d", d); return d.latestAction === SEARCH}).subscribe((data) => {
-      console.log("new value", data);
-      // Perform the actual search.
-      this.currentQuery = new StrixQuery();
-      this.currentQuery.type = data.type;
-      this.currentQuery.queryString = data.query;
-      this.currentQuery.pageIndex = data.page;
-      this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-      this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
-      this.currentQuery.filters = data.filters;
-      console.log("this.currentQuery", this.currentQuery);
-      this.runCurrentQuery();
-    });
-
-    // Redo the last query when the user closes the open document
-    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
-      this.runCurrentQuery();
-    });
-
     this.onInit();
   }
 
-  /* A component which makes a change to the query should register it here. */
-  /* public registerUpdate(): void {
-    this.currentQuerySubject.next(this.currentQuery);
-  } */
-
-  /*public chooseCorpora(corporaIDs: string[]): void {
-    this.currentQuery.corpora = corporaIDs;
-  } */
   public getSearchString(): string {
     return this.currentQuery.queryString;
   }
+  
   public setSearchString(searchString: string): void {
     this.currentQuery.queryString = searchString;
   }
+
   public setPage(page: number): void {
     this.currentQuery.pageIndex = page;
   }
@@ -94,59 +63,51 @@ export class QueryService {
   private signalStartedSearch() {
     this.searchStatusSubject.next(StrixEvent.SEARCHSTART);
   }
+
   private signalEndedSearch() {
     this.searchStatusSubject.next(StrixEvent.SEARCHEND);
   }
 
+  /* Every query call becomes a stream in the stream of streams,
+     but only the most recently added strean will actually be
+     subscribed to. (I.e. all older pending streams will be unsubscribed) */
   private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
 
-  /* The actual calls */
-  public runCurrentQuery() : void {
-    //return this.runQuery(this.currentQuery);
+  public runCurrentQuery() {
     this.signalStartedSearch();
-    /* this.runQuery(this.currentQuery).subscribe((answer) => {
-      console.log("ran query with the result", answer);
-      this.signalEndedSearch();
-      this.searchResultSubject.next(answer);
-    }); */
-    /* this.runQuery(this.currentQuery).switchMapTo(this.searchResult$).subscribe((answer) => {
-      console.log("ran query with the result", answer);
-      this.signalEndedSearch();
-    }); */
-    
-    /* let myObservable = this.runQuery(this.currentQuery);
-    const anotherObservable = Observable.timer(0, 1000);
-    this.startInterval$ = myObservable.switchMap((indata) => anotherObservable);
-    const subscribe = this.startInterval$.subscribe((z) => console.log(z)); */
-    /*this.runQuery(this.currentQuery).subscribe((answer) => {
-      console.log("ran query with the result", answer);
-      this.signalEndedSearch();
-      this.searchResultSubject.next(answer);
-    }); */
-
     this.runQuery(this.currentQuery);
-
-
-    
   }
-  private runQuery(query: StrixQuery): Observable<StrixResult> {
-    /* if (query.type === "normal") {
-      console.log("should search for a text string", query.queryString);
-      return this.callsService.searchForString(query);
+
+  private runQuery(query: StrixQuery) {
+    if (query.type === "normal") {
+      console.log("adding a search to the stream of streams");
+      this.streamOfStreams.next(this.callsService.searchForString(query));
     } else {
-      // Search for an annotation
-      
-    } */
-
-    console.log("adding to stream");
-    this.streamOfStreams.next(this.callsService.searchForString(query));
-
-    return null;
-    
+      // ... we'll see what the future brings
+    }
   }
 
   onInit() {
-    /* switchMap makes sure only the most recently added stream is listened to.
+
+    this.searchRedux = this.store.select('searchRedux');
+    /* React upon the action SEARCH, most likely triggering a main query search. */
+    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
+      this.currentQuery = new StrixQuery();
+      this.currentQuery.type = data.type;
+      this.currentQuery.queryString = data.query;
+      this.currentQuery.pageIndex = data.page;
+      this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
+      this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
+      this.currentQuery.filters = data.filters;
+      this.runCurrentQuery(); // Perform the actual search
+    });
+
+    /* Redo the last query when the user closes the open document */
+    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+      this.runCurrentQuery();
+    });
+
+    /* switchMap makes sure only the most recently added query stream is listened to.
        All other streams are unsubscribed and the $http request should, as a
        consequence be cancelled. */
     this.streamOfStreams.switchMap( obj => {

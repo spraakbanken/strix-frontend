@@ -8,7 +8,8 @@ import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
          BsDropdownModule,
          AlertModule,
-         PaginationModule } from 'ngx-bootstrap';
+         PaginationModule,
+         AccordionModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
 import { DocselectionComponent } from './docselection/docselection.component';
@@ -58,6 +59,7 @@ import { HistogramComponent } from './histogram/histogram.component';
     BsDropdownModule.forRoot(),
     AlertModule.forRoot(),
     PaginationModule.forRoot(),
+    AccordionModule.forRoot(),
     StoreModule.provideStore({searchRedux: searchReducer})
   ],
   providers: [DocumentsService,

@@ -3,13 +3,13 @@ GENERAL
 - Use two spaces for indentation
 - Write JavaScript objects as {a : b, c : d}, not {a: b, c: d} or {a:b,c:d}
 - Write TypeScript types like name: string, not name : string
-- 
+- Use snake_case for css-classes and component ids
 
 IMPORTS
 
 - Write imports with spaces padding the {} for readability
 - Have Angular imports on the first lines.
-- Then have other libraries.
+- Then other libraries.
 - Then have a blank line and then project internal imports.
 Example:
 

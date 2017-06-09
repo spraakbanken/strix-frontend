@@ -6,11 +6,12 @@ import 'rxjs/add/operator/debounceTime';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
-
 import { StrixDocument } from '../strixdocument.model';
 import { StrixSelection } from '../strixselection.model';
 import { StrixEvent } from '../strix-event.enum';
 import { DocumentsService } from '../documents.service';
+import { MetadataService } from '../metadata.service';
+import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
 import { CLOSEDOCUMENT } from '../searchreducer';
 
@@ -32,6 +33,14 @@ export class ReaderComponent implements AfterViewInit {
   private docLoadStatusSubscription: Subscription;
   private isLoading = false;
 
+  private mainDocument: StrixDocument;
+
+  /* Metadata */
+  private gotMetadata = false;
+  private metadataSubscription: Subscription;
+  private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
+  //private availableCorporaKeys: string[] = [];
+
   // Each item in cmViews is an index number of the DocumentsService documents.
   // They need not be in order!!
   private cmViews = [];
@@ -47,10 +56,6 @@ export class ReaderComponent implements AfterViewInit {
 
   private showBox: boolean = false;
   private singleWordSelection: boolean = false;
-  private annotationsListLeft = "inherit";
-  private annotationsListTop = "inherit";
-  private annotationsListRight = "inherit";
-  private annotationsListBottom = "inherit";
 
   private showSidebar = true;
   private bookmarks: any = [];
@@ -67,7 +72,23 @@ export class ReaderComponent implements AfterViewInit {
   */
 
 
-  constructor(private documentsService : DocumentsService, private store: Store<AppState>) {
+  constructor(private documentsService: DocumentsService,
+              private store: Store<AppState>,
+              private metadataService: MetadataService) {
+
+    // Make sure the metadata is loaded
+    this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
+      wasSuccess => {
+        if (wasSuccess) {
+          this.availableCorpora = metadataService.getAvailableCorpora();
+          console.log("the metadata", this.availableCorpora);
+          //this.availableCorporaKeys = _.keys(this.availableCorpora);
+          this.gotMetadata = true;
+        } else {
+          this.availableCorpora = {}; // TODO: Show some error message
+          //this.availableCorporaKeys = [];
+        }
+    });
 
     // If the user closes the main document:
     this.searchRedux = this.store.select('searchRedux');
@@ -107,6 +128,7 @@ export class ReaderComponent implements AfterViewInit {
         console.log("A document has been fetched.", message);
 
         let openedDocument = documentsService.getDocument(message.documentIndex);
+        this.mainDocument = openedDocument;
 
         let wholeText = openedDocument.dump.join("\n");
 
@@ -191,8 +213,8 @@ export class ReaderComponent implements AfterViewInit {
       }
 
       console.log("–––", selection.realCoordinates);
-      this.annotationsListLeft = selection.realCoordinates.left + "px";
-      this.annotationsListTop = selection.realCoordinates.bottom + "px";
+      //this.annotationsListLeft = selection.realCoordinates.left + "px";
+      //this.annotationsListTop = selection.realCoordinates.bottom + "px";
 
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
     }
@@ -214,7 +236,7 @@ export class ReaderComponent implements AfterViewInit {
 
   private onScrollInDocument(event) {
     //console.log("onScrollInDocument", event);
-    this.singleWordSelection = false;
+    //this.singleWordSelection = false;
   }
 
   private onViewportChange(event) {
@@ -255,11 +277,12 @@ export class ReaderComponent implements AfterViewInit {
     window['CodeMirrorStrixControl'].splice(index);
   }
 
-  private changeAnnotationHighlight(type : string, value : string) : void {
+  private changeAnnotationHighlight(type: string, value: string, datatype: string = "default") : void {
     console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     console.log("highlighting", type, value);
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationType = type;
+    window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationDatatype = datatype;
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationValue = value;
 
     let mirrorsArray = this.mirrors.toArray();
@@ -378,13 +401,13 @@ export class ReaderComponent implements AfterViewInit {
     console.log("should close the document now.");
   }
 
-  @HostListener('window:resize', ['$event.target']) 
+  /* @HostListener('window:resize', ['$event.target']) 
   onResize() { 
     console.log("ON THE RISE");
     if (this.mirrors.first) {
       //this.mirrors.first.codeMirrorInstance.setSize(null, "100%");
     }
-  }
+  } */
 
   private _onResize(event) {
     console.log("$event", event);

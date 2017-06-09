@@ -109,10 +109,21 @@ export class CmDirective {
             if (window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType) {
               let currentAnnotationType : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;
               let currentAnnotationValue : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationValue;
+              let currentAnnotationDatatype : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationDatatype;
 
-              if (tokenAnnotations[currentAnnotationType] === currentAnnotationValue) { // TODO: Value is always string?
-                styles.push('underlined');
+              if (currentAnnotationDatatype === "default") {
+                if (tokenAnnotations[currentAnnotationType] === currentAnnotationValue) { // TODO: Value is always string?
+                  styles.push('underlined');
+                }
+              } else if (currentAnnotationDatatype === "set") {
+                for (let item of tokenAnnotations[currentAnnotationType]) {
+                  if (item === currentAnnotationValue) {
+                    styles.push('underlined');
+                    break;
+                  }
+                }
               }
+              
             }
 
             return styles.join(' ');

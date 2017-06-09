@@ -52,41 +52,64 @@
     (onScrollInDocument)="onScrollInDocument(0)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
-  <div class="text_right_column" *ngIf="showSidebar && cmViews.length !== 0">
-    <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
-      <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
-      <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
-      &nbsp;{{bookmark.text}}
-    </div>
-  </div>
-    <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
-    <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
-    <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
-  <div
-    class="tokenAnnotationsList"
-    *ngIf="!isLoading && showBox && singleWordSelection"
-    [style.left]="annotationsListLeft"
-    [style.top]="annotationsListTop"
-    [style.right]="annotationsListRight"
-    [style.bottom]="annotationsListBottom">
-    <div class="closeBox" (click)="closeBox()">
-      <i class="fa fa-window-close-o"></i>
-    </div>
-    <div class="clear"></div>
-    <ul>
-      <li
-        *ngFor="let annotation of currentAnnotationsKeys">
-        <span class="goto_left" (click)="gotoLeft(annotation, currentAnnotations[annotation])">
-          <i class="fa fa-angle-left"></i>
-        </span>
-        <span
-          (click)="changeAnnotationHighlight(annotation, currentAnnotations[annotation])">
-          {{annotation}}: {{currentAnnotations[annotation]}}
-        </span>
-        <span class="goto_right" (click)="gotoRight(annotation, currentAnnotations[annotation])">
-          <i class="fa fa-angle-right"></i>
-        </span>
-      </li>
-    </ul>
-  </div>
+  <accordion closeOthers="true" class="right_accordion">
+    <accordion-group heading="Sökträffar">
+      <div class="text_right_column" *ngIf="showSidebar && cmViews.length !== 0 && !singleWordSelection">
+        <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
+          <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
+          <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
+          &nbsp;{{bookmark.text}}
+        </div>
+      </div>
+    </accordion-group>
+      <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
+      <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
+      <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
+    <accordion-group heading="Ordattribut">
+      <div
+        class="token_annotations_list"
+        *ngIf="!isLoading && showBox && singleWordSelection">
+        <!--<div class="closeBox" (click)="closeBox()">
+          <i class="fa fa-window-close-o"></i>
+        </div>
+        <div class="clear"></div>-->
+        <ul class="annotations_list_ul">
+          <!-- <li
+            *ngFor="let annotation of currentAnnotationsKeys">
+            <span class="goto_left" (click)="gotoLeft(annotation, currentAnnotations[annotation])">
+              <i class="fa fa-angle-left"></i>
+            </span>
+            <span
+              (click)="changeAnnotationHighlight(annotation, currentAnnotations[annotation])">
+              {{annotation}}: {{currentAnnotations[annotation]}}
+            </span>
+            <span class="goto_right" (click)="gotoRight(annotation, currentAnnotations[annotation])">
+              <i class="fa fa-angle-right"></i>
+            </span>
+          </li> -->
+          <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].wordAttributes">
+            <span [ngSwitch]="annotation.set">
+              <span *ngSwitchCase="true">
+                {{annotation.name}}:<br/>
+                <ul>
+                  <li
+                    *ngFor="let item of currentAnnotations[annotation.name]"
+                    (click)="changeAnnotationHighlight(annotation.name, item, 'set')"
+                    class="highlightable_annotation">
+                    {{item}}
+                  </li>
+                </ul>
+              </span>
+              <span
+                *ngSwitchCase="false"
+                (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                class="highlightable_annotation">
+                {{annotation.name}}: {{currentAnnotations[annotation.name]}}
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </accordion-group>
+  </accordion>
 </div>
