@@ -20,7 +20,7 @@ export class CmDirective {
       {
         lineNumbers: true,
         readOnly: true,
-        mode: {name: 'strix', globalVars: true},
+        mode: {name : 'strix', globalVars : true},
         lineWrapping : true
         //selectionPointer : "pointer",
       }
@@ -37,7 +37,7 @@ export class CmDirective {
       of the document and LINE_NUM_PREFIX_LENGTH chars with the line number (0-padded).
       These chars are HIDDEN from the user view and when the user copies text we trim the
       selection so that the prefixes are avoided. It's hacky but works very well so far.
-      We then communicate with the angular data we currently need to go through
+      When we communicate with the angular data we currently need to go through
       window['CodeMirrorStrix']. Maybe there is a cleaner solution to that.
     */
     CodeMirror.defineMode('strix', function(config, parserConfig) {

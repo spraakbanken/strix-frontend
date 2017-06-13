@@ -49,7 +49,7 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.lang = action.payload;
       break;
     case OPENDOCUMENT:
-      nextState.documentID = action.payload.es_id;
+      nextState.documentID = action.payload.doc_id;
       nextState.documentCorpus = action.payload.corpus;
       break;
     case CLOSEDOCUMENT:

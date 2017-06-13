@@ -130,7 +130,7 @@ export class DocumentsService {
             let index = -1;
             for (let i = 0; i < this.documents.length; i++) {
               let doc = this.documents[i];
-              console.log("es_id", answer.doc_id, doc.doc_id);
+              console.log("doc_id", answer.doc_id, doc.doc_id);
               if (doc && doc.doc_id && doc.doc_id === answer.doc_id) {
                 added = true;
                 index = i;
