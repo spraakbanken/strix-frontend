@@ -80,12 +80,19 @@ export class CmDirective {
             if (state.currentWid === null) {
               state.currentWid = window['CodeMirrorStrix'][state.documentIndex].lines[state.line][0];
             }
+            if (state.currentWid === undefined || state.currentWid === null) console.log("TOKEN PROBLEM.");
             let token = window['CodeMirrorStrix'][state.documentIndex].token_lookup[state.currentWid];
-
-            if (! token) { // Temporary because the BE only returns 10 now.
+            if (token === undefined ) {
+              console.log("FOUND UNDEFINED TOKEN.");
               stream.next();
-              return "";
+              return
+              //return;
             }
+
+            //if (! token) { // Temporary because the BE only returns 10 now.
+            //  stream.next();
+            //  return "";
+            //}
 
             let tokenText = token.word;
             let tokenAnnotations = token.attrs;
@@ -126,6 +133,10 @@ export class CmDirective {
               
             }
 
+            if (styles.length === 0) {
+              // add dummy style so all tokens get a <span>, or else there will be flickering in some browsers
+              return 'nostyle';
+            }
             return styles.join(' ');
           }
         }

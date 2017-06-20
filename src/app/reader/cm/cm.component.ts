@@ -47,6 +47,10 @@ export class CmComponent implements OnInit {
       this.trimSelections();
     });
 
+    this.codeMirrorInstance.on('update', () => {
+      console.log("cm update", this.codeMirrorInstance);
+    });
+
     this.codeMirrorInstance.on('cursorActivity', (instance) => {
       const padding = 12;
       var selections = instance.listSelections();

@@ -3,6 +3,7 @@ import { Subject } from 'rxjs/Subject';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
+//import 'rxjs/add/observable/of';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -143,7 +144,7 @@ export class DocumentsService {
               this.preprocessDocument(answer, index);
 
               /* This is a wacky hack to make the CodeMirror
-                parser understand something about the current state */
+                parser know something about the current state */
               window['CodeMirrorStrix'] = this.documents;
             }
 
@@ -289,10 +290,16 @@ export class DocumentsService {
     this.docLoadingStatusSubject.next(StrixEvent.CLOSED_MAIN_DOCUMENT);
   } */
 
-  public extendTokenInfoIfNecessary(docIndex: number, fromLine: number, toLine: number) {
+  private tokenInfoDone = new Subject<boolean>();
+  public tokenInfoDone$ = this.tokenInfoDone.asObservable();
+
+  public extendTokenInfoIfNecessary(docIndex: number, fromLine: number, toLine: number): void {
     // First convert line numbers to token numbers
     let doc = this.documents[docIndex];
     
+    // Get some more lines so we more likely have enough for the viewport when coloring
+    fromLine = Math.max(fromLine - 20, 0);
+
     let firstToken = doc.getFirstTokenFromLine(fromLine);
     let lastToken = doc.getLastTokenFromLine(toLine);
     
@@ -302,7 +309,7 @@ export class DocumentsService {
     let missing = false;
     for (let i = fromLine; i <= toLine; i++) {
       let firstTokenOnTheLine = doc.getFirstTokenFromLine(i);
-      console.log("->", i, firstTokenOnTheLine, doc.token_lookup[firstTokenOnTheLine]);
+      //console.log("->", i, firstTokenOnTheLine, doc.token_lookup[firstTokenOnTheLine]);
       if (! doc.token_lookup[firstTokenOnTheLine]) {
         missing = true;
         break;
@@ -311,18 +318,23 @@ export class DocumentsService {
 
     if (missing) {
 
-      return this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
+      this.callsService.getTokenDataFromDocument(doc.doc_id, doc.corpusID, firstToken, lastToken).subscribe(
         answer => {
           //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
           _.assign(doc.token_lookup, doc.token_lookup, answer.data.token_lookup);
           console.log( "size:", _.size(doc.token_lookup) );
+
+          this.tokenInfoDone.next(true);
         },
-        error => this.errorMessage = <any>error
-        );
+        error => {
+          this.errorMessage = <any>error;
+          this.tokenInfoDone.next(false);
+        }
+      );
 
     } else {
       console.log("we're set already!")
-      return null;
+      this.tokenInfoDone.next(false);
     }
 
     //return null;

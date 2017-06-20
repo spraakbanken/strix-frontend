@@ -76,6 +76,13 @@ export class ReaderComponent implements AfterViewInit {
               private store: Store<AppState>,
               private metadataService: MetadataService) {
 
+    // When done we need to do:
+    this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
+      //console.log("this is what we got back", documentsProcessing);
+      console.log("got new token data – causing refresh of the CM syntax coloring")
+      if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
+    });
+
     // Make sure the metadata is loaded
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
@@ -170,7 +177,6 @@ export class ReaderComponent implements AfterViewInit {
 
   }
   ngAfterViewInit() {
-
   }
 
   private updateTitles() {
@@ -250,10 +256,7 @@ export class ReaderComponent implements AfterViewInit {
   private handleViewportChange(event) {
     // First check if we have token information for the current viewport already
     // NO IDEA WHY WE NEED -1 BELOW
-    let documentsProcessing = this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
-    // When done we need to do:
-    // <currentMirror>.codeMirrorInstance.setOption("mode", "strix");
-    console.log("documentsProcessing", documentsProcessing);
+    this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
   }
 
   private onKeydown(event: any): void {
@@ -341,8 +344,6 @@ export class ReaderComponent implements AfterViewInit {
     let text = fragments.join(" ");
 
     
-
-    //cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
     cmInstance.markText(fromCursor, toCursor, {"css" : "text-decoration: underline"});
     this.bookmarks.push({
       "from" : fromCursor,
@@ -381,7 +382,6 @@ export class ReaderComponent implements AfterViewInit {
 
       console.log("addHighlight", fromCursor, toCursor);
 
-      //cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
       cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
       this.bookmarks.push({
         "from" : fromCursor,
@@ -411,15 +411,7 @@ export class ReaderComponent implements AfterViewInit {
 
   private _onResize(event) {
     console.log("$event", event);
-    //const newWidth = window.innerWidth - 220;
     const elem = document.getElementsByClassName("readerArea")[0];
-    //console.log("elem.clientTop", elem, elem.clientTop);
-    //const newHeight = window.innerHeight - elem.clientTop - 20;
-    //const.
-    //console.log("-----", this.elHeight);
-    //if (this.mirrors.first) {
-    //  this.mirrors.first.codeMirrorInstance.setSize(newWidth, newHeight);
-    //}
   }
 
 }
