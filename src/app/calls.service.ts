@@ -112,7 +112,7 @@ export class CallsService {
     }
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
-    let url = `${this.STRIXBACKEND_URL}/search/`;
+    let url = `${this.STRIXBACKEND_URL}/search`;
     console.log('url', url);
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `&corpora=${corpusIDs.join(",")}` : "";
     let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
@@ -129,7 +129,7 @@ export class CallsService {
 
   public searchForAnnotation(corpus: string, annotationKey: string, annotationValue: string): Observable<StrixResult> {
     //let url = `${this.STRIXBACKEND_URL}/search/${corpus}/${annotationKey}/${annotationValue}`;
-    let url = `${this.STRIXBACKEND_URL}/search/`;
+    let url = `${this.STRIXBACKEND_URL}/search`;
     console.log('url', url);
     let paramsString = `text_filter={"${annotationKey}" : "${annotationValue}"}`;
     let options = new RequestOptions({
@@ -143,7 +143,7 @@ export class CallsService {
   /* ------------------ Calls for searching in ONE document only ------------------ */
   public searchDocumentForAnnotation(callObj: any): Observable<any> {
     //let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}/${callObj.annotationKey}/${callObj.annotationValue}`;
-    let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}/`;
+    let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}`;
     let paramsString = `text_query_field=${callObj.annotationKey}&text_query=${callObj.annotationValue}&exclude=*&size=1&current_position=${callObj.currentPosition}&forward=${!callObj.backwards}`;
     let options = new RequestOptions({
       search: new URLSearchParams(paramsString)
@@ -163,7 +163,7 @@ export class CallsService {
 
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string): Observable<StrixDocument> {
     //let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/doc_id/${documentID}/${query}`;
-    let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}/`;
+    let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}`;
     console.log('url', url);
     let paramsString = `simple_highlight=false&token_lookup_from=${0}&token_lookup_to=${1000}&text_query=${query}`;
     let options = new RequestOptions({
