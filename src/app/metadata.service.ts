@@ -30,6 +30,14 @@ export class MetadataService {
     return this.availableCorpora;
   }
 
+  public getWordAnnotationsFor(corpusID: string): any[] {
+    return this.availableCorpora[corpusID].wordAttributes || [];
+  }
+
+  public getStructuralAnnotationsFor(corpusID: string): any[] {
+    return this.availableCorpora[corpusID].structAttributes || [];
+  }
+
   /*
     THERE NEEDS TO BE A WAY FOR THE METADATA SERVICE TO NOTIFY ALL OTHER COMPONENTS
     THAT THE METADATA CALL HAS FINISHED SO THAT THEY CAN GET WHAT THEY WANT.

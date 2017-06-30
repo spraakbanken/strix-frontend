@@ -63,7 +63,7 @@ export class DocumentsService {
       console.log("open document with", data, this.queryService);
       if (data.type === "LOCAL") {
         // Reopen the current document with the new query
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.query);
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.query || "");
       } else {
         // Open a new document in the ordinary way
         this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());

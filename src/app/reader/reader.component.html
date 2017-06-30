@@ -102,7 +102,7 @@
               </span>
               <span
                 *ngSwitchCase="false"
-                (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name]);readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
                 class="highlightable_annotation">
                 {{annotation.name}}: {{currentAnnotations[annotation.name]}}
               </span>

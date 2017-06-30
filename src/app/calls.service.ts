@@ -13,8 +13,10 @@ import { StrixCorpusConfig } from './strixcorpusconfig.model';
 @Injectable()
 export class CallsService {
 
+  private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/test";
+  //private readonly STRIXBACKEND_URL = "http://130.241.42.205:5000";
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
-  private readonly STRIXBACKEND_URL = "http://localhost:8080";
+  //private readonly STRIXBACKEND_URL = "http://localhost:8080";
 
   constructor(private http : Http) { }
 
@@ -142,6 +144,7 @@ export class CallsService {
 
   /* ------------------ Calls for searching in ONE document only ------------------ */
   public searchDocumentForAnnotation(callObj: any): Observable<any> {
+    console.log("searchDocumentForAnnotation()");
     //let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}/${callObj.annotationKey}/${callObj.annotationValue}`;
     let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}`;
     let paramsString = `text_query_field=${callObj.annotationKey}&text_query=${callObj.annotationValue}&exclude=*&size=1&current_position=${callObj.currentPosition}&forward=${!callObj.backwards}`;
@@ -154,6 +157,7 @@ export class CallsService {
   }
 
   public getDocument(documentID: string, corpusID: string) : Observable<StrixDocument> {
+    console.log("getDocument()");
     let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
     console.log('url', url);
     return this.http.get(url)
@@ -162,6 +166,7 @@ export class CallsService {
   }
 
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string): Observable<StrixDocument> {
+    console.log("getDocumentWithQuery()");
     //let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/doc_id/${documentID}/${query}`;
     let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}`;
     console.log('url', url);
@@ -175,6 +180,7 @@ export class CallsService {
   }
 
   public getTokenDataFromDocument(documentID: string, corpusID: string, start: number, end: number) {
+    console.log("getTokenDataFromDocument()");
     end++; // Because the API expects python style slicing indices
     let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
     let paramsString = `include=token_lookup&token_lookup_from=${start}&token_lookup_to=${end}`;
@@ -253,6 +259,14 @@ export class CallsService {
     });
     return this.http.get(url, options)
                     .map(this.extractTokenData) // Rename this to extractData?
+                    .catch(this.handleError);
+  }
+
+  /* Get annotations values */
+  public getValuesForAnnotation(corpusID: string, documentID, annotationName: string) {
+    let url = `${this.STRIXBACKEND_URL}/aggs/${corpusID}/${documentID}/${annotationName}`;
+    return this.http.get(url)
+                    .map(this.extractTokenData)
                     .catch(this.handleError);
   }
 

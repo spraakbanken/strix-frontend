@@ -14,6 +14,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
 import { CLOSEDOCUMENT } from '../searchreducer';
+import { ReaderCommunicationService } from '../reader-communication.service';
 
 interface AppState {
   searchRedux: any;
@@ -74,7 +75,8 @@ export class ReaderComponent implements AfterViewInit {
 
   constructor(private documentsService: DocumentsService,
               private store: Store<AppState>,
-              private metadataService: MetadataService) {
+              private metadataService: MetadataService,
+              private readerCommunicationService: ReaderCommunicationService) {
 
     // When done we need to do:
     this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
@@ -177,6 +179,23 @@ export class ReaderComponent implements AfterViewInit {
 
   }
   ngAfterViewInit() {
+    this.readerCommunicationService.event$.subscribe((data) => {
+      console.log("message from the reader communication service", data);
+      const message = data["message"];
+      const payload = data["payload"];
+      if (message === "goToNextAnnotation" ||
+          message === "goToPreviousAnnotation" ||
+          message === "changeAnnotationHighlight") {
+        const annotation = payload["annotation"];
+        const annotationValue = payload["annotationValue"];
+        this.changeAnnotationHighlight(annotation, annotationValue, "default");
+        if (message === "goToNextAnnotation") {
+          this.gotoAnnotation(annotation, annotationValue, false);
+        } else if (message === "goToPreviousAnnotation") {
+          this.gotoAnnotation(annotation, annotationValue, true);
+        }
+      }
+    });
   }
 
   private updateTitles() {
@@ -297,7 +316,6 @@ export class ReaderComponent implements AfterViewInit {
         console.log("refreshing highlight on view " + index, this.cmViews);
       }
     }
-
   }
 
   private closeBox() {

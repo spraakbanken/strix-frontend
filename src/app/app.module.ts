@@ -33,6 +33,8 @@ import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
 import { IndocsearchComponent } from './indocsearch/indocsearch.component';
 import { HistogramComponent } from './histogram/histogram.component';
+import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
+import { ReaderCommunicationService } from './reader-communication.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +51,8 @@ import { HistogramComponent } from './histogram/histogram.component';
     HeaderComponent,
     LocPipe,
     IndocsearchComponent,
-    HistogramComponent
+    HistogramComponent,
+    AnnotationsSelectorComponent
   ],
   imports: [
     BrowserModule,
@@ -68,7 +71,8 @@ import { HistogramComponent } from './histogram/histogram.component';
               QueryService,
               MetadataService,
               RoutingService,
-              LocService],
+              LocService,
+              ReaderCommunicationService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

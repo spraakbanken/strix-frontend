@@ -89,6 +89,10 @@ export class CmDirective {
               //return;
             }
 
+            if (token.word === ",") {
+              console.log("FOUND!!")
+            }
+
             //if (! token) { // Temporary because the BE only returns 10 now.
             //  stream.next();
             //  return "";
@@ -101,6 +105,7 @@ export class CmDirective {
             while (! stream.eol()) {
               newToken += stream.next();
               if (newToken === tokenText) {
+                console.log("matching", newToken, "with", tokenText);
                 state.currentWid++;
                 break;
               }
@@ -135,7 +140,16 @@ export class CmDirective {
 
             if (styles.length === 0) {
               // add dummy style so all tokens get a <span>, or else there will be flickering in some browsers
-              return 'nostyle';
+              if (".,;!?".indexOf(token.word) != -1) {
+                // Workaround for a strange codemirror behavior that joins segments that aren't whitespace–
+                // separated with the preceeding segment if the style is the same. We don't want that
+                // because it may cause flickering and sometimes even causes the text to reflow!
+                // TODO: Probably still a problem for cases like hello!? and hello...
+                // We could maybe save the last type of nostyle in the state and use the other one.
+                return "nostyle2";
+              } else {
+                return 'nostyle';
+              }
             }
             return styles.join(' ');
           }
