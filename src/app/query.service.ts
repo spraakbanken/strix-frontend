@@ -28,9 +28,19 @@ export class QueryService {
 
   private currentQuery: StrixQuery;
 
+  /* Every query call becomes a stream in the stream of streams,
+     but only the most recently added strean will actually be
+     subscribed to. (I.e. all older pending streams will be unsubscribed) */
+  private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
+  private streamOfAggregationStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
+
   // The searchResult$ stream delivers the actual results after a finished search
   private searchResultSubject = new Subject<any>();
   searchResult$ = this.searchResultSubject.asObservable();
+
+  // The aggregationResult$ stream delivers the aggregated results after a finished aggregation search
+  private aggregationResultSubject = new Subject<any>();
+  aggregationResult$ = this.aggregationResultSubject.asObservable();
 
   // Components should subscribe to the searchStatus$ stream
   // to know the *status* of the search (for displaying such 
@@ -68,20 +78,25 @@ export class QueryService {
     this.searchStatusSubject.next(StrixEvent.SEARCHEND);
   }
 
-  /* Every query call becomes a stream in the stream of streams,
-     but only the most recently added strean will actually be
-     subscribed to. (I.e. all older pending streams will be unsubscribed) */
-  private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
-
   public runCurrentQuery() {
     this.signalStartedSearch();
     this.runQuery(this.currentQuery);
+    this.runAggregationQuery(this.currentQuery);
   }
 
   private runQuery(query: StrixQuery) {
     if (query.type === "normal") {
       console.log("adding a search to the stream of streams");
       this.streamOfStreams.next(this.callsService.searchForString(query));
+    } else {
+      // ... we'll see what the future brings
+    }
+  }
+  
+  private runAggregationQuery(query: StrixQuery) {
+    if (query.type === "normal") {
+      console.log("adding an aggregation search to the stream of streams");
+      this.streamOfAggregationStreams.next(this.callsService.getAggregations(query));
     } else {
       // ... we'll see what the future brings
     }
@@ -97,7 +112,13 @@ export class QueryService {
       this.currentQuery.queryString = data.query;
       this.currentQuery.pageIndex = data.page;
       this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-      this.currentQuery.corpora = data.corpora; // TODO: Get all corpora as default
+      console.log("data.corpora", data.corpora);
+      if ( data.corpora.length === 1 && data.corpora[0] === undefined) { // Because of "corpora=" in the URL
+        this.currentQuery.corpora = []; // All corpora (default)
+      } else {
+        this.currentQuery.corpora = data.corpora;
+      }
+      
       this.currentQuery.filters = data.filters;
       this.runCurrentQuery(); // Perform the actual search
     });
@@ -115,6 +136,11 @@ export class QueryService {
     }).subscribe( value => {
       this.signalEndedSearch();
       this.searchResultSubject.next(value);
+    });
+    this.streamOfAggregationStreams.switchMap( obj => {
+      return obj;
+    }).subscribe( value => {
+      this.aggregationResultSubject.next(value);
     });
   }
 

@@ -107,7 +107,18 @@ export class CallsService {
   // search
   public searchForString(query: StrixQuery) : Observable<StrixResult> {
     console.log("the query filters are:", query.filters);
-    let corpusIDs = query.corpora;
+    //let corpusIDs = query.corpora;
+    let corpusIDs = [];
+
+    /* temporary fix */
+    let filters = _.cloneDeep(query.filters);
+    for (let key in filters) {
+      if (filters[key].field === "corpora") {
+        corpusIDs = filters[key].values;
+        filters.splice(key, 1);
+      }
+    }
+
     let searchString = query.queryString;
     if (searchString === null) {
       searchString = ""
@@ -115,12 +126,48 @@ export class CallsService {
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/search`;
-    console.log('url', url);
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `&corpora=${corpusIDs.join(",")}` : "";
     let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
-    if (query.filters && _.size(query.filters) > 0) {
-      paramsString += `&text_filter=${this.formatFilterObject(query.filters)}`;
+    if (filters && _.size(filters) > 0) {
+      paramsString += `&text_filter=${this.formatFilterObject(filters)}`;
     }
+    let options = new RequestOptions({
+      search : new URLSearchParams(paramsString)
+    });
+    return this.http.get(url, options)
+                    .map(this.preprocessResult)
+                    .catch(this.handleError);
+  }
+
+  /* Get aggregations for faceted search */
+  public getAggregations(query: StrixQuery) {
+    console.log("the query is:", query);
+    //let corpusIDs = query.corpora;
+    let corpusIDs = [];
+
+    /* temporary fix */
+    let filters = _.cloneDeep(query.filters);
+    for (let key in filters) {
+      if (filters[key].field === "corpora") {
+        corpusIDs = filters[key].values;
+        filters.splice(key, 1);
+      }
+    }
+
+
+    let searchString = query.queryString;
+    if (searchString === null) {
+      searchString = ""
+    }
+    let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
+    let toPage = (query.pageIndex) * query.documentsPerPage;
+    let url = `${this.STRIXBACKEND_URL}/aggs`;
+    let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
+    let paramsString = `${corporaPart}&text_query=${searchString}`;
+    if (filters && _.size(filters) > 0) {
+      paramsString += `&text_filter=${this.formatFilterObject(filters)}`;
+    }
+    console.log("paramsString", paramsString);
     let options = new RequestOptions({
       search : new URLSearchParams(paramsString)
     });

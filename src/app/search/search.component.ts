@@ -121,14 +121,14 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchRedux.take(1).subscribe(data => {
+    /* this.searchRedux.take(1).subscribe(data => {
       this.getHistogramData(data.corpora);
-    });
+    }); */
 
-    this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
+    /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
       console.log("acting upon", data.latestAction);
       this.getHistogramData(data.corpora);
-    });
+    }); */
   }
 
   private getHistogramData(corpora: string[]) {

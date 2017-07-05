@@ -26,11 +26,10 @@ export class RoutingService {
   private searchRedux: Observable<any>;
 
   private readonly urlFields = [
-    {tag : "corpora", type : FragmentType.STRINGARRAY, default : ["vivill"]},
+    {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
     {tag : "type", type : FragmentType.STRING, default : ""},
     {tag : "query", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
-    //{tag : "nextCorpora", type : FragmentType.STRINGARRAY, default : ["vivill"]},
     {tag : "nextType", type : FragmentType.STRING, default : "normal"},
     {tag : "nextQuery", type : FragmentType.STRING, default : ""},
     {tag : "filters", type : FragmentType.BASE64, default : {}},

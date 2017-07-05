@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
-import { SEARCH, CHANGECORPORA, CHANGELANG, CHANGEFILTERS, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import { SEARCH, CHANGELANG, CHANGEFILTERS, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -25,11 +25,11 @@ export class LeftcolumnComponent implements OnInit {
   private selectedLanguage: string = "";
   private gotMetadata = false;
 
-  private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
-  private availableCorporaKeys: string[] = [];
-  private selectedCorpusID: string = null; // TODO: Temporary
+  //private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
+  //private availableCorporaKeys: string[] = [];
+  //private selectedCorpusID: string = null; // TODO: Temporary
   private metadataSubscription: Subscription;
-  private searchResultSubscription: Subscription;
+  private aggregatedResultSubscription: Subscription;
 
   private aggregations = {};
   private aggregationKeys: string[] = [];
@@ -50,12 +50,7 @@ export class LeftcolumnComponent implements OnInit {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
-          this.availableCorpora = metadataService.getAvailableCorpora();
-          this.availableCorporaKeys = _.keys(this.availableCorpora);
           this.gotMetadata = true;
-        } else {
-          this.availableCorpora = {}; // TODO: Show some error message
-          this.availableCorporaKeys = [];
         }
     });
 
@@ -91,12 +86,13 @@ export class LeftcolumnComponent implements OnInit {
       this.currentFilters = newFilters; */
     });
 
-    this.searchResultSubscription = queryService.searchResult$.subscribe(
+    this.aggregatedResultSubscription = queryService.aggregationResult$.subscribe(
       answer => {
         console.log("answer", answer);
         // Make use of the aggregations
         this.aggregations = answer.aggregations;
         this.aggregationKeys = _.keys(this.aggregations);
+        console.log("aggregationKeys >", this.aggregationKeys);
         //this.documentsWithHits = answer.data;
         //this.totalNumberOfDocuments = answer.count;
         //this.isLoading = false;
@@ -108,15 +104,13 @@ export class LeftcolumnComponent implements OnInit {
 
   }
 
-  private chooseCorpus(corpusID: string) {
-    this.selectedCorpusID = corpusID;
-    //this.queryService.chooseCorpora([this.selectedCorpusID]);
-    //this.queryService.registerUpdate();
-    this.currentFilters = [];
-
-    this.store.dispatch({ type: CHANGECORPORA, payload : [corpusID]});
-    this.store.dispatch({ type: SEARCH, payload : null});
-  }
+  //private chooseCorpus(corpusID: string) {
+  //  this.selectedCorpusID = corpusID;
+  //  this.currentFilters = [];
+  //
+  //  this.store.dispatch({ type: CHANGECORPORA, payload : [corpusID]});
+  //  this.store.dispatch({ type: SEARCH, payload : null});
+  //}
 
   private chooseBucket(aggregationKey: string, bucket: string) {
     console.log(aggregationKey, bucket);
@@ -162,11 +156,21 @@ export class LeftcolumnComponent implements OnInit {
     }
     return false;
   }
+  private currentValueFor(aggregationKey: string): string {
+    for (let currentFilter of this.currentFilters) {
+      if (currentFilter.field === aggregationKey) {
+        return currentFilter.values[0];
+      }
+    }
+    return "–missing–";
+  }
 
-  private purgeCorpus() {
+  /* private purgeCorpus() {
     this.selectedCorpusID = null;
     this.purgeAllFilters();
-  }
+    this.store.dispatch({ type: CHANGECORPORA, payload : []});
+    this.store.dispatch({ type: SEARCH, payload : null});
+  } */
 
   private changeLanguageTo(language: string) {
     this.store.dispatch({ type: CHANGELANG, payload : language});
@@ -184,7 +188,7 @@ export class LeftcolumnComponent implements OnInit {
 
   ngOnInit() {
     this.searchRedux.take(1).subscribe(data => {
-      this.chooseCorpus(data.corpora[0]);
+      //this.chooseCorpus(data.corpora[0]);
       // Take any current filters from the store and massage them so they work with the internal data model
       let filterData = data.filters || {};
       let newFilters = [];

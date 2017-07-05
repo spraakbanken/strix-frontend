@@ -15,21 +15,8 @@
   <minidocselection *ngIf="openDocument"></minidocselection>
   <div class="clear"></div>
   <div class="filters_area" *ngIf="!openDocument && gotMetadata">
-    <div *ngIf="selectedCorpusID" class="purge_corpus_button">
-      <!--{{availableCorpora[selectedCorpusID].name | loc}}&nbsp;
-      <i class="fa fa-window-close-o"></i>-->
-      <div class="filter_box filter_box_corpus" (click)="purgeCorpus()">
-        {{availableCorpora[selectedCorpusID].name | loc}}&nbsp;
-        <div class="purge_filter_button"><i class="fa fa-times-circle"></i></div>
-      </div>
-    </div>
-    <ul *ngIf="!selectedCorpusID">
-      <li class="corpus_item" [class.selected]="selectedCorpusID === corpusID" *ngFor="let corpusID of availableCorporaKeys" (click)="chooseCorpus(availableCorpora[corpusID].corpusID)">
-        {{availableCorpora[corpusID].name | loc}}
-      </li>
-    </ul>
     <div *ngFor="let aggregationKey of aggregationKeys" class="aggregation_list">
-      <ng-template [ngIf]="!hasFilter(aggregationKey)">
+      <ng-template [ngIf]="!hasFilter(aggregationKey) && aggregationKey !== 'datefrom' && aggregationKey !== 'dateto'">
         <i>{{aggregationKey}}</i>&nbsp;
         <ul>
           <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" (click)="chooseBucket(aggregationKey, bucket.key)">
@@ -37,7 +24,7 @@
           </li>
         </ul>
       </ng-template>
-      <ng-template [ngIf]="hasFilter(aggregationKey)">
+      <ng-template [ngIf]="hasFilter(aggregationKey) && aggregationKey !== 'datefrom' && aggregationKey !== 'dateto'">
         <!--<div
           class="purge_aggregation_button"
           (click)="purgeFilter(aggregationKey)">
@@ -48,7 +35,7 @@
           {{aggregations[aggregationKey].buckets[0].key}}&nbsp;
         </div>-->
         <div class="filter_box">
-          {{aggregationKey}} = {{aggregations[aggregationKey].buckets[0].key}}&nbsp;
+          {{aggregationKey}} = {{currentValueFor(aggregationKey)}}&nbsp;
           <div class="purge_filter_button" (click)="purgeFilter(aggregationKey)"><i class="fa fa-times-circle"></i></div>
         </div>
       </ng-template>

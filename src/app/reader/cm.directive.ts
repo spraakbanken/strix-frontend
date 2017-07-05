@@ -75,7 +75,7 @@ export class CmDirective {
             state.beginning = false;
             return 'variable-2';
           } else {
-            let styles = []
+            let styles = [];
 
             if (state.currentWid === null) {
               state.currentWid = window['CodeMirrorStrix'][state.documentIndex].lines[state.line][0];
@@ -87,10 +87,6 @@ export class CmDirective {
               stream.next();
               return
               //return;
-            }
-
-            if (token.word === ",") {
-              console.log("FOUND!!")
             }
 
             //if (! token) { // Temporary because the BE only returns 10 now.
@@ -111,7 +107,7 @@ export class CmDirective {
               }
             }
 
-            if (tokenAnnotations.random === 'true') {
+            if (tokenAnnotations.random === 'true') { // Just for testing
               styles.push('underlined');
             }
 
@@ -119,9 +115,9 @@ export class CmDirective {
             //console.log("documentIndex", documentIndex, window['CodeMirrorStrixControl'][documentIndex]);
 
             if (window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType) {
-              let currentAnnotationType : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;
-              let currentAnnotationValue : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationValue;
-              let currentAnnotationDatatype : string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationDatatype;
+              let currentAnnotationType: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;
+              let currentAnnotationValue: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationValue;
+              let currentAnnotationDatatype: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationDatatype;
 
               if (currentAnnotationDatatype === "default") {
                 if (tokenAnnotations[currentAnnotationType] === currentAnnotationValue) { // TODO: Value is always string?
@@ -138,19 +134,12 @@ export class CmDirective {
               
             }
 
-            if (styles.length === 0) {
-              // add dummy style so all tokens get a <span>, or else there will be flickering in some browsers
-              if (".,;!?".indexOf(token.word) != -1) {
-                // Workaround for a strange codemirror behavior that joins segments that aren't whitespace–
-                // separated with the preceeding segment if the style is the same. We don't want that
-                // because it may cause flickering and sometimes even causes the text to reflow!
-                // TODO: Probably still a problem for cases like hello!? and hello...
-                // We could maybe save the last type of nostyle in the state and use the other one.
-                return "nostyle2";
-              } else {
-                return 'nostyle';
-              }
-            }
+            // Workaround for a disturbing codemirror behavior that joins segments that aren't whitespace–
+            // separated with the preceeding segment if the style is the same. We don't want that
+            // because it may cause flickering and sometimes even causes the text to reflow!
+            var dummyStyle = state.currentWid % 2 === 0 ? "even" : "odd";
+            styles.push(dummyStyle);
+
             return styles.join(' ');
           }
         }
