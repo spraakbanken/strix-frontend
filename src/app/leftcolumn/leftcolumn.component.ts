@@ -183,7 +183,7 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private reloadStrix() {
-    window.location.href = '/';
+    window.location.href = window.location.pathname;
   }
 
   ngOnInit() {

@@ -52,14 +52,74 @@
     (onScrollInDocument)="onScrollInDocument(0)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
-  <accordion closeOthers="true" class="right_accordion">
+  <accordion closeOthers="true" class="right_accordion" *ngIf="cmViews.length !== 0">
     <accordion-group heading="Sökträffar">
-      <div class="text_right_column" *ngIf="showSidebar && cmViews.length !== 0 && !singleWordSelection">
+      <div class="text_right_column" *ngIf="cmViews.length !== 0" class="bookmarks_area">
         <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
           <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
           <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
           &nbsp;{{bookmark.text}}
         </div>
+      </div>
+    </accordion-group>
+    <accordion-group heading="Textattribut">
+      <div class="text_annotations_list">
+         <ul class="annotations_list_ul">
+          <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].textAttributes">
+            <span [ngSwitch]="annotation.set || false">
+              <span *ngSwitchCase="true">
+                {{annotation.name}}:<br/>
+                <ul>
+                  <li
+                    *ngFor="let item of mainDocument.textAttributes[annotation.name]">
+                    {{item}}
+                  </li>
+                </ul>
+              </span>
+              <span
+                *ngSwitchCase="false">
+                {{annotation.name}}: {{mainDocument.textAttributes[annotation.name]}}
+              </span>
+            </span>
+          </li>
+        </ul>
+      </div>
+    </accordion-group>
+    <accordion-group heading="Strukturella attribut">
+      <div
+        class="token_annotations_list"
+        *ngIf="!isLoading && showBox && singleWordSelection">
+        <div *ngFor="let annotationGroup of availableCorpora[mainDocument.corpusID].structAttributes">
+          <div *ngIf="currentAnnotations[annotationGroup.name]">
+            <em>{{annotationGroup.name}}</em>
+            <ul class="annotations_list_ul indent">
+              <li *ngFor="let annotation of annotationGroup.attributes">
+                <span [ngSwitch]="annotation.set || false">
+                  <span *ngSwitchCase="true">
+                    {{annotation.name}}:<br/>
+                    <ul>
+                      <li
+                        *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name]"
+                        (click)="changeAnnotationHighlight(annotation.name, item, 'set')"
+                        class="highlightable_annotation">
+                        {{item}}
+                      </li>
+                    </ul>
+                  </span>
+                  <span
+                    *ngSwitchCase="false"
+                    (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name]);readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                    class="highlightable_annotation">
+                    {{annotation.name}}: {{currentAnnotations[annotationGroup.name].attrs[annotation.name]}}
+                  </span>
+                </span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="!singleWordSelection">
+        <i>markera ett ord för att se dess attribut</i>
       </div>
     </accordion-group>
       <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
@@ -69,24 +129,7 @@
       <div
         class="token_annotations_list"
         *ngIf="!isLoading && showBox && singleWordSelection">
-        <!--<div class="closeBox" (click)="closeBox()">
-          <i class="fa fa-window-close-o"></i>
-        </div>
-        <div class="clear"></div>-->
         <ul class="annotations_list_ul">
-          <!-- <li
-            *ngFor="let annotation of currentAnnotationsKeys">
-            <span class="goto_left" (click)="gotoLeft(annotation, currentAnnotations[annotation])">
-              <i class="fa fa-angle-left"></i>
-            </span>
-            <span
-              (click)="changeAnnotationHighlight(annotation, currentAnnotations[annotation])">
-              {{annotation}}: {{currentAnnotations[annotation]}}
-            </span>
-            <span class="goto_right" (click)="gotoRight(annotation, currentAnnotations[annotation])">
-              <i class="fa fa-angle-right"></i>
-            </span>
-          </li> -->
           <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].wordAttributes">
             <span [ngSwitch]="annotation.set">
               <span *ngSwitchCase="true">
@@ -109,6 +152,9 @@
             </span>
           </li>
         </ul>
+      </div>
+      <div *ngIf="!singleWordSelection">
+        <i>markera ett ord för att se dess attribut</i>
       </div>
     </accordion-group>
   </accordion>

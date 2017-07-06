@@ -8,10 +8,6 @@
     <img src="assets/logo.png" style="width:95%;margin-top:12px"/>
   </div>
   <div class="clear"></div>
-  <!--<div style="margin-left:12px;margin-top:8px">
-    <i class="fa fa-th"></i>&nbsp;Gå till sökresultat<br/>
-    <i class="fa fa-file-text-o"></i>&nbsp;Gå till text
-  </div>-->
   <minidocselection *ngIf="openDocument"></minidocselection>
   <div class="clear"></div>
   <div class="filters_area" *ngIf="!openDocument && gotMetadata">
@@ -25,15 +21,6 @@
         </ul>
       </ng-template>
       <ng-template [ngIf]="hasFilter(aggregationKey) && aggregationKey !== 'datefrom' && aggregationKey !== 'dateto'">
-        <!--<div
-          class="purge_aggregation_button"
-          (click)="purgeFilter(aggregationKey)">
-          <i class="fa fa-window-close-o"></i>
-        </div>
-        <div class="selected_frame">
-          <i class="selected">{{aggregationKey}}</i>&nbsp;
-          {{aggregations[aggregationKey].buckets[0].key}}&nbsp;
-        </div>-->
         <div class="filter_box">
           {{aggregationKey}} = {{currentValueFor(aggregationKey)}}&nbsp;
           <div class="purge_filter_button" (click)="purgeFilter(aggregationKey)"><i class="fa fa-times-circle"></i></div>

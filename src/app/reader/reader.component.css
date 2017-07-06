@@ -66,11 +66,16 @@ ul {
   }
 }
 
+.bookmarks_area {
+  overflow: hidden;
+}
+
 .bookmark {
   font-size: small;
   font-style: italic;
   cursor: pointer;
   white-space: nowrap;
+  overflow: hidden;
 }
 
 .readerArea {
@@ -166,6 +171,9 @@ ul {
 
 .annotations_list_ul {
   padding-left: 0px;
+}
+.indent {
+  margin-left: 10px;
 }
 
 /* .tokenAnnotationsList {

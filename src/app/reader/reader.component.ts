@@ -27,7 +27,6 @@ interface AppState {
   styleUrls: ['./reader.component.css']
 })
 export class ReaderComponent implements AfterViewInit {
-  //@ViewChild(CmComponent) mirror: CmComponent;
   @ViewChildren(CmComponent) mirrors: QueryList<CmComponent>;
   subscription : Subscription;
 
@@ -66,13 +65,6 @@ export class ReaderComponent implements AfterViewInit {
   private viewPortEvent = new Subject<any>();
   private viewPortChange$: Observable<any> = this.viewPortEvent.asObservable();
 
-  /*
-    this.showBox = false;
-    this.cmViews.splice(0);
-    break;
-  */
-
-
   constructor(private documentsService: DocumentsService,
               private store: Store<AppState>,
               private metadataService: MetadataService,
@@ -80,7 +72,6 @@ export class ReaderComponent implements AfterViewInit {
 
     // When done we need to do:
     this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
-      //console.log("this is what we got back", documentsProcessing);
       console.log("got new token data – causing refresh of the CM syntax coloring")
       if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
     });
@@ -91,11 +82,9 @@ export class ReaderComponent implements AfterViewInit {
         if (wasSuccess) {
           this.availableCorpora = metadataService.getAvailableCorpora();
           console.log("the metadata", this.availableCorpora);
-          //this.availableCorporaKeys = _.keys(this.availableCorpora);
           this.gotMetadata = true;
         } else {
           this.availableCorpora = {}; // TODO: Show some error message
-          //this.availableCorporaKeys = [];
         }
     });
 
@@ -104,9 +93,7 @@ export class ReaderComponent implements AfterViewInit {
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.showBox = false;
       this.singleWordSelection = false;
-      //this.mirrors.first.codeMirrorInstance.setValue("");
       this.removeView(0);
-      //this.cmViews.splice(0);
     });
 
     // When the user changes the viewport, we wait until there is
@@ -138,6 +125,8 @@ export class ReaderComponent implements AfterViewInit {
 
         let openedDocument = documentsService.getDocument(message.documentIndex);
         this.mainDocument = openedDocument;
+
+        console.log("the document", this.mainDocument);
 
         let wholeText = openedDocument.dump.join("\n");
 
@@ -232,14 +221,10 @@ export class ReaderComponent implements AfterViewInit {
 
       if (this.selectionStartTokenID === this.selectionEndTokenID) {
         let currentToken = activeDocument.token_lookup[this.selectionStartTokenID];
-        console.log("this.currentAnnotations", this.currentAnnotations);
         this.currentAnnotations = currentToken.attrs;
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
+        console.log("currentAnnotations", this.currentAnnotations);
       }
-
-      console.log("–––", selection.realCoordinates);
-      //this.annotationsListLeft = selection.realCoordinates.left + "px";
-      //this.annotationsListTop = selection.realCoordinates.bottom + "px";
 
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
     }
@@ -259,16 +244,9 @@ export class ReaderComponent implements AfterViewInit {
     mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head, {"scroll" : true})
   }
 
-  private onScrollInDocument(event) {
-    //console.log("onScrollInDocument", event);
-    //this.singleWordSelection = false;
-  }
+  private onScrollInDocument(event) {}
 
   private onViewportChange(event) {
-    console.log("viewportChange", event);
-    // This should start a stream which can be debounced
-    // and then call handleViewportChange();
-    //this.handleViewportChange();
     this.viewPortEvent.next(event);
   }
 
@@ -373,7 +351,6 @@ export class ReaderComponent implements AfterViewInit {
   }
 
   private gotoBookmark(index: number, bookmark: any) {
-    console.log("got index", index);
     let mirrorsArray = this.mirrors.toArray();
     let cmInstance = mirrorsArray[index].codeMirrorInstance;
     cmInstance.setSelection(bookmark.from);

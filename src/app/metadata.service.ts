@@ -20,6 +20,21 @@ export class MetadataService {
       answer => {
         console.log("corpus configs", answer);
         this.availableCorpora = answer;
+
+        // Temp workaround because the BE returns the structural attributes
+        // as dictionary so we need to make an array for consistency.
+        for (let corpus in this.availableCorpora) {
+          let attList = [];
+          for (let attributeKey in this.availableCorpora[corpus].structAttributes) {
+            attList.push({
+              attributes : this.availableCorpora[corpus].structAttributes[attributeKey],
+              name : attributeKey
+            });
+          }
+          this.availableCorpora[corpus].structAttributes = attList;
+        }
+        // end of temp fix
+
         this.successfulLoad.next(true);
       },
       error => this.errorMessage = <any>error
