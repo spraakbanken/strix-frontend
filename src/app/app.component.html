@@ -3,13 +3,12 @@
 </div>
 <div class="right_column">
   <search *ngIf="!openDocument" style="flex: 0 1 auto"></search> <!-- should we really have *ngIf="!openDocument" ? It looses the metadata when closing a document...-->
-  <docselection style="flex: 1 1 auto"></docselection>
+  <docselection [style.display]="(!openDocument)?'block':'none'" style="flex: 1 1 auto"></docselection><!-- We can't use ngIf because we want the component to stay in memory -->
   <indocsearch *ngIf="openDocument"></indocsearch>
   <header *ngIf="openDocument" style="flex: 0 1 auto"></header>
   <reader style="flex: 0 1 100%;overflow-y:auto"></reader>
-  <start-panel></start-panel>
-  <!--<div class="bottom_bar"><i>– plats för olika val –</i></div>-->
-  <div class="bottom_bar">
+  <start-panel *ngIf="!openDocument"></start-panel>
+  <div class="bottom_bar" *ngIf="openDocument">
     <annotations-selector></annotations-selector>
   </div>
 </div>

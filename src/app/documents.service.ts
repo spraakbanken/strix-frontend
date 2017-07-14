@@ -61,12 +61,12 @@ export class DocumentsService {
     console.log("in documents constructor");
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       console.log("open document with", data, this.queryService);
-      if (data.type === "LOCAL") {
+      if (data.localQuery && data.localQuery !== "") {
         // Reopen the current document with the new query
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.query || "");
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.localQuery || "");
       } else {
         // Open a new document in the ordinary way
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString());
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString() || "");
       }
       
     });

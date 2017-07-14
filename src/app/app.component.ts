@@ -33,6 +33,7 @@ export class AppComponent {
     });
 
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+      console.log("|closeDocument");
       this.openDocument = false;
     });
   }

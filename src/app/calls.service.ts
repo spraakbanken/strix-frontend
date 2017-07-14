@@ -153,6 +153,7 @@ export class CallsService {
         filters.splice(key, 1);
       }
     }
+    console.log("filters", filters);
 
 
     let searchString = query.queryString;
@@ -163,7 +164,10 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
-    let paramsString = `${corporaPart}&text_query=${searchString}`;
+    let paramsString = `${corporaPart}`;
+    if (searchString.length !== 0) {
+      paramsString += `&text_query=${searchString}`;
+    }
     if (filters && _.size(filters) > 0) {
       paramsString += `&text_filter=${this.formatFilterObject(filters)}`;
     }

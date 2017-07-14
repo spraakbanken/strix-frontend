@@ -32,6 +32,7 @@ export class ReaderComponent implements AfterViewInit {
 
   private docLoadStatusSubscription: Subscription;
   private isLoading = false;
+  private accordionOpen = null;
 
   private mainDocument: StrixDocument;
 
@@ -227,6 +228,9 @@ export class ReaderComponent implements AfterViewInit {
       }
 
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
+      if (this.singleWordSelection) {
+        this.accordionOpen = "TOKENATTRIBUTES";
+      }
     }
 
   }

@@ -101,7 +101,7 @@ export class CmDirective {
             while (! stream.eol()) {
               newToken += stream.next();
               if (newToken === tokenText) {
-                console.log("matching", newToken, "with", tokenText);
+                //console.log("matching", newToken, "with", tokenText);
                 state.currentWid++;
                 break;
               }

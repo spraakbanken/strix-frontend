@@ -2,9 +2,7 @@ import { ActionReducer, Action } from '@ngrx/store';
 import * as _ from 'lodash';
 
 export const CHANGETYPE = "CHANGETYPE";
-export const CHANGENEXTQUERY = "CHANGENEXTQUERY";
-export const CHANGENEXTTYPE = "CHANGENEXTQUERY";
-export const CHANGECORPORA = "CHANGECORPORA";
+export const CHANGEQUERY = "CHANGEQUERY";
 export const CHANGEFILTERS = "CHANGEFILTERS";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
@@ -29,15 +27,11 @@ export function searchReducer(state: any = {}, action: Action) {
       console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload);
       break;
+    case CHANGEQUERY:
+      nextState.query = action.payload;
+      break;
     case CHANGETYPE:
-      nextState.nextType = action.payload;
-      break;
-    case CHANGENEXTQUERY:
-      nextState.nextQuery = action.payload;
-      break;
-    case CHANGECORPORA:
-      nextState.corpora = action.payload;
-      //nextState.nextCorpora = action.payload;
+      nextState.type = action.payload;
       break;
     case CHANGEFILTERS:
       nextState.filters = action.payload;
@@ -57,14 +51,12 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.documentCorpus = null;
       break;
     case SEARCHINDOCUMENT:
-      console.log("RUNNING SEARCHINDOCUMENT");
-      nextState.type = "LOCAL"
-      nextState.query = action.payload;
+      nextState.localQuery = action.payload;
       nextState.latestAction = "OPENDOCUMENT";
       break;
     case SEARCH:
-      nextState.type = nextState.nextType;
-      nextState.query = nextState.nextQuery;
+      //nextState.type = nextState.nextType;
+      //nextState.query = nextState.nextQuery;
       //nextState.corpora = nextState.nextCorpora;
       nextState.page = 1;
       break;

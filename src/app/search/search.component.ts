@@ -10,7 +10,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGENEXTQUERY, CHANGEFILTERS, CHANGECORPORA, INITIATE } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, INITIATE } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -140,7 +140,7 @@ export class SearchComponent implements OnInit {
   }
 
   private simpleSearch() {
-    this.store.dispatch({ type: CHANGENEXTQUERY, payload : this.asyncSelected});
+    this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
   }
 

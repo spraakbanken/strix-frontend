@@ -24,14 +24,13 @@ enum FragmentType {
 export class RoutingService {
 
   private searchRedux: Observable<any>;
-
+  
   private readonly urlFields = [
     {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
-    {tag : "type", type : FragmentType.STRING, default : ""},
+    {tag : "type", type : FragmentType.STRING, default : "normal"},
     {tag : "query", type : FragmentType.STRING, default : ""},
+    {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
-    {tag : "nextType", type : FragmentType.STRING, default : "normal"},
-    {tag : "nextQuery", type : FragmentType.STRING, default : ""},
     {tag : "filters", type : FragmentType.BASE64, default : {}},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
@@ -96,9 +95,10 @@ export class RoutingService {
 
     this.store.dispatch({ type : INITIATE, payload : startState});
 
-    if (startState["query"]) {
-      this.store.dispatch({ type : RELOAD, payload : null});
-    }
+    setTimeout(() => { this.store.dispatch({ type : RELOAD, payload : null}); }, 1);
+    // REM: The timeout is needed to make sure the components start listening to the query streams,
+    // else they will be cold and not fire.
+    // There probably is a better solution for this. Maybe we can use BehaviorSubjects?
 
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
     const timer = TimerObservable.create(0);

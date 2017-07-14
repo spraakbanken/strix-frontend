@@ -53,7 +53,10 @@
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
   <accordion closeOthers="true" class="right_accordion" *ngIf="cmViews.length !== 0">
-    <accordion-group heading="Sökträffar">
+    <accordion-group [isOpen]="accordionOpen === 'HITS'">
+      <div accordion-heading>
+        <i class="fa fa-search"></i> Sökträffar <span *ngIf="bookmarks.length > 0">({{bookmarks.length}})</span>
+      </div>
       <div class="text_right_column" *ngIf="cmViews.length !== 0" class="bookmarks_area">
         <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
           <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
@@ -62,7 +65,7 @@
         </div>
       </div>
     </accordion-group>
-    <accordion-group heading="Textattribut">
+    <accordion-group heading="Textattribut" [isOpen]="accordionOpen === 'TEXTATTRIBUTES'">
       <div class="text_annotations_list">
          <ul class="annotations_list_ul">
           <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].textAttributes">
@@ -85,7 +88,7 @@
         </ul>
       </div>
     </accordion-group>
-    <accordion-group heading="Strukturella attribut">
+    <accordion-group heading="Strukturella attribut" [isOpen]="accordionOpen === 'STRUCTURALATTRIBUTES'">
       <div
         class="token_annotations_list"
         *ngIf="!isLoading && showBox && singleWordSelection">
@@ -125,7 +128,7 @@
       <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
       <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
       <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
-    <accordion-group heading="Ordattribut">
+    <accordion-group heading="Ordattribut" [isOpen]="accordionOpen === 'TOKENATTRIBUTES'">
       <div
         class="token_annotations_list"
         *ngIf="!isLoading && showBox && singleWordSelection">

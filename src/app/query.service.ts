@@ -79,6 +79,7 @@ export class QueryService {
   }
 
   public runCurrentQuery() {
+    console.log(":runCurrentQuery");
     this.signalStartedSearch();
     this.runQuery(this.currentQuery);
     this.runAggregationQuery(this.currentQuery);
@@ -112,12 +113,12 @@ export class QueryService {
       this.currentQuery.queryString = data.query;
       this.currentQuery.pageIndex = data.page;
       this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-      console.log("data.corpora", data.corpora);
+      /* console.log("data.corpora", data.corpora);
       if ( data.corpora.length === 1 && data.corpora[0] === undefined) { // Because of "corpora=" in the URL
         this.currentQuery.corpora = []; // All corpora (default)
       } else {
         this.currentQuery.corpora = data.corpora;
-      }
+      } */
       
       this.currentQuery.filters = data.filters;
       this.runCurrentQuery(); // Perform the actual search

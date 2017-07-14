@@ -1,24 +1,3 @@
-<!--<div class="btn-group" dropdown dropup="true">
-  <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
-    {{selectedAnnotation || "–"}} <span class="caret"></span>
-  </button>
-  <ul *dropdownMenu class="dropdown-menu" role="menu">
-    <li role="menuitem" *ngFor="let item of wordAnnotations">
-      <a class="dropdown-item" href="#" (click)="selectAnnotation(item.name)">{{item.name}}</a>
-    </li>
-  </ul>
-</div>-->
-
-<!--<div class="btn-group" dropdown dropup="true">
-  <button dropdownToggle type="button" class="btn btn-primary dropdown-toggle">
-    Dropup <span class="caret"></span>
-  </button>
-  <ul *dropdownMenu class="dropdown-menu" role="menu">
-    <li role="menuitem" *ngFor="let item of annotationValues">
-      <a class="dropdown-item" href="#" (click)="selectAnnotationValue(item.key)">{{item.key}}</a>
-    </li>
-  </ul>
-</div>-->
 <select (change)="selectAnnotation($event.target.value)" [ngModel]="selectedAnnotation">
   <option *ngFor="let item of wordAnnotations" value="{{item.name}}">{{item.name}}</option>
 </select>

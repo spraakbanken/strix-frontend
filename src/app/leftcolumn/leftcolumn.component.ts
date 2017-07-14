@@ -88,7 +88,7 @@ export class LeftcolumnComponent implements OnInit {
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.subscribe(
       answer => {
-        console.log("answer", answer);
+        console.log("leftcolumn answer", answer);
         // Make use of the aggregations
         this.aggregations = answer.aggregations;
         this.aggregationKeys = _.keys(this.aggregations);
@@ -103,14 +103,6 @@ export class LeftcolumnComponent implements OnInit {
 
 
   }
-
-  //private chooseCorpus(corpusID: string) {
-  //  this.selectedCorpusID = corpusID;
-  //  this.currentFilters = [];
-  //
-  //  this.store.dispatch({ type: CHANGECORPORA, payload : [corpusID]});
-  //  this.store.dispatch({ type: SEARCH, payload : null});
-  //}
 
   private chooseBucket(aggregationKey: string, bucket: string) {
     console.log(aggregationKey, bucket);
@@ -188,7 +180,6 @@ export class LeftcolumnComponent implements OnInit {
 
   ngOnInit() {
     this.searchRedux.take(1).subscribe(data => {
-      //this.chooseCorpus(data.corpora[0]);
       // Take any current filters from the store and massage them so they work with the internal data model
       let filterData = data.filters || {};
       let newFilters = [];
