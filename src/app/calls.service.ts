@@ -269,7 +269,7 @@ export class CallsService {
     // --------------------------------
     strixDocument.dump = data.dump;
     strixDocument.token_lookup = data.token_lookup;
-    strixDocument.corpusID = data.corpus;
+    strixDocument.corpusID = data.corpus_id;
     strixDocument.highlight = data.highlight;
     return strixDocument;
   }

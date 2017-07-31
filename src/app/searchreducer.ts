@@ -44,7 +44,7 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case OPENDOCUMENT:
       nextState.documentID = action.payload.doc_id;
-      nextState.documentCorpus = action.payload.corpus;
+      nextState.documentCorpus = action.payload.corpus_id;
       break;
     case CLOSEDOCUMENT:
       nextState.documentID = null;

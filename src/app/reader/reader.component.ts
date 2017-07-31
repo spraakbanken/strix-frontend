@@ -338,7 +338,7 @@ export class ReaderComponent implements AfterViewInit {
 
     let tokenID = doc.getTokenID(fromCursor.line, fromCursor.ch);
     let fragments: string[] = [];
-    for( let t = tokenID; t < tokenID + 4; t++) {
+    for (let t = tokenID; t < tokenID + 4; t++) {
       fragments.push(doc.token_lookup[t].word);
     }
     let text = fragments.join(" ");

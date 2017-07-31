@@ -94,6 +94,7 @@ export class DocselectionComponent implements OnInit {
 
   private openDocument(docIndex: number) {
     let doc = this.documentsWithHits[docIndex];
+    console.log("doc to open", doc);
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
   }
   private openDocumentInNew(docIndex: number) { // <- Not currently in use
