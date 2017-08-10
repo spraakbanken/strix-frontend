@@ -3,9 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "ng" : "ng",
+    "ng": "ng",
     "start": "ng serve",
-    "build" : "ng build",
+    "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@angular/cli": "1.0.3",
-    "@angular/compiler-cli":"^4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
     "@types/codemirror": "0.0.35",
     "@types/jasmine": "2.5.38",
     "@types/lodash": "^4.14.38",

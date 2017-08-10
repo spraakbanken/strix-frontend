@@ -49,5 +49,7 @@
       <div class="purge_filter_button" (click)="purgeFilter(filter.field)"><i class="fa fa-times-circle"></i></div>
     </div>
   </div>
-  <i *ngIf="isSearching" class="fa fa-spinner fa-pulse"></i>
+  <div style="height: 1em;">
+    <i [ngClass]="{fade_in : isSearching}" class="fa fa-spinner fa-pulse"></i>
+  </div>
 </div>
