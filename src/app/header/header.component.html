@@ -1,5 +1,5 @@
 <div class="doc_header" *ngIf="documentTitle">
-  <b>{{documentTitle}}</b>
+  <b>{{corpusName | loc}}: {{documentTitle}}</b>
   <div class="close_box" (click)="closeDocument()">
     <i class="fa fa-times fa-border"></i>
   </div>

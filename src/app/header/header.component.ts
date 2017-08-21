@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { DocumentsService } from '../documents.service';
+import { MetadataService } from '../metadata.service';
 
 /**
  * The header component should let the user search in the open document and as well
@@ -15,15 +16,18 @@ import { DocumentsService } from '../documents.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent implements OnInit {
-
+  
   private subscription: Subscription;
   private documentTitle: string;
+  private corpusName: string;
 
-  constructor(private documentsService : DocumentsService) {
+  constructor(private documentsService : DocumentsService, private metadataService : MetadataService) {
 
     this.subscription = documentsService.loadedDocument$.subscribe(message => {
       let openedDocument = documentsService.getDocument(message.documentIndex);
+      console.log("openedDocument", openedDocument)
       this.documentTitle = openedDocument.title;
+      this.corpusName = this.metadataService.getName(openedDocument.corpusID);
     });
 
   }
@@ -31,6 +35,7 @@ export class HeaderComponent implements OnInit {
   private closeDocument() {
     this.documentsService.closeMainDocument();
     this.documentTitle = null;
+    this.corpusName = null;
   }
 
   ngOnInit() {

@@ -52,6 +52,10 @@ export class MetadataService {
   public getStructuralAnnotationsFor(corpusID: string): any[] {
     return this.availableCorpora[corpusID].structAttributes || [];
   }
+  
+  public getName(corpusID: string): string {
+    return this.availableCorpora[corpusID].name;
+  }
 
   /*
     THERE NEEDS TO BE A WAY FOR THE METADATA SERVICE TO NOTIFY ALL OTHER COMPONENTS
