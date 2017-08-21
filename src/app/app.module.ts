@@ -54,7 +54,7 @@ import { SearchFilterComponent } from './search-filter/search-filter.component';
     IndocsearchComponent,
     HistogramComponent,
     AnnotationsSelectorComponent,
-    SearchFilterComponent
+    // SearchFilterComponent
   ],
   imports: [
     BrowserModule,
