@@ -107,7 +107,7 @@ export class RoutingService {
         console.log("autoopening document", startState["documentID"], startState["documentCorpus"]);
         this.store.dispatch({
           type : OPENDOCUMENT,
-          payload : {doc_id : startState["documentID"], corpus : startState["documentCorpus"]}
+          payload : {doc_id : startState["documentID"], corpus_id : startState["documentCorpus"]}
         });
       }
     });
