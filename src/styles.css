@@ -8,6 +8,10 @@
 
 /* CodeMirror related */
 
+.cm-hidden {
+  background-color: #ddd;
+  color: black;
+}
 .cm-underlined {
   color: #337ab7;
 }

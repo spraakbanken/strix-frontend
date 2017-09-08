@@ -15,7 +15,7 @@ export class CmComponent implements OnInit {
   @Output() onSelectionChange = new EventEmitter<StrixSelection>();
   @Output() onViewportChange = new EventEmitter<any>();
   @Output() onFocus = new EventEmitter<number>();
-  @Output() onScrollInDocument = new EventEmitter<number>();
+  @Output() onScroll = new EventEmitter<number>();
   @Output() onKeydown = new EventEmitter<any>();
 
   @Input() index : number;
@@ -72,7 +72,7 @@ export class CmComponent implements OnInit {
     });
 
     this.codeMirrorInstance.on('scroll', (instance, event) => {
-      this.onScrollInDocument.emit(this.index);
+      this.onScroll.emit(this.codeMirrorInstance.getViewport());
     });
 
     this.codeMirrorInstance.on('keydown', (instance, event) => {

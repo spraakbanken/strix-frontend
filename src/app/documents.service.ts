@@ -300,6 +300,8 @@ export class DocumentsService {
     // Get some more lines so we more likely have enough for the viewport when coloring
     fromLine = Math.max(fromLine - 20, 0);
 
+    toLine += 20;
+
     let firstToken = doc.getFirstTokenFromLine(fromLine);
     let lastToken = doc.getLastTokenFromLine(toLine);
     

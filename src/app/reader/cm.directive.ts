@@ -43,6 +43,10 @@ export class CmDirective {
     CodeMirror.defineMode('strix', function(config, parserConfig) {
       return {
         startState : function() {
+          if (! window["pcounter"] )
+            window["pcounter"] = 0;
+          window["pcounter"]++;
+          console.log("-START-", window["pcounter"]);
           return {
             currentWid : null,
             line : null,
@@ -50,7 +54,6 @@ export class CmDirective {
           };
         },
         token : function(stream, state) {
-
           const DOC_ID_PREFIX_LENGTH = 4;
           const LINE_NUM_PREFIX_LENGTH = 8;
 
@@ -83,9 +86,12 @@ export class CmDirective {
             if (state.currentWid === undefined || state.currentWid === null) console.log("TOKEN PROBLEM.");
             let token = window['CodeMirrorStrix'][state.documentIndex].token_lookup[state.currentWid];
             if (token === undefined ) {
-              console.log("FOUND UNDEFINED TOKEN.");
-              stream.next();
-              return
+              console.log("FOUND UNDEFINED TOKEN.", window["pcounter"], state.currentWid, window['CodeMirrorStrix'][state.documentIndex].token_lookup);
+              //stream.next();
+              stream.skipToEnd();
+              state.line++;
+              state.currentWid = null;
+              return "hidden"
               //return;
             }
 

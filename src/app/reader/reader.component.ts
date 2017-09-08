@@ -73,7 +73,7 @@ export class ReaderComponent implements AfterViewInit {
 
     // When done we need to do:
     this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
-      console.log("got new token data – causing refresh of the CM syntax coloring")
+      console.log("got new token data – causing refresh of the CM syntax coloring: ", actuallyDidSomething)
       if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
     });
 
@@ -100,7 +100,7 @@ export class ReaderComponent implements AfterViewInit {
     // When the user changes the viewport, we wait until there is
     // a period of "radio silence" before we act on only THE LAST change.
     // This is to spare calls to the backend.
-    this.viewPortChange$.debounceTime(1000).subscribe( (event) =>
+    this.viewPortChange$.debounceTime(100).subscribe( (event) =>
       this.handleViewportChange(event)
     );
 
@@ -236,8 +236,6 @@ export class ReaderComponent implements AfterViewInit {
   }
   /* Selects <tokenID> in the currently selected codemirror */
   private selectToken(cmIndex: number, tokenID) {
-    let anchor = {"line" : 0, "ch" : 0};
-    let head = {"line" : 0, "ch" : 0};
 
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     let doc = this.documentsService.getDocument(selectedDocumentIndex);
@@ -245,7 +243,7 @@ export class ReaderComponent implements AfterViewInit {
     console.log("result", result);
 
     let mirrorsArray = this.mirrors.toArray();
-    mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head, {"scroll" : true})
+    mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head - 1, {"scroll" : true}) // Really don't know why we need -1 (!)
   }
 
   private onScrollInDocument(event) {}
@@ -256,8 +254,7 @@ export class ReaderComponent implements AfterViewInit {
 
   private handleViewportChange(event) {
     // First check if we have token information for the current viewport already
-    // NO IDEA WHY WE NEED -1 BELOW
-    this.documentsService.extendTokenInfoIfNecessary(event.index, event.from, event.to -1); // Returns observable
+    this.documentsService.extendTokenInfoIfNecessary(event.index || 0, event.from, event.to); // Returns observable
   }
 
   private onKeydown(event: any): void {
@@ -281,7 +278,7 @@ export class ReaderComponent implements AfterViewInit {
     window['CodeMirrorStrixControl'].splice(index);
   }
 
-  private changeAnnotationHighlight(type: string, value: string, datatype: string = "default") : void {
+  private changeAnnotationHighlight(type: string, value: string, datatype: string = "default"): void {
     console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     console.log("highlighting", type, value);
@@ -378,6 +375,9 @@ export class ReaderComponent implements AfterViewInit {
       let tokenBounds = doc.getTokenBounds(tokenID);
       let fromCursor = tokenBounds.anchor;
       let toCursor = tokenBounds.head;
+      //let toCursor = tokenBounds.anchor;
+      //let fromCursor = tokenBounds.head;
+      //toCursor.char += 1;// not sure why +1
 
       console.log("addHighlight", fromCursor, toCursor);
 

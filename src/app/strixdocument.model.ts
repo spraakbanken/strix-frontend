@@ -83,7 +83,8 @@ export class StrixDocument {
 
     return {
       "anchor" : {"line" : lineNumber, "ch" : charsConsumed},
-      "head" : {"line" : lineNumber, "ch" : charsConsumed + this.token_lookup[tokenID].word.length - 1}
+      //"head" : {"line" : lineNumber, "ch" : charsConsumed + this.token_lookup[tokenID].word.length - 1}
+      "head" : {"line" : lineNumber, "ch" : charsConsumed + this.token_lookup[tokenID].word.length}
     };
   }
 

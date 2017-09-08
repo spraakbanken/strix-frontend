@@ -35,7 +35,7 @@ import { IndocsearchComponent } from './indocsearch/indocsearch.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
 import { ReaderCommunicationService } from './reader-communication.service';
-import { SearchFilterComponent } from './search-filter/search-filter.component';
+//import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
   declarations: [

@@ -23,7 +23,7 @@
     "@ngrx/core": "^1.2.0",
     "@ngrx/store": "^2.2.1",
     "bootstrap": "^3.3.7",
-    "codemirror": "^5.20.2",
+    "codemirror": "^5.28.0",
     "core-js": "^2.4.1",
     "font-awesome": "^4.7.0",
     "lodash": "^4.16.6",

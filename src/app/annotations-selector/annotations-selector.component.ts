@@ -101,7 +101,7 @@ export class AnnotationsSelectorComponent implements OnInit {
           this.annotationValues = values;
         }
         
-        console.log("this.annotationValues", this.annotationValues);
+        //console.log("this.annotationValues", this.annotationValues);
       },
       error => this.errorMessage = <any>error
     );

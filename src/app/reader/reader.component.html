@@ -47,9 +47,8 @@
   <cm *ngIf="cmViews.length !== 0"
     [style.width.px]="width"
     (onSelectionChange)="onSelectionChange($event)"
-    (onViewportChange)="onViewportChange($event)"
     (onFocus)="onFocus($event)"
-    (onScrollInDocument)="onScrollInDocument(0)"
+    (onScroll)="onViewportChange($event)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
   <accordion closeOthers="true" class="right_accordion" *ngIf="cmViews.length !== 0">
@@ -148,7 +147,7 @@
               </span>
               <span
                 *ngSwitchCase="false || undefined"
-                (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name]);readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
                 class="highlightable_annotation">
                 {{annotation.name}}: {{currentAnnotations[annotation.name]}}
               </span>
