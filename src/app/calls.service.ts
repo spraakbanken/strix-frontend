@@ -86,22 +86,19 @@ export class CallsService {
 
   */
 
-  private formatFilterObject(filters: any): string {
-    // Maybe we can make this unnecessary by harmonizing the frontend and backend
-    // but as of now, the backend doesn't support multiple values for the filters
-    // and we want to have that in the frontend just for not destroying the future
-    let filterStrings: string[] = [];
+  private formatFilterObject(filters: any[]): string {
     for (let filter of filters) {
-      let value = _.cloneDeep(filter.values[0]); // Clone so we don't alter the GUI state
       if (filter.field === "datefrom") {
         // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
-        value.range.lte = value.range.lte + "1231";
-        value.range.gte = value.range.gte + "0101";
+        filter.value.range.lte = filter.value.range.lte + "1231";
+        filter.value.range.gte = filter.value.range.gte + "0101";
       }
       
-      filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
+      // filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
-    return "{" + filterStrings.join(",") + "}";
+    let fieldGroups = _.groupBy(filters, "field")
+    return JSON.stringify(_.mapValues(fieldGroups, (list) => _.map(list, "value")))
+    // return "{" + filterStrings.join(",") + "}";
   }
 
   // search
@@ -111,11 +108,13 @@ export class CallsService {
     let corpusIDs = [];
 
     /* temporary fix */
-    let filters = _.cloneDeep(query.filters);
-    for (let key in filters) {
-      if (filters[key].field === "corpora") {
-        corpusIDs = filters[key].values;
-        filters.splice(key, 1);
+    let filters = []
+
+    for (let filter of query.filters) {
+      if (filter.field === "corpus_id") {
+        corpusIDs.push(filter.value);
+      } else {
+        filters.push(filter)
       }
     }
 
@@ -146,11 +145,12 @@ export class CallsService {
     let corpusIDs = [];
 
     /* temporary fix */
-    let filters = _.cloneDeep(query.filters);
-    for (let key in filters) {
-      if (filters[key].field === "corpora") {
-        corpusIDs = filters[key].values;
-        filters.splice(key, 1);
+    let filters = []
+    for (let filter of query.filters) {
+      if (filter.field === "corpus_id") {
+        corpusIDs.push(filter.value);
+      } else {
+        filters.push(filter);
       }
     }
     console.log("filters", filters);
@@ -164,7 +164,7 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
-    let paramsString = `${corporaPart}`;
+    let paramsString = `${corporaPart}&facet_count=7`;
     if (searchString.length !== 0) {
       paramsString += `&text_query=${searchString}`;
     }
@@ -250,6 +250,7 @@ export class CallsService {
     strixResult.count = body.hits;
     strixResult.data = body.data;
     strixResult.aggregations = body.aggregations;
+    strixResult.unused_facets = body.unused_facets;
     return strixResult;
   }
 

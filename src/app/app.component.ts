@@ -6,7 +6,7 @@ import { Store } from '@ngrx/store';
 
 import { RoutingService } from './routing.service';
 import { DocumentsService } from './documents.service';
-import { OPENDOCUMENT, CLOSEDOCUMENT } from './searchreducer';
+import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE } from './searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -22,10 +22,18 @@ export class AppComponent {
   private searchRedux: Observable<any>;
   private openDocument = false;
 
+  private languages = ["swe", "eng"]; // TODO: Move to some config
+  private selectedLanguage: string = "";
+
   constructor(private routingService: RoutingService, private store: Store<AppState>) {
     console.log(_.add(1, 3)); // Just to test lodash
 
     this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
+      this.selectedLanguage = data.lang;
+      //this.updateFilters();
+    });
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       console.log("|openDocument");
@@ -36,6 +44,11 @@ export class AppComponent {
       console.log("|closeDocument");
       this.openDocument = false;
     });
+  }
+
+  private changeLanguageTo(language: string) {
+    this.store.dispatch({ type: CHANGELANG, payload : language});
+    //this.locService.setCurrentLanguage(language);
   }
 
 }

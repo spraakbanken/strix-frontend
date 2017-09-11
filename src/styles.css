@@ -2,8 +2,17 @@
 
 /* General utility styles */
 
+a {
+  cursor : pointer;
+  /*color : #086788;*/
+}
+
 .clear {
   clear: both;
+}
+
+.form-control {
+  border-radius : 3px !important;
 }
 
 /* CodeMirror related */
@@ -55,7 +64,7 @@ em {
 } */
 
 body {
-  height: 100%;
+  font-family : "Gill sans";
 }
 
 @media screen and (min-width: 601px) {

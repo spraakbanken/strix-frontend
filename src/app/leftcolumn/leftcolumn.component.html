@@ -1,31 +1,49 @@
 <div class="left_column">
-  <div class="language_choice">
-    <span *ngFor="let lang of languages;let f = first">
-      <span *ngIf="!f">|&nbsp;</span><a [ngClass]="{selected: selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
-    </span>
-  </div>
+  
   <div (click)="reloadStrix()" class="logo_block">
-    <img src="assets/logo.png" style="width:95%;margin-top:12px"/>
+    <img src="assets/strix_logo.png"/>
   </div>
-  <div class="clear"></div>
+  
   <minidocselection *ngIf="openDocument"></minidocselection>
-  <div class="clear"></div>
+  
   <div class="filters_area" *ngIf="!openDocument && gotMetadata">
-    <div *ngFor="let aggregationKey of aggregationKeys" class="aggregation_list">
-      <ng-template [ngIf]="!hasFilter(aggregationKey) && aggregationKey !== 'datefrom' && aggregationKey !== 'dateto'">
-        <i>{{aggregationKey}}</i>&nbsp;
-        <ul>
-          <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" (click)="chooseBucket(aggregationKey, bucket.key)">
-            {{bucket.key}} ({{bucket.doc_count}})
-          </li>
-        </ul>
-      </ng-template>
-      <ng-template [ngIf]="hasFilter(aggregationKey) && aggregationKey !== 'datefrom' && aggregationKey !== 'dateto'">
-        <div class="filter_box">
-          {{aggregationKey}} = {{currentValueFor(aggregationKey)}}&nbsp;
-          <div class="purge_filter_button" (click)="purgeFilter(aggregationKey)"><i class="fa fa-times-circle"></i></div>
+    <div 
+        *ngFor="let aggregationKey of aggregationKeys" 
+        class="aggregation_list">
+      
+        <div *ngIf="aggregations[aggregationKey].buckets.length > 20; else defaultItem">
+          <h4>{{aggregationKey}}</h4>
+          
+          <ng-select [multiple]="true"
+                        [active]="getSelectActive(aggregationKey)"
+                        [items]="getSelectArray(aggregationKey)"
+                        (data)="dropdownRefresh($event, aggregationKey)"
+                        (selected)="dropdownSelected($event)"
+                        (removed)="dropdownRemoved($event)"
+                        placeholder="Inget filter valt"></ng-select>
+
         </div>
-      </ng-template>
-    </div>
+        
+        <ng-template #defaultItem>
+          <h4>{{aggregationKey}}</h4>
+          <ul class="">
+            <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" [ngClass]="{selected : bucket.selected}">
+              <div (click)="chooseBucket(aggregationKey, bucket)" *ngIf="!bucket.selected">{{bucket.key}} ({{bucket.doc_count}})</div>
+              <div class="filter_box" *ngIf="bucket.selected">
+                {{aggregationKey}} = {{bucket.key}}&nbsp;
+                <div class="purge_filter_button" (click)="purgeFilter(aggregationKey, bucket)"><i class="fa fa-times-circle"></i></div>
+              </div>
+            </li>
+          </ul>
+        </ng-template>
+      </div>
+
+      <div *ngIf="unusedFacets.length">
+        <h5>Visa fler filter</h5>
+        <ul>
+          <li *ngFor="let key of unusedFacets" (click)="addFacet(key)">{{key}}</li>
+        </ul>
+      </div>
+
   </div>
 </div>

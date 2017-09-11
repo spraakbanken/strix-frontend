@@ -98,26 +98,27 @@ export class SearchComponent implements OnInit {
       observer.next(this.asyncSelected);
     }).mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected));
 
-    this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe((data) => {
-      console.log("picked up filters change", data.filters);
-      this.currentFilters = data.filters; // Not sure we really should overwrite the whole tree.
-      let didFilter = false;
-      for (let filter of this.currentFilters) {
-        if (filter.field === "datefrom") {
-          didFilter = true;
-          let gte = filter.values[0].range.gte;
-          let lte = filter.values[0].range.lte;
-          console.log("control it 1", gte, lte, this.fromYear, this.toYear);
-          if (gte !== this.fromYear || lte !== this.toYear) {
-            console.log("control it 2");
-            this.histogramSelection = {"from" : moment(gte+"", "YYYY"), "to" : moment(lte+"", "YYYY")};
-          }
-        }
-      }
-      if (! didFilter) {
-        this.histogramSelection = {"from" : undefined, "to" : undefined};
-      }
-    });
+    // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
+    //   console.log("picked up filters change", filters);
+      
+    //   this.currentFilters = filters; // Not sure we really should overwrite the whole tree.
+    //   let didFilter = false;
+    //   for (let filter of this.currentFilters) {
+    //     if (filter.field === "datefrom") {
+    //       didFilter = true;
+    //       let gte = filter.values[0].range.gte;
+    //       let lte = filter.values[0].range.lte;
+    //       console.log("control it 1", gte, lte, this.fromYear, this.toYear);
+    //       if (gte !== this.fromYear || lte !== this.toYear) {
+    //         console.log("control it 2");
+    //         this.histogramSelection = {"from" : moment(gte+"", "YYYY"), "to" : moment(lte+"", "YYYY")};
+    //       }
+    //     }
+    //   }
+    //   if (! didFilter) {
+    //     this.histogramSelection = {"from" : undefined, "to" : undefined};
+    //   }
+    // });
   }
 
   ngOnInit() {

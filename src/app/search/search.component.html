@@ -13,27 +13,28 @@
         </li>
       </ul>-->
     </div>
-    <div class="clear"></div>
-    <div class="search_widget" *ngIf="searchType=='normal'">
-      <input type="text"
-        class="form-control simple_searchbox"
-        [(ngModel)]="asyncSelected"
-        (keydown.Enter)="simpleSearch()"/>
+    <div class="row">
+      <div class="search_widget col-md-8" *ngIf="searchType=='normal'">
+        <input type="text"
+          class="form-control simple_searchbox"
+          [(ngModel)]="asyncSelected"
+          (keydown.Enter)="simpleSearch()"/>
+      </div>
+      <div class="search_widget" *ngIf="searchType=='lemgram'">
+        <template #lemgramItemTemplate let-model="item" let-index="index">
+          <span>{{model | lemgram}}</span>
+        </template>
+        <input
+          type="text"
+          class="form-control simple_searchbox"
+          [(ngModel)]="asyncSelected"
+          [typeahead]="dataSource"
+          [typeaheadWaitMs]="300"
+          [typeaheadItemTemplate]="lemgramItemTemplate"
+          (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
+        </div>
+        <button (click)="simpleSearch(false)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;Sök</button>
     </div>
-    <div class="search_widget" *ngIf="searchType=='lemgram'">
-      <template #lemgramItemTemplate let-model="item" let-index="index">
-        <span>{{model | lemgram}}</span>
-      </template>
-      <input
-        type="text"
-        class="form-control simple_searchbox"
-        [(ngModel)]="asyncSelected"
-        [typeahead]="dataSource"
-        [typeaheadWaitMs]="300"
-        [typeaheadItemTemplate]="lemgramItemTemplate"
-        (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
-  </div>
-  <button (click)="simpleSearch(false)" class="btn btn-sm btn-default"><i class="fa fa-search"></i>&nbsp;Sök</button>
   <div class="clear"></div>
   <!--<div class="histogram_box">
     <histogram
@@ -44,8 +45,8 @@
   <div class="clear"></div>
   <div class="filters_area">
     <div *ngFor="let filter of currentFilters" class="filter_box">
-      <span *ngIf="filter.field !== 'datefrom'">{{filter.field}} = {{filter.values[0]}}&nbsp;</span>
-      <span *ngIf="filter.field === 'datefrom'"><i class="fa fa-calendar"></i>&nbsp;{{filter.values[0].range.gte}} – {{filter.values[0].range.lte}}&nbsp;</span>
+      <span *ngIf="filter.field !== 'datefrom'">{{filter.field}} = {{filter.value}}&nbsp;</span>
+      <span *ngIf="filter.field === 'datefrom'"><i class="fa fa-calendar"></i>&nbsp;{{filter.value.range.gte}} – {{filter.value.range.lte}}&nbsp;</span>
       <div class="purge_filter_button" (click)="purgeFilter(filter.field)"><i class="fa fa-times-circle"></i></div>
     </div>
   </div>

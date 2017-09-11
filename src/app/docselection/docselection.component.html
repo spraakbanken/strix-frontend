@@ -6,23 +6,23 @@
     </alert>
   </div>
 
-  <div class="hits_area" *ngIf="documentsWithHits.length > 0">
-    <div class="hits_header">
-      <span>Hittade {{totalNumberOfDocuments}} dokument.</span><br/>
+  <div class="hits_area row no-gutters" *ngIf="documentsWithHits.length > 0">
+    <div class="hits_header col-12 ">
+      <div class="">Hittade {{totalNumberOfDocuments}} dokument.</div>
       <pagination
         [totalItems]="totalNumberOfDocuments"
         [itemsPerPage]="10"
         [maxSize]="10"
         [(ngModel)]="currentPaginatorPage"
         (pageChanged)="paginatorPageChanged($event)"
-        class="pagination-sm"></pagination>
+        class="pagination-sm "></pagination>
     </div>
-    <div class="hits_left_column" *ngIf="gotMetadata">
+    <div class="hits_left_column col-md-8 pl-0" *ngIf="gotMetadata">
       <div class="hits_inner list-group">
         <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index">
           <div class="hit_document_header">
             <span class="hit_document_title">
-              <a (click)="openDocument(i)">{{doc.title}}</a>
+              <a tabindex (click)="openDocument(i)">{{doc.title}}</a>
             </span>
             <!--<span class="badge">
               {{doc.highlights.length}}
@@ -50,7 +50,7 @@
         </div>
       </div>
     </div>
-    <div class="hits_right_column">
+    <div class="hits_right_column col-md-4">
       <div *ngFor="let attribute of textAttributes">
         {{attribute.key}}: {{attribute.value}}
       </div>

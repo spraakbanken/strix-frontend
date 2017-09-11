@@ -1,13 +1,12 @@
 .mini_doc_selection_area {
     margin-left : 10px;
-    margin-right : -1px;
     padding : 6px;
     background-color : #f7f7f7;
     border-left : 1px solid grey;
     border-top : 1px solid grey;
     border-bottom : 1px solid grey;
-    border-top-left-radius : 6px;
-    border-bottom-left-radius : 6px;
+    border-top-left-radius : 3px;
+    border-bottom-left-radius : 3px;
     font-size : small;
 }
 
@@ -21,10 +20,6 @@
 }
 .hit_box:last-child {
     border-bottom : 0px;
-}
-
-a {
-    cursor : pointer;
 }
 
 .button_previous {
