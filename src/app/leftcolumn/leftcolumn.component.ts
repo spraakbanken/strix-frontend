@@ -9,7 +9,7 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
-import { SEARCH, CHANGELANG, CHANGEFILTERS, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations } from "../strixresult.model";
 
 interface AppState {
@@ -45,6 +45,7 @@ export class LeftcolumnComponent implements OnInit {
   private openDocument = false;
 
   private searchRedux: Observable<any>;
+  private includeFacets : string[] = []
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
@@ -105,7 +106,7 @@ export class LeftcolumnComponent implements OnInit {
         this.aggregations = _.merge(newAggs, answer.aggregations);
         this.aggregationKeys = _.keys(_.omit(answer.aggregations, ["datefrom", "dateto"]));
         console.log("aggregationKeys >", this.aggregationKeys);
-        this.unusedFacets = answer.unused_facets;
+        this.unusedFacets = _.difference(answer.unused_facets, ["datefrom", "dateto"]);
 
         //this.documentsWithHits = answer.data;
         //this.totalNumberOfDocuments = answer.count;
@@ -178,8 +179,13 @@ export class LeftcolumnComponent implements OnInit {
 
   
 
-  // stub
-  private addFacet(key) {
+  private addFacet(key : string) {
+    if(!this.includeFacets.length) {
+      this.includeFacets = [].concat(this.aggregationKeys)
+    }
+    this.includeFacets.push(key)
+    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : this.includeFacets })
+    this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   private updateFilters() {
@@ -225,7 +231,7 @@ export class LeftcolumnComponent implements OnInit {
       this.aggregations = result.aggregations;
       this.aggregationKeys = _.keys(_.omit(this.aggregations, ["datefrom", "dateto"]));
 
-      this.unusedFacets = result.unused_facets;
+      this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
 
       let filterData = filters || [];
       let newFilters = [];

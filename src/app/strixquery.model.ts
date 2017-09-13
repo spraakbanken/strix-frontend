@@ -5,4 +5,5 @@ export class StrixQuery {
     pageIndex: number; // 1-based!
     documentsPerPage: number;
     filters: any;
+    includeFacets: string[] = [];
 }

@@ -29,9 +29,12 @@
           <ul class="">
             <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" [ngClass]="{selected : bucket.selected}">
               <div (click)="chooseBucket(aggregationKey, bucket)" *ngIf="!bucket.selected">{{bucket.key}} ({{bucket.doc_count}})</div>
-              <div class="filter_box" *ngIf="bucket.selected">
-                {{aggregationKey}} = {{bucket.key}}&nbsp;
-                <div class="purge_filter_button" (click)="purgeFilter(aggregationKey, bucket)"><i class="fa fa-times-circle"></i></div>
+              
+              <div class="filter_btn btn-sm btn-success d-block text-left" *ngIf="bucket.selected" (click)="purgeFilter(aggregationKey, bucket)">
+                <span class="label">{{aggregationKey}} = {{bucket.key}}&nbsp;</span>
+                <span class="labelremove">Ta bort filter</span>
+
+                <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
               </div>
             </li>
           </ul>
@@ -41,7 +44,7 @@
       <div *ngIf="unusedFacets.length">
         <h5>Visa fler filter</h5>
         <ul>
-          <li *ngFor="let key of unusedFacets" (click)="addFacet(key)">{{key}}</li>
+          <li *ngFor="let key of unusedFacets" (click)="addFacet(key)" class="aggregation_item">{{key}}</li>
         </ul>
       </div>
 

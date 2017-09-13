@@ -18,7 +18,7 @@ h3,h4,h5 {
 
 ul {
   padding: 2px;
-  background-color : white;
+  background-color : #e8e8e8;
   border-radius : 3px;
   border : 1px solid lightgrey ;
 }
@@ -32,6 +32,7 @@ li:hover {
 }
 li.selected:hover {
   color : inherit;
+  background-color : inherit;
 }
 li:last-child {
   border-bottom: 0px;
@@ -39,6 +40,33 @@ li:last-child {
 .filters_area {
   padding: 10px;
 }
+.filter_btn {
+  position: relative;
+  height : 2.1em;
+}
+.filter_btn .label, .filter_btn .labelremove {
+  transition: opacity 200ms;
+  position: absolute;
+  left: 0.5em;
+}
+.purge_filter_button {
+  transition: opacity 200ms;
+}
+.filter_btn .label {
+  opacity : 1;
+}
+
+.filter_btn:hover .label {
+  opacity : 0;
+}
+
+.filter_btn .labelremove, .filter_btn .purge_filter_button {
+  opacity : 0;
+}
+.filter_btn:hover .labelremove, .filter_btn:hover .purge_filter_button {
+  opacity : 1;
+}
+
 .corpus_item {
   cursor: pointer;
 }

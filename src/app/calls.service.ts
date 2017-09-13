@@ -103,7 +103,7 @@ export class CallsService {
 
   // search
   public searchForString(query: StrixQuery) : Observable<StrixResult> {
-    console.log("the query filters are:", query.filters);
+    console.log("searchForString", query);
     //let corpusIDs = query.corpora;
     let corpusIDs = [];
 
@@ -126,12 +126,19 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/search`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `&corpora=${corpusIDs.join(",")}` : "";
-    let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
+    // let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
+    let params = new URLSearchParams()
+    params.set("exclude", 'lines,dump,token_lookup')
+    params.set("from", fromPage.toString())
+    params.set("to", toPage.toString())
+    params.set("simple_highlight", String(true))
+    params.set("text_query", searchString)
+
     if (filters && _.size(filters) > 0) {
-      paramsString += `&text_filter=${this.formatFilterObject(filters)}`;
+      params.set("text_filter", this.formatFilterObject(filters))
     }
     let options = new RequestOptions({
-      search : new URLSearchParams(paramsString)
+      search : params
     });
     return this.http.get(url, options)
                     .map(this.preprocessResult)
@@ -140,7 +147,7 @@ export class CallsService {
 
   /* Get aggregations for faceted search */
   public getAggregations(query: StrixQuery) {
-    console.log("the query is:", query);
+    console.log("getAggregations", query);
     //let corpusIDs = query.corpora;
     let corpusIDs = [];
 
@@ -164,16 +171,19 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
-    let paramsString = `${corporaPart}&facet_count=7`;
+    let params = new URLSearchParams()
+    params.set("facet_count", '7')
     if (searchString.length !== 0) {
-      paramsString += `&text_query=${searchString}`;
+      params.set('text_query', searchString)
     }
     if (filters && _.size(filters) > 0) {
-      paramsString += `&text_filter=${this.formatFilterObject(filters)}`;
+      params.set('text_filter', this.formatFilterObject(filters))
     }
-    console.log("paramsString", paramsString);
+    if(query.includeFacets.length) {
+      params.set("include_facets", query.includeFacets.join(","))
+    }
     let options = new RequestOptions({
-      search : new URLSearchParams(paramsString)
+      search : params
     });
     return this.http.get(url, options)
                     .map(this.preprocessResult)
