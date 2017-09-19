@@ -125,9 +125,13 @@ export class CallsService {
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/search`;
-    let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `&corpora=${corpusIDs.join(",")}` : "";
     // let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
     let params = new URLSearchParams()
+
+    if(corpusIDs && corpusIDs.length > 0) {
+      params.set("corpora", corpusIDs.join(","))  
+    }
+
     params.set("exclude", 'lines,dump,token_lookup')
     params.set("from", fromPage.toString())
     params.set("to", toPage.toString())
@@ -173,6 +177,11 @@ export class CallsService {
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
     let params = new URLSearchParams()
     params.set("facet_count", '7')
+
+    if(corpusIDs && corpusIDs.length > 0) {
+      params.set("corpora", corpusIDs.join(","))  
+    }
+
     if (searchString.length !== 0) {
       params.set('text_query', searchString)
     }

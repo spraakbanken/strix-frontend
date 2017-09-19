@@ -44,10 +44,20 @@ export class RoutingService {
 
     this.searchRedux.subscribe((data) => {
       console.log("the data", data);
-      const urlString = "#?" + this.urlFields.map((field) => {
-        return `${encodeURI(field.tag)}=${encodeURI(this.stringify(field.type, data[field.tag]))}`;
-      }).join("&");
-      window.location.hash = urlString;
+      const urlString = _.compact(this.urlFields.map((field) => {
+        let key = field.tag
+        let val = this.stringify(field.type, data[field.tag])
+        console.log("val", key, val, this.stringify(field.type, field.default))
+
+        if(!val || val === this.stringify(field.type, field.default)) {
+          return ""
+        }
+        return `${encodeURI(key)}=${encodeURI(val)}`;
+      })).join("&");
+
+      if(urlString) {
+        window.location.hash = "#?" + urlString;
+      }
     });
 
   }
