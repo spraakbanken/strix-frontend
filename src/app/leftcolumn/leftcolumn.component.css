@@ -43,7 +43,15 @@ li:last-child {
 .filter_btn {
   position: relative;
   height : 2.1em;
+  cursor: pointer;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow-x: hidden;
 }
+.filter_btn.small {
+  margin-bottom: 0.2em;
+}
+
 .filter_btn .label, .filter_btn .labelremove {
   transition: opacity 200ms;
   position: absolute;

@@ -38,7 +38,7 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.filters = action.payload;
       break;
     case CHANGE_INCLUDE_FACET:
-      nextState.includeFacets = action.payload;
+      nextState.include_facets = action.payload;
       break;
     case CHANGEPAGE:
       nextState.page = action.payload;

@@ -121,7 +121,7 @@ export class QueryService {
       } */
       
       this.currentQuery.filters = data.filters;
-      this.currentQuery.includeFacets = data.includeFacets || [];
+      this.currentQuery.include_facets = data.include_facets || [];
       this.runCurrentQuery(); // Perform the actual search
     });
 

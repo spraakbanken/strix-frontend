@@ -2,6 +2,10 @@
 
 /* General utility styles */
 
+.dropdown-menu {
+  max-height : 300px;
+  overflow-y: auto;
+}
 a {
   cursor : pointer;
   /*color : #086788;*/
@@ -9,6 +13,10 @@ a {
 
 .clear {
   clear: both;
+}
+
+h5 {
+  margin-top: 0.4em;
 }
 
 .form-control {

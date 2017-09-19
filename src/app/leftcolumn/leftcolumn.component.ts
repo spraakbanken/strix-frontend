@@ -45,7 +45,8 @@ export class LeftcolumnComponent implements OnInit {
   private openDocument = false;
 
   private searchRedux: Observable<any>;
-  private includeFacets : string[] = []
+  private include_facets : string[] = []
+  private typeaheadSelected : string;
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
@@ -119,38 +120,23 @@ export class LeftcolumnComponent implements OnInit {
 
   }
 
-  private getSelectArray(aggKey) {
-    return _.map(this.aggregations[aggKey].buckets, (bucket : Bucket) => {
-      return {id : bucket.key, text : bucket.key + ` (${bucket.doc_count})`}
-    })
-  }
-  private getSelectActive(aggKey) {
-    return _.map(_.filter(this.aggregations[aggKey].buckets, "selected"), (bucket : Bucket) => {
-      return {id : bucket.key, text : bucket.key + ` (${bucket.doc_count})`}
-    })
+  private getSelectArray(aggKey) : Bucket[] {
+    return _.reject(this.aggregations[aggKey].buckets, 'selected')
   }
 
-  private dropdownSelected(selectedItem) {
+  private listDropdownSelected(aggKey) : Bucket[] {
+    return _.filter(this.aggregations[aggKey].buckets, "selected")
+  }
+
+  private dropdownSelected(selectedItem, aggKey) {
     console.log("dropdownSelected", selectedItem)
-  }
-  private dropdownRemoved(selectedItem) {
-    console.log("dropdownRemoved", selectedItem)
-  }
-  private dropdownRefresh(selectedItems : any[], aggregationKey) {
-    let ids = _.map(selectedItems, "id")
-    for(let bucket of this.aggregations[aggregationKey].buckets) {
-      if(ids.includes(bucket.key)) {
-        bucket.selected = true
-      } else {
-        bucket.selected = false
-      }
-    }
-    this.updateFilters();
+    let bucket : Bucket = _.find(this.getSelectArray(aggKey), (item) => item.key == selectedItem.item.key)
+    this.chooseBucket(aggKey, bucket)
+    this.typeaheadSelected = ""
   }
 
-  private filterSelected(buckets : any[]) {
-    return _.filter(buckets, (item) => !item.selected)
-
+  private onInputClick(event) {
+    event.target.scrollIntoView()
   }
 
   private chooseBucket(aggregationKey: string, bucket: Bucket) {
@@ -180,11 +166,11 @@ export class LeftcolumnComponent implements OnInit {
   
 
   private addFacet(key : string) {
-    if(!this.includeFacets.length) {
-      this.includeFacets = [].concat(this.aggregationKeys)
+    if(!this.include_facets.length) {
+      this.include_facets = [].concat(this.aggregationKeys)
     }
-    this.includeFacets.push(key)
-    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : this.includeFacets })
+    this.include_facets.push(key)
+    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : this.include_facets })
     this.store.dispatch({ type: SEARCH, payload : null});
   }
 

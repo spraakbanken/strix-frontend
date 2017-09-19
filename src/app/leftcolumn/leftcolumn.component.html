@@ -14,16 +14,38 @@
         <div *ngIf="aggregations[aggregationKey].buckets.length > 20; else defaultItem">
           <h4>{{aggregationKey}}</h4>
           
-          <ng-select [multiple]="true"
+          <div class="filter_btn small btn-sm btn-success" *ngFor="let item of listDropdownSelected(aggregationKey)" (click)="purgeFilter(aggregationKey, item)">
+            <span class="label">{{item.key}}&nbsp;</span>
+            <span class="labelremove">Ta bort filter</span>
+            <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
+          </div>
+          <input [(ngModel)]="typeaheadSelected"
+                 [typeahead]="getSelectArray(aggregationKey)"
+                 (typeaheadOnSelect)="dropdownSelected($event, aggregationKey)"
+                 typeaheadOptionField="key"
+                 [typeaheadItemTemplate]="itemTemplate"
+                 [placeholder]="'Välj från lista (' + getSelectArray(aggregationKey).length + ' alternativ)'"
+                 [typeaheadMinLength]="0"
+                 [typeaheadOptionsLimit]="1000"
+                 (click)="onInputClick($event)"
+                 class="form-control">
+
+        <ng-template #itemTemplate let-item="item" let-index="index">
+          {{item.key}} ({{item.doc_count}})
+          
+        </ng-template>
+
+          <!-- <ng-select [multiple]="true"
                         [active]="getSelectActive(aggregationKey)"
                         [items]="getSelectArray(aggregationKey)"
                         (data)="dropdownRefresh($event, aggregationKey)"
                         (selected)="dropdownSelected($event)"
                         (removed)="dropdownRemoved($event)"
-                        placeholder="Inget filter valt"></ng-select>
+                        placeholder="Inget filter valt"></ng-select> -->
 
         </div>
         
+
         <ng-template #defaultItem>
           <h4>{{aggregationKey}}</h4>
           <ul class="">

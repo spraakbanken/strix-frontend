@@ -32,6 +32,7 @@ export class RoutingService {
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
     {tag : "filters", type : FragmentType.BASE64, default : {}},
+    {tag : "include_facets", type : FragmentType.STRINGARRAY, default : []},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config

@@ -179,8 +179,8 @@ export class CallsService {
     if (filters && _.size(filters) > 0) {
       params.set('text_filter', this.formatFilterObject(filters))
     }
-    if(query.includeFacets.length) {
-      params.set("include_facets", query.includeFacets.join(","))
+    if(query.include_facets.length) {
+      params.set("include_facets", query.include_facets.join(","))
     }
     let options = new RequestOptions({
       search : params

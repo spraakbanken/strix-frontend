@@ -35,7 +35,6 @@ import { IndocsearchComponent } from './indocsearch/indocsearch.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
 import { ReaderCommunicationService } from './reader-communication.service';
-import { SelectModule } from 'ng2-select';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -66,8 +65,7 @@ import { SelectModule } from 'ng2-select';
     AlertModule.forRoot(),
     PaginationModule.forRoot(),
     AccordionModule.forRoot(),
-    StoreModule.provideStore({searchRedux: searchReducer}),
-    SelectModule
+    StoreModule.provideStore({searchRedux: searchReducer})
   ],
   providers: [DocumentsService,
               CallsService,
