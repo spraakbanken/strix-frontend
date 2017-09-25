@@ -81,7 +81,7 @@ ul {
 .readerArea {
   overflow-x: auto;
   position: relative;
-  /* height: 800px; */
+  height: 100%;
 }
 
 .text_header {
