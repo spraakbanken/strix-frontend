@@ -86,7 +86,7 @@ export class CmDirective {
             if (state.currentWid === undefined || state.currentWid === null) console.log("TOKEN PROBLEM.");
             let token = window['CodeMirrorStrix'][state.documentIndex].token_lookup[state.currentWid];
             if (token === undefined ) {
-              console.log("FOUND UNDEFINED TOKEN.", window["pcounter"], state.currentWid, window['CodeMirrorStrix'][state.documentIndex].token_lookup);
+              //console.log("FOUND UNDEFINED TOKEN.", window["pcounter"], state.currentWid, window['CodeMirrorStrix'][state.documentIndex].token_lookup);
               //stream.next();
               stream.skipToEnd();
               state.line++;

@@ -304,6 +304,11 @@ export class DocumentsService {
 
     let firstToken = doc.getFirstTokenFromLine(fromLine);
     let lastToken = doc.getLastTokenFromLine(toLine);
+    console.log("lastToken", lastToken);
+    if (lastToken === -1) {
+      console.log("getting the LAST token in the document.")
+      lastToken = doc.getLastTokenFromDocument();
+    }
     
     console.log("from token ", firstToken, " to ", lastToken);
 

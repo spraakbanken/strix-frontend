@@ -282,6 +282,7 @@ export class CallsService {
     strixDocument.title = data.title;
     strixDocument.textAttributes = data.text_attributes;
     strixDocument.lines = data.lines;
+    strixDocument.word_count = data.word_count;
     // Temporary until backend fix ----
     if (strixDocument.lines[strixDocument.lines.length-1].length === 1) {
       strixDocument.lines[strixDocument.lines.length-1].push(strixDocument.lines[strixDocument.lines.length-1][0]);

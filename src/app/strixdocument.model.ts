@@ -7,6 +7,7 @@ export class StrixDocument {
   title: string;
   corpusID: string;
   highlight: any;
+  word_count: number;
 
   // Internal index for the frontend to keep track of.
   // It never changes after it's loaded, but it may
@@ -94,14 +95,38 @@ export class StrixDocument {
 
     let firstToken = -1;
     let offset = 0;
+
+    console.log("fline|", line, this.lines, this.lines.length);
     
-    while (firstToken === -1) {
-       firstToken = this.lines[line-offset][0];
-       offset++;
-       if (line - offset <= 0) firstToken = 0;
+    if (line < this.lines.length) {
+      while (firstToken === -1) {
+        if (line - offset <= 0) {
+          firstToken = 0;
+        } else {
+          firstToken = this.lines[line-offset][0];
+          offset++;
+        }
+        /* if (line - offset <= 0) firstToken = 0; */
+      }
+      return firstToken;
+    } else {
+      return -1;
     }
-    
-    return firstToken;
+  }
+
+  public getLastTokenFromDocument() {
+    /* The last line can be an empty line (-1) so we need to continue backwards until we have a non empty line. */
+    /* let lastToken = -1;
+    let lineNumber = this.lines.length - 1;
+    while( lastToken === -1 ) {
+      if (this.lines[lineNumber].length === 2) {
+        lastToken = this.lines[lineNumber][1];
+      }
+      lineNumber--;
+    }
+    return lastToken;
+    */
+    return this.word_count;
   }
 
   public getLastTokenFromLine(line: number) {
@@ -113,18 +138,31 @@ export class StrixDocument {
 
     console.log("line|", line, this.lines, this.lines.length);
     
-    while (lastToken === -1) {
-      if (this.lines[line+offset].length === 2) {
-        lastToken = this.lines[line+offset][1];
+    if (line < this.lines.length) {
+      while (lastToken === -1) {
+        /* if (! this.lines[line+offset]) {
+          lastToken = 
+          break;
+        } */
+        if (this.lines[line+offset]) {
+          if (this.lines[line+offset].length === 2) {
+            lastToken = this.lines[line+offset][1];
+          }
+          offset++;
+        } else {
+          break;
+        }
+        /* if (line + offset > this.lines.length) {
+          lastToken = 0;
+        } */
+        // TODO: What happens in the event of an empty line at the end. Is it even possible?
       }
-      offset++;
-      if (line + offset > this.lines.length) {
-        lastToken = 0;
-      }
-      // TODO: What happens in the event of an empty line at the end. Is it even possible?
+
+      return lastToken;
+    } else {
+      return -1;
     }
 
-    return lastToken;
   }
 
 }
