@@ -147,3 +147,8 @@ body {
   cursor: pointer;
   margin-right: 2px;
 }
+
+/* Fix */
+.row {
+  margin-right: unset;
+}
