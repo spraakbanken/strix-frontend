@@ -1,9 +1,25 @@
 <select (change)="selectAnnotation($event.target.value)" [ngModel]="selectedAnnotation">
   <option *ngFor="let item of wordAnnotations" value="{{item.name}}">{{item.name}}</option>
 </select>
-<select (change)="selectAnnotationValue($event.target.value)" [ngModel]="selectedAnnotationValue" *ngIf="selectedAnnotation">
+<!--<select (change)="selectAnnotationValue($event.target.value)" [ngModel]="selectedAnnotationValue" *ngIf="selectedAnnotation && !useTypeahead">
   <option *ngFor="let item of annotationValues" value="{{item.key}}">{{item.key}}</option>
-</select>
+</select>-->
+<input
+  *ngIf="selectedAnnotation"
+  [(ngModel)]="selectedAnnotationValue"
+  [typeahead]="annotationValues"
+  (typeaheadOnSelect)="dropdownSelected($event, selectedItem)"
+  typeaheadOptionField="key"
+  [typeaheadItemTemplate]="itemTemplate"
+  [placeholder]="'Välj från lista (' + annotationValues.length + ' alternativ)'"
+  [typeaheadMinLength]="0"
+  [typeaheadOptionsLimit]="500"
+  (click)="onInputClick($event)"
+  class="form-control annotation-typeahead">
+<ng-template #itemTemplate let-item="item" let-index="index">
+  {{item.key}} ({{item.doc_count}})
+  
+</ng-template>
 <button *ngIf="selectedAnnotationValue" (click)="goToPreviousAnnotation()">
   <i class="fa fa-arrow-left"></i>
 </button>

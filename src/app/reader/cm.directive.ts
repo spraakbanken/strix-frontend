@@ -8,10 +8,10 @@ export class CmDirective {
   @Output() onInstanciated = new EventEmitter<any>();
 
   editor: any;
+  static definedCodeMirrorMode = false;
 
   constructor(private _el: ElementRef) {
-    // TODO: This should only be done once, so we have to check for it in some way.
-    this.defineCodeMirrorMode();
+    if (! CmDirective.definedCodeMirrorMode ) this.defineCodeMirrorMode();
   }
 
   ngAfterViewInit() {
@@ -40,13 +40,11 @@ export class CmDirective {
       When we communicate with the angular data we currently need to go through
       window['CodeMirrorStrix']. Maybe there is a cleaner solution to that.
     */
+    console.log("Defining CodeMirror mode.");
+    CmDirective.definedCodeMirrorMode = true;
     CodeMirror.defineMode('strix', function(config, parserConfig) {
       return {
         startState : function() {
-          if (! window["pcounter"] )
-            window["pcounter"] = 0;
-          window["pcounter"]++;
-          console.log("-START-", window["pcounter"]);
           return {
             currentWid : null,
             line : null,
@@ -86,19 +84,11 @@ export class CmDirective {
             if (state.currentWid === undefined || state.currentWid === null) console.log("TOKEN PROBLEM.");
             let token = window['CodeMirrorStrix'][state.documentIndex].token_lookup[state.currentWid];
             if (token === undefined ) {
-              //console.log("FOUND UNDEFINED TOKEN.", window["pcounter"], state.currentWid, window['CodeMirrorStrix'][state.documentIndex].token_lookup);
-              //stream.next();
               stream.skipToEnd();
               state.line++;
               state.currentWid = null;
-              return "hidden"
-              //return;
+              return "hidden";
             }
-
-            //if (! token) { // Temporary because the BE only returns 10 now.
-            //  stream.next();
-            //  return "";
-            //}
 
             let tokenText = token.word;
             let tokenAnnotations = token.attrs;
@@ -107,7 +97,6 @@ export class CmDirective {
             while (! stream.eol()) {
               newToken += stream.next();
               if (newToken === tokenText) {
-                //console.log("matching", newToken, "with", tokenText);
                 state.currentWid++;
                 break;
               }
@@ -118,7 +107,6 @@ export class CmDirective {
             }
 
             let documentIndex = state.documentIndex;
-            //console.log("documentIndex", documentIndex, window['CodeMirrorStrixControl'][documentIndex]);
 
             if (window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType) {
               let currentAnnotationType: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;

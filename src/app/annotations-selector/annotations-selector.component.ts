@@ -91,17 +91,14 @@ export class AnnotationsSelectorComponent implements OnInit {
   private selectAnnotation(annotation: string) {
     console.log("selectAnnotation", annotation);
     this.selectedAnnotation = annotation;
+    this.selectedAnnotationValue = null;
     this.annotationValues = [];
     // Getting the annotation values for the selected annotation
     this.callsService.getValuesForAnnotation(this.currentCorpusID, this.currentDocumentID, annotation)
     .subscribe(
       answer => {
         let values = answer.aggregations[annotation].buckets;
-        if (values.length <= 100) {
-          this.annotationValues = values;
-        }
-        
-        //console.log("this.annotationValues", this.annotationValues);
+        this.annotationValues = values;
       },
       error => this.errorMessage = <any>error
     );
