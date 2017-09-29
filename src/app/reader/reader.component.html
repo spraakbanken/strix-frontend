@@ -62,6 +62,9 @@
           <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
           &nbsp;{{bookmark.text}}
         </div>
+        <div *ngIf="bookmarks.length === 0">
+          <i>inga träffar.</i>
+        </div>
       </div>
     </accordion-group>
     <accordion-group heading="Textattribut" [isOpen]="accordionOpen === 'TEXTATTRIBUTES'">
@@ -102,7 +105,7 @@
                     <ul>
                       <li
                         *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name]"
-                        (click)="changeAnnotationHighlight(annotation.name, item, 'set')"
+                        (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, item, 'set')"
                         class="highlightable_annotation">
                         {{item}}
                       </li>
@@ -110,7 +113,7 @@
                   </span>
                   <span
                     *ngSwitchCase="false"
-                    (click)="changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name]);readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                    (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, currentAnnotations[annotationGroup.name].attrs[annotation.name])"
                     class="highlightable_annotation">
                     {{annotation.name}}: {{currentAnnotations[annotationGroup.name].attrs[annotation.name]}}
                   </span>
@@ -139,7 +142,7 @@
                 <ul>
                   <li
                     *ngFor="let item of currentAnnotations[annotation.name]"
-                    (click)="changeAnnotationHighlight(annotation.name, item, 'set')"
+                    (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, item, 'set')"
                     class="highlightable_annotation">
                     {{item}}
                   </li>
@@ -147,7 +150,7 @@
               </span>
               <span
                 *ngSwitchCase="false || undefined"
-                (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, currentAnnotations[annotation.name])"
+                (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, currentAnnotations[annotation.name])"
                 class="highlightable_annotation">
                 {{annotation.name}}: {{currentAnnotations[annotation.name]}}
               </span>

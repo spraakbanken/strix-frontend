@@ -49,11 +49,7 @@ export class AnnotationsSelectorComponent implements OnInit {
     this.subscription = this.documentsService.loadedDocument$.subscribe(
       message => {
         console.log("A document has been fetched.", message);
-
-        let openedDocument = this.documentsService.getDocument(message.documentIndex);
-        this.mainDocument = openedDocument;
-
-        let wholeText = openedDocument.dump.join("\n");
+        this.mainDocument = this.documentsService.getDocument(message.documentIndex);
 
         this.currentCorpusID = this.mainDocument.corpusID;
         this.currentDocumentID = this.mainDocument.doc_id;
@@ -77,8 +73,12 @@ export class AnnotationsSelectorComponent implements OnInit {
       const message = data["message"];
       const payload = data["payload"];
       if (message === "changeAnnotationHighlight") {
+        //this.selectedAnnotation = payload["annotation"];
+        console.log("payload av", payload["annotationValue"]);
+        if (payload["annotation"] !== this.selectedAnnotation) {
+          this.selectAnnotation(payload["annotation"]);
+        }
         this.selectedAnnotationValue = payload["annotationValue"];
-        this.selectAnnotation(payload["annotation"]);
       };
     });
   }
@@ -90,8 +90,8 @@ export class AnnotationsSelectorComponent implements OnInit {
 
   private selectAnnotation(annotation: string) {
     console.log("selectAnnotation", annotation);
+    this.selectedAnnotationValue = ""; // <- destroys stuff :(
     this.selectedAnnotation = annotation;
-    this.selectedAnnotationValue = null;
     this.annotationValues = [];
     // Getting the annotation values for the selected annotation
     this.callsService.getValuesForAnnotation(this.currentCorpusID, this.currentDocumentID, annotation)
@@ -105,8 +105,10 @@ export class AnnotationsSelectorComponent implements OnInit {
   }
 
   private selectAnnotationValue(annotationValue: string) {
-    this.selectedAnnotationValue = annotationValue;
-    this.readerCommunicationService.changeAnnotationHighlight(this.selectedAnnotation, this.selectedAnnotationValue);
+    if (annotationValue && annotationValue !== "") {
+      this.selectedAnnotationValue = annotationValue;
+      this.readerCommunicationService.changeAnnotationHighlight(this.selectedAnnotation, null, this.selectedAnnotationValue);
+    }
   }
 
   private goToNextAnnotation() {

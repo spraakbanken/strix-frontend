@@ -8,3 +8,19 @@
   padding: 2px;
   cursor: pointer;
 }
+.tools_area {
+  padding-left: 8px;
+  padding-top: 2px;
+  padding-bottom: 2px;
+  background-color: #f7f7f7;
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #999;
+  height: 44px;
+  text-align: center;
+}
+.tools_list {
+  float: left;
+}
+.actual_tools {
+  float: left;
+}

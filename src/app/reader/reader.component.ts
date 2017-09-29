@@ -178,7 +178,10 @@ export class ReaderComponent implements AfterViewInit {
           message === "changeAnnotationHighlight") {
         const annotation = payload["annotation"];
         const annotationValue = payload["annotationValue"];
-        this.changeAnnotationHighlight(annotation, annotationValue, "default");
+        const annotationStructuralType = payload["annotationStructuralType"]; // TODO - Fix this for the structural annotations
+        //const datatype = payload["datatype"];
+        const datatype = _.isArray(this.currentAnnotations[annotation]) ? "set" : "default";
+        this.changeAnnotationHighlight(annotation, annotationStructuralType, annotationValue, datatype);
         if (message === "goToNextAnnotation") {
           this.gotoAnnotation(annotation, annotationValue, false);
         } else if (message === "goToPreviousAnnotation") {
@@ -278,11 +281,12 @@ export class ReaderComponent implements AfterViewInit {
     window['CodeMirrorStrixControl'].splice(index);
   }
 
-  private changeAnnotationHighlight(type: string, value: string, datatype: string = "default"): void {
+  private changeAnnotationHighlight(type: string, structuralType : string, value: string, datatype: string = "default"): void {
     console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     console.log("highlighting", type, value);
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationType = type;
+    window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationStructuralType = structuralType;
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationDatatype = datatype;
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationValue = value;
 

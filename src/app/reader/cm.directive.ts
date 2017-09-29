@@ -110,11 +110,16 @@ export class CmDirective {
 
             if (window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType) {
               let currentAnnotationType: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationType;
+              let currentAnnotationStructuralType: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationStructuralType;
               let currentAnnotationValue: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationValue;
               let currentAnnotationDatatype: string = window['CodeMirrorStrixControl'][documentIndex].currentAnnotationDatatype;
 
               if (currentAnnotationDatatype === "default") {
                 if (tokenAnnotations[currentAnnotationType] === currentAnnotationValue) { // TODO: Value is always string?
+                  styles.push('underlined');
+                } else if (currentAnnotationStructuralType && tokenAnnotations[currentAnnotationStructuralType] && tokenAnnotations[currentAnnotationStructuralType].attrs[currentAnnotationType] === currentAnnotationValue) {
+                  // NOTE: This will collide if we can have structural annotation names that are the same as any other
+                  // annotation name. Will this ever be the case?
                   styles.push('underlined');
                 }
               } else if (currentAnnotationDatatype === "set") {

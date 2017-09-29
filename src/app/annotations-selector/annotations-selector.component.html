@@ -8,13 +8,12 @@
   *ngIf="selectedAnnotation"
   [(ngModel)]="selectedAnnotationValue"
   [typeahead]="annotationValues"
-  (typeaheadOnSelect)="dropdownSelected($event, selectedItem)"
+  (typeaheadOnSelect)="selectAnnotationValue(selectedAnnotationValue)"
   typeaheadOptionField="key"
   [typeaheadItemTemplate]="itemTemplate"
   [placeholder]="'Välj från lista (' + annotationValues.length + ' alternativ)'"
   [typeaheadMinLength]="0"
   [typeaheadOptionsLimit]="500"
-  (click)="onInputClick($event)"
   class="form-control annotation-typeahead">
 <ng-template #itemTemplate let-item="item" let-index="index">
   {{item.key}} ({{item.doc_count}})
