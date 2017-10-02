@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import * as _ from 'lodash';
 
 import { CHANGELANG, INITIATE } from './searchreducer';
 
@@ -18,12 +19,20 @@ export class LocService {
     "swe" : {
       "swe" : "Svenska",
       "eng" : "Engelska",
-      "related_documents" : "Relaterade dokument"
+      "related_documents" : "Relaterade dokument",
+      "search_document" : "Sök i dokumentet",
+      'hits' : "Sökträffar",
+      'textattributes' : "Textattribut",
+      'corpus_id' : 'Samling'
     },
     "eng" : {
       "swe" : "Swedish",
       "eng" : "English",
-      "related_documents" : "Related documents"
+      "related_documents" : "Related documents",
+      "search_document" : "Search current document",
+      'hits' : "Hits",
+      'textattributes' : "Text attributes",
+      'corpus_id' : 'Collection'
     }
   };
 
@@ -37,6 +46,10 @@ export class LocService {
 
   }
 
+  public updateDictionary(obj : {eng: Record<string, string>, swe: Record<string, string>}) {
+    _.merge(this.dictionaries, obj)
+  }
+
   public getCurrentLanguage(): string {
     return this.currentLanguage;
   }
@@ -44,9 +57,14 @@ export class LocService {
     console.log("changing language to " + isoCode);
     this.currentLanguage = isoCode;
   }
-  public getTranslationFor(source: string): string {
+  public getTranslationFor(source: string, defaultVal? : string): string {
     let term = this.dictionaries[this.currentLanguage][source];
-    return term || "-missing translation-";
+    if(defaultVal) {
+      return term || defaultVal
+    } else {
+      return term || "-missing translation-";
+    }
+    
   }
 
 }

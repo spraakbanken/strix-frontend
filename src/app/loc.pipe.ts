@@ -9,7 +9,7 @@ export class LocPipe implements PipeTransform {
 
   constructor(private locService: LocService) {}
   
-  transform(value: any, args?: any): any {
+  transform(value: any, defaultValue?: any): any {
     if (value === undefined || value === null) {
       console.log("This shouldn't happen. A translatable value is undefined or null. Probably a metadata or data error.");
       return "-error-";
@@ -18,7 +18,7 @@ export class LocPipe implements PipeTransform {
       /*
         It's a simple string. Translate it according to the GUI dictionary.
       */
-      return this.locService.getTranslationFor(value);
+      return this.locService.getTranslationFor(value, defaultValue);
     } else {
       /*
         It's an object with this structure:
@@ -30,7 +30,7 @@ export class LocPipe implements PipeTransform {
         We pick the translated text for the current language.
       */
       let currentLanguage = this.locService.getCurrentLanguage();
-      return value[currentLanguage] || "-missing translation-";
+      return value[currentLanguage] || defaultValue || "-missing translation-";
     }
     
   }

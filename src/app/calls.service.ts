@@ -9,6 +9,7 @@ import { StrixDocument } from './strixdocument.model';
 import { StrixResult } from './strixresult.model';
 import { StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
+import { LocService } from './loc.service';
 
 @Injectable()
 export class CallsService {
@@ -18,7 +19,7 @@ export class CallsService {
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
   //private readonly STRIXBACKEND_URL = "http://localhost:8080";
 
-  constructor(private http : Http) { }
+  constructor(private http : Http, private locService : LocService) { }
 
   /* public getCorpora() : Observable<string[]> {
     let url = `${this.STRIXBACKEND_URL}/config`;
@@ -40,7 +41,7 @@ export class CallsService {
         console.log("getCorpusInfo data", data)
 
         let strixCorpusConfigs: { [key: string] : StrixCorpusConfig} = {};
-
+        this.extractLocalizationKeys(data)
         for (let corpusID in data) {
           let corpusConfig = new StrixCorpusConfig();
           corpusConfig.corpusID = corpusID;
@@ -51,11 +52,43 @@ export class CallsService {
           corpusConfig.description = corpusData.description;
           corpusConfig.name = corpusData.name;
           strixCorpusConfigs[corpusID] = corpusConfig;
+
+
         }
         return strixCorpusConfigs;
 
       }).catch(this.handleError);
   }
+
+  private extractLocalizationKeys(config) {
+    for (let corpusID in config) {
+      let corpusData = config[corpusID];
+      
+      let updateObj = _.mapValues(corpusData.name, (name) => {
+         return _.fromPairs([[corpusID, name]])
+      })
+      this.locService.updateDictionary(updateObj)
+
+
+        // TODO: we might need to namespace these or it could get crowded...
+      this.defaultAttrParse(corpusData.attributes.text_attributes)
+      this.defaultAttrParse(corpusData.attributes.word_attributes)
+      this.defaultAttrParse(_.values(corpusData.attributes.struct_attributes))
+    }
+
+  }
+  private defaultAttrParse(attrObj) {
+    for(let obj of attrObj) {
+      let updateObj = _.mapValues(obj.translation_name, (transationStr) => {
+        let o = {}
+        o[obj.name] = transationStr
+        return o
+      })
+      this.locService.updateDictionary(updateObj)
+    }
+  }
+
+
 
   /*
 

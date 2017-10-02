@@ -45,12 +45,10 @@ export class RoutingService {
     this.searchRedux.subscribe((data) => {
       console.log("the data", data);
       const urlString = _.compact(this.urlFields.map((field) => {
-        let key = field.tag;
-        let val = this.stringify(field.type, data[field.tag]);
-        console.log("val", key, val, this.stringify(field.type, field.default));
-
-        if (!val || val === this.stringify(field.type, field.default)) {
-          return "";
+        let key = field.tag
+        let val = this.stringify(field.type, data[field.tag])
+        if(!val || val === this.stringify(field.type, field.default)) {
+          return ""
         }
         return `${encodeURI(key)}=${encodeURI(val)}`;
       })).join("&");

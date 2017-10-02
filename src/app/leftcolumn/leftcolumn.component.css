@@ -16,6 +16,9 @@
 h3,h4,h5 {
   color : white;
 }
+h4::first-letter {
+  text-transform: uppercase;
+}
 
 ul {
   padding: 2px;

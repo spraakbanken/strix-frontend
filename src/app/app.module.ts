@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 
 import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
@@ -60,6 +61,7 @@ import { ReaderCommunicationService } from './reader-communication.service';
     BrowserModule,
     FormsModule,
     HttpModule,
+    RouterModule.forRoot([]),
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
     AlertModule.forRoot(),

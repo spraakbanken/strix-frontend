@@ -8,9 +8,10 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { LocService } from '../loc.service';
 import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations } from "../strixresult.model";
+
+// import {Router} from '@angular/router';
 
 interface AppState {
   searchRedux: any;
@@ -50,14 +51,19 @@ export class LeftcolumnComponent implements OnInit {
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
-              private store: Store<AppState>,
-              private locService: LocService) {
+              private store: Store<AppState>
+              ) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
           this.gotMetadata = true;
         }
     });
+
+    // this.activatedRoute.queryParams.subscribe((params: Params) => {
+    //   console.log("params", params)
+    // });
+
 
     this.searchRedux = this.store.select('searchRedux');
 
@@ -92,32 +98,20 @@ export class LeftcolumnComponent implements OnInit {
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.subscribe(
-      (answer : StrixResult) => {
-        console.log("leftcolumn answer", answer);
-        // Make use of the aggregations
-        // for(let key in answer.aggregations ) {
-        //   _.map(answer.aggregations[key].buckets, (item) => {
-        //     item.parent = key
-        //     return item
-        //   })
-
-        // }
-        this.decorateWithParent(answer.aggregations)
-        let newAggs = _.pick(this.aggregations, _.keys(answer.aggregations))
-        this.aggregations = _.merge(newAggs, answer.aggregations);
-        this.aggregationKeys = _.keys(_.omit(answer.aggregations, ["datefrom", "dateto"]));
-        console.log("aggregationKeys >", this.aggregationKeys);
-        this.unusedFacets = _.difference(answer.unused_facets, ["datefrom", "dateto"]);
-
-        //this.documentsWithHits = answer.data;
-        //this.totalNumberOfDocuments = answer.count;
-        //this.isLoading = false;
+      (result : StrixResult) => {
+        this.parseAggResults(result) 
       },
       error => null//this.errorMessage = <any>error
     );
+  }
 
-
-
+  private parseAggResults(result : StrixResult) {
+    console.log("parseAggResults", result);
+    this.decorateWithParent(result.aggregations)
+    let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
+    this.aggregations = _.merge(newAggs, result.aggregations);
+    this.aggregationKeys = _.keys(_.omit(result.aggregations, ["datefrom", "dateto"]));
+    this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
 
   private getSelectArray(aggKey) : Bucket[] {
@@ -210,15 +204,9 @@ export class LeftcolumnComponent implements OnInit {
       this.searchRedux
           
     ).take(1).subscribe(([result, {filters}] : [StrixResult, any]) => {
-      console.log("zip take 1", result, filters)
-
-      this.decorateWithParent(result.aggregations)
+      console.log("Leftcolumn init", result, filters)
+      this.parseAggResults(result)
       
-      this.aggregations = result.aggregations;
-      this.aggregationKeys = _.keys(_.omit(this.aggregations, ["datefrom", "dateto"]));
-
-      this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
-
       let filterData = filters || [];
       let newFilters = [];
       for(let filter of filterData) {

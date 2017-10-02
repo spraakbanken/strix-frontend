@@ -6,18 +6,14 @@ html,body {
   height: 100%;
 }
 
-.preloader {
-  height: 100vh;
-  width: 100vw;
-  display : flex;
-  align-items: center;
-  justify-content: center;
+.clearfix {
+  &::after {
+      display: block;
+      content: "";
+      clear: both;
+    }
 }
-.preloader:before {
-  font-size : 30px;
-  content: "Laddar";
-  display : block;
-}
+
 .dropdown-menu {
   max-height : 300px;
   overflow-y: auto;
@@ -25,6 +21,17 @@ html,body {
 a {
   cursor : pointer;
   /*color : #086788;*/
+}
+a.disabled {
+  color : inherit !important;
+  text-decoration : none !important;
+  cursor : default !important;
+}
+a:not([href]):not([tabindex]) {
+  color : #086788;
+}
+a:not([href]):not([tabindex]):hover {
+  text-decoration: underline;
 }
 
 .clear {

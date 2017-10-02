@@ -54,7 +54,7 @@
   <accordion closeOthers="true" class="right_accordion" *ngIf="cmViews.length !== 0">
     <accordion-group [isOpen]="accordionOpen === 'HITS'">
       <div accordion-heading>
-        <i class="fa fa-search"></i> Sökträffar <span *ngIf="bookmarks.length > 0">({{bookmarks.length}})</span>
+        <i class="fa fa-search"></i> {{"hits" | loc}} <span *ngIf="bookmarks.length > 0">({{bookmarks.length}})</span>
       </div>
       <div class="text_right_column" *ngIf="cmViews.length !== 0" class="bookmarks_area">
         <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
@@ -67,7 +67,7 @@
         </div>
       </div>
     </accordion-group>
-    <accordion-group heading="Textattribut" [isOpen]="accordionOpen === 'TEXTATTRIBUTES'">
+    <accordion-group [heading]="'textattributes' | loc" [isOpen]="accordionOpen === 'TEXTATTRIBUTES'">
       <div class="text_annotations_list">
          <ul class="annotations_list_ul">
           <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].textAttributes">

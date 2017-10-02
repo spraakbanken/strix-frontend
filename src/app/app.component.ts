@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
+import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
 import { DocumentsService } from './documents.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE } from './searchreducer';
@@ -25,7 +26,7 @@ export class AppComponent {
   private languages = ["swe", "eng"]; // TODO: Move to some config
   private selectedLanguage: string = "";
 
-  constructor(private routingService: RoutingService, private store: Store<AppState>) {
+  constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService) {
     console.log(_.add(1, 3)); // Just to test lodash
 
     this.searchRedux = this.store.select('searchRedux');
@@ -48,7 +49,7 @@ export class AppComponent {
 
   private changeLanguageTo(language: string) {
     this.store.dispatch({ type: CHANGELANG, payload : language});
-    //this.locService.setCurrentLanguage(language);
+    // this.locService.setCurrentLanguage(language);
   }
 
 }
