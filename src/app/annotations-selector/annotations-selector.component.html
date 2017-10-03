@@ -1,6 +1,25 @@
-<select (change)="selectAnnotation($event.target.value)" [ngModel]="selectedAnnotation">
+<select
+  (change)="selectAnnotationStructuralType($event.target.value)"
+  [ngModel]="selectedAnnotationStructuralType">
+  <optgroup label="Ordattribut">
+    <option value="token">ordattribut</option>
+  </optgroup>
+  <optgroup label="Strukturella attribut">
+    <option *ngFor="let item of structuralAnnotations" value="{{item.name}}">{{item.name}}</option>
+  </optgroup>
+</select>
+<select
+  *ngIf="selectedAnnotationStructuralType === 'token'"
+  (change)="selectAnnotation($event.target.value)"
+  [ngModel]="selectedAnnotation" >
   <option *ngFor="let item of wordAnnotations" value="{{item.name}}">{{item.name}}</option>
 </select>
+<select
+  *ngIf="selectedAnnotationStructuralType !== 'token'"
+  (change)="selectAnnotation($event.target.value, selectedAnnotationStructuralType)"
+  [ngModel]="selectedAnnotation">
+    <option *ngFor="let item of getStructuralAttributeGroup(selectedAnnotationStructuralType).attributes" value="{{item.name}}">{{item.name}}</option>
+  </select>
 <!--<select (change)="selectAnnotationValue($event.target.value)" [ngModel]="selectedAnnotationValue" *ngIf="selectedAnnotation && !useTypeahead">
   <option *ngFor="let item of annotationValues" value="{{item.key}}">{{item.key}}</option>
 </select>-->

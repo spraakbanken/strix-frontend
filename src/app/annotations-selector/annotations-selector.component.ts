@@ -31,6 +31,7 @@ export class AnnotationsSelectorComponent implements OnInit {
   private wordAnnotations = [];
   private selectedAnnotation: string;
   private selectedAnnotationValue: string;
+  private selectedAnnotationStructuralType = 'token';
   private structuralAnnotations = [];
   private currentCorpusID: string;
   private currentDocumentID: string;
@@ -75,6 +76,9 @@ export class AnnotationsSelectorComponent implements OnInit {
       if (message === "changeAnnotationHighlight") {
         //this.selectedAnnotation = payload["annotation"];
         console.log("payload av", payload["annotationValue"]);
+        if (payload["annotationStructuralType"] !== this.selectedAnnotationStructuralType) {
+          this.selectAnnotationStructuralType(payload["annotationStructuralType"]);
+        }
         if (payload["annotation"] !== this.selectedAnnotation) {
           this.selectAnnotation(payload["annotation"]);
         }
@@ -86,18 +90,32 @@ export class AnnotationsSelectorComponent implements OnInit {
   private updateAnnotationsLists(corpusID: string) {
     this.wordAnnotations = this.metadataService.getWordAnnotationsFor(corpusID);
     this.structuralAnnotations = this.metadataService.getStructuralAnnotationsFor(corpusID);
+    console.log("this.structuralAnnotations", this.structuralAnnotations);
   }
 
-  private selectAnnotation(annotation: string) {
+  private selectAnnotationStructuralType(structuralType: string) {
+    this.selectedAnnotationStructuralType = structuralType || "token";
+    console.log("structural attributes", this.structuralAnnotations);
+  }
+
+  private getStructuralAttributeGroup(name: string) {
+    return _.find(this.structuralAnnotations, (obj) => obj.name === name);
+  }
+
+  private selectAnnotation(annotation: string, structure: string = null) {
     console.log("selectAnnotation", annotation);
-    this.selectedAnnotationValue = ""; // <- destroys stuff :(
+    this.selectedAnnotationValue = "";
     this.selectedAnnotation = annotation;
     this.annotationValues = [];
+    let augAnnotation = annotation;
+    if (structure) {
+      augAnnotation = `${structure}.${augAnnotation}`;
+    }
     // Getting the annotation values for the selected annotation
-    this.callsService.getValuesForAnnotation(this.currentCorpusID, this.currentDocumentID, annotation)
+    this.callsService.getValuesForAnnotation(this.currentCorpusID, this.currentDocumentID, augAnnotation)
     .subscribe(
       answer => {
-        let values = answer.aggregations[annotation].buckets;
+        let values = answer.aggregations[augAnnotation].buckets;
         this.annotationValues = values;
       },
       error => this.errorMessage = <any>error
@@ -107,15 +125,15 @@ export class AnnotationsSelectorComponent implements OnInit {
   private selectAnnotationValue(annotationValue: string) {
     if (annotationValue && annotationValue !== "") {
       this.selectedAnnotationValue = annotationValue;
-      this.readerCommunicationService.changeAnnotationHighlight(this.selectedAnnotation, null, this.selectedAnnotationValue);
+      this.readerCommunicationService.changeAnnotationHighlight(this.selectedAnnotation, this.selectedAnnotationStructuralType, this.selectedAnnotationValue);
     }
   }
 
   private goToNextAnnotation() {
-    this.readerCommunicationService.goToNextAnnotation(this.selectedAnnotation, this.selectedAnnotationValue);
+    this.readerCommunicationService.goToNextAnnotation(this.selectedAnnotation, this.selectedAnnotationStructuralType, this.selectedAnnotationValue);
   }
   private goToPreviousAnnotation() {
-    this.readerCommunicationService.goToPreviousAnnotation(this.selectedAnnotation, this.selectedAnnotationValue);
+    this.readerCommunicationService.goToPreviousAnnotation(this.selectedAnnotation, this.selectedAnnotationStructuralType, this.selectedAnnotationValue);
   }
 
 }

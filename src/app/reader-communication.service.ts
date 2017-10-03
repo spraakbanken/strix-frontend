@@ -8,11 +8,15 @@ export class ReaderCommunicationService {
   public event$ = this._subject.asObservable();
   constructor() { }
 
-  public goToNextAnnotation(annotation: string, annotationValue: string) {
-    this._subject.next({message: "goToNextAnnotation", payload: {annotation: annotation, annotationValue: annotationValue}});
+  public goToNextAnnotation(annotation: string, annotationStructuralType : string, annotationValue: string) {
+    this._subject.next({message: "goToNextAnnotation", payload: {annotation: annotation,
+                                                                 annotationStructuralType : annotationStructuralType,
+                                                                 annotationValue: annotationValue}});
   }
-  public goToPreviousAnnotation(annotation: string, annotationValue: string) {
-    this._subject.next({message: "goToPreviousAnnotation", payload: {annotation: annotation, annotationValue: annotationValue}});
+  public goToPreviousAnnotation(annotation: string, annotationStructuralType : string, annotationValue: string) {
+    this._subject.next({message: "goToPreviousAnnotation", payload: {annotation: annotation,
+                                                                     annotationStructuralType : annotationStructuralType,
+                                                                     annotationValue: annotationValue}});
   }
   public changeAnnotationHighlight(annotation: string, annotationStructuralType : string, annotationValue: string) {
     console.log("CHANGEANNOTATIONHIGHLIGHT", annotation, annotationValue);

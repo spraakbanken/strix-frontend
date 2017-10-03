@@ -178,14 +178,15 @@ export class ReaderComponent implements AfterViewInit {
           message === "changeAnnotationHighlight") {
         const annotation = payload["annotation"];
         const annotationValue = payload["annotationValue"];
-        const annotationStructuralType = payload["annotationStructuralType"]; // TODO - Fix this for the structural annotations
+        const annotationStructuralType = payload["annotationStructuralType"];
+        console.log("payload structure", annotationStructuralType);
         //const datatype = payload["datatype"];
         const datatype = _.isArray(this.currentAnnotations[annotation]) ? "set" : "default";
         this.changeAnnotationHighlight(annotation, annotationStructuralType, annotationValue, datatype);
         if (message === "goToNextAnnotation") {
-          this.gotoAnnotation(annotation, annotationValue, false);
+          this.gotoAnnotation(annotation, annotationStructuralType, annotationValue, false); // TODO: Fix for structurals
         } else if (message === "goToPreviousAnnotation") {
-          this.gotoAnnotation(annotation, annotationValue, true);
+          this.gotoAnnotation(annotation, annotationStructuralType, annotationValue, true); // TODO: Fix for structurals
         }
       }
     });
@@ -265,10 +266,10 @@ export class ReaderComponent implements AfterViewInit {
     if (event.event.which === 37) {
       // Left
       // TODO: Fix this ugly code. Don't use the global object here.
-      this.gotoLeft(window['CodeMirrorStrixControl'][event.index].currentAnnotationType, window['CodeMirrorStrixControl'][event.index].currentAnnotationValue );
+      this.gotoLeft(window['CodeMirrorStrixControl'][event.index].currentAnnotationType, window['CodeMirrorStrixControl'][event.index].currentAnnotationStructuralType, window['CodeMirrorStrixControl'][event.index].currentAnnotationValue );
     } else if (event.event.which === 39) {
       // Right
-      this.gotoRight(window['CodeMirrorStrixControl'][event.index].currentAnnotationType, window['CodeMirrorStrixControl'][event.index].currentAnnotationValue );
+      this.gotoRight(window['CodeMirrorStrixControl'][event.index].currentAnnotationType, window['CodeMirrorStrixControl'][event.index].currentAnnotationStructuralType, window['CodeMirrorStrixControl'][event.index].currentAnnotationValue );
     }
   }
 
@@ -304,18 +305,21 @@ export class ReaderComponent implements AfterViewInit {
   private closeBox() {
     this.showBox = false;
   }
-  private gotoLeft(annotationKey: string, annotationValue: string) {
+  private gotoLeft(annotationKey: string, annotationStructuralType: string, annotationValue: string) {
     // Search for the closest previous token with the same annotation
-    this.gotoAnnotation(annotationKey, annotationValue, true);
+    this.gotoAnnotation(annotationKey, annotationStructuralType, annotationValue, true);
   }
-  private gotoRight(annotationKey: string, annotationValue: string) {
+  private gotoRight(annotationKey: string, annotationStructuralType: string, annotationValue: string) {
     // Search for the closest next token with the same annotation
-    this.gotoAnnotation(annotationKey, annotationValue, false);
+    this.gotoAnnotation(annotationKey, annotationStructuralType, annotationValue, false);
   }
-  private gotoAnnotation(annotationKey: string, annotationValue: string, backwards: boolean) {
-    console.log("goto annotation");
+  private gotoAnnotation(annotationKey: string, annotationStructuralType: string, annotationValue: string, backwards: boolean) {
+    console.log("goto annotation", annotationKey, annotationStructuralType, annotationValue);
     let cmIndex = this.selectedMirrorIndex; // In case the user switches codemirror, we still use the correct one!
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
+    if (annotationStructuralType && annotationStructuralType !== "token") {
+      annotationKey = `${annotationStructuralType}.${annotationKey}`;
+    }
     this.documentsService.searchForAnnotation(selectedDocumentIndex, annotationKey, annotationValue, this.selectionStartTokenID, backwards).subscribe(
       answer => {
         console.log("call success. the wid is", answer);
