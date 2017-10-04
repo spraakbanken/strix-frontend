@@ -20,12 +20,16 @@ h4::first-letter {
   text-transform: uppercase;
 }
 
+ul, input {
+  background-color : #e8e8e8;
+}
+
 ul {
   padding: 2px;
-  background-color : #e8e8e8;
   border-radius : 3px;
   border : 1px solid lightgrey ;
 }
+
 li {
   list-style-type: none;
   padding: 3px 10px;
@@ -43,40 +47,6 @@ li:last-child {
 }
 .filters_area {
   padding: 10px;
-}
-.filter_btn {
-  position: relative;
-  height : 2.1em;
-  cursor: pointer;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow-x: hidden;
-}
-.filter_btn.small {
-  margin-bottom: 0.2em;
-}
-
-.filter_btn .label, .filter_btn .labelremove {
-  transition: opacity 200ms;
-  position: absolute;
-  left: 0.5em;
-}
-.purge_filter_button {
-  transition: opacity 200ms;
-}
-.filter_btn .label {
-  opacity : 1;
-}
-
-.filter_btn:hover .label {
-  opacity : 0;
-}
-
-.filter_btn .labelremove, .filter_btn .purge_filter_button {
-  opacity : 0;
-}
-.filter_btn:hover .labelremove, .filter_btn:hover .purge_filter_button {
-  opacity : 1;
 }
 
 .corpus_item {

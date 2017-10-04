@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+// import { RouterModule } from '@angular/router';
 
 import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
@@ -22,6 +22,7 @@ import { ReaderComponent } from './reader/reader.component';
 import { KarpService } from './karp.service';
 import { LemgramPipe } from './lemgram.pipe';
 import { LeftcolumnComponent } from './leftcolumn/leftcolumn.component';
+import { MultiCompleteComponent } from './leftcolumn/multicomplete/multicomplete.component';
 import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
@@ -47,6 +48,7 @@ import { ReaderCommunicationService } from './reader-communication.service';
     ReaderComponent,
     LemgramPipe,
     LeftcolumnComponent,
+    MultiCompleteComponent,
     StartPanelComponent,
     SearchComponent,
     MinidocselectionComponent,
@@ -61,7 +63,7 @@ import { ReaderCommunicationService } from './reader-communication.service';
     BrowserModule,
     FormsModule,
     HttpModule,
-    RouterModule.forRoot([]),
+    // RouterModule.forRoot([]),
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
     AlertModule.forRoot(),

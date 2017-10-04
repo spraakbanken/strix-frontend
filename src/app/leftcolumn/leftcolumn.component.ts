@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChildren } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
@@ -10,6 +10,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations } from "../strixresult.model";
+import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 
 // import {Router} from '@angular/router';
 
@@ -24,7 +25,7 @@ interface AppState {
 
 })
 export class LeftcolumnComponent implements OnInit {
-
+  // @ViewChildren 
   
   private gotMetadata = false;
 
@@ -47,7 +48,7 @@ export class LeftcolumnComponent implements OnInit {
 
   private searchRedux: Observable<any>;
   private include_facets : string[] = []
-  private typeaheadSelected : string;
+  
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
@@ -105,6 +106,7 @@ export class LeftcolumnComponent implements OnInit {
     );
   }
 
+  
   private parseAggResults(result : StrixResult) {
     console.log("parseAggResults", result);
     this.decorateWithParent(result.aggregations)
@@ -113,25 +115,7 @@ export class LeftcolumnComponent implements OnInit {
     this.aggregationKeys = _.keys(_.omit(result.aggregations, ["datefrom", "dateto"]));
     this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
-
-  private getSelectArray(aggKey) : Bucket[] {
-    return _.reject(this.aggregations[aggKey].buckets, 'selected')
-  }
-
-  private listDropdownSelected(aggKey) : Bucket[] {
-    return _.filter(this.aggregations[aggKey].buckets, "selected")
-  }
-
-  private dropdownSelected(selectedItem, aggKey) {
-    console.log("dropdownSelected", selectedItem)
-    let bucket : Bucket = _.find(this.getSelectArray(aggKey), (item) => item.key == selectedItem.item.key)
-    this.chooseBucket(aggKey, bucket)
-    this.typeaheadSelected = ""
-  }
-
-  private onInputClick(event) {
-    event.target.scrollIntoView()
-  }
+  
 
   private chooseBucket(aggregationKey: string, bucket: Bucket) {
     bucket.selected = true

@@ -1,0 +1,23 @@
+<div>
+    <div class="filter_btn small btn-sm btn-success" *ngFor="let item of selected" (click)="onDeselect(item)">
+      <span class="label">{{item.key}}&nbsp;</span>
+      <span class="labelremove">Ta bort filter</span>
+      <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
+    </div>
+    
+      <input [(ngModel)]="typeaheadSelected"
+             [typeahead]="remaining"
+             (typeaheadOnSelect)="dropdownSelected($event)"
+             typeaheadOptionField="key"
+             [typeaheadItemTemplate]="itemTemplate"
+             [placeholder]="'Välj från lista (' + remaining.length + ' alternativ)'"
+             [typeaheadMinLength]="0"
+             [typeaheadOptionsLimit]="100"
+             (click)="onInputClick($event)"
+             class="form-control">
+    
+    <ng-template #itemTemplate let-item="item" let-index="index">
+      {{item.key}} ({{item.doc_count}})
+      
+    </ng-template>
+</div>
