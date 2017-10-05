@@ -31,6 +31,11 @@ export class MultiCompleteComponent implements OnInit {
         this.remaining = _.clone(this.buckets);
     }
 
+    private getRemaining() {
+        console.log("running", this.remaining);
+        return this.remaining;
+    }
+
     private onInputClick(event) {
       if(window.outerHeight - event.target.getBoundingClientRect().bottom < 300) {
           event.target.scrollIntoView()

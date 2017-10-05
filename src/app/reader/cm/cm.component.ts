@@ -18,9 +18,9 @@ export class CmComponent implements OnInit {
   @Output() onScroll = new EventEmitter<number>();
   @Output() onKeydown = new EventEmitter<any>();
 
-  @Input() index : number;
+  @Input() index: number;
 
-  codeMirrorInstance : any;
+  codeMirrorInstance: any;
   
   constructor(private documentsService : DocumentsService) {}
 

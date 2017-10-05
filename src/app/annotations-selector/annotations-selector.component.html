@@ -34,7 +34,7 @@
   [typeaheadMinLength]="0"
   [typeaheadOptionsLimit]="500"
   class="form-control annotation-typeahead">
-<ng-template #itemTemplate let-item="item" let-index="index">
+<ng-template #itemTemplate let-item="item">
   {{item.key}} ({{item.doc_count}})
   
 </ng-template>

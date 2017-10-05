@@ -6,15 +6,15 @@
     </div>
     
       <input [(ngModel)]="typeaheadSelected"
-             [typeahead]="remaining"
+             [typeahead]="getRemaining()"
              (typeaheadOnSelect)="dropdownSelected($event)"
              typeaheadOptionField="key"
              [typeaheadItemTemplate]="itemTemplate"
              [placeholder]="'Välj från lista (' + remaining.length + ' alternativ)'"
              [typeaheadMinLength]="0"
-             [typeaheadOptionsLimit]="100"
+             [typeaheadOptionsLimit]="1000"
              (click)="onInputClick($event)"
-             class="form-control">
+             class="form-control"/>
     
     <ng-template #itemTemplate let-item="item" let-index="index">
       {{item.key}} ({{item.doc_count}})

@@ -32,7 +32,7 @@ export class ReaderComponent implements AfterViewInit {
 
   private docLoadStatusSubscription: Subscription;
   private isLoading = false;
-  private accordionOpen = null;
+  private openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
 
   private mainDocument: StrixDocument;
 
@@ -233,7 +233,7 @@ export class ReaderComponent implements AfterViewInit {
 
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
       if (this.singleWordSelection) {
-        this.accordionOpen = "TOKENATTRIBUTES";
+        this.openness["TOKENATTRIBUTES"] = true;
       }
     }
 

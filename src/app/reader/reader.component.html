@@ -51,8 +51,8 @@
     (onScroll)="onViewportChange($event)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
-  <accordion closeOthers="true" class="right_accordion" *ngIf="cmViews.length !== 0">
-    <accordion-group [isOpen]="accordionOpen === 'HITS'">
+  <accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0">
+    <accordion-group [isOpen]="openness['HITS']">
       <div accordion-heading>
         <i class="fa fa-search"></i> {{"hits" | loc}} <span *ngIf="bookmarks.length > 0">({{bookmarks.length}})</span>
       </div>
@@ -67,14 +67,14 @@
         </div>
       </div>
     </accordion-group>
-    <accordion-group [heading]="'textattributes' | loc" [isOpen]="accordionOpen === 'TEXTATTRIBUTES'">
+    <accordion-group [heading]="'textattributes' | loc" [isOpen]="openness['TEXTATTRIBUTES']">
       <div class="text_annotations_list">
          <ul class="annotations_list_ul">
           <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].textAttributes">
-            <span [ngSwitch]="annotation.set || false">
+            <div class="annotations_local_area" [ngSwitch]="annotation.set || false">
               <span *ngSwitchCase="true">
-                {{annotation.name}}:<br/>
-                <ul>
+                <span class="annotation_title">{{annotation.name}}</span>
+                <ul class="annotations_list">
                   <li
                     *ngFor="let item of mainDocument.textAttributes[annotation.name]">
                     {{item}}
@@ -83,14 +83,15 @@
               </span>
               <span
                 *ngSwitchCase="false">
-                {{annotation.name}}: {{mainDocument.textAttributes[annotation.name]}}
+                <span class="annotation_title">{{annotation.name}}</span>
+                {{mainDocument.textAttributes[annotation.name]}}
               </span>
-            </span>
+            </div>
           </li>
         </ul>
       </div>
     </accordion-group>
-    <accordion-group heading="Strukturella attribut" [isOpen]="accordionOpen === 'STRUCTURALATTRIBUTES'">
+    <accordion-group heading="Strukturella attribut" [isOpen]="openness['STRUCTURALATTRIBUTES']">
       <div
         class="token_annotations_list"
         *ngIf="!isLoading && showBox && singleWordSelection">
@@ -99,10 +100,10 @@
             <em>{{annotationGroup.name}}</em>
             <ul class="annotations_list_ul indent">
               <li *ngFor="let annotation of annotationGroup.attributes">
-                <span [ngSwitch]="annotation.set || false">
+                <span class="annotations_local_area" [ngSwitch]="annotation.set || false">
                   <span *ngSwitchCase="true">
-                    {{annotation.name}}:<br/>
-                    <ul>
+                    <span class="annotation_title">{{annotation.translation_name | loc}}</span>
+                    <ul class="annotations_list">
                       <li
                         *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name]"
                         (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, item, 'set')"
@@ -115,7 +116,8 @@
                     *ngSwitchCase="false"
                     (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, currentAnnotations[annotationGroup.name].attrs[annotation.name])"
                     class="highlightable_annotation">
-                    {{annotation.name}}: {{currentAnnotations[annotationGroup.name].attrs[annotation.name]}}
+                    <span class="annotation_title">{{annotation.translation_name | loc}}</span>
+                    {{currentAnnotations[annotationGroup.name].attrs[annotation.name]}}
                   </span>
                 </span>
               </li>
@@ -130,29 +132,29 @@
       <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
       <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
       <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
-    <accordion-group heading="Ordattribut" [isOpen]="accordionOpen === 'TOKENATTRIBUTES'">
+    <accordion-group heading="Ordattribut" [isOpen]="openness['TOKENATTRIBUTES']">
       <div
         class="token_annotations_list"
         *ngIf="!isLoading && showBox && singleWordSelection">
         <ul class="annotations_list_ul">
           <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].wordAttributes">
-            <span [ngSwitch]="annotation.set">
+            <span class="annotations_local_area" [ngSwitch]="annotation.set">
               <span *ngSwitchCase="true">
-                {{annotation.name}}:<br/>
-                <ul>
+                <span class="annotation_title">{{annotation.translation_name | loc}}</span>
+                <ul class="annotations_list">
                   <li
                     *ngFor="let item of currentAnnotations[annotation.name]"
                     (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, item, 'set')"
                     class="highlightable_annotation">
-                    {{item}}
+                    <annotation [data]="item" [type]="annotation.type"></annotation>
                   </li>
                 </ul>
               </span>
               <span
                 *ngSwitchCase="false || undefined"
-                (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, currentAnnotations[annotation.name])"
-                class="highlightable_annotation">
-                {{annotation.name}}: {{currentAnnotations[annotation.name]}}
+                (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, currentAnnotations[annotation.name])">
+                <span class="annotation_title">{{annotation.translation_name | loc}}</span>
+                <span class="highlightable_annotation">{{currentAnnotations[annotation.name]}}</span>
               </span>
             </span>
           </li>

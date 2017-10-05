@@ -1,0 +1,16 @@
+<ng-template [ngIf]="type === 'lemgram'">
+  <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{posPart}}</span>) 
+  <a 
+    [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Clemgram%7Cequals%7C'+data"
+    target="_blank"
+    (click)="clickedKarp($event)">
+    <img
+    class="karp_logo"
+    src="assets/karplogo.png"
+    />
+  </a>
+</ng-template>
+
+<ng-template [ngIf]="type !== 'lemgram'">
+  {{data}}
+</ng-template>

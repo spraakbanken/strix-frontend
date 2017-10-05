@@ -200,3 +200,6 @@ body {
 
 /* end filter button */
 
+.card-body {
+  padding: 2px;
+}
