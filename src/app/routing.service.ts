@@ -5,7 +5,7 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT, CLOSEDOCUMENT } from './searchreducer';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
    the ngrx-store app store in sync. It is the only piece of code that is allowed
@@ -42,6 +42,12 @@ export class RoutingService {
     this.searchRedux = this.store.select('searchRedux');
     this.initializeStartingParameters();
 
+    window.onpopstate = (event) => {
+      console.log("popstate", "location: " + document.location + ", state: " + JSON.stringify(event.state));
+      // window.location.href = document.location
+      this.initializeStartingParameters()
+    };
+
     this.searchRedux.subscribe((data) => {
       console.log("the data", data);
       const urlString = _.compact(this.urlFields.map((field) => {
@@ -53,8 +59,11 @@ export class RoutingService {
         return `${encodeURI(key)}=${encodeURI(val)}`;
       })).join("&");
 
-      if (urlString) {
-        window.location.hash = "#?" + urlString;
+      // if (urlString) {
+      //   window.location.hash = "#?" + urlString;
+      // }
+      if(urlString && data.latestAction !== INITIATE) {
+        window.history.pushState("", "", "?" + urlString)
       }
     });
 
@@ -88,7 +97,7 @@ export class RoutingService {
   }
 
   private initializeStartingParameters() {
-    const urlHash = window.location.hash;
+    const urlHash = window.location.search;
     let startParams = {};
     if (urlHash && urlHash.length > 1) {
       const urlPart = urlHash.split("?")[1];

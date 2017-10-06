@@ -73,7 +73,7 @@ export class CallsService {
         // TODO: we might need to namespace these or it could get crowded...
       this.defaultAttrParse(corpusData.attributes.text_attributes)
       this.defaultAttrParse(corpusData.attributes.word_attributes)
-      this.defaultAttrParse(_.values(corpusData.attributes.struct_attributes))
+      // this.defaultAttrParse(_.values(corpusData.attributes.struct_attributes))
     }
 
   }

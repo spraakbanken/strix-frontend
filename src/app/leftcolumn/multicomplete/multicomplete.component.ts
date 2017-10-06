@@ -1,4 +1,4 @@
-import { Component, OnInit, EventEmitter, Input, Output } from '@angular/core';
+import { Component, OnInit, EventEmitter, Input, Output, ChangeDetectionStrategy } from '@angular/core';
 
 
 import { Bucket } from "../../strixresult.model";
@@ -8,7 +8,8 @@ import * as _ from 'lodash';
 @Component({
   selector: 'multicomplete',
   templateUrl: './multicomplete.component.html',
-  styleUrls: ['./multicomplete.component.css']
+  styleUrls: ['./multicomplete.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class MultiCompleteComponent implements OnInit {
@@ -28,7 +29,7 @@ export class MultiCompleteComponent implements OnInit {
     }
     ngOnInit() {
         console.log("ngOnInit", this.buckets)
-        this.remaining = _.clone(this.buckets);
+        this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
     }
 
     private getRemaining() {
@@ -43,7 +44,7 @@ export class MultiCompleteComponent implements OnInit {
     }
     private onDeselect(bucket : Bucket) {
         this.remaining.push(bucket) 
-        this.remaining = _.sortBy(this.remaining, "key")
+        this.remaining = _.orderBy(this.remaining, "doc_count", "desc")
         this.selected.splice(this.selected.indexOf(bucket), 1)
         this.onRemove.emit(bucket)
     }

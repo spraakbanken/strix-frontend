@@ -1,6 +1,7 @@
-<div class="doc_header" *ngIf="documentTitle">
-  <b>{{corpusName | loc}}: {{documentTitle}}</b>
-  <div class="close_box" (click)="closeDocument()">
+<div class="doc_header">
+  <b [hidden]="!documentTitle">{{corpusName | loc}}: {{documentTitle}}</b>
+  <div class="close_box" (click)="closeDocument()" 
+    [hidden]="!documentTitle">
     <i class="fa fa-times fa-border"></i>
   </div>
 </div>
