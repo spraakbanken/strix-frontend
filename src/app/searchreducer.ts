@@ -13,6 +13,7 @@ export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
+export const POPSTATE = "POPSTATE";
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.

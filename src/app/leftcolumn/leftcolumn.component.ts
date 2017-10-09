@@ -118,6 +118,7 @@ export class LeftcolumnComponent implements OnInit {
   
 
   private chooseBucket(aggregationKey: string, bucket: Bucket) {
+    console.log("chooseBucket", aggregationKey, bucket)
     bucket.selected = true
 
     this.updateFilters();
@@ -194,7 +195,8 @@ export class LeftcolumnComponent implements OnInit {
       let filterData = filters || [];
       let newFilters = [];
       for(let filter of filterData) {
-        let bucket = _.find(result.aggregations[filter.field].buckets, (item) => item.key === filter.value)
+        let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
+        console.log("bucket", bucket)
         if(bucket) {
           bucket.selected = true
         }

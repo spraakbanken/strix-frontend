@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/fromEvent';
+import 'rxjs/add/operator/pairwise';
 import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT, CLOSEDOCUMENT } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT, CLOSEDOCUMENT, POPSTATE } from './searchreducer';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
    the ngrx-store app store in sync. It is the only piece of code that is allowed
@@ -42,11 +44,32 @@ export class RoutingService {
     this.searchRedux = this.store.select('searchRedux');
     this.initializeStartingParameters();
 
-    window.onpopstate = (event) => {
-      console.log("popstate", "location: " + document.location + ", state: " + JSON.stringify(event.state));
-      // window.location.href = document.location
-      this.initializeStartingParameters()
-    };
+    // window.onpopstate = (event) => {
+    let prevState = null
+    Observable.fromEvent(window, "popstate").map(() => {
+      // console.log("popstate", "location: " + document.location + ", state: " + JSON.stringify(event.state));
+      let currentState = this.getCurrentState()
+      console.log("currentState", currentState)
+      // this.initializeStartingParameters()
+
+      // this.store.dispatch({ type : POPSTATE, payload : currentState});
+      let ret = [currentState, prevState];
+      prevState = currentState
+      return ret
+      
+    }).subscribe( ([current, prev] ) => {
+      console.log("current, prev", current, prev)
+
+      if(!current.documentID) {
+        this.store.dispatch({
+          type : CLOSEDOCUMENT
+        });
+
+      }
+
+
+    })
+
 
     this.searchRedux.subscribe((data) => {
       console.log("the data", data);
@@ -59,15 +82,13 @@ export class RoutingService {
         return `${encodeURI(key)}=${encodeURI(val)}`;
       })).join("&");
 
-      // if (urlString) {
-      //   window.location.hash = "#?" + urlString;
-      // }
       if(urlString && data.latestAction !== INITIATE) {
         window.history.pushState("", "", "?" + urlString)
       }
     });
 
   }
+
 
   private stringify(type: FragmentType, obj): string {
     if (!obj) return "";
@@ -96,20 +117,25 @@ export class RoutingService {
     }
   }
 
-  private initializeStartingParameters() {
-    const urlHash = window.location.search;
+  private getCurrentState() {
+    const urlSearch = window.location.search;
+    console.log("urlSearch", urlSearch)
     let startParams = {};
-    if (urlHash && urlHash.length > 1) {
-      const urlPart = urlHash.split("?")[1];
+    if (urlSearch && urlSearch.length > 1) {
+      const urlPart = urlSearch.split("?")[1];
       startParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
-      console.log("starting params", startParams);
     }
-
-    const startState = {};
+    const state = {};
     for (let field of this.urlFields) {
       const item = startParams[field.tag] ? this.destringify(field.type, startParams[field.tag]) : field.default;
-      startState[field.tag] = item || null;
+      state[field.tag] = item || null;
     }
+    return state
+  }
+
+  private initializeStartingParameters() {
+    let startState = this.getCurrentState()
+    console.log("init startState", startState)
 
     this.store.dispatch({ type : INITIATE, payload : startState});
 
