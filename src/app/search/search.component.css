@@ -21,6 +21,7 @@
 .search_widget + button {
   vertical-align: middle;
   padding: 7px 10px;
+  height: 100%;
 }
 .simple_searchbox {
   margin-right: 5px;

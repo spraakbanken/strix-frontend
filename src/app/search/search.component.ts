@@ -10,7 +10,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, INITIATE } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, INITIATE, CHANGE_IN_ORDER } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -71,6 +71,7 @@ export class SearchComponent implements OnInit {
 
   private searchStatusSubscription: Subscription;
   private isSearching = false;
+  private isKeywordChecked : boolean = false;
 
   constructor(private callsService: CallsService,
               private karpService: KarpService,
@@ -98,6 +99,7 @@ export class SearchComponent implements OnInit {
       observer.next(this.asyncSelected);
     }).mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected));
 
+
     // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
     //   console.log("picked up filters change", filters);
       
@@ -122,14 +124,24 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-    /* this.searchRedux.take(1).subscribe(data => {
-      this.getHistogramData(data.corpora);
-    }); */
+     this.searchRedux.take(1).subscribe(data => {
+      // this.getHistogramData(data.corpora);
+      this.isKeywordChecked = data.keyword_search
+
+      if(data.query) {
+        this.asyncSelected = data.query
+      }
+    }); 
 
     /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
       console.log("acting upon", data.latestAction);
       this.getHistogramData(data.corpora);
     }); */
+  }
+
+  private keywordChange(val) {
+    console.log("inOrderChange", val)
+    this.store.dispatch({type : CHANGE_IN_ORDER, payload: val})
   }
 
   private getHistogramData(corpora: string[]) {

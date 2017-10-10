@@ -19,7 +19,7 @@ interface AppState {
 }
 
 enum FragmentType {
-  STRING, STRINGARRAY, NUMBER, BASE64
+  STRING, STRINGARRAY, NUMBER, BASE64, BOOLEAN, URI
 }
 
 @Injectable()
@@ -30,11 +30,12 @@ export class RoutingService {
   private readonly urlFields = [
     {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
     {tag : "type", type : FragmentType.STRING, default : "normal"},
-    {tag : "query", type : FragmentType.STRING, default : ""},
+    {tag : "query", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
     {tag : "filters", type : FragmentType.BASE64, default : {}},
     {tag : "include_facets", type : FragmentType.STRINGARRAY, default : []},
+    {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
@@ -73,7 +74,7 @@ export class RoutingService {
 
     this.searchRedux.subscribe((data) => {
       console.log("the data", data);
-      const urlString = _.compact(this.urlFields.map((field) => {
+      let urlString = _.compact(this.urlFields.map((field) => {
         let key = field.tag
         let val = this.stringify(field.type, data[field.tag])
         if(!val || val === this.stringify(field.type, field.default)) {
@@ -81,9 +82,11 @@ export class RoutingService {
         }
         return `${encodeURI(key)}=${encodeURI(val)}`;
       })).join("&");
-
-      if(urlString && data.latestAction !== INITIATE) {
-        window.history.pushState("", "", "?" + urlString)
+      if(urlString) {
+        urlString = "?" + urlString
+      }
+      if(data.latestAction !== INITIATE) {
+        window.history.pushState("", "", urlString)
       }
     });
 
@@ -95,9 +98,13 @@ export class RoutingService {
     switch (type) {
       case FragmentType.STRING:
         return obj;
+      case FragmentType.URI:
+        return obj;
       case FragmentType.STRINGARRAY:
         return obj.join(",");
       case FragmentType.NUMBER:
+        return obj.toString();
+      case FragmentType.BOOLEAN:
         return obj.toString();
       case FragmentType.BASE64:
         return btoa(JSON.stringify(obj));
@@ -108,12 +115,16 @@ export class RoutingService {
     switch (type) {
       case FragmentType.STRING:
         return str;
+      case FragmentType.URI:
+        return decodeURIComponent(str);
       case FragmentType.STRINGARRAY:
         return str.split(",");
       case FragmentType.NUMBER:
         return parseInt(str, 10);
       case FragmentType.BASE64:
         return JSON.parse(atob(str));
+      case FragmentType.BOOLEAN:
+        return str === "true";
     }
   }
 

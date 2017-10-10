@@ -20,6 +20,12 @@
           class="form-control simple_searchbox"
           [(ngModel)]="asyncSelected"
           (keydown.Enter)="simpleSearch()"/>
+
+          <label for="keyword_search">{{'keyword_search' | loc}}</label>
+          <input type="checkbox" class="" id="keyword_search" 
+            [(ngModel)]="isKeywordChecked"
+            (change)="keywordChange(isKeywordChecked)"
+          >
       </div>
       <div class="search_widget" *ngIf="searchType=='lemgram'">
         <template #lemgramItemTemplate let-model="item" let-index="index">

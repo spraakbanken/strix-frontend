@@ -23,7 +23,8 @@ export class LocService {
       "search_document" : "Sök i dokumentet",
       'hits' : "Sökträffar",
       'textattributes' : "Textattribut",
-      'corpus_id' : 'Samling'
+      'corpus_id' : 'Samling',
+      'keyword_search' : "Nyckelordssökning"
     },
     "eng" : {
       "swe" : "Swedish",
@@ -32,7 +33,8 @@ export class LocService {
       "search_document" : "Search current document",
       'hits' : "Hits",
       'textattributes' : "Text attributes",
-      'corpus_id' : 'Collection'
+      'corpus_id' : 'Collection',
+      'keyword_search' : "Keyword search"
     }
   };
 

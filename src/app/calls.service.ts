@@ -174,6 +174,9 @@ export class CallsService {
     if (filters && _.size(filters) > 0) {
       params.set("text_filter", this.formatFilterObject(filters))
     }
+    if(query.keyword_search) {
+      params.set("in_order", (!query.keyword_search).toString())
+    }
     let options = new RequestOptions({
       search : params
     });
@@ -223,6 +226,9 @@ export class CallsService {
     }
     if(query.include_facets.length) {
       params.set("include_facets", query.include_facets.join(","))
+    }
+    if(query.keyword_search) {
+      params.set("in_order", (!query.keyword_search).toString())
     }
     let options = new RequestOptions({
       search : params

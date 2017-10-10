@@ -6,4 +6,5 @@ export class StrixQuery {
     documentsPerPage: number;
     filters: any;
     include_facets: string[] = [];
+    keyword_search: boolean;
 }

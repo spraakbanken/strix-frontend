@@ -122,6 +122,9 @@ export class QueryService {
       
       this.currentQuery.filters = data.filters;
       this.currentQuery.include_facets = data.include_facets || [];
+      if(data.keyword_search) {
+        this.currentQuery.keyword_search = data.keyword_search
+      }
       this.runCurrentQuery(); // Perform the actual search
     });
 

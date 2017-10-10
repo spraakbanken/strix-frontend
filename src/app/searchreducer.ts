@@ -14,6 +14,8 @@ export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 export const POPSTATE = "POPSTATE";
+export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
+
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.
@@ -40,6 +42,9 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGE_INCLUDE_FACET:
       nextState.include_facets = action.payload;
+      break;
+    case CHANGE_IN_ORDER:
+      nextState.keyword_search = action.payload;
       break;
     case CHANGEPAGE:
       nextState.page = action.payload;
