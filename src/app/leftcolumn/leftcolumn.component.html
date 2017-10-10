@@ -37,7 +37,7 @@
           <h4>{{aggregationKey | loc}}</h4>
           <ul class="">
             <li class="aggregation_item" *ngFor="let bucket of aggregations[aggregationKey].buckets" [ngClass]="{selected : bucket.selected}">
-              <div (click)="chooseBucket(aggregationKey, bucket)" *ngIf="!bucket.selected">{{bucket.key | loc:bucket.key}} ({{bucket.doc_count}})</div>
+              <div (click)="chooseBucket(aggregationKey, bucket)" *ngIf="!bucket.selected">{{bucket.key | loc:bucket.key}} ({{bucket.doc_count | prettynumber}})</div>
               
               <div class="filter_btn btn-sm btn-success d-block text-left" *ngIf="bucket.selected" (click)="purgeFilter(aggregationKey, bucket)">
                 <span class="label">{{aggregationKey | loc}} = {{bucket.key}}&nbsp;</span>

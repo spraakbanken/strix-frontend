@@ -14,7 +14,7 @@ import { LocService } from './loc.service';
 @Injectable()
 export class CallsService {
 
-  private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/test";
+  private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb";
   //private readonly STRIXBACKEND_URL = "http://130.241.42.205:5000";
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
   //private readonly STRIXBACKEND_URL = "http://localhost:8080";

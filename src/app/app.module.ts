@@ -38,6 +38,7 @@ import { HistogramComponent } from './histogram/histogram.component';
 import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
 import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
+import { PrettynumberPipe } from './prettynumber.pipe';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -59,6 +60,7 @@ import { AnnotationComponent } from './annotation/annotation.component';
     HistogramComponent,
     AnnotationsSelectorComponent,
     AnnotationComponent,
+    PrettynumberPipe,
     // SearchFilterComponent
   ],
   imports: [

@@ -30,12 +30,12 @@
   (typeaheadOnSelect)="selectAnnotationValue(selectedAnnotationValue)"
   typeaheadOptionField="key"
   [typeaheadItemTemplate]="itemTemplate"
-  [placeholder]="'Välj från lista (' + annotationValues.length + ' alternativ)'"
+  [placeholder]="'Välj från lista (' + pretty(annotationValues.length) + ' alternativ)'"
   [typeaheadMinLength]="0"
   [typeaheadOptionsLimit]="500"
   class="form-control annotation-typeahead">
 <ng-template #itemTemplate let-item="item">
-  {{item.key}} ({{item.doc_count}})
+  {{item.key}} ({{item.doc_count | prettynumber}})
   
 </ng-template>
 <button *ngIf="selectedAnnotationValue" (click)="goToPreviousAnnotation()">

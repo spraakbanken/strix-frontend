@@ -24,7 +24,8 @@ export class LocService {
       'hits' : "Sökträffar",
       'textattributes' : "Textattribut",
       'corpus_id' : 'Samling',
-      'keyword_search' : "Nyckelordssökning"
+      'keyword_search' : "Nyckelordssökning",
+      'THOUSANDS_SEPARATOR' : " "
     },
     "eng" : {
       "swe" : "Swedish",
@@ -34,7 +35,8 @@ export class LocService {
       'hits' : "Hits",
       'textattributes' : "Text attributes",
       'corpus_id' : 'Collection',
-      'keyword_search' : "Keyword search"
+      'keyword_search' : "Keyword search",
+      'THOUSANDS_SEPARATOR' : ","
     }
   };
 
@@ -49,7 +51,7 @@ export class LocService {
   }
 
   public updateDictionary(obj : {eng: Record<string, string>, swe: Record<string, string>}) {
-    _.merge(this.dictionaries, obj)
+    _.merge(this.dictionaries, obj);
   }
 
   public getCurrentLanguage(): string {
@@ -61,12 +63,21 @@ export class LocService {
   }
   public getTranslationFor(source: string, defaultVal? : string): string {
     let term = this.dictionaries[this.currentLanguage][source];
-    if(defaultVal) {
-      return term || defaultVal
+    if (defaultVal) {
+      return term || defaultVal;
     } else {
       return term || "-missing translation-";
     }
-    
+  }
+
+  public getPrettyNumberString(input: string | number) {
+    input = input.toString();
+    let regex = /(\d+)(\d{3})/;
+    let separator = this.getTranslationFor("THOUSANDS_SEPARATOR", ","); // TODO: Choose by language
+    while(regex.test(input)) {
+      input = input.replace(regex, "$1" + separator + "$2");
+    }
+    return input;
   }
 
 }

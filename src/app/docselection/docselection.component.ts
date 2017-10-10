@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';

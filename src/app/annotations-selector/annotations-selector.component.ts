@@ -9,6 +9,7 @@ import { ReaderCommunicationService } from '../reader-communication.service';
 import { CallsService } from '../calls.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
+import { LocService } from '../loc.service';
 
 interface AppState {
   searchRedux: any;
@@ -44,7 +45,8 @@ export class AnnotationsSelectorComponent implements OnInit {
               private store: Store<AppState>,
               private metadataService: MetadataService,
               private callsService: CallsService,
-              private readerCommunicationService: ReaderCommunicationService) { }
+              private readerCommunicationService: ReaderCommunicationService,
+              private locService: LocService) { }
 
   ngOnInit() {
     this.subscription = this.documentsService.loadedDocument$.subscribe(
@@ -120,6 +122,10 @@ export class AnnotationsSelectorComponent implements OnInit {
       },
       error => this.errorMessage = <any>error
     );
+  }
+
+  private pretty(input) {
+    return this.locService.getPrettyNumberString(input);
   }
 
   private selectAnnotationValue(annotationValue: string) {
