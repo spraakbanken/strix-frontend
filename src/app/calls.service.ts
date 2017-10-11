@@ -273,6 +273,12 @@ export class CallsService {
                     .map(this.extractDocumentData)
                     .catch(this.handleError);
   }
+  public getDocumentBySentenceID(corpusID: string, sentenceID: string) : Observable<StrixDocument> {
+    let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${sentenceID}`;
+    return this.http.get(url)
+                    .map(this.extractDocumentData)
+                    .catch(this.handleError);
+  }
 
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string): Observable<StrixDocument> {
     console.log("getDocumentWithQuery()");

@@ -24,7 +24,7 @@ export class LocService {
       'hits' : "Sökträffar",
       'textattributes' : "Textattribut",
       'corpus_id' : 'Samling',
-      'keyword_search' : "Nyckelordssökning",
+      'keyword_search' : "I följd",
       'THOUSANDS_SEPARATOR' : " "
     },
     "eng" : {
@@ -35,7 +35,7 @@ export class LocService {
       'hits' : "Hits",
       'textattributes' : "Text attributes",
       'corpus_id' : 'Collection',
-      'keyword_search' : "Keyword search",
+      'keyword_search' : "In order",
       'THOUSANDS_SEPARATOR' : ","
     }
   };

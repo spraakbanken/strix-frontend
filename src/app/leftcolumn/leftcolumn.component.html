@@ -50,7 +50,7 @@
         </ng-template>
       </div>
 
-      <div *ngIf="unusedFacets.length">
+      <div *ngIf="unusedFacets.length" class="unused_facets">
         <h5>Visa fler filter</h5>
         <ul>
           <li *ngFor="let key of unusedFacets" (click)="addFacet(key)" class="aggregation_item">{{key | loc}}</li>

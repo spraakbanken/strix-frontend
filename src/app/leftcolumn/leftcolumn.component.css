@@ -20,6 +20,15 @@ h3,h4,h5 {
 h4::first-letter {
   text-transform: uppercase;
 }
+.unused_facets h5 {
+  font-variant: small-caps;
+  text-transform: lowercase;
+  font-size: 0.9em;
+  margin-top: 2em;
+}
+.unused_facets ul {
+  font-size : 0.8em;
+}
 
 ul, input {
   background-color : #e8e8e8;

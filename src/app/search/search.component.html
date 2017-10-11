@@ -23,8 +23,8 @@
 
           <label for="keyword_search">{{'keyword_search' | loc}}</label>
           <input type="checkbox" class="" id="keyword_search" 
-            [(ngModel)]="isKeywordChecked"
-            (change)="keywordChange(isKeywordChecked)"
+            [(ngModel)]="isPhraseSearch"
+            (change)="searchTypeChange(isPhraseSearch)"
           >
       </div>
       <div class="search_widget" *ngIf="searchType=='lemgram'">

@@ -1,3 +1,8 @@
+:host {
+  display: block;
+  max-height: 80vh;
+}
+
 /* .all_texts_area {
   display: table;
   width: 100%;

@@ -71,7 +71,7 @@ export class SearchComponent implements OnInit {
 
   private searchStatusSubscription: Subscription;
   private isSearching = false;
-  private isKeywordChecked : boolean = false;
+  private isPhraseSearch : boolean = true;
 
   constructor(private callsService: CallsService,
               private karpService: KarpService,
@@ -126,7 +126,7 @@ export class SearchComponent implements OnInit {
   ngOnInit() {
      this.searchRedux.take(1).subscribe(data => {
       // this.getHistogramData(data.corpora);
-      this.isKeywordChecked = data.keyword_search
+      this.isPhraseSearch = !data.keyword_search
 
       if(data.query) {
         this.asyncSelected = data.query
@@ -139,9 +139,9 @@ export class SearchComponent implements OnInit {
     }); */
   }
 
-  private keywordChange(val) {
-    console.log("inOrderChange", val)
-    this.store.dispatch({type : CHANGE_IN_ORDER, payload: val})
+  private searchTypeChange(val) {
+    console.log("searchTypeChange", val)
+    this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
   private getHistogramData(corpora: string[]) {
