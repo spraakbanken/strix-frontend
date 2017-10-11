@@ -28,7 +28,6 @@ export class MultiCompleteComponent implements OnInit {
         // this.remaining = this.buckets;
     }
     ngOnInit() {
-        console.log("ngOnInit", this.buckets)
         // this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
         for(let item of this.buckets) {
           if(item.selected) {
@@ -42,7 +41,6 @@ export class MultiCompleteComponent implements OnInit {
     }
 
     private getRemaining() {
-        console.log("running", this.remaining);
         return this.remaining;
     }
 

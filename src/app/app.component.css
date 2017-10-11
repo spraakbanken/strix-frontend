@@ -5,19 +5,11 @@
 
 
 .left_column {
-  /*display: inline-block;*/
-  
-  width: 250px;
-  /*height: 100vh;*/
-  height: 100%;
-  min-height: 100vh;
 }
 
 .right_column {
   /*background-color: brown;*/
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  min-height: 100vh;
 }
 
 reader {

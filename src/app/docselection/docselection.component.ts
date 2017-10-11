@@ -11,7 +11,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD } from '../searchreducer';
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -83,7 +83,12 @@ export class DocselectionComponent implements OnInit {
 
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    this.searchRedux.filter((d) => d.latestAction === INITIATE).subscribe((data) => {
+      console.log("init", data)
+      this.currentPaginatorPage = data.page
+    })
+  }
 
   private paginatorPageChanged(event: any) {
     console.log("Changed paginator page", event);

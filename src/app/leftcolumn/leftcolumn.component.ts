@@ -25,13 +25,9 @@ interface AppState {
 
 })
 export class LeftcolumnComponent implements OnInit {
-  // @ViewChildren 
   
   private gotMetadata = false;
 
-  //private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
-  //private availableCorporaKeys: string[] = [];
-  //private selectedCorpusID: string = null; // TODO: Temporary
   private metadataSubscription: Subscription;
   private aggregatedResultSubscription: Subscription;
 
@@ -39,10 +35,6 @@ export class LeftcolumnComponent implements OnInit {
   private aggregationKeys: string[] = [];
   private currentFilters: any[] = []; // TODO: Make some interface
   private unusedFacets : string[] = [];
-  /*
-    field : "fieldname",
-    values : ["value1", "value2"]
-  */
 
   private openDocument = false;
 
@@ -61,14 +53,7 @@ export class LeftcolumnComponent implements OnInit {
         }
     });
 
-    // this.activatedRoute.queryParams.subscribe((params: Params) => {
-    //   console.log("params", params)
-    // });
-
-
     this.searchRedux = this.store.select('searchRedux');
-
-    
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       this.openDocument = true;
@@ -76,26 +61,6 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.openDocument = false;
-    });
-
-    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
-      // REM: We can't use INITIATE since it's sent before the component loads, hence we use SEARCH
-      /* console.log("initiate", data.corpora); 
-      this.selectedCorpusID = data.corpora;
-      // Take any current filters from the store and massage them so they work with the internal data model
-      let filterData = data.filters || {};
-      let newFilters = [];
-      for(let filter of filterData) {
-        console.log("filter:", filter);
-        newFilters.push({
-          "field" : filter.field,
-          "values" : filter.values
-        });
-      }
-      this.currentFilters = newFilters; */
-
-      console.log("search suscribe this.aggregations", this.aggregations)
-
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.subscribe(
@@ -112,7 +77,11 @@ export class LeftcolumnComponent implements OnInit {
     this.decorateWithParent(result.aggregations)
     let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
     this.aggregations = _.merge(newAggs, result.aggregations);
-    this.aggregationKeys = _.keys(_.omit(result.aggregations, ["datefrom", "dateto"]));
+    this.aggregationKeys = _(result.aggregations)
+                            .omit(["datefrom", "dateto"])
+                            .keys()
+                            .sortBy( (key) => key === "corpus_id" ? "aaaaaa": key)
+                            .value()
     this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
   
@@ -133,16 +102,6 @@ export class LeftcolumnComponent implements OnInit {
     bucket.selected = false
     this.updateFilters();
   }
-
-
-  /* private purgeCorpus() {
-    this.selectedCorpusID = null;
-    this.purgeAllFilters();
-    this.store.dispatch({ type: CHANGECORPORA, payload : []});
-    this.store.dispatch({ type: SEARCH, payload : null});
-  } */
-
-  
 
   private addFacet(key : string) {
     if(!this.include_facets.length) {
@@ -202,23 +161,6 @@ export class LeftcolumnComponent implements OnInit {
         }
        }
     })
-
-    // this.searchRedux.take(1).subscribe(([result, {filters}] : [StrixResult, [key: string] : any]) => {
-      // Take any current filters from the store and massage them so they work with the internal data model
-      
-        
-        // newFilters.push({
-        //   "field" : filter.field,
-        //   "value" : filter.value
-        // });
-      // }
-      // this.currentFilters = newFilters;
-    // });
-
-    /* this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe((data) => {
-      console.log("acting upon", data.latestAction);
-
-    }); */
   }
-
 }
+

@@ -212,7 +212,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
     let params = new URLSearchParams()
-    params.set("facet_count", '7')
+    params.set("facet_count", '5')
 
     if(corpusIDs && corpusIDs.length > 0) {
       params.set("corpora", corpusIDs.join(","))  
