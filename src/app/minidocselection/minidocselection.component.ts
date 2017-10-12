@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
@@ -17,7 +17,7 @@ interface AppState {
   templateUrl: './minidocselection.component.html',
   styleUrls: ['./minidocselection.component.css']
 })
-export class MinidocselectionComponent implements OnInit {
+export class MinidocselectionComponent implements OnInit, OnDestroy {
 
   private searchRedux: Observable<any>;
 
@@ -86,6 +86,10 @@ export class MinidocselectionComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
 }

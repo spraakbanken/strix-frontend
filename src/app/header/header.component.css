@@ -14,9 +14,8 @@
   padding-top: 2px;
   padding-bottom: 2px;
   background-color: #f7f7f7;
-  border-top: 1px solid #999;
   border-bottom: 1px solid #999;
-  height: 44px;
+  display: flex;
   text-align: center;
 }
 .tools_list {

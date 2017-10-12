@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, HostListener } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, HostListener, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -26,7 +26,7 @@ interface AppState {
   templateUrl: './reader.component.html',
   styleUrls: ['./reader.component.css']
 })
-export class ReaderComponent implements AfterViewInit {
+export class ReaderComponent implements AfterViewInit, OnDestroy {
   @ViewChildren(CmComponent) mirrors: QueryList<CmComponent>;
   subscription : Subscription;
 
@@ -142,9 +142,11 @@ export class ReaderComponent implements AfterViewInit {
               let tokenID = h.position;
               this.addHighlight(message.documentIndex, tokenID);
             }
+            this.selectToken(0, 0);
+            this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
             
           }, 0);
-        } else {
+        } else { // THE CODE BELOW CANNOT HAPPEN RIGHT NOW
           this.clearBookmarks();
           this.cmViews[0] = openedDocument.index;
           this.mirrors.first.codeMirrorInstance.setValue(wholeText);
@@ -192,6 +194,11 @@ export class ReaderComponent implements AfterViewInit {
     });
   }
 
+  ngOnDestroy() {
+    // This actually doesn't happen since we hide the reader rather than delete it from the DOM.
+    this.subscription.unsubscribe();
+  }
+
   private updateTitles() {
     let newTitles = [];
     for (let index = 0; index < this.cmViews.length; index++) {
@@ -208,7 +215,7 @@ export class ReaderComponent implements AfterViewInit {
     this.selectedMirrorIndex = index;
   }
 
-  private onSelectionChange(selection : StrixSelection) {
+  private onSelectionChange(selection: StrixSelection) {
     this.showBox = true;
     console.log("line " + selection.startRow + "(char " + selection.startChar + ") to " + selection.endRow + " (char " + selection.endChar + ")" );
     this.selection = selection;
@@ -224,17 +231,16 @@ export class ReaderComponent implements AfterViewInit {
         return;
       }
 
-      if (this.selectionStartTokenID === this.selectionEndTokenID) {
-        let currentToken = activeDocument.token_lookup[this.selectionStartTokenID];
-        this.currentAnnotations = currentToken.attrs;
-        this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
-        console.log("currentAnnotations", this.currentAnnotations);
-      }
-
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
       if (this.singleWordSelection) {
         this.openness["TOKENATTRIBUTES"] = true;
+        let currentToken = activeDocument.token_lookup[this.selectionEndTokenID];
+        this.currentAnnotations = currentToken.attrs;
+
+        this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
+        console.log("currentAnnotations", this.currentAnnotations);
       }
+      
     }
 
   }
@@ -419,6 +425,36 @@ export class ReaderComponent implements AfterViewInit {
   private _onResize(event) {
     console.log("$event", event);
     const elem = document.getElementsByClassName("readerArea")[0];
+  }
+
+  private ensureArray(value) {
+    let isit = Array.isArray(value) ? value : [value];
+    console.log("IS IT", isit);
+    return isit;
+  }
+
+  private getTranslations(annotation) { // SB-SPECIFIC HACK TO LET LEMGRAMS GET POSTAG TRANSLATIONS
+    if (annotation.translation_value) {
+      return annotation.translation_value;
+    } else {
+      if (annotation.type_info && annotation.type_info.translation_value) {
+        return annotation.type_info.translation_value;
+      } else {
+        return {};
+      }
+    }
+    
+    
+    /*if (annotation.type === "lemgram") {
+      let wordAttributes = this.availableCorpora[this.mainDocument.corpusID].wordAttributes;
+      let posAttr = _.find(wordAttributes, (item) => item.name === "pos");
+      if (!posAttr) return {}
+      console.log("posAttr.translation_value", posAttr.translation_value)
+      return posAttr.translation_value || {};
+    } else {
+      return annotation.translation_value;
+    } */
+    
   }
 
 }

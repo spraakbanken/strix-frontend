@@ -10,7 +10,8 @@ import { TypeaheadModule,
          BsDropdownModule,
          AlertModule,
          PaginationModule,
-         AccordionModule } from 'ngx-bootstrap';
+         AccordionModule,
+         TooltipModule } from 'ngx-bootstrap';
 
 import { AppComponent } from './app.component';
 import { DocselectionComponent } from './docselection/docselection.component';
@@ -39,6 +40,7 @@ import { AnnotationsSelectorComponent } from './annotations-selector/annotations
 import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
+import { EnsurearrayPipe } from './ensurearray.pipe';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -61,6 +63,7 @@ import { PrettynumberPipe } from './prettynumber.pipe';
     AnnotationsSelectorComponent,
     AnnotationComponent,
     PrettynumberPipe,
+    EnsurearrayPipe,
     // SearchFilterComponent
   ],
   imports: [
@@ -73,6 +76,7 @@ import { PrettynumberPipe } from './prettynumber.pipe';
     AlertModule.forRoot(),
     PaginationModule.forRoot(),
     AccordionModule.forRoot(),
+    TooltipModule.forRoot(),
     StoreModule.provideStore({searchRedux: searchReducer})
   ],
   providers: [DocumentsService,

@@ -61,6 +61,11 @@ export class QueryService {
   public getSearchString(): string {
     return this.currentQuery.queryString;
   }
+
+  public getInOrderFlag(): boolean {
+    let keywordSearch = this.currentQuery.keyword_search || false;
+    return !keywordSearch;
+  }
   
   public setSearchString(searchString: string): void {
     this.currentQuery.queryString = searchString;

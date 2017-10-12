@@ -1,4 +1,8 @@
 .annotation-typeahead {
-    width: 400px;
+    width: 340px;
     display: inline-block;
+}
+.annotation-dropdown {
+    display: inline-block;
+    width: 160px;
 }

@@ -66,7 +66,7 @@ export class DocumentsService {
         this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.localQuery || "");
       } else {
         // Open a new document in the ordinary way
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString() || "");
+        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString() || "", this.queryService.getInOrderFlag());
       }
       
     });
@@ -157,21 +157,16 @@ export class DocumentsService {
         );
   }
 
-  public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, newReader = false): void {
-
-    console.log("trying to navigate...");
-
-    if (! newReader) {
-      console.log("loading the document in the main reader.")
-      this.signalStartedDocumentLoading();
-      // Decrease the count (and possibly delete) the old main document
-      if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
-      this.mainReaderDocumentID = documentID;
-    }
+  public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true): void {
+    console.log("loading the document in the main reader.", inOrder)
+    this.signalStartedDocumentLoading();
+    // Decrease the count (and possibly delete) the old main document
+    if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
+    this.mainReaderDocumentID = documentID;
 
     this.addDocumentReference(documentID);
 
-    this.callsService.getDocumentWithQuery(documentID, corpusID, query)
+    this.callsService.getDocumentWithQuery(documentID, corpusID, query, inOrder)
         .subscribe(
           answer => {
 
@@ -200,11 +195,9 @@ export class DocumentsService {
             }
 
             /* Inform other components that the document has been opened: */
-            let message = new StrixMessage(index, newReader);
+            let message = new StrixMessage(index, false); // false = new reader (which we don't use anymore...)
             this.loadedDocument.next(message);
-            if (!newReader) {
-              this.signalEndedDocumentLoading();
-            }
+            this.signalEndedDocumentLoading();
 
           },
           error => this.errorMessage = <any>error
@@ -256,7 +249,7 @@ export class DocumentsService {
     for (let i = 0; i < dump.length; i++) {
       let documentIndexPart = _.padStart((documentIndex).toString(), this.DOC_ID_PREFIX_LENGTH, '0');
       let lineNumberPart = _.padStart(i.toString(), this.LINE_NUM_PREFIX_LENGTH, '0');
-      dump[i] = documentIndexPart + lineNumberPart + dump[i].replace(/\n/g,'');
+      dump[i] = documentIndexPart + lineNumberPart + dump[i].replace(/\n/g, '');
     }
   }
 

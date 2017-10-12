@@ -127,6 +127,9 @@ export class AnnotationsSelectorComponent implements OnInit {
   private pretty(input) {
     return this.locService.getPrettyNumberString(input);
   }
+  private getTranslation(input) {
+    return this.locService.getTranslationFor(input);
+  }
 
   private selectAnnotationValue(annotationValue: string) {
     if (annotationValue && annotationValue !== "") {

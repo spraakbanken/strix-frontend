@@ -31,7 +31,7 @@ export class CmDirective {
   private defineCodeMirrorMode() {
     /*
       It's VERY important to realize that the code below runs at REAL TIME and
-      DOESN'T have access to the angular data directly. It ONLY knows about the
+      DOESN'T have access to the angular or cm data directly. It ONLY knows about the
       CURRENT LINE's text when doing the coloring. Therefore we prefixed each line
       with DOC_ID_PREFIX_LENGTH chars corresponding to the (frontend internal) index
       of the document and LINE_NUM_PREFIX_LENGTH chars with the line number (0-padded).

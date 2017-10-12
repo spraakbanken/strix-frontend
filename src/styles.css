@@ -201,5 +201,16 @@ body {
 /* end filter button */
 
 .card-body {
-  padding: 2px;
+  padding: 4px;
 }
+.card-header {
+  padding: 0.50rem 1.0rem;
+  cursor: pointer;
+}
+
+/* .CodeMirror-selected {
+  border: 1px solid black !important;
+  background: black !important;
+  color: white !important;
+  border-radius: 4px;
+} */

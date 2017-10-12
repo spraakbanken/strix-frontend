@@ -14,7 +14,7 @@ export class LocService {
 
   private searchRedux: Observable<any>;
 
-  private currentLanguage : string = "swe"; // TODO: The default language should be in some config
+  private currentLanguage : string = "swe"; // TODO: The default language should be in some config (or chosen by locale)
   private dictionaries: any = {
     "swe" : {
       "swe" : "Svenska",
@@ -22,9 +22,16 @@ export class LocService {
       "related_documents" : "Relaterade dokument",
       "search_document" : "Sök i dokumentet",
       'hits' : "Sökträffar",
-      'textattributes' : "Textattribut",
+      'sidebar_text_attributes' : "Textattribut",
+      'sidebar_structural_attributes' : "Strukturella attribut",
+      'sidebar_word_attributes' : "Ordattribut",
       'corpus_id' : 'Samling',
       'keyword_search' : "I följd",
+      'word_attributes' : "ordattribut",
+      'structural_attributes' : "strukturella attribut",
+      'sentence' : "mening",
+      'ne' : "namntaggning",
+      "paragraph" : "stycke",
       'THOUSANDS_SEPARATOR' : " "
     },
     "eng" : {
@@ -33,9 +40,16 @@ export class LocService {
       "related_documents" : "Related documents",
       "search_document" : "Search current document",
       'hits' : "Hits",
-      'textattributes' : "Text attributes",
+      'sidebar_text_attributes' : "Text attributes",
+      'sidebar_structural_attributes' : "Structural attributes",
+      'sidebar_word_attributes' : "Word attributes",
       'corpus_id' : 'Collection',
       'keyword_search' : "In order",
+      'word_attributes' : "word attributes",
+      'structural_attributes' : "structural attributes",
+      'sentence' : "sentence",
+      'ne' : "named entity",
+      "paragraph" : "paragraph",
       'THOUSANDS_SEPARATOR' : ","
     }
   };
@@ -73,8 +87,8 @@ export class LocService {
   public getPrettyNumberString(input: string | number) {
     input = input.toString();
     let regex = /(\d+)(\d{3})/;
-    let separator = this.getTranslationFor("THOUSANDS_SEPARATOR", ","); // TODO: Choose by language
-    while(regex.test(input)) {
+    let separator = this.getTranslationFor("THOUSANDS_SEPARATOR", ",");
+    while (regex.test(input)) {
       input = input.replace(regex, "$1" + separator + "$2");
     }
     return input;

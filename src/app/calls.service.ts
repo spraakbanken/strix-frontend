@@ -280,12 +280,15 @@ export class CallsService {
                     .catch(this.handleError);
   }
 
-  public getDocumentWithQuery(documentID: string, corpusID: string, query: string): Observable<StrixDocument> {
+  public getDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true): Observable<StrixDocument> {
     console.log("getDocumentWithQuery()");
     //let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/doc_id/${documentID}/${query}`;
     let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}`;
     console.log('url', url);
     let paramsString = `simple_highlight=false&token_lookup_from=${0}&token_lookup_to=${1000}&text_query=${query}`;
+    if (!inOrder) {
+      paramsString += `&in_order=false`;
+    }
     let options = new RequestOptions({
       search: new URLSearchParams(paramsString)
     });
