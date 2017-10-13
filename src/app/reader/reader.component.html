@@ -44,7 +44,10 @@
                                           mainDocument.textAttributes[annotation.name].length === 0)}">{{annotation.translation_name | loc}}</span>
                   <ul class="annotations_list">
                     <li *ngFor="let item of mainDocument.textAttributes[annotation.name] | ensurearray">
-                      <annotation [data]="item" [type]="annotation.type"></annotation>
+                      <annotation
+                        [data]="item"
+                        [type]="annotation.type"
+                        [translations]="annotation.translation_value"></annotation>
                     </li>
                   </ul>
                 </span>
