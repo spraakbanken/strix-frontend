@@ -61,26 +61,25 @@ export class DocumentsService {
     console.log("in documents constructor");
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       console.log("open document with", data, this.queryService);
-<<<<<<< HEAD
+
       if (data.localQuery && data.localQuery !== "") {
         // Reopen the current document with the new query
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.localQuery || "");
+        this.loadDocumentWithQuery(
+           data.documentID,
+           data.documentCorpus,
+           data.localQuery || "",
+           null,
+           data.sentenceID || null);
       } else {
         // Open a new document in the ordinary way
-        this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString() || "", this.queryService.getInOrderFlag());
+        this.loadDocumentWithQuery(
+           data.documentID,
+           data.documentCorpus,
+           this.queryService.getSearchString() || "",
+           this.queryService.getInOrderFlag(),
+           data.sentenceID || null);
       }
-=======
-      let query = ""
->>>>>>> worked on localization for leftcolumn
-      
-      this.loadDocumentWithQuery(
-         data.documentID,
-         data.documentCorpus,
-         data.localQuery || this.queryService.getSearchString() || "",
-         null,
-         data.sentenceID || null);
-    
-    });
+    })
   }
 
   /* A simple reference counting mechanism for keeping track of
