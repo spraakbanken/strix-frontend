@@ -44,6 +44,8 @@ export class MultiCompleteComponent implements OnInit {
     private getLocString(key : string) {
       if(this.locConf && this.locConf.translation_value) {
         return this.locConf.translation_value[key]
+      } else {
+        return key
       }
     }
     private getRemaining() {
