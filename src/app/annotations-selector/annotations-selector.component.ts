@@ -97,6 +97,7 @@ export class AnnotationsSelectorComponent implements OnInit {
 
   private selectAnnotationStructuralType(structuralType: string) {
     this.selectedAnnotationStructuralType = structuralType || "token";
+    this.selectedAnnotation = undefined;
     console.log("structural attributes", this.structuralAnnotations);
   }
 

@@ -8,13 +8,15 @@
 
   <div class="hits_area row" *ngIf="documentsWithHits.length > 0">
     <div class="hits_header col-12 ">
-      <div class="">Hittade {{totalNumberOfDocuments | prettynumber}} dokument.</div>
+      <div class="">{{'found' | loc}} {{totalNumberOfDocuments | prettynumber}} {{'documents' | loc}}.</div>
       <pagination
         [totalItems]="totalNumberOfDocuments"
         [itemsPerPage]="10"
         [maxSize]="10"
         [(ngModel)]="currentPaginatorPage"
         (pageChanged)="paginatorPageChanged($event)"
+        previousText="&lsaquo;"
+        nextText="&rsaquo;"
         class="pagination-sm "></pagination>
     </div>
     <div class="hits_left_column col-md-8" *ngIf="gotMetadata">

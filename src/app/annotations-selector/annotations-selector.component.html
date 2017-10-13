@@ -1,4 +1,4 @@
-<span>färgmarkering&nbsp;</span>
+<span>{{'color_mark_attribute' | loc}}&nbsp;</span>
 <select
   class="form-control annotation-dropdown"
   (change)="selectAnnotationStructuralType($event.target.value)"
@@ -15,6 +15,7 @@
   *ngIf="selectedAnnotationStructuralType === 'token'"
   (change)="selectAnnotation($event.target.value)"
   [ngModel]="selectedAnnotation" >
+  <option value="undefined" selected hidden disabled>&lt;{{'no_choice' | loc}}&gt;</option>
   <option *ngFor="let item of wordAnnotations" value="{{item.name}}">{{item.translation_name | loc}}</option>
 </select>
 <select
@@ -22,6 +23,7 @@
   *ngIf="selectedAnnotationStructuralType !== 'token'"
   (change)="selectAnnotation($event.target.value, selectedAnnotationStructuralType)"
   [ngModel]="selectedAnnotation">
+    <option value="undefined" selected hidden disabled>&lt;{{'no_choice' | loc}}&gt;</option>
     <option *ngFor="let item of getStructuralAttributeGroup(selectedAnnotationStructuralType).attributes" value="{{item.name}}">{{item.translation_name | loc}}</option>
   </select>
 <!--<select (change)="selectAnnotationValue($event.target.value)" [ngModel]="selectedAnnotationValue" *ngIf="selectedAnnotation && !useTypeahead">

@@ -26,7 +26,7 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
   private searchResultSubscription: Subscription;
   private documentsWithHits: StrixDocument[] = [];
   private totalNumberOfDocuments: number = 0;
-  private page = 1;
+  /* private page = 1; */
 
   //private isLoading = false;
   private show = false;
@@ -38,12 +38,12 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       this.show = true;
-      this.page = data.page;
+      /* this.page = data.page; */
     });
     this.searchRedux.filter((d) => d.latestAction === SEARCH || d.latestAction === RELOAD).subscribe((data) => {
       console.log("searched or changed page")
       this.documentsWithHits = [];
-      this.page = data.page;
+      /* this.page = data.page; */
     });
 
     this.subscription = documentsService.loadedDocument$.subscribe(
@@ -73,7 +73,7 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
   }
 
-  private previousPage() {
+  /* private previousPage() {
     this.store.dispatch({type : CHANGEPAGE, payload : this.page - 1});
     this.store.dispatch({type : RELOAD, payload : null});
     console.log("Dispatched CHANGEPAGE to", this.page - 1);
@@ -83,7 +83,7 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
     this.store.dispatch({type : CHANGEPAGE, payload : this.page + 1});
     this.store.dispatch({type : RELOAD, payload : null});
     console.log("Dispatched CHANGEPAGE to", this.page + 1);
-  }
+  } */
 
   ngOnInit() {
   }
