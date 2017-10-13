@@ -5,15 +5,17 @@ import { Bucket } from "../../strixresult.model";
 import * as _ from 'lodash';
 
 
+
 @Component({
   selector: 'multicomplete',
   templateUrl: './multicomplete.component.html',
   styleUrls: ['./multicomplete.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  // changeDetection: ChangeDetectionStrategy.OnPush
 
 })
 export class MultiCompleteComponent implements OnInit {
 
+    @Input() locConf : any;
     @Input() buckets : Bucket[];
     @Output() onSelect = new EventEmitter<Bucket>();
     @Output() onRemove = new EventEmitter<Bucket>();
@@ -24,10 +26,10 @@ export class MultiCompleteComponent implements OnInit {
     private remaining : Bucket[] = [];
 
     constructor() {
-        // console.log("this.data", this.buckets)
-        // this.remaining = this.buckets;
+
     }
     ngOnInit() {
+        console.log("multi locConf", this.locConf)
         // this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
         for(let item of this.buckets) {
           if(item.selected) {
@@ -39,7 +41,11 @@ export class MultiCompleteComponent implements OnInit {
         this.remaining = _.orderBy(this.buckets, "doc_count", "desc");
 
     }
-
+    private getLocString(key : string) {
+      if(this.locConf && this.locConf.translation_value) {
+        return this.locConf.translation_value[key]
+      }
+    }
     private getRemaining() {
         return this.remaining;
     }

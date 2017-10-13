@@ -10,14 +10,14 @@
              (typeaheadOnSelect)="dropdownSelected($event)"
              typeaheadOptionField="key"
              [typeaheadItemTemplate]="itemTemplate"
-             [placeholder]="'Välj från lista (' + remaining.length + ' alternativ)'"
+             [placeholder]="('list_choose' | loc) + ' (' + remaining.length + ' ' + ('options' | loc) + ')'"
              [typeaheadMinLength]="0"
              [typeaheadOptionsLimit]="100"
              (click)="onInputClick($event)"
              class="form-control"/>
     
     <ng-template #itemTemplate let-item="item" let-index="index">
-      {{item.key}} ({{item.doc_count}})
+      {{getLocString(item.key) | loc:item.key}} ({{item.doc_count}})
       
     </ng-template>
 </div>

@@ -32,6 +32,8 @@ export class LocService {
       'sentence' : "mening",
       'ne' : "namntaggning",
       "paragraph" : "stycke",
+      'list_choose' : "Välj från lista",
+      'options' : "alternativ",
       'THOUSANDS_SEPARATOR' : " "
     },
     "eng" : {
@@ -44,6 +46,8 @@ export class LocService {
       'sidebar_structural_attributes' : "Structural attributes",
       'sidebar_word_attributes' : "Word attributes",
       'corpus_id' : 'Collection',
+      'list_choose' : "Select from list",
+      'options' : "options",
       'keyword_search' : "In order",
       'word_attributes' : "word attributes",
       'structural_attributes' : "structural attributes",

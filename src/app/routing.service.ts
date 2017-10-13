@@ -37,6 +37,7 @@ export class RoutingService {
     {tag : "include_facets", type : FragmentType.STRINGARRAY, default : []},
     {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
+    {tag : "sentenceID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
@@ -158,11 +159,15 @@ export class RoutingService {
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
     const timer = TimerObservable.create(0);
     timer.subscribe(() => {
-      if (startState["documentID"] && startState["documentCorpus"]) {
+      if ((startState["documentID"] || startState["sentenceID"]) && startState["documentCorpus"]) {
         console.log("autoopening document", startState["documentID"], startState["documentCorpus"]);
         this.store.dispatch({
           type : OPENDOCUMENT,
-          payload : {doc_id : startState["documentID"], corpus_id : startState["documentCorpus"]}
+          payload : {
+            doc_id : startState["documentID"], 
+            sentence_id : startState["sentenceID"],
+            corpus_id : startState["documentCorpus"]
+          }
         });
       }
     });

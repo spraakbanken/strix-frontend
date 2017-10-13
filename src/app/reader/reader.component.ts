@@ -138,7 +138,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
             // Show the highlights
             console.log("highlight data", openedDocument);
-            for (let h of openedDocument.highlight) {
+            for (let h of openedDocument.highlight || []) {
               let tokenID = h.position;
               this.addHighlight(message.documentIndex, tokenID);
             }

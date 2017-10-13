@@ -40,16 +40,21 @@ export class LeftcolumnComponent implements OnInit {
 
   private searchRedux: Observable<any>;
   private include_facets : string[] = []
+  private availableCorpora : { [key: string] : StrixCorpusConfig};
+  private mem_guessConfFromAttributeName : Function;
   
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
-              private store: Store<AppState>
+              private store: Store<AppState>,
               ) {
+    this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
           this.gotMetadata = true;
+          this.availableCorpora = this.metadataService.getAvailableCorpora();
+          console.log("this.availableCorpora", this.availableCorpora)
         }
     });
 
@@ -71,7 +76,17 @@ export class LeftcolumnComponent implements OnInit {
     );
   }
 
-  
+  private guessConfFromAttributeName(attrName : string) {
+    for(let item of _.values(this.availableCorpora)) {
+      for(let attrObj of item.textAttributes) {
+        if(attrObj.name === attrName) {
+          return attrObj
+        }
+      }
+    }
+
+  }
+
   private parseAggResults(result : StrixResult) {
     console.log("parseAggResults", result);
     this.decorateWithParent(result.aggregations)

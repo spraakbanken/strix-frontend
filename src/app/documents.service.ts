@@ -61,6 +61,7 @@ export class DocumentsService {
     console.log("in documents constructor");
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       console.log("open document with", data, this.queryService);
+<<<<<<< HEAD
       if (data.localQuery && data.localQuery !== "") {
         // Reopen the current document with the new query
         this.loadDocumentWithQuery(data.documentID, data.documentCorpus, data.localQuery || "");
@@ -68,7 +69,17 @@ export class DocumentsService {
         // Open a new document in the ordinary way
         this.loadDocumentWithQuery(data.documentID, data.documentCorpus, this.queryService.getSearchString() || "", this.queryService.getInOrderFlag());
       }
+=======
+      let query = ""
+>>>>>>> worked on localization for leftcolumn
       
+      this.loadDocumentWithQuery(
+         data.documentID,
+         data.documentCorpus,
+         data.localQuery || this.queryService.getSearchString() || "",
+         null,
+         data.sentenceID || null);
+    
     });
   }
 
@@ -157,7 +168,7 @@ export class DocumentsService {
         );
   }
 
-  public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true): void {
+  public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true, sentenceID = null): void {
     console.log("loading the document in the main reader.", inOrder)
     this.signalStartedDocumentLoading();
     // Decrease the count (and possibly delete) the old main document
@@ -166,10 +177,9 @@ export class DocumentsService {
 
     this.addDocumentReference(documentID);
 
-    this.callsService.getDocumentWithQuery(documentID, corpusID, query, inOrder)
-        .subscribe(
+    let service$ : Observable<any> = sentenceID ? this.callsService.getDocumentBySentenceID(corpusID, sentenceID) : this.callsService.getDocumentWithQuery(documentID, corpusID, query, inOrder)
+    service$.subscribe(
           answer => {
-
             console.log("answer", answer);
 
             // We should only add the document if it isn't already in the documents array
