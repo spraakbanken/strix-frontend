@@ -10,7 +10,13 @@
     </div>
   </div>
   <search *ngIf="!openDocument"></search> <!-- should we really have *ngIf="!openDocument" ? It looses the metadata when closing a document...-->
-  <docselection [style.display]="(!openDocument)?'block':'none'" ></docselection><!-- We can't use ngIf because we want the component to stay in memory -->
+  <div class="row">
+    <docselection class="col-lg-9" [style.display]="(!openDocument)?'block':'none'" ></docselection><!-- We can't use ngIf because we want the component to stay in memory -->
+    <div *ngIf="!openDocument" class="logos d-none d-lg-block col-3 align-self-right">
+      <div><img src="assets/sb_logo.jpg" alt=""></div>
+      <div><img src="assets/sweclarin_logo.png" alt=""></div>
+    </div>
+  </div>
   <indocsearch *ngIf="openDocument"></indocsearch>
   <header *ngIf="openDocument" style="flex: 0 1 auto"></header>
   <reader [hidden]="!openDocument"></reader>

@@ -1,4 +1,4 @@
-<div class="docselection" *ngIf="show">
+<div class="docselection col" *ngIf="show">
 
    <div class="no_hits_area" *ngIf="hasSearched && documentsWithHits.length === 0">
     <alert type="danger" dismissible="true">
@@ -6,8 +6,8 @@
     </alert>
   </div>
 
-  <div class="hits_area row" *ngIf="documentsWithHits.length > 0">
-    <div class="hits_header col-12 ">
+  <div class="hits_area" *ngIf="documentsWithHits.length > 0">
+    <div class="hits_header row flex-column ">
       <div class="">{{'found' | loc}} {{totalNumberOfDocuments | prettynumber}} {{'documents' | loc}}.</div>
       <pagination
         [totalItems]="totalNumberOfDocuments"
@@ -19,7 +19,7 @@
         nextText="&rsaquo;"
         class="pagination-sm "></pagination>
     </div>
-    <div class="hits_left_column col-md-8" *ngIf="gotMetadata">
+    <div class="hits_left_column row" *ngIf="gotMetadata">
       <div class="hits_inner list-group">
         <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index">
           <div class="hit_document_header">

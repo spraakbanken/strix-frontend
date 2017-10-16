@@ -33,6 +33,7 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGEQUERY:
       nextState.query = action.payload;
+      nextState.page = 1
       break;
     case CHANGETYPE:
       nextState.type = action.payload;

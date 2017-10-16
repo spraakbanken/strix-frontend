@@ -11,7 +11,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE } from '../searchreducer';
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY } from '../searchreducer';
 
 interface AppState {
   searchRedux: any;
@@ -67,6 +67,9 @@ export class DocselectionComponent implements OnInit {
       this.hasSearched = false;
       //this.show = false;
     });
+    this.searchRedux.filter((d) => d.latestAction === CHANGEQUERY).subscribe((data) => {
+      this.currentPaginatorPage = data.page
+    })
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       answer => {

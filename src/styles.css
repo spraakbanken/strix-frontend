@@ -46,6 +46,13 @@ h5 {
   border-radius : 3px !important;
 }
 
+.logos {
+  text-align: center;
+}
+.logos div {
+  margin-bottom: 1em;
+}
+
 /* CodeMirror related */
 
 .cm-hidden {
@@ -96,6 +103,7 @@ em {
 
 body {
   font-family : Nunito, arial, sans-serif;
+  padding-left : 1em;
 }
 
 @media screen and (min-width: 601px) {
@@ -157,7 +165,7 @@ body {
 
 /* Fix */
 .row {
-  margin-right: unset;
+  /*margin-right: unset;*/
 }
 
 

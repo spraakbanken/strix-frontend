@@ -28,7 +28,7 @@ export class StartPanelComponent implements OnInit {
 
   private influences(action: string): boolean {
     return (action === SEARCH ||
-            action === RELOAD ||
+            // action === RELOAD ||
             action === OPENDOCUMENT);
   }
 

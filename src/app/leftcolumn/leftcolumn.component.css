@@ -89,7 +89,7 @@ li:last-child {
 
 .logo_block {
   cursor: pointer;
-  margin: 1em 0;
+  margin: 2em 0 1em 0;
 }
 .logo_block img {
   display: block;
