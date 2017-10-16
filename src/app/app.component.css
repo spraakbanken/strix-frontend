@@ -1,3 +1,7 @@
+:host {
+  margin-right: unset;
+}
+
 .header {
   padding: 0 1em;
   height : 6px;
