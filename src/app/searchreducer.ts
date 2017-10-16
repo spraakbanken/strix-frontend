@@ -60,6 +60,7 @@ export function searchReducer(state: any = {}, action: Action) {
     case CLOSEDOCUMENT:
       nextState.documentID = null;
       nextState.documentCorpus = null;
+      nextState.localQuery = null;
       break;
     case SEARCHINDOCUMENT:
       nextState.localQuery = action.payload;
@@ -70,6 +71,7 @@ export function searchReducer(state: any = {}, action: Action) {
       //nextState.query = nextState.nextQuery;
       //nextState.corpora = nextState.nextCorpora;
       nextState.page = 1;
+      nextState.localQuery = null;
       break;
     case RELOAD:
       // Like search but without changing the state.

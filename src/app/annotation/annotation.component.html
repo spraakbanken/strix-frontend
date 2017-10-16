@@ -1,6 +1,7 @@
 <ng-template [ngIf]="type === 'lemgram'">
   <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{translations[posPart] | loc}}</span>) 
   <a 
+    *ngIf="!noKarp" 
     [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Clemgram%7Cequals%7C'+data"
     target="_blank"
     (click)="clickedKarp($event)">
@@ -13,7 +14,8 @@
 
 <ng-template [ngIf]="type === 'sense'">
     <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>
-    <a 
+    <a
+      *ngIf="!noKarp" 
       [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Csense%7Cequals%7C'+data"
       target="_blank"
       (click)="clickedKarp($event)">

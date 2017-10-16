@@ -1,5 +1,5 @@
 <div class="readerLoading" *ngIf="isLoading">
-  <i class="fa fa-spinner fa-pulse"></i>&nbsp;Laddar...
+  <i class="fa fa-spinner fa-pulse"></i>&nbsp;{{'loading' | loc}}...
 </div>
 <div class="readerArea">
   <cm *ngIf="cmViews.length !== 0 && gotMetadata"
@@ -10,7 +10,7 @@
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
   
-  <accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0">
+  <accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0 && gotMetadata">
 
     <!-- Search Hits -->
     <accordion-group [isOpen]="openness['HITS']" *ngIf="bookmarks.length > 0">
@@ -39,9 +39,7 @@
                 <span>
                   <span 
                     class="annotation_title"
-                    [ngClass]="{empty : ! mainDocument.textAttributes[annotation.name] || 
-                                         (mainDocument.textAttributes[annotation.name].length &&
-                                          mainDocument.textAttributes[annotation.name].length === 0)}">{{annotation.translation_name | loc}}</span>
+                    [ngClass]="{empty : isEmpty(mainDocument.textAttributes[annotation.name])}">{{annotation.translation_name | loc}}</span>
                   <ul class="annotations_list">
                     <li *ngFor="let item of mainDocument.textAttributes[annotation.name] | ensurearray">
                       <annotation
@@ -72,9 +70,7 @@
                   <span>
                     <span
                       class="annotation_title"
-                      [ngClass]="{empty : ! currentAnnotations[annotationGroup.name].attrs[annotation.name] ||
-                                 (currentAnnotations[annotationGroup.name].attrs[annotation.name].length &&
-                                  currentAnnotations[annotationGroup.name].attrs[annotation.name].length === 0)}">
+                      [ngClass]="{empty : isEmpty(currentAnnotations[annotationGroup.name].attrs[annotation.name])}">
                       {{annotation.translation_name | loc}}
                     </span>
                     <ul class="annotations_list">
@@ -115,8 +111,7 @@
               <span>
                 <span
                   class="annotation_title"
-                  [ngClass]="{empty : ! currentAnnotations[annotation.name] || 
-                             (currentAnnotations[annotation.name].length && currentAnnotations[annotation.name].length === 0)}">
+                  [ngClass]="{empty : isEmpty(currentAnnotations[annotation.name])}">
                   {{annotation.translation_name | loc}}
                 </span>
                 <ul class="annotations_list">

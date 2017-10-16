@@ -138,6 +138,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
             // Show the highlights
             console.log("highlight data", openedDocument);
+            this.clearBookmarks();
             for (let h of openedDocument.highlight || []) {
               let tokenID = h.position;
               this.addHighlight(message.documentIndex, tokenID);
@@ -158,14 +159,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             this.addHighlight(message.documentIndex, tokenID);
           }
         }
-
-        // Probably we haven't yet created a new mirror...so maybe
-        // we'll need to trigger a digest cycle here somehow.
-
-        //let mirrorsArray = this.mirrors.toArray();
-        //mirrorsArray[cmIndex].codeMirrorInstance.setValue(wholeText);
         
-
         this.updateTitles();
     });
 
@@ -433,7 +427,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     return isit;
   }
 
-  private getTranslations(annotation) { // SB-SPECIFIC HACK TO LET LEMGRAMS GET POSTAG TRANSLATIONS
+  private getTranslations(annotation) {
     if (annotation.translation_value) {
       return annotation.translation_value;
     } else {
@@ -443,18 +437,18 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         return {};
       }
     }
-    
-    
-    /*if (annotation.type === "lemgram") {
-      let wordAttributes = this.availableCorpora[this.mainDocument.corpusID].wordAttributes;
-      let posAttr = _.find(wordAttributes, (item) => item.name === "pos");
-      if (!posAttr) return {}
-      console.log("posAttr.translation_value", posAttr.translation_value)
-      return posAttr.translation_value || {};
+  }
+
+  private isEmpty(input: string): boolean {
+    if (input === undefined || input === null) {
+      return true;
     } else {
-      return annotation.translation_value;
-    } */
-    
+      if (_.isArray(input)) {
+        return input.length === 0;
+      } else {
+        return false;
+      }
+    }
   }
 
 }

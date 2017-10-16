@@ -41,6 +41,7 @@ export class LocService {
       'found' : 'Hittade',
       'documents' : 'dokument',
       'color_mark_attribute' : 'Färgmarkera',
+      'loading' : "Laddar",
       'THOUSANDS_SEPARATOR' : " "
     },
     'eng' : {
@@ -68,6 +69,7 @@ export class LocService {
       'found' : 'Found',
       'documents' : 'documents',
       'color_mark_attribute' : 'Colorize',
+      'loading' : "Loading",
       'THOUSANDS_SEPARATOR' : ","
     }
   };

@@ -11,6 +11,7 @@ export class AnnotationComponent implements OnInit {
   @Input() type: string;
   @Input() translations: any;
   @Input() name: string; // Just for change detection's sake... but it doesn't wotk anyway :S
+  @Input() noKarp = false;
 
   private basePart: string;
   private posPart: string;

@@ -146,4 +146,31 @@ export class AnnotationsSelectorComponent implements OnInit {
     this.readerCommunicationService.goToPreviousAnnotation(this.selectedAnnotation, this.selectedAnnotationStructuralType, this.selectedAnnotationValue);
   }
 
+  private getAnnotation() {
+    let annotations;
+    if (this.selectedAnnotationStructuralType === "token") {
+      annotations = this.wordAnnotations;
+    } else {
+      annotations = this.structuralAnnotations;
+    }
+    return _.find(annotations, (item) => item["name"] === this.selectedAnnotation);
+  }
+
+  private getAnnotationType(): string {
+    return this.getAnnotation()["type"];
+  }
+
+  private getAnnotationTranslation() {
+    let annotation = this.getAnnotation();
+    if (annotation["translation_value"]) {
+      return annotation["translation_value"];
+    } else {
+      if (annotation["type_info"] && annotation["type_info"].translation_value) {
+        return annotation["type_info"].translation_value;
+      } else {
+        return {};
+      }
+    }
+  }
+
 }

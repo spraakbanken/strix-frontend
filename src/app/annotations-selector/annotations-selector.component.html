@@ -41,7 +41,12 @@
   [typeaheadOptionsLimit]="500"
   class="form-control annotation-typeahead">
 <ng-template #itemTemplate let-item="item">
-  {{item.key}} ({{item.doc_count | prettynumber}})
+  <!--{{item.key}} ({{item.doc_count | prettynumber}})-->
+  <annotation
+    [data]="item.key"
+    [translations]="getAnnotationTranslation()"
+    [type]="getAnnotationType()"
+    [noKarp]="true"></annotation> ({{item.doc_count | prettynumber}})
   
 </ng-template>
 <button *ngIf="selectedAnnotationValue" (click)="goToPreviousAnnotation()">

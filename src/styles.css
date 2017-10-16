@@ -60,7 +60,9 @@ h5 {
   color: black;
 }
 .cm-underlined {
-  color: #337ab7;
+  /*color: #337ab7;*/
+  background-color: #086788;
+  color: white;
 }
 .cm-variable-2 {
   display: none;

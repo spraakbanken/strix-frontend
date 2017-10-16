@@ -120,7 +120,7 @@ export class DocumentsService {
 
   /* Loading a document as a whole. */
   public loadDocument(documentID: string, corpusID: string, highlights: any, newReader = false): void {
-
+    // IS THIS FUNCTION EVEN USED ANYWHERE ANYMORE?
     if (! newReader) {
       console.log("loading the document in the main reader.")
       // Decrease the count (and possibly delete) the old main document
