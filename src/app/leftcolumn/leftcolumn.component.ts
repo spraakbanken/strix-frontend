@@ -84,7 +84,15 @@ export class LeftcolumnComponent implements OnInit {
         }
       }
     }
+  }
 
+  private getLocString(aggregationKey, key) {
+    let transObj = this.mem_guessConfFromAttributeName(aggregationKey).translation_value
+    if(transObj) {
+      return transObj[key]
+    } else {
+      return key
+    }
   }
 
   private parseAggResults(result : StrixResult) {
