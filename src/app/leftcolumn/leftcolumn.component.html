@@ -41,7 +41,7 @@
               <div (click)="chooseBucket(aggregationKey, bucket)" *ngIf="!bucket.selected">{{getLocString(aggregationKey, bucket.key) | loc:bucket.key}} ({{bucket.doc_count | prettynumber}})</div>
               
               <div class="filter_btn btn-sm btn-success d-block text-left" *ngIf="bucket.selected" (click)="purgeFilter(aggregationKey, bucket)">
-                <span class="label">{{aggregationKey | loc}} = {{bucket.key}}&nbsp;</span>
+                <span class="label">{{getLocString(aggregationKey, bucket.key) | loc:bucket.key}}&nbsp;</span>
                 <span class="labelremove">Ta bort filter</span>
 
                 <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
