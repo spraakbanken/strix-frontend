@@ -61,6 +61,7 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.documentID = null;
       nextState.documentCorpus = null;
       nextState.localQuery = null;
+      nextState.sentenceID = null;
       break;
     case SEARCHINDOCUMENT:
       nextState.localQuery = action.payload;

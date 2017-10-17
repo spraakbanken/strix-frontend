@@ -151,7 +151,7 @@ export class AnnotationsSelectorComponent implements OnInit {
     if (this.selectedAnnotationStructuralType === "token") {
       annotations = this.wordAnnotations;
     } else {
-      annotations = this.structuralAnnotations;
+      annotations = this.getStructuralAttributeGroup(this.selectedAnnotationStructuralType).attributes;
     }
     return _.find(annotations, (item) => item["name"] === this.selectedAnnotation);
   }
