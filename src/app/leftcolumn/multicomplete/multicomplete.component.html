@@ -16,7 +16,7 @@
              (click)="onInputClick($event)"
              class="form-control"/>
     
-    <ng-template #itemTemplate let-item="item" let-index="index"><div><span></div></span>
+    <ng-template #itemTemplate let-item="item" let-index="index">
       {{getLocString(item.key) | loc:item.key}} ({{item.doc_count}})
       
     </ng-template>
