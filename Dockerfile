@@ -19,5 +19,4 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-EXPOSE 4200
-CMD [ "ng", "serve", "-H", "0.0.0.0" ]
+# CMD [ "ng", "serve", "-H", "0.0.0.0" ]
