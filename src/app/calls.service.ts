@@ -11,10 +11,12 @@ import { StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
 
+import { environment } from '../environments/environment';
+
 @Injectable()
 export class CallsService {
 
-  private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb";
+  private readonly STRIXBACKEND_URL = environment.api
   //private readonly STRIXBACKEND_URL = "http://130.241.42.205:5000";
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
   //private readonly STRIXBACKEND_URL = "http://localhost:8080";

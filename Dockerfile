@@ -19,4 +19,12 @@ RUN npm install
 # Bundle app source
 COPY . .
 
-# CMD [ "ng", "serve", "-H", "0.0.0.0" ]
+RUN echo "export const environment = { \
+  production: false, \
+  api: 'https://ws.spraakbanken.gu.se/ws/strixlabb' \
+};" > src/environments/environment.docker.ts
+
+RUN ng build --environment=docker
+CMD [ "ng", "serve", "-H", "0.0.0.0" ]
+
+
