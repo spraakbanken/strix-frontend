@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  api: "https://ws.spraakbanken.gu.se/ws/strix"
+  api: "https://ws.spraakbanken.gu.se/ws/strixlabb"
 };
