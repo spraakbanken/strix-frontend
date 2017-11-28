@@ -30,7 +30,8 @@ export class MultiCompleteComponent implements OnInit {
     }
     ngOnInit() {
         console.log("multi locConf", this.locConf)
-        this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
+        // this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
+        this.remaining = _.cloneDeep(this.buckets)
         for(let item of this.buckets) {
           if(item.selected) {
             this.selected.push(item)

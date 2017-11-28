@@ -215,6 +215,7 @@ export class CallsService {
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
     let params = new URLSearchParams()
     params.set("facet_count", '5')
+    params.set("exclude_empty_buckets", "true")
 
     if(corpusIDs && corpusIDs.length > 0) {
       params.set("corpora", corpusIDs.join(","))  

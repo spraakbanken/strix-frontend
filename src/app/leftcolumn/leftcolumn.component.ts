@@ -87,6 +87,7 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private getLocString(aggregationKey, key) {
+    console.log("getLocString", aggregationKey, key)
     let transObj = this.mem_guessConfFromAttributeName(aggregationKey).translation_value
     if(transObj) {
       return transObj[key]
@@ -97,6 +98,10 @@ export class LeftcolumnComponent implements OnInit {
 
   private parseAggResults(result : StrixResult) {
     console.log("parseAggResults", result);
+    // console.log("result.aggregations", result.aggregations)
+    for(let agg of _.values(result.aggregations)) {
+      agg.buckets = _.orderBy(agg.buckets, "doc_count", "desc")
+    }
     this.decorateWithParent(result.aggregations)
     let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
     this.aggregations = _.merge(newAggs, result.aggregations);
