@@ -3,6 +3,7 @@ import { Component, OnInit, EventEmitter, Input, Output, ChangeDetectionStrategy
 
 import { Bucket } from "../../strixresult.model";
 import * as _ from 'lodash';
+import { OnChanges } from '@angular/core/src/metadata/lifecycle_hooks';
 
 
 
@@ -13,7 +14,7 @@ import * as _ from 'lodash';
   // changeDetection: ChangeDetectionStrategy.OnPush
 
 })
-export class MultiCompleteComponent implements OnInit {
+export class MultiCompleteComponent implements OnInit, OnChanges {
 
     @Input() locConf : any;
     @Input() buckets : Bucket[];
@@ -31,17 +32,28 @@ export class MultiCompleteComponent implements OnInit {
     ngOnInit() {
         console.log("multi locConf", this.locConf)
         // this.remaining = _.orderBy(_.cloneDeep(this.buckets), "doc_count", "desc");
-        this.remaining = _.cloneDeep(this.buckets)
-        for(let item of this.buckets) {
-          if(item.selected) {
-            this.selected.push(item)
-          } else {
-            this.remaining.push(item)
-          }
-        }
-        this.remaining = _.orderBy(this.buckets, "doc_count", "desc");
+        this.updateData();
 
     }
+    ngOnChanges() {
+      console.log("ngOnChanges +", this.buckets)
+      this.updateData();
+    }
+
+    private updateData() {
+      this.selected = [];
+      this.remaining = [];
+      this.remaining = _.cloneDeep(this.buckets)
+      for(let item of this.buckets) {
+        if(item.selected) {
+          this.selected.push(item)
+        } else {
+          this.remaining.push(item)
+        }
+      }
+      this.remaining = _.orderBy(this.buckets, "doc_count", "desc");
+    }
+
     private getLocString(key : string) {
       if(this.locConf && this.locConf.translation_value) {
         return this.locConf.translation_value[key]

@@ -94,7 +94,9 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
       this.showBox = false;
       this.singleWordSelection = false;
-      this.removeView(0);
+      if (this.cmViews.length !== 0) {
+        this.removeView(0);
+      }
     });
 
     // When the user changes the viewport, we wait until there is
