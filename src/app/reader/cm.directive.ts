@@ -130,7 +130,12 @@ export class CmDirective {
                   }
                 }
               }
-              
+            }
+
+            if (tokenAnnotations['sentence'] && tokenAnnotations['sentence']['attrs'] && tokenAnnotations['sentence']['attrs']['speaker_id'] === 'PE1') {
+              styles.push("annotation-one");
+            } else if (tokenAnnotations['sentence'] && tokenAnnotations['sentence']['attrs'] && tokenAnnotations['sentence']['attrs']['speaker_id'] === 'KU1') {
+              styles.push("annotation-two");
             }
 
             // Workaround for a disturbing codemirror behavior that joins segments that aren't whitespace–

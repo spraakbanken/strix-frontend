@@ -55,6 +55,13 @@ h5 {
 
 /* CodeMirror related */
 
+.cm-annotation-one {
+  color: blueviolet;
+}
+.cm-annotation-two {
+  color: green;
+}
+
 .cm-hidden {
   background-color: #ddd;
   color: black;
