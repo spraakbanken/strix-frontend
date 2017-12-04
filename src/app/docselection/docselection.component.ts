@@ -27,6 +27,7 @@ export class DocselectionComponent implements OnInit {
   private searchRedux: Observable<any>;
 
   private hasSearched = false;
+  private disablePaginatorEvent = false;
   
   private currentPaginatorPage: number = 1; // Needs to be 1-based because of the paginator widget
 
@@ -68,12 +69,12 @@ export class DocselectionComponent implements OnInit {
       //this.show = false;
     });
     this.searchRedux.filter((d) => d.latestAction === CHANGEQUERY).subscribe((data) => {
+      //this.disablePaginatorEvent = true;
       this.currentPaginatorPage = data.page
     })
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       answer => {
-        console.log("answe###r", answer);
 
         this.documentsWithHits = answer.data;
         this.totalNumberOfDocuments = answer.count;
@@ -89,16 +90,32 @@ export class DocselectionComponent implements OnInit {
   ngOnInit() {
     this.searchRedux.filter((d) => d.latestAction === INITIATE).subscribe((data) => {
       console.log("init", data)
-      this.currentPaginatorPage = data.page
+      //this.currentPaginatorPage = data.page
+      this.setPaginatorPage(data.page)
     })
   }
 
+  private setPaginatorPage(page) {
+    // Workaround to supress the paginator event when set by the back button or similar
+    // We need to check that it actually changes, else the next paginator interaction will
+    // still be disabled.
+    if (page !== this.currentPaginatorPage) {
+      this.disablePaginatorEvent = true;
+      this.currentPaginatorPage = page;
+    }
+  }
+
   private paginatorPageChanged(event: any) {
-    console.log("Changed paginator page", event);
-    //this.queryService.setPage(event.page); // Should probably be a dispatch to the store
-    this.store.dispatch({type : CHANGEPAGE, payload: event.page});
-    this.store.dispatch({type : RELOAD, payload : null});
-    //this.simpleSearch(true);
+    if (! this.disablePaginatorEvent ) { // So we don't get an extra search from the back-button
+      console.log("Changed paginator page", event);
+      //this.queryService.setPage(event.page); // Should probably be a dispatch to the store
+      this.store.dispatch({type : CHANGEPAGE, payload: event.page});
+      this.store.dispatch({type : RELOAD, payload : null});
+      //this.simpleSearch(true);
+    } else {
+      console.log("Supressed paginator event.")
+      this.disablePaginatorEvent = false;
+    }
   }
 
   private openDocument(docIndex: number) {

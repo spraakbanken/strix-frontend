@@ -7,7 +7,8 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT, CLOSEDOCUMENT, POPSTATE } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, POPSTATE, CLOSEDOCUMENT_NOHISTORY } from './searchreducer';
+import { DocumentsService } from 'app/documents.service';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
    the ngrx-store app store in sync. It is the only piece of code that is allowed
@@ -42,7 +43,7 @@ export class RoutingService {
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
 
-  constructor(private store: Store<AppState>) {
+  constructor(private store: Store<AppState>, private documentsService: DocumentsService) {
     this.searchRedux = this.store.select('searchRedux');
     this.initializeStartingParameters();
 
@@ -62,12 +63,13 @@ export class RoutingService {
     }).subscribe( ([current, prev] ) => {
       console.log("current, prev", current, prev)
 
-      if(!current.documentID) {
+      /*if(!current.documentID) {
         this.store.dispatch({
           type : CLOSEDOCUMENT
         });
 
-      }
+      }*/
+      this.initializeStartingParameters();
 
 
     })
@@ -83,11 +85,17 @@ export class RoutingService {
         }
         return `${encodeURI(key)}=${encodeURI(val)}`;
       })).join("&");
-      if(urlString) {
-        urlString = "?" + urlString
+      if (urlString) {
+        urlString = "?" + urlString;
       }
-      if(data.latestAction !== INITIATE) {
-        window.history.pushState("", "", urlString)
+      if (data.latestAction !== INITIATE) {
+        if (data.history) {
+          console.log("PUSHING STATE")
+          window.history.pushState("", "", urlString)
+        } else {
+          window.history.replaceState("", "", urlString)
+        }
+       
       }
     });
 
@@ -162,12 +170,17 @@ export class RoutingService {
       if ((startState["documentID"] || startState["sentenceID"]) && startState["documentCorpus"]) {
         console.log("autoopening document", startState["documentID"], startState["documentCorpus"]);
         this.store.dispatch({
-          type : OPENDOCUMENT,
+          type : OPENDOCUMENT_NOHISTORY,
           payload : {
             doc_id : startState["documentID"], 
             sentence_id : startState["sentenceID"],
             corpus_id : startState["documentCorpus"]
           }
+        });
+      } else {
+        //this.documentsService.closeMainDocument();
+        this.store.dispatch({
+          type : CLOSEDOCUMENT_NOHISTORY,
         });
       }
     });

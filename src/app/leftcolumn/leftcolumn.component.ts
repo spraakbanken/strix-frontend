@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChildren } from '@angular/core';
+import { Component, OnInit, ViewChildren, NgZone, ChangeDetectorRef } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
@@ -8,7 +8,8 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
+         INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations } from "../strixresult.model";
 import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 
@@ -22,7 +23,6 @@ interface AppState {
   selector: 'leftcolumn',
   templateUrl: './leftcolumn.component.html',
   styleUrls: ['./leftcolumn.component.css']
-
 })
 export class LeftcolumnComponent implements OnInit {
   
@@ -33,7 +33,7 @@ export class LeftcolumnComponent implements OnInit {
 
   private aggregations : Aggregations = {};
   private aggregationKeys: string[] = [];
-  private currentFilters: any[] = []; // TODO: Make some interface
+  //private currentFilters: any[] = []; // TODO: Make some interface
   private unusedFacets : string[] = [];
 
   private openDocument = false;
@@ -47,6 +47,8 @@ export class LeftcolumnComponent implements OnInit {
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
               private store: Store<AppState>,
+              private zone: NgZone,
+              private cd: ChangeDetectorRef
               ) {
     this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
@@ -74,12 +76,16 @@ export class LeftcolumnComponent implements OnInit {
       },
       error => null//this.errorMessage = <any>error
     );
+
+    /* this.searchRedux.filter((d) => d.latestAction === INITIATE).subscribe((data) => {
+      console.log("SHOULD INITIATE FILTERS WITH", data.filters);
+    }); */
   }
 
   private guessConfFromAttributeName(attrName : string) {
-    for(let item of _.values(this.availableCorpora)) {
-      for(let attrObj of item.textAttributes) {
-        if(attrObj.name === attrName) {
+    for (let item of _.values(this.availableCorpora)) {
+      for (let attrObj of item.textAttributes) {
+        if (attrObj.name === attrName) {
           return attrObj
         }
       }
@@ -89,16 +95,16 @@ export class LeftcolumnComponent implements OnInit {
   private getLocString(aggregationKey, key) {
     console.log("getLocString", aggregationKey, key)
     let transObj = this.mem_guessConfFromAttributeName(aggregationKey).translation_value
-    if(transObj) {
+    if (transObj) {
       return transObj[key]
     } else {
       return key
     }
   }
 
-  private parseAggResults(result : StrixResult) {
+  private parseAggResults(result: StrixResult) {
     console.log("parseAggResults", result);
-    for(let agg of _.values(result.aggregations)) {
+    for (let agg of _.values(result.aggregations)) {
       agg.buckets = _.orderBy(agg.buckets, "doc_count", "desc")
     }
     this.decorateWithParent(result.aggregations)
@@ -122,16 +128,17 @@ export class LeftcolumnComponent implements OnInit {
 
 
   private purgeAllFilters() {
-    this.currentFilters = [];
+    //this.currentFilters = [];
     this.updateFilters();
   }
   private purgeFilter(aggregationKey: string, bucket: Bucket) {
+    console.log("YES", bucket, this.aggregations, this.aggregationKeys)
     bucket.selected = false
     this.updateFilters();
   }
 
   private addFacet(key : string) {
-    if(!this.include_facets.length) {
+    if (!this.include_facets.length) {
       this.include_facets = [].concat(this.aggregationKeys)
     }
     this.include_facets.push(key)
@@ -161,7 +168,7 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private decorateWithParent(aggs : Aggregations) {
-    for(let key in aggs ) {
+    for (let key in aggs) {
       _.map(aggs[key].buckets, (item) => {
         item.parent = key
         return item
@@ -170,23 +177,43 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Filtrera på INITIATE nedan
     Observable.zip(
       this.queryService.aggregationResult$,
-      this.searchRedux
-          
-    ).take(1).subscribe(([result, {filters}] : [StrixResult, any]) => {
-      console.log("Leftcolumn init", result, filters)
-      this.parseAggResults(result)
-      
-      let filterData = filters || [];
-      let newFilters = [];
-      for(let filter of filterData) {
-        let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
-        console.log("bucket", bucket)
-        if(bucket) {
-          bucket.selected = true
+      this.searchRedux.filter((d) => d.latestAction === INITIATE)
+
+    ).subscribe(([result, {filters}] : [StrixResult, any]) => {
+      //this.zone.run(() => {  
+        console.log("Leftcolumn init", result, filters)
+        this.parseAggResults(result)
+        
+        let filterData = filters || [];
+        // Clear all filters first (could probably be optimized)
+        for (let agg in this.aggregations) {
+          _.forEach(this.aggregations[agg].buckets, (bucket) => {
+            if (bucket.selected) {
+              console.log("Deleting bucket.selected for", bucket)
+              //delete bucket.selected
+              bucket.selected = false
+            }
+          });
         }
-       }
+        // Then select from the URL data
+        for (let filter of filterData) {
+          let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
+          console.log("bucket", bucket)
+          if (bucket) {
+            bucket.selected = true
+          }
+        }
+
+        this.aggregationKeys = _.cloneDeep(this.aggregationKeys);
+        this.aggregations = _.cloneDeep(this.aggregations);
+        
+        //this.cd.detectChanges();
+        //this.cd.markForCheck();
+
+      //});
     })
   }
 }
