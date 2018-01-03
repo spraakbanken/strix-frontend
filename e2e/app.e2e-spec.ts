@@ -13,4 +13,17 @@ describe('strix App', function() {
     
     expect(element(by.css('.doc_header b')).getText()).toEqual('RD - Betänkande: Ny fastighetsmäklarlag (förnyad behandling)');
   });
+
+  it('should filter when clicking a button in left sidebar', async () => {
+    browser.get('/');  
+
+    let getNum = async () => {
+        let text = (await element(by.css(".hits_header .num")).getText()).replace(/ /g, "")
+        return Number(text)
+    }
+    let num = getNum()
+    element(by.css(".aggregation_item")).click()
+    expect(getNum()).toBeLessThan(await num)
+
+  });
 });

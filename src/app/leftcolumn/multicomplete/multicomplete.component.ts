@@ -25,6 +25,7 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
 
     private selected : Bucket[] = [];
     private remaining : Bucket[] = [];
+    private head : Bucket[] = [];
 
     constructor() {
 
@@ -36,22 +37,17 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
 
     }
     ngOnChanges() {
-      console.log("ngOnChanges +", this.buckets)
+      // console.log("ngOnChanges +", this.buckets)
       this.updateData();
     }
 
     private updateData() {
-      this.selected = [];
-      this.remaining = [];
-      this.remaining = _.cloneDeep(this.buckets)
-      for(let item of this.buckets) {
-        if(item.selected) {
-          this.selected.push(item)
-        } else {
-          this.remaining.push(item)
-        }
-      }
-      this.remaining = _.orderBy(this.buckets, "doc_count", "desc");
+      console.log("updateData", this.buckets[0].parent)
+      let sortedBuckets =  _.orderBy(this.buckets, "doc_count", "desc");
+      this.head = sortedBuckets.slice(0, 3)
+      sortedBuckets = sortedBuckets.slice(3)
+      this.selected = _.filter(sortedBuckets, "selected")
+      this.remaining = _.filter(sortedBuckets, (item) => !item.selected)
     }
 
     private getLocString(key : string) {
@@ -75,6 +71,10 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
         this.remaining = _.orderBy(this.remaining, "doc_count", "desc")
         this.selected.splice(this.selected.indexOf(bucket), 1)
         this.onRemove.emit(bucket)
+    }
+    private selectFromHead(bucket : Bucket) {
+      bucket.selected = true
+      this.onSelect.emit(bucket)
     }
     private dropdownSelected(match) {
       let selectedItem : Bucket = match.item;

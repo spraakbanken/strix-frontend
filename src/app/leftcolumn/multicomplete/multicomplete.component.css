@@ -1,3 +1,19 @@
 input {
     background-color : #e8e8e8;
+    border-top-left-radius: 0!important;
+    border-top-right-radius: 0!important;
+}
+
+.btn-primary {
+    border: 1px solid #114c61;
+    overflow: hidden;
+}
+
+ul {
+    margin-bottom: 0;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.aggregation_item {
+    cursor: pointer;
 }

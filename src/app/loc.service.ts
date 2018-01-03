@@ -34,7 +34,7 @@ export class LocService {
       'sentence' : "mening",
       'ne' : 'namntaggning',
       'paragraph' : 'stycke',
-      'list_choose' : 'Välj från lista',
+      'list_choose' : 'Välj fler från lista',
       'options' : 'alternativ',
       'no_choice' : 'inget val',
       'select_a_word' : 'markera ett ord för att se dess attribut',

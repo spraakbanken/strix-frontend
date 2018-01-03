@@ -50,13 +50,13 @@ export class LeftcolumnComponent implements OnInit {
               private zone: NgZone,
               private cd: ChangeDetectorRef
               ) {
-    this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
           this.gotMetadata = true;
           this.availableCorpora = this.metadataService.getAvailableCorpora();
           console.log("this.availableCorpora", this.availableCorpora)
+          this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
         }
     });
 
@@ -83,9 +83,11 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private guessConfFromAttributeName(attrName : string) {
+    console.log("guessConfFromAttributeName", attrName)
     for (let item of _.values(this.availableCorpora)) {
       for (let attrObj of item.textAttributes) {
         if (attrObj.name === attrName) {
+          console.log("item", item)
           return attrObj
         }
       }
@@ -93,6 +95,9 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private getLocString(aggregationKey, key) {
+    if(aggregationKey == "corpus_id") {
+      return this.availableCorpora[key].name
+    }
     console.log("getLocString", aggregationKey, key)
     let transObj = this.mem_guessConfFromAttributeName(aggregationKey).translation_value
     if (transObj) {
@@ -109,7 +114,28 @@ export class LeftcolumnComponent implements OnInit {
     }
     this.decorateWithParent(result.aggregations)
     let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
-    this.aggregations = _.merge(newAggs, result.aggregations);
+
+    function customizer(oldValue, newValue) {
+      // merge arrays by moving old selected value to new aggs array
+      if (_.isArray(oldValue)) {
+        let selected : Bucket[] = _.filter(oldValue, "selected")
+        let valGroups = _.groupBy(newValue, "key")
+        for(let bucket of selected) {
+          let target = valGroups[bucket.key]
+          if(target && target.length) {
+            target[0].selected = true
+          } else {
+            // make sure selected filters don't disappear by adding them 
+            // to incoming aggs array
+            newValue.push(target)
+          }
+        }
+        return newValue
+      }
+    }
+
+    this.aggregations = _.mergeWith(newAggs, result.aggregations, customizer)
+    console.log("aggregations", this.aggregations)
     this.aggregationKeys = _(result.aggregations)
                             .omit(["datefrom", "dateto"])
                             .keys()

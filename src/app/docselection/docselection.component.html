@@ -8,7 +8,7 @@
 
   <div class="hits_area" *ngIf="documentsWithHits.length > 0">
     <div class="hits_header row flex-column ">
-      <div class="">{{'found' | loc}} {{totalNumberOfDocuments | prettynumber}} {{'documents' | loc}}.</div>
+      <div>{{'found' | loc}} <span class="num">{{totalNumberOfDocuments | prettynumber}}</span> {{'documents' | loc}}.</div>
       <pagination
         [totalItems]="totalNumberOfDocuments"
         [itemsPerPage]="10"

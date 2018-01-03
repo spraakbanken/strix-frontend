@@ -1,9 +1,29 @@
 <div>
-    <div class="filter_btn small btn-sm btn-success" *ngFor="let item of selected" (click)="onDeselect(item)">
-      <span class="label">{{getLocString(item.key) | loc:item.key}}&nbsp;</span>
-      <span class="labelremove">Ta bort filter</span>
-      <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
-    </div>
+
+    <ul class="">
+      <li class="aggregation_item" *ngFor="let bucket of head" [ngClass]="{selected : bucket.selected}">
+        <div (click)="selectFromHead(bucket)" *ngIf="!bucket.selected">{{getLocString(bucket.key) | loc:bucket.key}} ({{bucket.doc_count | prettynumber}})</div>
+        
+        <div class="filter_btn btn-sm btn-success d-block text-left" *ngIf="bucket.selected" (click)="onDeselect(bucket)">
+          <span class="label">{{getLocString(bucket.key) | loc:bucket.key}}&nbsp;</span>
+          <span class="labelremove">Ta bort filter</span>
+
+          <div class="purge_filter_button pull-right"><i class="fa fa-times-circle"></i></div>
+        </div>
+      </li>
+
+      <li *ngFor="let item of selected"  >
+        <div class="filter_btn small btn-sm btn-success" 
+             
+             (click)="onDeselect(item)">
+          <span class="label">{{getLocString(item.key) | loc:item.key}}&nbsp;</span>
+          <span class="labelremove">Ta bort filter</span>
+          <div class=" purge_filter_button pull-right" ><i class="fa fa-times-circle"></i></div>
+        </div>
+      </li>
+
+    </ul>
+    
     
       <input [(ngModel)]="typeaheadSelected"
              [typeahead]="getRemaining()"

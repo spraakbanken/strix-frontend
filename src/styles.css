@@ -18,6 +18,9 @@ html,body {
   max-height : 300px;
   overflow-y: auto;
 }
+.dropdown-item {
+  cursor: pointer;
+}
 a {
   cursor : pointer;
   /*color : #086788;*/
@@ -172,9 +175,30 @@ body {
   margin-right: 2px;
 }
 
-/* Fix */
-.row {
-  /*margin-right: unset;*/
+.left_column ul, .left_column input {
+  background-color : #e8e8e8;
+}
+
+.left_column ul {
+  padding: 2px;
+  border-radius : 3px;
+  border : 1px solid lightgrey ;
+}
+
+.left_column li {
+  list-style-type: none;
+  padding: 3px 10px;
+}
+.left_column li:hover {
+  /*color : white;*/
+  background-color : lightgrey;
+}
+.left_column li.selected:hover {
+  color : inherit;
+  background-color : inherit;
+}
+.left_column li:last-child {
+  border-bottom: 0px;
 }
 
 
