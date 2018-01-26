@@ -1,12 +1,12 @@
 import { browser, by, element } from 'protractor';
-import { StrixPage } from './app.po';
+// import { StrixPage } from './app.po';
 
 describe('strix App', function() {
-  let page: StrixPage;
+  // let page: StrixPage;
 
-  beforeEach(() => {
-    page = new StrixPage();
-  });
+  // beforeEach(() => {
+    // page = new StrixPage();
+  // });
 
   it('should show the relevant document', async () => {
     await browser.get('/?filters=W3siZmllbGQiOiJkYXRhdHlwIiwidmFsdWUiOiJodXZ1ZGRva3VtZW50In1d&documentID=25f95347-f194-4b1e-8737-9a4a41e86ae4&documentCorpus=rd-bet');  
