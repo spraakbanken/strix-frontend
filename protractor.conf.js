@@ -2,7 +2,6 @@
 // https://github.com/angular/protractor/blob/master/lib/config.ts
 
 const { SpecReporter } = require('jasmine-spec-reporter');
-console.log("process.env.STRIX_FRONTEND_DOCKER_HOST", process.env.STRIX_FRONTEND_DOCKER_HOST)
 exports.config = {
   allScriptsTimeout: 11000,
   specs: [
