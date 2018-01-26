@@ -22,7 +22,7 @@ describe('strix App', function() {
         return Number(text)
     }
     let num = getNum()
-    element(by.css(".aggregation_item")).click()
+    await element(by.css(".aggregation_item")).click()
     expect(getNum()).toBeLessThan(await num)
 
   });
