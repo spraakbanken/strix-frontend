@@ -21,12 +21,12 @@ services:
 
 
   hub:
-    image: selenium/hub
+    image: selenium/hub:3.7.1-argon
     environment:
       - "JAVA_OPTS=-Dselenium.LOGGER.level=WARNING"
 
   chrome:
-    image: selenium/node-chrome
+    image: selenium/node-chrome:3.7.1
     depends_on:
       - hub
     environment:
