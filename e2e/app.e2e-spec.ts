@@ -15,7 +15,7 @@ describe('strix App', function() {
   });
 
   it('should filter when clicking a button in left sidebar', async () => {
-    browser.get('/');  
+    await browser.get('/');  
 
     let getNum = async () => {
         let text = (await element(by.css(".hits_header .num")).getText()).replace(/ /g, "")
