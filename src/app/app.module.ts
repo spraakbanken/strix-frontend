@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { CommonModule } from '@angular/common';
@@ -79,8 +79,15 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     TooltipModule.forRoot(),
     StoreModule.provideStore({searchRedux: searchReducer})
   ],
-  providers: [DocumentsService,
+  providers: [
               CallsService,
+              {
+                provide: APP_INITIALIZER,
+                useFactory: onAppInit,
+                multi: true,
+                deps: [CallsService]
+              },
+              DocumentsService,
               KarpService,
               QueryService,
               MetadataService,
@@ -90,3 +97,17 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
   bootstrap: [AppComponent]
 })
 export class AppModule { }
+
+export function onAppInit(callsService: CallsService): () => Promise<any> {
+  return (): Promise<any> => {
+    return new Promise((resolve, reject) => {
+      callsService.testForLogin().subscribe(
+        answer => {
+          console.log("the answer", answer);
+          resolve();
+        },
+        error => { resolve(); }
+      );
+    });
+  };
+}

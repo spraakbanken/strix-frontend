@@ -5,5 +5,6 @@
 
 export const environment = {
   production: false,
-  api: "https://ws.spraakbanken.gu.se/ws/strixlabb"
+  api: "https://ws.spraakbanken.gu.se/ws/strixlabb/test",
+  auth: "https://sp.spraakbanken.gu.se/auth"
 };

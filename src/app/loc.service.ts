@@ -42,7 +42,8 @@ export class LocService {
       'documents' : 'dokument',
       'color_mark_attribute' : 'Färgmarkera',
       'loading' : "Laddar",
-      'THOUSANDS_SEPARATOR' : " "
+      'THOUSANDS_SEPARATOR' : " ",
+      "login" : "Logga in"
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -70,7 +71,8 @@ export class LocService {
       'documents' : 'documents',
       'color_mark_attribute' : 'Colorize',
       'loading' : "Loading",
-      'THOUSANDS_SEPARATOR' : ","
+      'THOUSANDS_SEPARATOR' : ",",
+      "login" : "Log in"
     }
   };
 
