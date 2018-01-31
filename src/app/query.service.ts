@@ -59,12 +59,22 @@ export class QueryService {
   }
 
   public getSearchString(): string {
-    return this.currentQuery.queryString;
+    if (this.currentQuery && this.currentQuery.queryString) {
+      return this.currentQuery.queryString;
+    } else {
+      return null;
+    }
   }
 
   public getInOrderFlag(): boolean {
-    let keywordSearch = this.currentQuery.keyword_search || false;
-    return !keywordSearch;
+    if (this.currentQuery && this.currentQuery.keyword_search) {
+      //let keywordSearch = this.currentQuery.keyword_search
+      return false;
+    } else {
+      return true;
+    }
+    //let keywordSearch = this.currentQuery.keyword_search || false;
+    //return !keywordSearch;
   }
   
   public setSearchString(searchString: string): void {
@@ -84,7 +94,7 @@ export class QueryService {
   }
 
   public runCurrentQuery() {
-    console.log(":runCurrentQuery");
+    console.log(":runCurrentQuery", this.currentQuery);
     this.signalStartedSearch();
     this.runQuery(this.currentQuery);
     this.runAggregationQuery(this.currentQuery);
@@ -135,7 +145,7 @@ export class QueryService {
 
     /* Redo the last query when the user closes the open document */
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
-      this.runCurrentQuery();
+      if (this.currentQuery) this.runCurrentQuery(); // REM: Don't know why it's sometimes null (and only in Firefox, it seems..)
     });
 
     /* switchMap makes sure only the most recently added query stream is listened to.

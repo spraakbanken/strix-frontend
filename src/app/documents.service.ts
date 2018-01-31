@@ -64,6 +64,7 @@ export class DocumentsService {
 
       if (data.localQuery && data.localQuery !== "") {
         // Reopen the current document with the new query
+        console.log("way 1")
         this.loadDocumentWithQuery(
            data.documentID,
            data.documentCorpus,
@@ -72,6 +73,7 @@ export class DocumentsService {
            data.sentenceID || null);
       } else {
         // Open a new document in the ordinary way
+        console.log("way 2")
         this.loadDocumentWithQuery(
            data.documentID,
            data.documentCorpus,
