@@ -35,6 +35,8 @@ export class CallsService {
                     }).catch(this.handleError);
   } */
 
+  /* IMPORTANT: we need to put the jwt on the window object since the calls service object used
+    in the application init section isn't the same as the one injected in the bootstrapped app. */
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
     let options = new RequestOptions({ withCredentials: true });
