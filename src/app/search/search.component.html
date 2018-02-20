@@ -28,9 +28,9 @@
           >
       </div>
       <div class="search_widget" *ngIf="searchType=='lemgram'">
-        <template #lemgramItemTemplate let-model="item" let-index="index">
+        <ng-template #lemgramItemTemplate let-model="item" let-index="index">
           <span>{{model | lemgram}}</span>
-        </template>
+        </ng-template>
         <input
           type="text"
           class="form-control simple_searchbox"

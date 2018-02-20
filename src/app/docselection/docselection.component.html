@@ -32,16 +32,16 @@
           </div>
           <div class="clear"></div>
           <div class="hit_document_body">
-            <template [ngIf]="doc.highlight"> <!-- will not be necessary later on when highlight is always present -->
+            <ng-template [ngIf]="doc.highlight"> <!-- will not be necessary later on when highlight is always present -->
               <span *ngFor="let highlight of doc.highlight; let l = last" [innerHTML]="highlight+'&nbsp;'">
                 <br *ngIf="last"/> <!-- ??? -->
               </span>
-            </template>
-            <template [ngIf]="doc.preview"> <!-- will not be necessary later on when highlight is always present -->
+            </ng-template>
+            <ng-template [ngIf]="doc.preview"> <!-- will not be necessary later on when highlight is always present -->
               <span>
                 {{doc.preview}} <span class="dots">...</span>
               </span>
-            </template>
+            </ng-template>
           </div>
           <div class="hit_appendix">
             <span class="hit_collection_title">

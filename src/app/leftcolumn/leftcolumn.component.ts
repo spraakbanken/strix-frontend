@@ -10,7 +10,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
          INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
-import { StrixResult, Bucket, Aggregations } from "../strixresult.model";
+import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
 import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 
 // import {Router} from '@angular/router';
@@ -82,12 +82,29 @@ export class LeftcolumnComponent implements OnInit {
     }); */
   }
 
+  private getTypeForAgg(aggregationKey : string, agg : any) {
+    if(aggregationKey == "corpus_id") {return "multicomplete"}
+    let conf = this.guessConfFromAttributeName(aggregationKey)
+    let ret = {
+      "double" : "range"
+    }[conf.type]
+
+    if(!ret) {
+      if(agg.buckets.length > 20) {
+        return "multicomplete"
+      } else {
+        return "list"
+      }
+      
+    } else {
+      return ret
+    }
+  }
+
   private guessConfFromAttributeName(attrName : string) {
-    console.log("guessConfFromAttributeName", attrName)
     for (let item of _.values(this.availableCorpora)) {
       for (let attrObj of item.textAttributes) {
         if (attrObj.name === attrName) {
-          console.log("item", item)
           return attrObj
         }
       }
@@ -98,7 +115,6 @@ export class LeftcolumnComponent implements OnInit {
     if(aggregationKey == "corpus_id") {
       return this.availableCorpora[key].name
     }
-    console.log("getLocString", aggregationKey, key)
     let transObj = this.mem_guessConfFromAttributeName(aggregationKey).translation_value
     if (transObj) {
       return transObj[key]
@@ -107,10 +123,22 @@ export class LeftcolumnComponent implements OnInit {
     }
   }
 
+  private decorateRangeType(agg: Agg) {
+    agg.value = [(_.minBy(agg.buckets, "from") as any).from, (_.maxBy(agg.buckets, "to").to  as any)]
+    console.log("agg.value", agg.value)
+  }
+
   private parseAggResults(result: StrixResult) {
     console.log("parseAggResults", result);
-    for (let agg of _.values(result.aggregations)) {
+    for (let key in result.aggregations) {
+      let agg = result.aggregations[key]
       agg.buckets = _.orderBy(agg.buckets, "doc_count", "desc")
+      // if(agg.type)
+      console.log("key", key)
+      agg.type = this.getTypeForAgg(key, agg)
+      if(agg.type == "range") {
+        this.decorateRangeType(agg)
+      } 
     }
     this.decorateWithParent(result.aggregations)
     let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
@@ -206,9 +234,10 @@ export class LeftcolumnComponent implements OnInit {
     // Filtrera på INITIATE nedan
     Observable.zip(
       this.queryService.aggregationResult$,
-      this.searchRedux.filter((d) => d.latestAction === INITIATE)
+      this.searchRedux.filter((d) => d.latestAction === INITIATE),
+      this.metadataService.loadedMetadata$
 
-    ).subscribe(([result, {filters}] : [StrixResult, any]) => {
+    ).subscribe(([result, {filters}, info] : [StrixResult, any, any]) => {
       //this.zone.run(() => {  
         console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)

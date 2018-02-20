@@ -18,6 +18,14 @@ export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 export const POPSTATE = "POPSTATE";
 export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
 
+// payload was removed from Action in lib, brought it back.
+declare module '@ngrx/store' {
+  interface Action {
+    type: string;
+    payload?: any;
+  }
+}
+
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.

@@ -13,6 +13,8 @@ import { TypeaheadModule,
          AccordionModule,
          TooltipModule } from 'ngx-bootstrap';
 
+import { NouisliderModule } from 'ng2-nouislider';
+
 import { AppComponent } from './app.component';
 import { DocselectionComponent } from './docselection/docselection.component';
 import { DocumentsService } from './documents.service';
@@ -77,7 +79,8 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     PaginationModule.forRoot(),
     AccordionModule.forRoot(),
     TooltipModule.forRoot(),
-    StoreModule.provideStore({searchRedux: searchReducer})
+    StoreModule.forRoot({searchRedux: searchReducer}),
+    NouisliderModule
   ],
   providers: [
               CallsService,
