@@ -6,7 +6,11 @@ export interface Aggregations {
 export interface Agg {
     buckets : Bucket[],
     type : string,
-    value : any
+    value : any,
+
+    min?: number,
+    max?: number,
+    selected : boolean
 }
 
 export interface Bucket {
@@ -15,8 +19,10 @@ export interface Bucket {
     parent: string,
     doc_count : number,
 
-    from: number,
-    to: number
+    // TODO: move range props to seprate type?
+    from?: number,
+    to?: number
+    
 }
 
 export class StrixResult {

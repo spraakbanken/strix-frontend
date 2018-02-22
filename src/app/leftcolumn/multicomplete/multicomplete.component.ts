@@ -42,7 +42,6 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
     }
 
     private updateData() {
-      console.log("updateData", this.buckets[0].parent)
       let sortedBuckets =  _.orderBy(this.buckets, "doc_count", "desc");
       this.head = sortedBuckets.slice(0, 3)
       sortedBuckets = sortedBuckets.slice(3)

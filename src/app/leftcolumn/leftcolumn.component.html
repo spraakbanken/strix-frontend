@@ -9,7 +9,7 @@
   <div class="filters_area" *ngIf="!openDocument && gotMetadata">
     <div 
         *ngFor="let aggregationKey of aggregationKeys" 
-        class="aggregation_list">
+        class="aggregation_list" >
 
         <h4>{{aggregationKey | loc}}</h4>
         <ng-container [ngSwitch]="aggregations[aggregationKey].type">
@@ -38,15 +38,16 @@
             </ul>
           </ng-template>
 
-          <ng-template [ngSwitchCase]="'range'">
-            {{aggregations[aggregationKey].value}}
-            <nouislider [connect]="true" [min]="0" [max]="15" [(ngModel)]="aggregations[aggregationKey].value"></nouislider>
-          </ng-template>
+          <div class="range" *ngSwitchCase="'range'">
+            <nouislider [connect]="true" 
+              [min]="aggregations[aggregationKey].min" 
+              [max]="aggregations[aggregationKey].max" 
+              [(ngModel)]="aggregations[aggregationKey].value"
+              (change)="onRangeChange(aggregationKey)"
+            ></nouislider>
+          </div>
         </ng-container>
       
-        <div *ngIf="aggregations[aggregationKey].buckets.length > 20; else defaultItem">
-          
-          
         
           <!-- <ng-select [multiple]="true"
                         [active]="getSelectActive(aggregationKey)"
@@ -56,13 +57,6 @@
                         (removed)="dropdownRemoved($event)"
                         placeholder="Inget filter valt"></ng-select> -->
 
-        </div>
-        
-
-        <ng-template #defaultItem>
-          <h4>{{aggregationKey | loc}}</h4>
-          
-        </ng-template>
       </div>
 
       <div *ngIf="unusedFacets.length" class="unused_facets">

@@ -255,3 +255,31 @@ body {
   color: white !important;
   border-radius: 4px;
 } */
+
+.noUi-connect {
+  background-color : #F0C808;
+}
+
+.noUi-horizontal {
+    height: 7px;
+}
+.noUi-horizontal {
+    height: 7px;
+}
+
+.noUi-target {
+  border: 1px solid #d8c35f;
+}
+
+.noUi-horizontal .noUi-handle {
+  width: 24px;
+  height: 18px;
+}
+.noUi-handle:after, .noUi-handle:before {
+  left: 9px;
+  top: 1px;
+}
+
+.noUi-handle:after {
+    left: 13px;
+}

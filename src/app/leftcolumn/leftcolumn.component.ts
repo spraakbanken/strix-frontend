@@ -1,5 +1,6 @@
-import { Component, OnInit, ViewChildren, NgZone, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChildren } from '@angular/core';
 import { Subscription }   from 'rxjs/Subscription';
+import 'rxjs/Rx';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/zip';
 import * as _ from 'lodash';
@@ -47,15 +48,14 @@ export class LeftcolumnComponent implements OnInit {
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
               private store: Store<AppState>,
-              private zone: NgZone,
-              private cd: ChangeDetectorRef
+              // private cd: ChangeDetectorRef
               ) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         if (wasSuccess) {
           this.gotMetadata = true;
           this.availableCorpora = this.metadataService.getAvailableCorpora();
-          console.log("this.availableCorpora", this.availableCorpora)
+          console.log("this.availableCorpora subsc", this.availableCorpora)
           this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
         }
     });
@@ -70,7 +70,7 @@ export class LeftcolumnComponent implements OnInit {
       this.openDocument = false;
     });
 
-    this.aggregatedResultSubscription = queryService.aggregationResult$.subscribe(
+    this.aggregatedResultSubscription = queryService.aggregationResult$.skip(1).subscribe(
       (result : StrixResult) => {
         this.parseAggResults(result) 
       },
@@ -124,24 +124,48 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private decorateRangeType(agg: Agg) {
-    agg.value = [(_.minBy(agg.buckets, "from") as any).from, (_.maxBy(agg.buckets, "to").to  as any)]
-    console.log("agg.value", agg.value)
+    let max = _.maxBy(agg.buckets, (item) => {
+      if(!_.isFinite(item.to)) {
+        return -1
+      }
+      return item.to
+    }).to
+    
+    agg.min = _.minBy(agg.buckets, "from").from
+    agg.max = max
+    agg.value = [ agg.min, max]
+  }
+
+  private onRangeChange(aggregationKey) {
+    console.log("onRangeChange")
+    let [gte, lte] = this.aggregations[aggregationKey].value
+
+    this.aggregations[aggregationKey].selected = true
+
+    this.updateFilters()
+    // this.store.dispatch({ type: CHANGEFILTERS, payload : [{field: aggregationKey, value: {range: {gte, lte}}}]});
+    // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   private parseAggResults(result: StrixResult) {
     console.log("parseAggResults", result);
+    if(_.keys(result.aggregations).length < 2) {
+      return
+    }
     for (let key in result.aggregations) {
-      let agg = result.aggregations[key]
-      agg.buckets = _.orderBy(agg.buckets, "doc_count", "desc")
-      // if(agg.type)
-      console.log("key", key)
-      agg.type = this.getTypeForAgg(key, agg)
-      if(agg.type == "range") {
-        this.decorateRangeType(agg)
-      } 
+      let newAgg = result.aggregations[key]
+      let oldAgg = this.aggregations[key]
+      newAgg.buckets = _.orderBy(newAgg.buckets, "doc_count", "desc")
+      // if(newAgg.type)
+      newAgg.type = this.getTypeForAgg(key, newAgg)
+      if(newAgg.type == "range" && oldAgg) {
+        result.aggregations[key] = oldAgg
+      } else if(newAgg.type == "range") {
+        this.decorateRangeType(newAgg)
+      }
     }
     this.decorateWithParent(result.aggregations)
-    let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
+    // let newAggs = _.pick(this.aggregations, _.keys(result.aggregations))
 
     function customizer(oldValue, newValue) {
       // merge arrays by moving old selected value to new aggs array
@@ -162,7 +186,7 @@ export class LeftcolumnComponent implements OnInit {
       }
     }
 
-    this.aggregations = _.mergeWith(newAggs, result.aggregations, customizer)
+    this.aggregations = _.mergeWith(this.aggregations, result.aggregations, customizer)
     console.log("aggregations", this.aggregations)
     this.aggregationKeys = _(result.aggregations)
                             .omit(["datefrom", "dateto"])
@@ -209,11 +233,23 @@ export class LeftcolumnComponent implements OnInit {
                               .filter("selected")
                               .map((item : any) => ({field: item.parent, value: item.key}))
                               .value()
+    let selectedAggs = _(this.aggregations)
+                              .toPairs()
+                              .filter(([aggregationKey, obj]) => obj.selected && obj.type == "range")
+                              .map(([aggregationKey, obj]) => {
+                                let [gte, lte] = obj.value
+                                return {
+                                  field: aggregationKey,
+                                  value: {range: {gte, lte}},
+                                  type : obj.type
+                                }
+                              })
+                              .value()
 
-
+    console.log("selectedAggs", selectedAggs)
     console.log("selectedBuckets", selectedBuckets)
 
-    this.store.dispatch({ type: CHANGEFILTERS, payload : selectedBuckets});
+    this.store.dispatch({ type: CHANGEFILTERS, payload : [...selectedBuckets, ...selectedAggs]});
     this.store.dispatch({ type: SEARCH, payload : null});
   }
 
@@ -255,20 +291,19 @@ export class LeftcolumnComponent implements OnInit {
         }
         // Then select from the URL data
         for (let filter of filterData) {
-          let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
-          console.log("bucket", bucket)
-          if (bucket) {
-            bucket.selected = true
+          console.log("filter", filter)
+          if(filter.type == "range") {
+            this.aggregations[filter.field].value = [filter.value.range.gte, filter.value.range.lte]
+          } else {
+            let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
+            if (bucket) {
+              bucket.selected = true
+            }
           }
         }
 
         this.aggregationKeys = _.cloneDeep(this.aggregationKeys);
         this.aggregations = _.cloneDeep(this.aggregations);
-        
-        //this.cd.detectChanges();
-        //this.cd.markForCheck();
-
-      //});
     })
   }
 }

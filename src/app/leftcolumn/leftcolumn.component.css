@@ -81,3 +81,11 @@ h4::first-letter {
 /deep/ .ui-select-choices-row > a {
   padding-left : 10px !important;
 }
+
+.range {
+  padding-left: 0.4em;
+  padding-right: 1em;
+}
+
+
+

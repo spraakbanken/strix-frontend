@@ -147,6 +147,7 @@ export class CallsService {
 
   private formatFilterObject(filters: any[]): string {
     for (let filter of filters) {
+      console.log("filter", filter)
       if (filter.field === "datefrom") {
         // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
         filter.value.range.lte = filter.value.range.lte + "1231";
@@ -155,9 +156,21 @@ export class CallsService {
       
       // filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
-    let fieldGroups = _.groupBy(filters, "field")
-    return JSON.stringify(_.mapValues(fieldGroups, (list) => _.map(list, "value")))
-    // return "{" + filterStrings.join(",") + "}";
+
+    function wrapValuesInArray(filters) {
+      let fieldGroups = _.groupBy(filters, "field")
+      return _.mapValues(fieldGroups, (list) => _.map(list, "value"))
+    }
+    let notRangeFilters = _.filter(filters, (item) => {
+      return item.type != "range"
+    })
+    let rangeFilters = _.filter(filters, (item) => {
+      return item.type == "range"
+    })
+    let output = wrapValuesInArray(notRangeFilters)
+    let rangeObj = _.fromPairs(_.map(rangeFilters, (item) => [item.field, item.value]))
+    
+    return JSON.stringify(_.merge(output, rangeObj))
   }
 
   // search
@@ -198,6 +211,7 @@ export class CallsService {
     params.set("text_query", searchString)
 
     if (filters && _.size(filters) > 0) {
+      console.log("this.formatFilterObject(filters)", this.formatFilterObject(filters))
       params.set("text_filter", this.formatFilterObject(filters))
     }
     if(query.keyword_search) {
