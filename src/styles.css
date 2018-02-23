@@ -16,7 +16,7 @@ html,body {
 
 .dropdown-menu {
   max-height : 300px;
-  overflow-y: auto;
+  overflow-y: auto !important;
 }
 .dropdown-item {
   cursor: pointer;
@@ -39,6 +39,10 @@ a:not([href]):not([tabindex]):hover {
 
 .clear {
   clear: both;
+}
+
+.color-white {
+  color: white;
 }
 
 h5 {

@@ -39,6 +39,7 @@
           </ng-template>
 
           <div class="range" *ngSwitchCase="'range'">
+            <span class="color-white">{{aggregations[aggregationKey].value[0]}}–{{aggregations[aggregationKey].value[1]}}</span>
             <nouislider [connect]="true" 
               [min]="aggregations[aggregationKey].min" 
               [max]="aggregations[aggregationKey].max" 
