@@ -12,7 +12,8 @@ import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
          INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
-import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
+// import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
+// import { RangesliderComponent } from "./rangeslider.component";
 
 // import {Router} from '@angular/router';
 
@@ -133,18 +134,17 @@ export class LeftcolumnComponent implements OnInit {
     
     agg.min = _.minBy(agg.buckets, "from").from
     agg.max = max
-    agg.value = [ agg.min, max]
+    agg.value = {range: {lte: agg.max, gte: agg.min}}
   }
 
-  private onRangeChange(aggregationKey) {
-    console.log("onRangeChange")
-    let [gte, lte] = this.aggregations[aggregationKey].value
+  private onRangeChange(aggregationKey, payload) {
+    console.log("onRangeChange", payload)
+    // let [gte, lte] = this.aggregations[aggregationKey].value
 
     this.aggregations[aggregationKey].selected = true
+    // this.aggregations[aggregationKey].value = payload
 
     this.updateFilters()
-    // this.store.dispatch({ type: CHANGEFILTERS, payload : [{field: aggregationKey, value: {range: {gte, lte}}}]});
-    // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   private parseAggResults(result: StrixResult) {
@@ -196,9 +196,7 @@ export class LeftcolumnComponent implements OnInit {
     this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
   
-
   private chooseBucket(aggregationKey: string, bucket: Bucket) {
-    console.log("chooseBucket", aggregationKey, bucket)
     bucket.selected = true
 
     this.updateFilters();
@@ -237,17 +235,13 @@ export class LeftcolumnComponent implements OnInit {
                               .toPairs()
                               .filter(([aggregationKey, obj]) => obj.selected && obj.type == "range")
                               .map(([aggregationKey, obj]) => {
-                                let [gte, lte] = obj.value
                                 return {
                                   field: aggregationKey,
-                                  value: {range: {gte, lte}},
+                                  value: obj.value,
                                   type : obj.type
                                 }
                               })
                               .value()
-
-    console.log("selectedAggs", selectedAggs)
-    console.log("selectedBuckets", selectedBuckets)
 
     this.store.dispatch({ type: CHANGEFILTERS, payload : [...selectedBuckets, ...selectedAggs]});
     this.store.dispatch({ type: SEARCH, payload : null});
@@ -293,7 +287,8 @@ export class LeftcolumnComponent implements OnInit {
         for (let filter of filterData) {
           console.log("filter", filter)
           if(filter.type == "range") {
-            this.aggregations[filter.field].value = [filter.value.range.gte, filter.value.range.lte]
+            console.log("filter.value", filter.value)
+            this.aggregations[filter.field].value = filter.value
           } else {
             let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
             if (bucket) {

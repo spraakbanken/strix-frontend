@@ -39,25 +39,17 @@
           </ng-template>
 
           <div class="range" *ngSwitchCase="'range'">
-            <span class="color-white">{{aggregations[aggregationKey].value[0]}}–{{aggregations[aggregationKey].value[1]}}</span>
-            <nouislider [connect]="true" 
-              [min]="aggregations[aggregationKey].min" 
-              [max]="aggregations[aggregationKey].max" 
-              [(ngModel)]="aggregations[aggregationKey].value"
-              (change)="onRangeChange(aggregationKey)"
-            ></nouislider>
+            <span class="color-white">{{aggregations[aggregationKey].value.range.gte}}–{{aggregations[aggregationKey].value.range.lte}}</span>
+
+            <rangeslider
+              [min]="aggregations[aggregationKey].min"
+              [max]="aggregations[aggregationKey].max"
+              [(value)]="aggregations[aggregationKey].value"
+              (onRangeChange)="onRangeChange(aggregationKey, $event)"
+            ></rangeslider>
+
           </div>
         </ng-container>
-      
-        
-          <!-- <ng-select [multiple]="true"
-                        [active]="getSelectActive(aggregationKey)"
-                        [items]="getSelectArray(aggregationKey)"
-                        (data)="dropdownRefresh($event, aggregationKey)"
-                        (selected)="dropdownSelected($event)"
-                        (removed)="dropdownRemoved($event)"
-                        placeholder="Inget filter valt"></ng-select> -->
-
       </div>
 
       <div *ngIf="unusedFacets.length" class="unused_facets">

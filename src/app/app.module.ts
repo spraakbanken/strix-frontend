@@ -26,6 +26,7 @@ import { KarpService } from './karp.service';
 import { LemgramPipe } from './lemgram.pipe';
 import { LeftcolumnComponent } from './leftcolumn/leftcolumn.component';
 import { MultiCompleteComponent } from './leftcolumn/multicomplete/multicomplete.component';
+import { RangesliderComponent } from './leftcolumn/rangeslider.component';
 import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
@@ -66,6 +67,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     AnnotationComponent,
     PrettynumberPipe,
     EnsurearrayPipe,
+    RangesliderComponent,
     // SearchFilterComponent
   ],
   imports: [

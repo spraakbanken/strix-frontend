@@ -72,20 +72,20 @@ h4::first-letter {
   margin: 0 auto;
 }
 
-/deep/ .ui-select-match-item {
+::ng-deep .ui-select-match-item {
   max-width: 100%;
   text-overflow: ellipsis;
   overflow-x: hidden;
 }
 
-/deep/ .ui-select-choices-row > a {
+::ng-deep .ui-select-choices-row > a {
   padding-left : 10px !important;
 }
 
-.range {
+/*.range {
   padding-left: 0.4em;
   padding-right: 1em;
-}
+}*/
 
 
 
