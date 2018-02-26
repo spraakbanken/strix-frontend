@@ -125,6 +125,9 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private decorateRangeType(agg: Agg) {
+
+    agg.buckets = _.filter(agg.buckets, (item) => item.from < 4000)
+
     let max = _.maxBy(agg.buckets, (item) => {
       if(!_.isFinite(item.to)) {
         return -1
