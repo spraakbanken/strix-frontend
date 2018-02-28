@@ -4,12 +4,6 @@ import * as _ from 'lodash';
 @Component({
   selector: 'rangeslider',
   template: `
-    <style>
-      .range {
-        padding-left: 0.4em;
-        padding-right: 1em;
-      }
-    </style>
     <nouislider [connect]="true" 
       [min]="min" 
       [max]="max" 
