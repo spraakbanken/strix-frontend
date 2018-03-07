@@ -263,6 +263,9 @@ body {
 .noUi-connect {
   background-color : #F0C808;
 }
+.noUi-connects {
+  border-radius: 0;
+}
 
 .noUi-horizontal {
     height: 7px;

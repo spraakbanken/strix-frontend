@@ -35,7 +35,6 @@ export class LeftcolumnComponent implements OnInit {
 
   private aggregations : Aggregations = {};
   private aggregationKeys: string[] = [];
-  //private currentFilters: any[] = []; // TODO: Make some interface
   private unusedFacets : string[] = [];
 
   private openDocument = false;
@@ -207,7 +206,6 @@ export class LeftcolumnComponent implements OnInit {
 
 
   private purgeAllFilters() {
-    //this.currentFilters = [];
     this.updateFilters();
   }
   private purgeFilter(aggregationKey: string, bucket: Bucket) {

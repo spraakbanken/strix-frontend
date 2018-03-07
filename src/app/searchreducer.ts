@@ -56,10 +56,14 @@ export function searchReducer(state: any = {}, action: Action) {
       if(!nextState.filters.length) {
         nextState.filters = []
       }
-      nextState.filters = nextState.filters.concat(action.payload)
+
+      let fields = _.map(action.payload, "field")
+
+      nextState.filters = _.filter(nextState.filters, item => !fields.includes(item.field) ).concat(action.payload)
       break;
     case CHANGEFILTERS:
       nextState.filters = action.payload;
+      console.log("nextState.filters", nextState.filters)
       break;
     case CHANGE_INCLUDE_FACET:
       nextState.include_facets = action.payload;

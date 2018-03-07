@@ -116,6 +116,7 @@ export class ChartComponent implements OnInit {
 
   onZoomChange() {
     let [from, to] = this.range
+    console.log("onZoomChange", from, to)
     this.registerRangeChange(from, to)
   }
 

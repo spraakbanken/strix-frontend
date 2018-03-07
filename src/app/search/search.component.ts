@@ -163,19 +163,19 @@ export class SearchComponent implements OnInit {
     console.log('Dropdown is now: ', open);
   }
 
-  private purgeFilter(aggregationKey: string) {
-    for (let i = 0; i < this.currentFilters.length; i++) {
-      if (this.currentFilters[i].field === aggregationKey) {
-        this.currentFilters.splice(i, 1);
-        break;
-      }
-    }
-    this.updateFilters();
-  }
+  // private purgeFilter(aggregationKey: string) {
+  //   for (let i = 0; i < this.currentFilters.length; i++) {
+  //     if (this.currentFilters[i].field === aggregationKey) {
+  //       this.currentFilters.splice(i, 1);
+  //       break;
+  //     }
+  //   }
+  //   this.updateFilters();
+  // }
 
-  private updateFilters() {
-    this.store.dispatch({ type: CHANGEFILTERS, payload : this.currentFilters});
-    this.store.dispatch({ type: SEARCH, payload : null});
-  }
+  // private updateFilters() {
+  //   this.store.dispatch({ type: CHANGEFILTERS, payload : this.currentFilters});
+  //   this.store.dispatch({ type: SEARCH, payload : null});
+  // }
 
 }
