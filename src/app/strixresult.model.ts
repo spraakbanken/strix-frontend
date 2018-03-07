@@ -14,14 +14,16 @@ export interface Agg {
 }
 
 export interface Bucket {
-    key : string,
+    key : any,
     selected : boolean,
     parent: string,
     doc_count : number,
 
     // TODO: move range props to seprate type?
     from?: number,
-    to?: number
+    to?: number,
+
+    word_count? : number;
     
 }
 

@@ -40,29 +40,29 @@ export class SearchComponent implements OnInit {
   private fromYear: number;
   private toYear: number;
 
-  private changeDates(dates: any) {
-    this.fromYear = moment(dates.from*1000).year();
-    this.toYear = moment(dates.to*1000).year();
-    this.updateInterval();
-  };
+  // private changeDates(dates: any) {
+  //   this.fromYear = moment(dates.from*1000).year();
+  //   this.toYear = moment(dates.to*1000).year();
+  //   this.updateInterval();
+  // };
 
-  private updateInterval() {
-    console.log("new interval", this.fromYear + "-" + this.toYear);
-    let isSet = false;
-    let value = {"range" : {"gte" : this.fromYear, "lte" : this.toYear}};
-    console.log("currentFilter*", this.currentFilters.length);
-    for (let currentFilter of this.currentFilters) {
-      console.log("currentFilter*", currentFilter);
-      if (currentFilter.field === "datefrom") {
-        currentFilter.values = [value];
-        isSet = true;
-      }
-    }
-    if (!isSet) {
-      this.currentFilters.push({"field" : "datefrom", "values" : [value]});
-    }
-    this.updateFilters();
-  }
+  // private updateInterval() {
+  //   console.log("new interval", this.fromYear + "-" + this.toYear);
+  //   let isSet = false;
+  //   let value = {"range" : {"gte" : this.fromYear, "lte" : this.toYear}};
+  //   console.log("currentFilter*", this.currentFilters.length);
+  //   for (let currentFilter of this.currentFilters) {
+  //     console.log("currentFilter*", currentFilter);
+  //     if (currentFilter.field === "datefrom") {
+  //       currentFilter.values = [value];
+  //       isSet = true;
+  //     }
+  //   }
+  //   if (!isSet) {
+  //     this.currentFilters.push({"field" : "datefrom", "values" : [value]});
+  //   }
+  //   this.updateFilters();
+  // }
 
   /*
     field : "fieldname",
@@ -142,14 +142,6 @@ export class SearchComponent implements OnInit {
   private searchTypeChange(val) {
     console.log("searchTypeChange", val)
     this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
-  }
-
-  private getHistogramData(corpora: string[]) {
-    console.log("getting histogram data.");
-    this.callsService.getDateHistogramData(corpora[0]).subscribe((histogramData) => {
-      this.histogramData = histogramData;
-      console.log("got histogram data", histogramData);
-    });
   }
 
   private simpleSearch() {

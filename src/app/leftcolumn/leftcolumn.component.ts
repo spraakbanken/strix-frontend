@@ -241,7 +241,7 @@ export class LeftcolumnComponent implements OnInit {
                                 return {
                                   field: aggregationKey,
                                   value: obj.value,
-                                  type : obj.type
+                                  type : "range"
                                 }
                               })
                               .value()

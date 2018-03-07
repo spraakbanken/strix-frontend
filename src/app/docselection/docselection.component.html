@@ -6,8 +6,8 @@
     </alert>
   </div>
 
-  <div class="hits_area" *ngIf="documentsWithHits.length > 0">
-    <div class="hits_header row flex-column ">
+  <div class="hits_area" >
+    <div class="hits_header row flex-column " *ngIf="documentsWithHits.length > 0">
       <div>{{'found' | loc}} <span class="num">{{totalNumberOfDocuments | prettynumber}}</span> {{'documents' | loc}}.</div>
       <pagination
         [totalItems]="totalNumberOfDocuments"
@@ -19,6 +19,9 @@
         nextText="&rsaquo;"
         class="pagination-sm "></pagination>
     </div>
+
+    <chart></chart>
+
     <div class="hits_left_column row" *ngIf="gotMetadata">
       <div class="hits_inner list-group">
         <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index">

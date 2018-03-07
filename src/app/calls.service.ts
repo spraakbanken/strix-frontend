@@ -148,11 +148,11 @@ export class CallsService {
   private formatFilterObject(filters: any[]): string {
     for (let filter of filters) {
       console.log("filter", filter)
-      if (filter.field === "datefrom") {
-        // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
-        filter.value.range.lte = filter.value.range.lte + "1231";
-        filter.value.range.gte = filter.value.range.gte + "0101";
-      }
+      // if (filter.field === "datefrom") {
+      //   // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
+      //   filter.value.range.lte = filter.value.range.lte + "1231";
+      //   filter.value.range.gte = filter.value.range.gte + "0101";
+      // }
       
       // filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
@@ -168,6 +168,7 @@ export class CallsService {
       return item.type == "range"
     })
     let output = wrapValuesInArray(notRangeFilters)
+    console.log("notRangeFilters", notRangeFilters)
     let rangeObj = _.fromPairs(_.map(rangeFilters, (item) => [item.field, item.value]))
     
     return JSON.stringify(_.merge(output, rangeObj))
@@ -228,7 +229,15 @@ export class CallsService {
   /* Get aggregations for faceted search */
   public getAggregations(query: StrixQuery) {
     console.log("getAggregations", query);
-    //let corpusIDs = query.corpora;
+    
+    let url = `${this.STRIXBACKEND_URL}/aggs`;
+    let params = this.strixQueryToParams(query)
+    return this.http.get(url, this.getOptions(params))
+                    .map(this.preprocessResult)
+                    .catch(this.handleError);
+  }
+
+  private strixQueryToParams(query : StrixQuery) : URLSearchParams {
     let corpusIDs = [];
 
     /* temporary fix */
@@ -249,7 +258,6 @@ export class CallsService {
     }
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
-    let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
     let params = new URLSearchParams()
     params.set("facet_count", '5')
@@ -271,12 +279,8 @@ export class CallsService {
     if (query.keyword_search) {
       params.set("in_order", (!query.keyword_search).toString())
     }
-    //let options = new RequestOptions({
-    //  search : params
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
-                    .catch(this.handleError);
+
+    return params
   }
 
   public searchForAnnotation(corpus: string, annotationKey: string, annotationValue: string): Observable<StrixResult> {
@@ -433,15 +437,24 @@ export class CallsService {
   }
 
   /* get data for Date Histogram */
-  public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
-    let url = `${this.STRIXBACKEND_URL}/date_histogram/${corpusID}/year`;
-    console.log('url', url);
-    //let paramsString = `date_field=datefrom`;
-    let params = new URLSearchParams();
-    params.set("date_field", "datefrom");
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
+  // public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
+  //   let url = `${this.STRIXBACKEND_URL}/date_histogram/${corpusID}/year`;
+  //   console.log('url', url);
+  //   //let paramsString = `date_field=datefrom`;
+  //   let params = new URLSearchParams();
+  //   params.set("date_field", "datefrom");
+  //   //let options = new RequestOptions({
+  //   //  search: new URLSearchParams(paramsString)
+  //   //});
+  //   return this.http.get(url, this.getOptions(params))
+  //                   .map(this.extractTokenData) // Rename this to extractData?
+  //                   .catch(this.handleError);
+  // }
+  public getDateHistogramData(query : StrixQuery): Observable<StrixResult> {
+    let url = `${this.STRIXBACKEND_URL}/aggs`;
+    let params = this.strixQueryToParams(query)
+    params.set("include_facets", "datefrom");
+    params.delete("exclude_empty_buckets")
     return this.http.get(url, this.getOptions(params))
                     .map(this.extractTokenData) // Rename this to extractData?
                     .catch(this.handleError);

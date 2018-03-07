@@ -4,6 +4,7 @@ import * as _ from 'lodash';
 export const CHANGETYPE = "CHANGETYPE";
 export const CHANGEQUERY = "CHANGEQUERY";
 export const CHANGEFILTERS = "CHANGEFILTERS";
+export const ADD_FILTERS = "ADD_FILTERS";
 export const CHANGE_INCLUDE_FACET = "CHANGE_INCLUDE_FACET";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
@@ -49,6 +50,13 @@ export function searchReducer(state: any = {}, action: Action) {
       break;
     case CHANGETYPE:
       nextState.type = action.payload;
+      break;
+    case ADD_FILTERS:
+      console.log("nextState.filters", nextState.filters)
+      if(!nextState.filters.length) {
+        nextState.filters = []
+      }
+      nextState.filters = nextState.filters.concat(action.payload)
       break;
     case CHANGEFILTERS:
       nextState.filters = action.payload;

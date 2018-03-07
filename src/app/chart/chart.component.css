@@ -1,0 +1,79 @@
+.minimap {
+}
+.slider {
+  position: absolute;
+  width : 100%;
+  height : 100%;
+  margin : 0;
+}
+.minimap_container {
+  margin-left: 50px;
+  position: relative;
+  margin-right: 10px;
+}
+
+::ng-deep .minimap_container .noUi-connect {
+  border-top: 3px solid lightgrey;
+  border-bottom: 3px solid lightgrey;
+  background-color: transparent;
+}
+::ng-deep .minimap_container .noUi-connects {
+  background-color: transparent;
+}
+::ng-deep .minimap_container .noUi-target {
+   /*height: 150px;*/
+  height : 100%;
+  border:none;
+  background-color: transparent;
+}
+
+::ng-deep .minimap_container .noUi-origin {
+  height : 100%;
+}
+::ng-deep .minimap_container .noUi-horizontal .noUi-handle {
+  height : 100%;
+  top : 0;
+
+  border: 1px solid lightgrey;
+  border-radius: 0px;
+  background: #f1f1f1;  
+  box-shadow: none;
+}
+
+::ng-deep .minimap_container .noUi-horizontal .noUi-handle {
+  outline: none !important;
+  cursor: grab;
+}
+::ng-deep .minimap_container .noUi-horizontal .noUi-handle:active {
+  cursor: grabbing;
+}
+
+::ng-deep .minimap_container .noUi-handle:after, ::ng-deep .minimap_container .noUi-handle:before {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 40px;
+  width: 1px;
+  background: #c3c3c3;
+  top: 33px;
+}
+ ::ng-deep .minimap_container .noUi-handle:before {
+  left: 9px;
+ }
+::ng-deep .minimap_container .noUi-handle:after {
+  right: 9px;
+
+}
+
+.cover {
+  background-color : rgba(255,255,255,0.7);
+  height : 100%;
+  position: absolute;
+}
+.cover.left {
+  left: 0;
+}
+.cover.right {
+  right : 0;
+}
+

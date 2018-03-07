@@ -33,6 +33,7 @@ export class QueryService {
      subscribed to. (I.e. all older pending streams will be unsubscribed) */
   private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
   private streamOfAggregationStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
+  private streamOfDateHistogramStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
 
   // The searchResult$ stream delivers the actual results after a finished search
   private searchResultSubject = new Subject<any>();
@@ -41,6 +42,8 @@ export class QueryService {
   // The aggregationResult$ stream delivers the aggregated results after a finished aggregation search
   private aggregationResultSubject = new Subject<any>();
   aggregationResult$ = this.aggregationResultSubject.asObservable();
+  private dateHistogramResultSubject = new BehaviorSubject<any>(null);
+  dateHistogramResult$ = this.dateHistogramResultSubject.asObservable();
 
   // Components should subscribe to the searchStatus$ stream
   // to know the *status* of the search (for displaying such 
@@ -55,6 +58,13 @@ export class QueryService {
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
+    this.dateHistogramResult$.subscribe(
+          (result : StrixResult) => {
+            console.log("service", result)
+            // resolve(this.aggsToChartData(result))
+          },
+          error => console.log("datehistogram error")//this.errorMessage = <any>error
+        );
     this.onInit();
   }
 
@@ -113,6 +123,7 @@ export class QueryService {
     if (query.type === "normal") {
       console.log("adding an aggregation search to the stream of streams");
       this.streamOfAggregationStreams.next(this.callsService.getAggregations(query));
+      this.streamOfDateHistogramStreams.next(this.callsService.getDateHistogramData(query));
     } else {
       // ... we'll see what the future brings
     }
@@ -161,6 +172,11 @@ export class QueryService {
       return obj;
     }).subscribe( value => {
       this.aggregationResultSubject.next(value);
+    });
+    this.streamOfDateHistogramStreams.switchMap( obj => {
+      return obj;
+    }).subscribe( value => {
+      this.dateHistogramResultSubject.next(value);
     });
   }
 

@@ -44,7 +44,7 @@ import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
-// import { SearchFilterComponent } from './search-filter/search-filter.component';
+import { ChartComponent } from './chart/chart.component';
 
 @NgModule({
   declarations: [
@@ -68,7 +68,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     PrettynumberPipe,
     EnsurearrayPipe,
     RangesliderComponent,
-    // SearchFilterComponent
+    ChartComponent,
   ],
   imports: [
     BrowserModule,

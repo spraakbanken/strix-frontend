@@ -17,7 +17,7 @@
       "test": "test.ts",
       "tsconfig": "tsconfig.app.json",
       "testTsconfig" : "tsconfig.spec.json",
-      "prefix": "app",
+      "prefix": "",
       "styles": [
         "../node_modules/codemirror/lib/codemirror.css",
         
@@ -25,7 +25,7 @@
         "bootstrap_custom.scss",
         "styles.css"
       ],
-      "scripts": [],
+      "scripts": ["../node_modules/chart.js/dist/Chart.bundle.min.js"],
       "environmentSource": "environments/environment.ts",
       "environments": {
         "dev": "environments/environment.ts",
