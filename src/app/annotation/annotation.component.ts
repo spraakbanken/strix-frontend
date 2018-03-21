@@ -1,4 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, TemplateRef } from '@angular/core';
+import { BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import { DocumentsService } from 'app/documents.service';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'annotation',
@@ -20,7 +24,21 @@ export class AnnotationComponent implements OnInit {
   private stringPart: string = null;
   private confidence: string = null;
 
-  constructor() { }
+  /* IVIP */
+  private jwt: string = window["jwt"];
+  private currentResource: any;
+  private currentTime = 0;
+  private currentText = '';
+  modalRef: BsModalRef;
+
+  constructor(
+    private documentsService: DocumentsService,
+    private modalService: BsModalService
+  ) { }
+
+  openModal(template: TemplateRef<any>) {
+    this.modalRef = this.modalService.show(template);
+  }
 
   ngOnInit() {
     console.log("ngOnInit", this.translations, this.type, this.data, this.name);
@@ -36,6 +54,11 @@ export class AnnotationComponent implements OnInit {
         let sense_parts = this.data.split("..");
         this.indexPart = sense_parts[1];
         this.basePart = sense_parts[0];
+        break;
+      case 'audio':
+
+        break;
+      case 'video':
         break;
       default:
         if (typeof this.data === 'string') {
@@ -55,6 +78,50 @@ export class AnnotationComponent implements OnInit {
 
   private clickedKarp(event) {
     event.stopPropagation();
+  }
+
+  private openResource() {
+    this.currentResource = this.data;
+    this.currentTime = 4000;
+    console.log("THE DATA", this.data);
+  }
+
+  private updateTime(time) {
+    let current = this.findToken(time);
+    if (current) {
+      //console.log("tokenIndices", tokenIndices)
+      this.currentText = current;
+    }
+  }
+
+  private findToken(timestamp) {
+    let openDocument = this.documentsService.getDocument(0);
+    console.log("openDocument", openDocument);
+    let tokens = openDocument.token_lookup;
+    let len = _.size(tokens);
+    // Needs optimization with a binary search instead, or a precalculation step:
+    for(let i = 0; i < len; i++) {
+      let sentence = tokens[i].attrs.sentence;
+      if (sentence) {
+        let start = sentence.attrs.start;
+        let end = sentence.attrs.end;
+        if (start && end) {
+          if (timestamp >= start/1000 && timestamp <= end/1000) {
+            let startTokenIndex = sentence.start_wid;
+            let endTokenIndex = startTokenIndex + sentence.length - 1;
+            return this.getTextFromIndices(tokens, startTokenIndex, endTokenIndex)
+          }
+        }
+      }
+    }
+  }
+
+  private getTextFromIndices(tokenData, start, end) {
+    let sentence = '';
+    for(let i = start; i <= end; i++) {
+      sentence += tokenData[i].word + (tokenData[i].whitespace || '')
+    }
+    return sentence;
   }
 
 }

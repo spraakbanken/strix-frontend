@@ -11,7 +11,8 @@ import { TypeaheadModule,
          AlertModule,
          PaginationModule,
          AccordionModule,
-         TooltipModule } from 'ngx-bootstrap';
+         TooltipModule,
+         ModalModule } from 'ngx-bootstrap';
 
 import { NouisliderModule } from 'ng2-nouislider';
 
@@ -81,6 +82,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     PaginationModule.forRoot(),
     AccordionModule.forRoot(),
     TooltipModule.forRoot(),
+    ModalModule.forRoot(),
     StoreModule.forRoot({searchRedux: searchReducer}),
     NouisliderModule
   ],

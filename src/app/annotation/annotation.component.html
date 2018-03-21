@@ -26,7 +26,42 @@
     </a>
 </ng-template>
 
-<ng-template [ngIf]="type !== 'lemgram' && type !== 'sense'">
+<ng-template [ngIf]="type === 'audio'">
+  <button (click)="openResource();openModal(modaltemplate)" class="btn btn-sm btn-primary resource-button">
+    <i class="fa fa-file-audio-o"></i>
+  </button>
+</ng-template>
+
+<ng-template [ngIf]="type === 'video'">
+  <button (click)="openResource();openModal(modaltemplate)" class="btn btn-sm btn-primary resource-button">
+    <i class="fa fa-file-movie-o"></i>
+  </button>
+</ng-template>
+
+<ng-template [ngIf]="type !== 'lemgram' && type !== 'sense' && type !== 'audio' && type !== 'video'">
   <span *ngIf="translations && translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{translations[stringPart] | loc}}</span>
   <span *ngIf="!translations || !translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{stringPart}}</span>
+</ng-template>
+
+<ng-template #modaltemplate>
+  <div *ngIf="currentResource">
+    <div class="pop-up">
+      <video
+        #movieplayer
+        width="100%"
+        height="100%"
+        controlsList="nodownload"
+        controls
+        (timeupdate)="updateTime(movieplayer.currentTime)">
+        <source
+          [src]="'https://ws.spraakbanken.gu.se/ws/strixlabb/resource/ivip/' + currentResource.path + '?jwt=' + jwt"
+          [type]="currentResource.type"
+          />
+        Your browser does not support HTML videos.
+      </video><br/>
+      <div><span>{{currentText}}</span></div>
+      <br/>
+      <button (click)="movieplayer.currentTime=20">Hoppa fram</button>
+    </div>
+  </div>
 </ng-template>
