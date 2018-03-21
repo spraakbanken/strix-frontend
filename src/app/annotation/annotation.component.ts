@@ -29,7 +29,7 @@ export class AnnotationComponent implements OnInit {
   private currentResource: any;
   private currentTime = 0;
   private currentText = '';
-  modalRef: BsModalRef;
+  private modalRef: BsModalRef;
 
   constructor(
     private documentsService: DocumentsService,
@@ -56,7 +56,6 @@ export class AnnotationComponent implements OnInit {
         this.basePart = sense_parts[0];
         break;
       case 'audio':
-
         break;
       case 'video':
         break;
@@ -83,24 +82,21 @@ export class AnnotationComponent implements OnInit {
   private openResource() {
     this.currentResource = this.data;
     this.currentTime = 4000;
-    console.log("THE DATA", this.data);
   }
 
   private updateTime(time) {
     let current = this.findToken(time);
     if (current) {
-      //console.log("tokenIndices", tokenIndices)
       this.currentText = current;
     }
   }
 
   private findToken(timestamp) {
     let openDocument = this.documentsService.getDocument(0);
-    console.log("openDocument", openDocument);
     let tokens = openDocument.token_lookup;
     let len = _.size(tokens);
     // Needs optimization with a binary search instead, or a precalculation step:
-    for(let i = 0; i < len; i++) {
+    for (let i = 0; i < len; i++) {
       let sentence = tokens[i].attrs.sentence;
       if (sentence) {
         let start = sentence.attrs.start;
@@ -118,7 +114,7 @@ export class AnnotationComponent implements OnInit {
 
   private getTextFromIndices(tokenData, start, end) {
     let sentence = '';
-    for(let i = start; i <= end; i++) {
+    for (let i = start; i <= end; i++) {
       sentence += tokenData[i].word + (tokenData[i].whitespace || '')
     }
     return sentence;
