@@ -9,9 +9,10 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-         INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import { SEARCH, CHANGELANG, CHANGEFILTERS, ADD_FILTERS, CHANGE_INCLUDE_FACET,
+         INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, INIT_DATE_HISTORGRAM } from '../searchreducer';
 import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
+import * as moment from "moment"
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 // import { RangesliderComponent } from "./rangeslider.component";
 
@@ -43,6 +44,8 @@ export class LeftcolumnComponent implements OnInit {
   private include_facets : string[] = []
   private availableCorpora : { [key: string] : StrixCorpusConfig};
   private mem_guessConfFromAttributeName : Function;
+
+  private moment = moment;
   
 
   constructor(private metadataService: MetadataService,
@@ -64,6 +67,25 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
       this.openDocument = true;
+    });
+    this.searchRedux.filter((d) => d.latestAction === ADD_FILTERS).subscribe((data) => {
+
+      let datefrom = _.find(data.filters, (item) => item.field == "datefrom") 
+
+      if(datefrom) {
+        this.aggregations["datefrom"] = {
+          type : "token",
+          value: datefrom.value,
+          buckets: [],
+          selected: true
+
+        }
+        console.log("this.aggregations['datefrom']", this.aggregations["datefrom"])
+        _.remove(this.aggregationKeys, item => item == "datefrom")
+        this.aggregationKeys.splice(0, 0, "datefrom")
+
+        this.store.dispatch({type : SEARCH})
+      }
     });
 
     this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
@@ -190,11 +212,16 @@ export class LeftcolumnComponent implements OnInit {
 
     this.aggregations = _.mergeWith(this.aggregations, result.aggregations, customizer)
     console.log("aggregations", this.aggregations)
-    this.aggregationKeys = _(result.aggregations)
-                            .omit(["datefrom", "dateto"])
+    this.aggregationKeys = _(this.aggregations)
+                            .omit(["dateto"]) // probably not needed, they should be filtered from backend
                             .keys()
-                            .sortBy( (key) => key === "corpus_id" ? "aaaaaa": key)
-                            .value()
+                            .sortBy( (key) => {
+                              return {
+                                datefrom: "aaaa",
+                                corpus_id: "aaaaa"
+                              }[key] || key
+                            })
+                            .value() as any as string[]
     this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
   
@@ -208,9 +235,13 @@ export class LeftcolumnComponent implements OnInit {
   private purgeAllFilters() {
     this.updateFilters();
   }
-  private purgeFilter(aggregationKey: string, bucket: Bucket) {
-    console.log("YES", bucket, this.aggregations, this.aggregationKeys)
+  private purgeFilter(key : string, bucket: Bucket) {
+    console.log("purgeFilter", bucket, key)
     bucket.selected = false
+    if(key == "datefrom") {
+      delete this.aggregations["datefrom"]
+      _.remove(this.aggregationKeys, item => item == "datefrom")
+    }
     this.updateFilters();
   }
 
@@ -246,6 +277,7 @@ export class LeftcolumnComponent implements OnInit {
 
     this.store.dispatch({ type: CHANGEFILTERS, payload : [...selectedBuckets, ...selectedAggs]});
     this.store.dispatch({ type: SEARCH, payload : null});
+    this.store.dispatch({ type: INIT_DATE_HISTORGRAM, payload : null })
   }
 
   private reloadStrix() {
@@ -287,6 +319,16 @@ export class LeftcolumnComponent implements OnInit {
         // Then select from the URL data
         for (let filter of filterData) {
           console.log("filter", filter)
+          // if(filter.field == "datefrom") {
+          //   this.aggregations["datefrom"] = {
+          //     type : "token",
+          //     value: filter.value,
+          //     buckets: [],
+          //     selected: true
+
+          //   }
+          //   this.aggregationKeys.splice(0, 0, "datefrom")
+          // } 
           if(filter.type == "range") {
             console.log("filter.value", filter.value)
             this.aggregations[filter.field].value = filter.value

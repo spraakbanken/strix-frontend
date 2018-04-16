@@ -4,7 +4,7 @@ import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
 import { QueryService } from '../query.service';
 import { Store } from '@ngrx/store';
 
-import { ADD_FILTERS, SEARCH } from '../searchreducer';
+import { ADD_FILTERS, SEARCH, INIT_DATE_HISTORGRAM } from '../searchreducer';
 
 import * as _ from "lodash";
 
@@ -13,7 +13,7 @@ import Chart from 'chart.js'
 declare var Chart : any;
 
 import * as moment from "moment"
-window.moment = moment
+// window.moment = moment
 
 interface AppState {
   searchRedux: any;
@@ -23,7 +23,7 @@ interface AppState {
   selector: 'chart',
   template: `
     <div>
-      <canvas (click)="onChartClick($event)" #canvas width="400" height="400"></canvas>
+      <div class="canvas_container"><canvas (click)="onChartClick($event)" #canvas width="400" height="200"></canvas></div>
       <div class="minimap_container">
         <div class="cover left" [ngStyle]="{width: ( ((range[0] - min) / (max - min))  * 100 ) + '%'}"></div>
         <div class="cover right" [ngStyle]="{width: ( ((max - range[1]) / (max - min))  * 100 ) + '%'}"></div>
@@ -35,7 +35,7 @@ interface AppState {
               (update)="onZoom()"
               (change)="onZoomChange()"
             ></nouislider>
-        <canvas class="minimap" #minimapCanvas width="400" height="80"></canvas>
+        <canvas class="minimap" #minimapCanvas width="400" height="50"></canvas>
       </div>
     </div>
   `,
@@ -77,6 +77,7 @@ export class ChartComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.store.dispatch({ type: INIT_DATE_HISTORGRAM, payload : null })
   }
 
   onChartClick(event : Event) {
@@ -88,17 +89,16 @@ export class ChartComponent implements OnInit {
   }
 
   registerRangeChange(from : number, to : number) {
-    // TODO: rather than add this should replace filter of field 'datefrom' with new obj.
-    this.store.dispatch({ type: ADD_FILTERS, payload : [{
-      field: "datefrom",
-      value: {
-        range: {gte: from, lte: to}
-      },
-      type : "range"
-    }]
-  });
-  // TODO: should not overwrite /aggs used to build graph. use payload argument to deactivate datefrom agg?
-  // this.store.dispatch({ type: SEARCH, payload : null })
+    this.store.dispatch({ type: ADD_FILTERS, payload : [
+      {
+        field: "datefrom",
+        value: {
+          range: {gte: Math.floor(from), lte: Math.ceil(to)}
+        },
+        type : "range"
+      }
+    ]});
+    // this.store.dispatch({ type: SEARCH, payload : null })
   }
 
   onZoom() {
@@ -204,7 +204,7 @@ export class ChartComponent implements OnInit {
           }],
             yAxes: [{
                 ticks: {
-                    beginAtZero:true
+                    beginAtZero:true,
                 }
             }]
           }

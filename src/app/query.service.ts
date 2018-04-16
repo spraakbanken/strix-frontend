@@ -9,7 +9,7 @@ import { StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
-import { SEARCH, CLOSEDOCUMENT } from './searchreducer';
+import { SEARCH, CLOSEDOCUMENT, INIT_DATE_HISTORGRAM } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
 
 interface AppState {
@@ -58,13 +58,6 @@ export class QueryService {
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
-    this.dateHistogramResult$.subscribe(
-          (result : StrixResult) => {
-            console.log("service", result)
-            // resolve(this.aggsToChartData(result))
-          },
-          error => console.log("datehistogram error")//this.errorMessage = <any>error
-        );
     this.onInit();
   }
 
@@ -123,35 +116,27 @@ export class QueryService {
     if (query.type === "normal") {
       console.log("adding an aggregation search to the stream of streams");
       this.streamOfAggregationStreams.next(this.callsService.getAggregations(query));
-      this.streamOfDateHistogramStreams.next(this.callsService.getDateHistogramData(query));
+      // this.streamOfDateHistogramStreams.next(this.callsService.getDateHistogramData(query));
     } else {
       // ... we'll see what the future brings
     }
+  }
+
+  public runDatehistogramAggQuery(query: StrixQuery) {
+    this.streamOfDateHistogramStreams.next(this.callsService.getDateHistogramData(query))
   }
 
   onInit() {
 
     this.searchRedux = this.store.select('searchRedux');
     /* React upon the action SEARCH, most likely triggering a main query search. */
-    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
-      this.currentQuery = new StrixQuery();
-      this.currentQuery.type = data.type;
-      this.currentQuery.queryString = data.query;
-      this.currentQuery.pageIndex = data.page;
-      this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-      /* console.log("data.corpora", data.corpora);
-      if ( data.corpora.length === 1 && data.corpora[0] === undefined) { // Because of "corpora=" in the URL
-        this.currentQuery.corpora = []; // All corpora (default)
-      } else {
-        this.currentQuery.corpora = data.corpora;
-      } */
-      
-      this.currentQuery.filters = data.filters;
-      this.currentQuery.include_facets = data.include_facets || [];
-      if(data.keyword_search) {
-        this.currentQuery.keyword_search = data.keyword_search
-      }
+    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((state) => {
+      this.currentQuery = this.stateToQuery(state)
       this.runCurrentQuery(); // Perform the actual search
+    });
+    this.searchRedux.filter((d) => d.latestAction === INIT_DATE_HISTORGRAM).subscribe((state) => {
+      let query : StrixQuery = this.stateToQuery(state)
+      this.runDatehistogramAggQuery(query); 
     });
 
     /* Redo the last query when the user closes the open document */
@@ -178,6 +163,27 @@ export class QueryService {
     }).subscribe( value => {
       this.dateHistogramResultSubject.next(value);
     });
+  }
+
+  private stateToQuery(state : any) {
+    let query = new StrixQuery();
+    query.type = state.type;
+    query.queryString = state.query;
+    query.pageIndex = state.page;
+    query.documentsPerPage = 10; // TODO: Make non hardcoded
+    /* console.log("state.corpora", state.corpora);
+    if ( state.corpora.length === 1 && state.corpora[0] === undefined) { // Because of "corpora=" in the URL
+      query.corpora = []; // All corpora (default)
+    } else {
+      query.corpora = state.corpora;
+    } */
+    
+    query.filters = state.filters;
+    query.include_facets = state.include_facets || [];
+    if(state.keyword_search) {
+      query.keyword_search = state.keyword_search
+    }
+    return query
   }
 
 }

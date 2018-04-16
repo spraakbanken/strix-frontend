@@ -436,20 +436,6 @@ export class CallsService {
                     .catch(this.handleError);
   }
 
-  /* get data for Date Histogram */
-  // public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
-  //   let url = `${this.STRIXBACKEND_URL}/date_histogram/${corpusID}/year`;
-  //   console.log('url', url);
-  //   //let paramsString = `date_field=datefrom`;
-  //   let params = new URLSearchParams();
-  //   params.set("date_field", "datefrom");
-  //   //let options = new RequestOptions({
-  //   //  search: new URLSearchParams(paramsString)
-  //   //});
-  //   return this.http.get(url, this.getOptions(params))
-  //                   .map(this.extractTokenData) // Rename this to extractData?
-  //                   .catch(this.handleError);
-  // }
   public getDateHistogramData(query : StrixQuery): Observable<StrixResult> {
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let params = this.strixQueryToParams(query)

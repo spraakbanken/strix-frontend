@@ -47,7 +47,7 @@
     "@angular/language-service": "^5.2.5",
     "@types/codemirror": "0.0.35",
     "@types/jasmine": "2.5.38",
-    "@types/lodash": "^4.14.38",
+    "@types/lodash": "^4.14.106",
     "@types/node": "~6.0.60",
     "codelyzer": "^4.0.1",
     "jasmine-core": "~2.5.2",

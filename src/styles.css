@@ -135,27 +135,6 @@ body {
 }
 
 
-/* Histogram */
-.x_tick {
-  border : none;
-}
-.title {
-  bottom : -1.4em;
-}
-            
-.svg {
-  margin-bottom: 2em;
-}
-
-.graph {
-  display: none;
-}
-
-.rickshaw_range_slider_preview_container {
-  width: 380px;
-  height: 44px;
-  background-color: #f1f8fc;
-}
 
 /* Filter boxes */
 

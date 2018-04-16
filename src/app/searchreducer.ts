@@ -18,6 +18,7 @@ export const CHANGELANG = "CHANGELANG";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 export const POPSTATE = "POPSTATE";
 export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
+export const INIT_DATE_HISTORGRAM = "INIT_DATE_HISTORGRAM";
 
 // payload was removed from Action in lib, brought it back.
 declare module '@ngrx/store' {
@@ -113,6 +114,8 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.localQuery = null;
       nextState.history = false;
       break;
+    case INIT_DATE_HISTORGRAM:
+      break
     case RELOAD:
       // Like search but without changing the state.
       // Used for the first load of the page.

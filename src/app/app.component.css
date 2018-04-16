@@ -9,6 +9,7 @@
 
 
 .left_column {
+  z-index: 100;
 }
 
 .right_column {

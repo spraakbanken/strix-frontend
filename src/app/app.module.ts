@@ -38,7 +38,6 @@ import { HeaderComponent } from './header/header.component';
 import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
 import { IndocsearchComponent } from './indocsearch/indocsearch.component';
-import { HistogramComponent } from './histogram/histogram.component';
 import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
 import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
@@ -62,7 +61,6 @@ import { ChartComponent } from './chart/chart.component';
     HeaderComponent,
     LocPipe,
     IndocsearchComponent,
-    HistogramComponent,
     AnnotationsSelectorComponent,
     AnnotationComponent,
     PrettynumberPipe,
