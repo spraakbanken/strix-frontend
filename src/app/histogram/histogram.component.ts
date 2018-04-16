@@ -98,7 +98,7 @@ export class HistogramComponent implements OnInit {
           return y;
         },
         formatter : (series, x, y, formattedX, formattedY, d) => {
-          let i = _.indexOf((_.map(series.data, "x")), x, true);
+          let i = _.indexOf((_.map(series.data, "x")), x);
           return `Antal ord: ${formattedY}<br>Verk: ${series.data[i].titles.join("<br>")}`;
         }
       });
