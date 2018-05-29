@@ -1,6 +1,5 @@
 #FROM node:boron
 
-USER strix
 FROM mhart/alpine-node:8.9
 RUN apk add --no-cache make gcc g++ python
 
