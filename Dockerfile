@@ -9,7 +9,6 @@ WORKDIR /usr/src/app
 RUN chgrp -R 0 /usr/src/app && \
     chmod -R g=u /usr/src/app
 
-USER 1001
 
 # Install app dependencies
 # COPY package.json .
@@ -35,4 +34,5 @@ RUN echo "export const environment = { \
 RUN ng build --environment=docker
 CMD [ "ng", "serve", "-H", "0.0.0.0" ]
 
+USER 1001
 
