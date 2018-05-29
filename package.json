@@ -2,6 +2,7 @@
   "name": "strix",
   "version": "0.0.0",
   "license": "MIT",
+
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -10,7 +11,8 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "stage": "ng build --environment=lab",
-    "dev": "ng serve"
+    "dev": "ng serve",
+    "postinstall" : "yarn global add @angular/cli"
   },
   "private": true,
   "dependencies": {
