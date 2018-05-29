@@ -6,6 +6,11 @@ RUN apk add --no-cache make gcc g++ python
 # Create app directory
 WORKDIR /usr/src/app
 
+RUN chgrp -R 0 /usr/src/app && \
+    chmod -R g=u /usr/src/app
+
+USER 1001
+
 # Install app dependencies
 # COPY package.json .
 # For npm@5 or later, copy package-lock.json as well
