@@ -1,5 +1,6 @@
 #FROM node:boron
 
+USER strix
 FROM mhart/alpine-node:8.9
 RUN apk add --no-cache make gcc g++ python
 
@@ -18,6 +19,8 @@ RUN npm install
 
 # Bundle app source
 COPY . .
+
+RUN mkdir dist 
 
 RUN echo "export const environment = { \
   production: false, \
