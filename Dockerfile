@@ -49,6 +49,6 @@ RUN echo "export const environment = { \
 };" > src/environments/environment.docker.ts
 
 RUN ng build --environment=docker
-CMD [ "ng", "serve", "--host", "0.0.0.0" ]
+CMD [ "ng", "serve", "--host", "0.0.0.0", "--disable-host-check" ]
 
 # RUN /bin/sh
