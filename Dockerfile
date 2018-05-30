@@ -20,10 +20,7 @@ RUN addgroup -S 1001 && adduser -S -G 1001 1001
 RUN mkdir -p ${APP_ROOT} && \
     mkdir -p ${NPM_CONFIG_PREFIX} && \
     chown -R 1001:0 ${HOME} && \
-    chmod -R ug+rwx ${HOME} && \
-    mkdir /tmp/logs && \
-    chown -R 1001:0 /tmp/logs && \
-    chmod -R ug+rwx /tmp/logs
+    chmod -R ug+rwx ${HOME}
 
 EXPOSE 4200
 
@@ -38,9 +35,6 @@ RUN npm install
 # If you are building your code for production
 # RUN npm install --only=production
 
-# Bundle app source
-
-
 
 RUN echo "export const environment = { \
   production: false, \
@@ -48,7 +42,8 @@ RUN echo "export const environment = { \
   auth: 'https://sp.spraakbanken.gu.se/auth' \
 };" > src/environments/environment.docker.ts
 
-RUN ng build --environment=docker
+# RUN ng build --configuration=docker
+RUN ng e2e
 CMD [ "ng", "serve", "--host", "0.0.0.0", "--disable-host-check" ]
 
 # RUN /bin/sh
