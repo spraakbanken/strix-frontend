@@ -25,7 +25,7 @@ RUN mkdir -p ${APP_ROOT} && \
     chown -R 1001:0 /tmp/logs && \
     chmod -R ug+rwx /tmp/logs
 
-EXPOSE 3000
+EXPOSE 4200
 
 USER 1001
 # Install app dependencies
