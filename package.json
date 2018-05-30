@@ -9,7 +9,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "stage": "ng build --environment=lab",
-    "dev": "ng serve"
+    "dev": "ng serve",
     "install": "npm install -g @angular/cli"
   },
   "private": true,
