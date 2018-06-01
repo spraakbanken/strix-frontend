@@ -43,7 +43,7 @@ RUN echo "export const environment = { \
 };" > src/environments/environment.docker.ts
 
 # RUN ng build --configuration=docker
-RUN ng e2e
+RUN ng e2e --host $STRIX_FRONTEND_DOCKER_HOST
 CMD [ "ng", "serve", "--host", "0.0.0.0", "--disable-host-check" ]
 
 # RUN /bin/sh
