@@ -23,7 +23,7 @@ export class MetadataService {
 
         // Temp workaround because the BE returns the structural attributes
         // as dictionary so we need to make an array for consistency.
-        for (let corpus in this.availableCorpora) {
+        /* for (let corpus in this.availableCorpora) {
           let attList = [];
           for (let attributeKey in this.availableCorpora[corpus].structAttributes) {
             attList.push({
@@ -32,8 +32,18 @@ export class MetadataService {
             });
           }
           this.availableCorpora[corpus].structAttributes = attList;
-        }
+        } */
         // end of temp fix
+        for (let corpus in this.availableCorpora) {
+          let attList = [];
+          for (let attributeKey in this.availableCorpora[corpus].structAttributes) {
+            attList.push({
+              attributes : this.availableCorpora[corpus].structAttributes[attributeKey].attributes,
+              name : attributeKey
+            });
+          }
+          this.availableCorpora[corpus].structAttributes = attList;
+        }
 
         this.successfulLoad.next(true);
       },

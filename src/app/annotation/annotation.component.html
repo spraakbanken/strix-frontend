@@ -52,7 +52,8 @@
         height="100%"
         controlsList="nodownload"
         controls
-        (timeupdate)="updateTime(movieplayer.currentTime)">
+        (timeupdate)="updateTime(movieplayer.currentTime)"
+        (loadedmetadata)="loadedMetadata(movieplayer)">
         <source
           [src]="'https://ws.spraakbanken.gu.se/ws/strixlabb/resource/ivip/' + currentResource.path + '?jwt=' + jwt"
           [type]="currentResource.type"

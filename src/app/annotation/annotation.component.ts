@@ -81,14 +81,21 @@ export class AnnotationComponent implements OnInit {
 
   private openResource() {
     this.currentResource = this.data;
-    this.currentTime = 4000;
+    //this.currentTime = 4000;
   }
 
   private updateTime(time) {
+    console.log("updateTime")
     let current = this.findToken(time);
+    console.log("current", current);
     if (current) {
       this.currentText = current;
     }
+  }
+
+  private loadedMetadata(movieplayer) {
+    console.log("loaded video metadata.", this.data.start)
+    if (this.data.start) movieplayer.currentTime = this.data.start / 1000;
   }
 
   private findToken(timestamp) {
@@ -99,8 +106,8 @@ export class AnnotationComponent implements OnInit {
     for (let i = 0; i < len; i++) {
       let sentence = tokens[i].attrs.sentence;
       if (sentence) {
-        let start = sentence.attrs.start;
-        let end = sentence.attrs.end;
+        let start = sentence.attrs.video_resource.start;
+        let end = sentence.attrs.video_resource.end;
         if (start && end) {
           if (timestamp >= start/1000 && timestamp <= end/1000) {
             let startTokenIndex = sentence.start_wid;
