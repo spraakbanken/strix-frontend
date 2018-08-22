@@ -5,7 +5,7 @@ import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/switchMapTo';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/timer';
-import { StrixQuery } from './strixquery.model';
+import { QueryType, StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
@@ -101,7 +101,7 @@ export class QueryService {
   }
 
   private runQuery(query: StrixQuery) {
-    if (query.type === "normal") {
+    if (query.type === QueryType.Normal) {
       console.log("adding a search to the stream of streams");
       this.streamOfStreams.next(this.callsService.searchForString(query));
     } else {
@@ -110,7 +110,7 @@ export class QueryService {
   }
   
   private runAggregationQuery(query: StrixQuery) {
-    if (query.type === "normal") {
+    if (query.type === QueryType.Normal) {
       console.log("adding an aggregation search to the stream of streams");
       this.streamOfAggregationStreams.next(this.callsService.getAggregations(query));
     } else {

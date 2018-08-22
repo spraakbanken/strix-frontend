@@ -24,7 +24,7 @@ export class AppComponent {
   private openDocument = false;
   private loggedIn = false;
 
-  private languages = ["swe", "eng"]; // TODO: Move to some config
+  private languages: string[] = ["swe", "eng"]; // TODO: Move to some config
   private selectedLanguage: string = "";
 
   constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService) {

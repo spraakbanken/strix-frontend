@@ -9,6 +9,7 @@ import * as _ from 'lodash';
 
 import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, POPSTATE, CLOSEDOCUMENT_NOHISTORY } from './searchreducer';
 import { DocumentsService } from 'app/documents.service';
+import { QueryType } from './strixquery.model';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
    the ngrx-store app store in sync. It is the only piece of code that is allowed
@@ -30,7 +31,7 @@ export class RoutingService {
   
   private readonly urlFields = [
     {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
-    {tag : "type", type : FragmentType.STRING, default : "normal"},
+    {tag : "type", type : FragmentType.STRING, default : QueryType.Normal},
     {tag : "query", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
@@ -137,16 +138,16 @@ export class RoutingService {
     }
   }
 
-  private getCurrentState() {
-    const urlSearch = window.location.search;
+  private getCurrentState(): object {
+    const urlSearch: string = window.location.search;
     console.log("urlSearch", urlSearch)
     let startParams = {};
     if (urlSearch && urlSearch.length > 1) {
       const urlPart = urlSearch.split("?")[1];
       startParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
     }
-    const state = {};
-    for (let field of this.urlFields) {
+    const state: object = {};
+    for (const field of this.urlFields) {
       const item = startParams[field.tag] ? this.destringify(field.type, startParams[field.tag]) : field.default;
       state[field.tag] = item || null;
     }
@@ -154,7 +155,7 @@ export class RoutingService {
   }
 
   private initializeStartingParameters() {
-    let startState = this.getCurrentState()
+    const startState = this.getCurrentState();
     console.log("init startState", startState)
 
     this.store.dispatch({ type : INITIATE, payload : startState});

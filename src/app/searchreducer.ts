@@ -1,5 +1,6 @@
 import { ActionReducer, Action } from '@ngrx/store';
 import * as _ from 'lodash';
+import {StrixQuery} from './strixquery.model';
 
 export const CHANGETYPE = "CHANGETYPE";
 export const CHANGEQUERY = "CHANGEQUERY";

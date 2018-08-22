@@ -11,6 +11,8 @@ import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
 import { SEARCH, CHANGEQUERY, CHANGEFILTERS, INITIATE, CHANGE_IN_ORDER } from '../searchreducer';
+import { Observer } from '../../../node_modules/rxjs';
+import { Filter, QueryType } from '../strixquery.model';
 
 interface AppState {
   searchRedux: any;
@@ -26,13 +28,13 @@ export class SearchComponent implements OnInit {
   private searchRedux: Observable<any>;
   
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
-  private searchType = "normal"; // TODO: Have something else than the string
+  private searchType = QueryType.Normal;
 
   private asyncSelected: string = "";
   private dataSource: Observable<any>;
   private errorMessage: string;
 
-  private currentFilters: any[] = [];
+  private currentFilters: Filter[] = [];
 
   private histogramData: any;
   private histogramSelection: any;
@@ -54,12 +56,12 @@ export class SearchComponent implements OnInit {
     for (let currentFilter of this.currentFilters) {
       console.log("currentFilter*", currentFilter);
       if (currentFilter.field === "datefrom") {
-        currentFilter.values = [value];
+        currentFilter.value = value;
         isSet = true;
       }
     }
     if (!isSet) {
-      this.currentFilters.push({"field" : "datefrom", "values" : [value]});
+      this.currentFilters.push({"field" : "datefrom", "value" : value});
     }
     this.updateFilters();
   }
@@ -94,7 +96,7 @@ export class SearchComponent implements OnInit {
       error => this.errorMessage = <any>error
     );
 
-    this.dataSource = Observable.create((observer:any) => {
+    this.dataSource = Observable.create((observer: Observer<any>) => {
       // Runs on every autocompletion search
       observer.next(this.asyncSelected);
     }).mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected));

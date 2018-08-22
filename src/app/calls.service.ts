@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
 import { StrixResult } from './strixresult.model';
-import { StrixQuery } from './strixquery.model';
+import { Filter, StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
 
@@ -47,7 +47,7 @@ export class CallsService {
 
   private getOptions(params: URLSearchParams): RequestOptions {
     let headers = new Headers();
-    let options;
+    let options: RequestOptions;
     if (window["jwt"]) {
       headers.append("Authorization", "Bearer " + window["jwt"])
       options = new RequestOptions({headers: headers, search: params});
@@ -152,7 +152,7 @@ export class CallsService {
 
   */
 
-  private formatFilterObject(filters: any[]): string {
+  private formatFilterObject(filters: Filter[]): string {
     for (let filter of filters) {
       console.log("filter", filter)
       if (filter.field === "datefrom") {
@@ -164,16 +164,12 @@ export class CallsService {
       // filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
 
-    function wrapValuesInArray(filters) {
+    function wrapValuesInArray(filters: Filter[]) {
       let fieldGroups = _.groupBy(filters, "field")
       return _.mapValues(fieldGroups, (list) => _.map(list, "value"))
     }
-    let notRangeFilters = _.filter(filters, (item) => {
-      return item.type != "range"
-    })
-    let rangeFilters = _.filter(filters, (item) => {
-      return item.type == "range"
-    })
+    let notRangeFilters = _.reject(filters, {type: "range"});
+    let rangeFilters = _.filter(filters, {type: "range"});
     let output = wrapValuesInArray(notRangeFilters)
     let rangeObj = _.fromPairs(_.map(rangeFilters, (item) => [item.field, item.value]))
     
@@ -184,10 +180,10 @@ export class CallsService {
   public searchForString(query: StrixQuery) : Observable<StrixResult> {
     console.log("searchForString", query);
     //let corpusIDs = query.corpora;
-    let corpusIDs = [];
+    let corpusIDs: string[] = [];
 
     /* temporary fix */
-    let filters = []
+    let filters: Filter[] = [];
 
     for (let filter of query.filters) {
       if (filter.field === "corpus_id") {
