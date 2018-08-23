@@ -34,7 +34,7 @@
       <div class="text_annotations_list">
          <ul class="annotations_list_ul">
           <ng-template ngFor let-annotation [ngForOf]="availableCorpora[mainDocument.corpusID].textAttributes">
-            <li *ngIf="!(annotation.enabled === false) && !annotation.ignore">
+            <li *ngIf="!(annotation.visible === false) && annotation.searchable">
               <div class="annotations_local_area">
                 <span>
                   <span 
