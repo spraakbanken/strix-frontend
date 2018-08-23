@@ -15,6 +15,7 @@ import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
 import { CLOSEDOCUMENT } from '../searchreducer';
 import { ReaderCommunicationService } from '../reader-communication.service';
+import { SearchQuery } from '../strixsearchquery.model';
 
 interface AppState {
   searchRedux: any;
@@ -322,7 +323,8 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     if (annotationStructuralType && annotationStructuralType !== "token") {
       annotationKey = `${annotationStructuralType}.${annotationKey}`;
     }
-    this.documentsService.searchForAnnotation(selectedDocumentIndex, annotationKey, annotationValue, this.selectionStartTokenID, backwards).subscribe(
+    const searchQuery = new SearchQuery(annotationKey, annotationValue, this.selectionStartTokenID, !backwards);
+    this.documentsService.searchForAnnotation(selectedDocumentIndex, searchQuery).subscribe(
       answer => {
         console.log("call success. the wid is", answer);
         this.selectToken(cmIndex, answer);

@@ -15,6 +15,7 @@ import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
 import { OPENDOCUMENT } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
+import { SearchQuery } from './strixsearchquery.model';
 
 interface AppState {
   searchRedux: any;
@@ -267,18 +268,9 @@ export class DocumentsService {
   /*
    Returns an observable with the token ID of the next (or previous) match.
   */
-  // TODO: Refactor into some kind of object so we avoid 5 parameters.
-  public searchForAnnotation(documentIndex: number, annotationKey: string, annotationValue: string, currentPosition: number, backwards: boolean) : Observable<number> {
+  public searchForAnnotation(documentIndex: number, searchQuery: SearchQuery): Observable<number> {
     let doc = this.documents[documentIndex];
-    let callObj = {
-      "corpusID" : doc.corpusID,
-      "elasticID" : doc.doc_id,
-      "annotationKey" : annotationKey,
-      "annotationValue" : annotationValue,
-      "currentPosition" : currentPosition,
-      "backwards" : backwards
-    };
-    return this.callsService.searchDocumentForAnnotation(callObj).map((answer) => {
+    return this.callsService.searchDocumentForAnnotation(doc.corpusID, doc.doc_id, searchQuery).map((answer) => {
       console.log("the real answer", answer);
       return answer.highlight[0].attrs.wid;
     });

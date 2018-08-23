@@ -12,6 +12,7 @@ import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
 
 import { environment } from '../environments/environment';
+import { SearchQuery } from './strixsearchquery.model';
 
 @Injectable()
 export class CallsService {
@@ -298,15 +299,15 @@ export class CallsService {
   }
 
   /* ------------------ Calls for searching in ONE document only ------------------ */
-  public searchDocumentForAnnotation(callObj: any): Observable<any> {
+  public searchDocumentForAnnotation(corpusID: string, docID: string, searchQuery: SearchQuery): Observable<any> {
     console.log("searchDocumentForAnnotation()");
-    let url = `${this.STRIXBACKEND_URL}/annotation_lookup/${callObj.corpusID}/${callObj.elasticID}`;
+    let url = `${this.STRIXBACKEND_URL}/annotation_lookup/${corpusID}/${docID}`;
     let params = new URLSearchParams();
-    params.set("text_query_field", callObj.annotationKey);
-    params.set("text_query", callObj.annotationValue);
+    params.set("text_query_field", searchQuery.annotationKey);
+    params.set("text_query", searchQuery.annotationValue);
     params.set("size", "1");
-    params.set("current_position", callObj.currentPosition);
-    params.set("forward", `${! callObj.backwards}`);
+    params.set("current_position", String(searchQuery.currentPosition));
+    params.set("forward", `${! searchQuery.forward}`);
     return this.http.get(url, this.getOptions(params))
                     .map((res) => res.json())
                     .catch(this.handleError);
