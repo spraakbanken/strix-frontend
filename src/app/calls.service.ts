@@ -97,13 +97,14 @@ export class CallsService {
 
 
         // TODO: we might need to namespace these or it could get crowded...
+      // text_ and word_attributes are arrays but struct_attributes is an object.
       this.defaultAttrParse(corpusData.attributes.text_attributes)
       this.defaultAttrParse(corpusData.attributes.word_attributes)
-      // this.defaultAttrParse(_.values(corpusData.attributes.struct_attributes))
+      this.defaultAttrParseObj(corpusData.attributes.struct_attributes)
     }
 
   }
-  private defaultAttrParse(attrObj) {
+  private defaultAttrParse(attrObj: any[]) {
     for(let obj of attrObj) {
       let updateObj = _.mapValues(obj.translation_name, (transationStr) => {
         let o = {}
@@ -112,6 +113,12 @@ export class CallsService {
       })
       this.locService.updateDictionary(updateObj)
     }
+  }
+
+  private defaultAttrParseObj(attrObj: object) {
+    // First convert {x: {a: b}, ...} to [{name: x, a: b}, ...].
+    this.defaultAttrParse(_.values(_.mapValues(attrObj,
+      (obj, key) => ({...obj, name: key}))));
   }
 
 
