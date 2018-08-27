@@ -7,7 +7,7 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, POPSTATE, CLOSEDOCUMENT_NOHISTORY } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY } from './searchreducer';
 import { DocumentsService } from 'app/documents.service';
 import { QueryType } from './strixquery.model';
 
@@ -30,7 +30,6 @@ export class RoutingService {
   private searchRedux: Observable<any>;
   
   private readonly urlFields = [
-    {tag : "corpora", type : FragmentType.STRINGARRAY, default : []},
     {tag : "type", type : FragmentType.STRING, default : QueryType.Normal},
     {tag : "query", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
@@ -106,18 +105,12 @@ export class RoutingService {
   private stringify(type: FragmentType, obj): string {
     if (!obj) return "";
     switch (type) {
-      case FragmentType.STRING:
-        return obj;
-      case FragmentType.URI:
-        return obj;
       case FragmentType.STRINGARRAY:
         return obj.join(",");
-      case FragmentType.NUMBER:
-        return obj.toString();
-      case FragmentType.BOOLEAN:
-        return obj.toString();
       case FragmentType.BASE64:
         return btoa(JSON.stringify(obj));
+      default:
+        return String(obj);
     }
   }
 

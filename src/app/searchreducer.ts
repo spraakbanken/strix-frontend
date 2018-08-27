@@ -2,7 +2,6 @@ import { ActionReducer, Action } from '@ngrx/store';
 import * as _ from 'lodash';
 import {StrixQuery} from './strixquery.model';
 
-export const CHANGETYPE = "CHANGETYPE";
 export const CHANGEQUERY = "CHANGEQUERY";
 export const CHANGEFILTERS = "CHANGEFILTERS";
 export const CHANGE_INCLUDE_FACET = "CHANGE_INCLUDE_FACET";
@@ -16,7 +15,6 @@ export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
-export const POPSTATE = "POPSTATE";
 export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
 
 // payload was removed from Action in lib, brought it back.
@@ -47,9 +45,6 @@ export function searchReducer(state: any = {}, action: Action) {
     case CHANGEQUERY:
       nextState.query = action.payload;
       nextState.page = 1
-      break;
-    case CHANGETYPE:
-      nextState.type = action.payload;
       break;
     case CHANGEFILTERS:
       nextState.filters = action.payload;
@@ -95,9 +90,6 @@ export function searchReducer(state: any = {}, action: Action) {
       nextState.latestAction = "OPENDOCUMENT";
       break;
     case SEARCH:
-      //nextState.type = nextState.nextType;
-      //nextState.query = nextState.nextQuery;
-      //nextState.corpora = nextState.nextCorpora;
       nextState.page = 1;
       nextState.localQuery = null;
       nextState.history = false;
