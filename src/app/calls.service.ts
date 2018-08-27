@@ -304,19 +304,13 @@ export class CallsService {
   /* ------------------ Calls for searching in ONE document only ------------------ */
   public searchDocumentForAnnotation(callObj: any): Observable<any> {
     console.log("searchDocumentForAnnotation()");
-    //let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}/${callObj.annotationKey}/${callObj.annotationValue}`;
-    let url = `${this.STRIXBACKEND_URL}/search/${callObj.corpusID}/${callObj.elasticID}`;
-    //let paramsString = `text_query_field=${callObj.annotationKey}&text_query=${callObj.annotationValue}&exclude=*&size=1&current_position=${callObj.currentPosition}&forward=${!callObj.backwards}`;
+    let url = `${this.STRIXBACKEND_URL}/annotation_lookup/${callObj.corpusID}/${callObj.elasticID}`;
     let params = new URLSearchParams();
     params.set("text_query_field", callObj.annotationKey);
     params.set("text_query", callObj.annotationValue);
-    params.set("exclude", "*");
     params.set("size", "1");
     params.set("current_position", callObj.currentPosition);
     params.set("forward", `${! callObj.backwards}`);
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
     return this.http.get(url, this.getOptions(params))
                     .map((res) => res.json())
                     .catch(this.handleError);
