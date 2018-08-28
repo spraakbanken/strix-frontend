@@ -427,6 +427,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     return isit;
   }
 
+
   private getTranslations(annotation) {
     if (annotation.translation_value) {
       return annotation.translation_value;

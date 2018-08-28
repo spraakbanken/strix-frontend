@@ -1,5 +1,6 @@
-import { Directive, Output, Input, EventEmitter, ElementRef } from '@angular/core';
+import { Directive, ElementRef, EventEmitter, Output } from '@angular/core';
 import * as CodeMirror from 'codemirror';
+import * as _ from 'lodash/fp';
 
 @Directive({
   selector: '[cm]'
@@ -43,6 +44,7 @@ export class CmDirective {
     console.log("Defining CodeMirror mode.");
     CmDirective.definedCodeMirrorMode = true;
     CodeMirror.defineMode('strix', function(config, parserConfig) {
+      const speakers: string[] = [];
       return {
         startState : function() {
           return {
@@ -132,17 +134,16 @@ export class CmDirective {
               }
             }
 
-            if (tokenAnnotations['sentence'] && tokenAnnotations['sentence']['attrs'] && tokenAnnotations['sentence']['attrs']['speaker_id'] === 'PE1') {
-              styles.push("annotation-one");
-            } else if (tokenAnnotations['sentence'] && tokenAnnotations['sentence']['attrs'] && tokenAnnotations['sentence']['attrs']['speaker_id'] === 'KU1') {
-              styles.push("annotation-two");
+            const speakerID = _.get(['sentence', 'attrs', 'speaker_id'], tokenAnnotations);
+            if (speakerID && !['comment', 'pause'].includes(speakerID)) {
+              if (!speakers.includes(speakerID)) speakers.push(speakerID);
+              styles.push('annotation-' + speakers.indexOf(speakerID));
             }
 
             // Workaround for a disturbing codemirror behavior that joins segments that aren't whitespace–
             // separated with the preceeding segment if the style is the same. We don't want that
             // because it may cause flickering and sometimes even causes the text to reflow!
-            var dummyStyle = state.currentWid % 2 === 0 ? "even" : "odd";
-            styles.push(dummyStyle);
+            styles.push(state.currentWid % 2 ? "even" : "odd");
 
             return styles.join(' ');
           }

@@ -62,11 +62,20 @@ h5 {
 
 /* CodeMirror related */
 
-.cm-annotation-one {
-  color: blueviolet;
+.cm-annotation-0 {
+  color: #1f77b4;
 }
-.cm-annotation-two {
-  color: green;
+.cm-annotation-1 {
+  color: #ff7f0e;
+}
+.cm-annotation-2 {
+  color: #2ca02c;
+}
+.cm-annotation-3 {
+  color: #9467bd;
+}
+.cm-annotation-4 {
+  color: #d62728;
 }
 
 .cm-hidden {
