@@ -94,7 +94,7 @@ export class LocService {
     this.currentLanguage = isoCode;
   }
   public getTranslationFor(source: string, defaultVal? : string): string {
-    let term = this.dictionaries[this.currentLanguage][source];
+    let term = this.dictionaries[this.getCurrentLanguage()][source];
     if (defaultVal) {
       return term || defaultVal;
     } else {

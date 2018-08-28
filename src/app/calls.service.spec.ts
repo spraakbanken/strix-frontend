@@ -1,16 +1,21 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
+import { Http } from '@angular/http';
+
 import { CallsService } from './calls.service';
+import { LocService } from './loc.service';
 
 describe('Service: Calls', () => {
+  let http: Http;
+  let locService: LocService;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [CallsService]
-    });
+    http = jasmine.createSpyObj('Http', []);
+    locService = jasmine.createSpyObj('LocService', ['getTranslationFor', 'getCurrentLanguage']);
   });
 
-  it('should ...', inject([CallsService], (service: CallsService) => {
-    expect(service).toBeTruthy();
-  }));
+  it('instantiate', () => {
+    let callsService = new CallsService(http, locService);
+    expect(callsService).toBeTruthy();
+  });
 });
