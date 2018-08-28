@@ -1,6 +1,6 @@
 import { Directive, ElementRef, EventEmitter, Output } from '@angular/core';
 import * as CodeMirror from 'codemirror';
-import * as _ from 'lodash/fp';
+import * as _ from 'lodash';
 
 @Directive({
   selector: '[cm]'
@@ -134,7 +134,7 @@ export class CmDirective {
               }
             }
 
-            const speakerID = _.get(['sentence', 'attrs', 'speaker_id'], tokenAnnotations);
+            const speakerID = _.get(tokenAnnotations, ['sentence', 'attrs', 'speaker_id']);
             if (speakerID && !['comment', 'pause'].includes(speakerID)) {
               if (!speakers.includes(speakerID)) speakers.push(speakerID);
               styles.push('annotation-' + speakers.indexOf(speakerID));

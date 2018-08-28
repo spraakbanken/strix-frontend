@@ -9,12 +9,12 @@ describe('Pipe: Loc', () => {
 
   beforeEach(() => {
     locServiceSwe = <LocService>{
-      getTranslationFor: (v, d) => 'Samling',
-      getCurrentLanguage: () => 'swe',
+      getTranslationFor : (v, d) => 'Samling',
+      getCurrentLanguage : () => 'swe',
     };
     locServiceEng = <LocService>{
-      getTranslationFor: (v, d) => 'Collection',
-      getCurrentLanguage: () => 'eng',
+      getTranslationFor : (v, d) => 'Collection',
+      getCurrentLanguage : () => 'eng',
     };
   });
 

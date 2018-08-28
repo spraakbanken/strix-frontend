@@ -63,7 +63,7 @@ export class MetadataService {
     return this.availableCorpora[corpusID].structAttributes || [];
   }
   
-  public getName(corpusID: string): string {
+  public getName(corpusID: string): {[lang: string]: string} {
     return this.availableCorpora[corpusID].name;
   }
 

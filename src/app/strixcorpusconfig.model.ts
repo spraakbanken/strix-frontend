@@ -1,8 +1,10 @@
 export class StrixCorpusConfig {
-    corpusID : string;
-    textAttributes : any[];
-    wordAttributes : any[]; // Should maybe be explicit ({"name" : string, "nodeName" : string, "set" : boolean})
-    structAttributes : any[];
-    description: any; // Object where each key is a language code and the value is the descripton as a string
-    name: any; // Object where each key is a language code and the value is the name as a string
+  constructor(
+    public corpusID: string,
+    public textAttributes: any[],
+    public wordAttributes: any[], // Should maybe be explicit ({"name" : string, "nodeName" : string, "set" : boolean})
+    public structAttributes: any[], // TODO Separate classes for when it iss any[] and when it is object.
+    public description: {[lang: string]: string}, // TODO Name this type
+    public name: {[lang: string]: string}
+  ) {}
 }

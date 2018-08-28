@@ -8,6 +8,8 @@ import { AppState, CHANGELANG, INITIATE } from './searchreducer';
 @Injectable()
 export class LocService {
 
+  static readonly MISSING: string = '-missing translation-';
+
   private searchRedux: Observable<any>;
 
   private currentLanguage : string = "swe"; // TODO: The default language should be in some config (or chosen by locale)
@@ -94,12 +96,7 @@ export class LocService {
     this.currentLanguage = isoCode;
   }
   public getTranslationFor(source: string, defaultVal? : string): string {
-    let term = this.dictionaries[this.getCurrentLanguage()][source];
-    if (defaultVal) {
-      return term || defaultVal;
-    } else {
-      return term || "-missing translation-";
-    }
+    return _.get(this.dictionaries, [this.getCurrentLanguage(), source]) || (defaultVal || LocService.MISSING);
   }
 
   public getPrettyNumberString(input: string | number) {

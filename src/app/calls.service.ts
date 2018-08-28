@@ -67,22 +67,15 @@ export class CallsService {
         let data = res.json();
         console.log("getCorpusInfo data", data, window["jwt"])
 
-        let strixCorpusConfigs: { [key: string] : StrixCorpusConfig} = {};
-        this.extractLocalizationKeys(data)
-        for (let corpusID in data) {
-          let corpusConfig = new StrixCorpusConfig();
-          corpusConfig.corpusID = corpusID;
-          let corpusData = data[corpusID];
-          corpusConfig.textAttributes = corpusData.attributes.text_attributes;
-          corpusConfig.wordAttributes = corpusData.attributes.word_attributes;
-          corpusConfig.structAttributes = corpusData.attributes.struct_attributes;
-          corpusConfig.description = corpusData.description;
-          corpusConfig.name = corpusData.name;
-          strixCorpusConfigs[corpusID] = corpusConfig;
-
-
-        }
-        return strixCorpusConfigs;
+        this.extractLocalizationKeys(data);
+        return _.mapValues(data, (corpusData, corpusID) => new StrixCorpusConfig(
+          corpusID,
+          corpusData.attributes.text_attributes,
+          corpusData.attributes.word_attributes,
+          corpusData.attributes.struct_attributes,
+          corpusData.description,
+          corpusData.name
+        ));
 
       }).catch(this.handleError);
   }

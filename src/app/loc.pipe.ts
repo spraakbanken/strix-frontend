@@ -30,7 +30,7 @@ export class LocPipe implements PipeTransform {
         We pick the translated text for the current language.
       */
       let currentLanguage = this.locService.getCurrentLanguage();
-      return value[currentLanguage] || defaultValue || "-missing translation-";
+      return value[currentLanguage] || defaultValue || LocService.MISSING;
     }
     
   }

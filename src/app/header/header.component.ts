@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs/Subscription';
 
 import { DocumentsService } from '../documents.service';
+import { LocService } from '../loc.service';
 import { MetadataService } from '../metadata.service';
 
 /**
@@ -18,16 +19,16 @@ import { MetadataService } from '../metadata.service';
 export class HeaderComponent implements OnInit {
   
   private subscription: Subscription;
-  private documentTitle: string;
-  private corpusName: string;
+  public documentTitle: string;
+  public corpusName: {[lang: string]: string};
 
-  constructor(private documentsService : DocumentsService, private metadataService : MetadataService) {
+  constructor(private documentsService: DocumentsService, private metadataService: MetadataService) {
 
     this.subscription = documentsService.loadedDocument$.subscribe(message => {
       let openedDocument = documentsService.getDocument(message.documentIndex);
       console.log("openedDocument", openedDocument)
       this.documentTitle = openedDocument.title;
-      this.corpusName = this.metadataService.getName(openedDocument.corpusID);
+      this.corpusName = metadataService.getName(openedDocument.corpusID);
     });
 
   }
