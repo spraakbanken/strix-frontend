@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { SEARCHINDOCUMENT } from '../searchreducer';
-
-interface AppState {
-  searchRedux: any;
-}
+import { AppState, SEARCHINDOCUMENT } from '../searchreducer';
 
 @Component({
   selector: 'indocsearch',

@@ -10,10 +10,7 @@ import { CallsService } from '../calls.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
-
-interface AppState {
-  searchRedux: any;
-}
+import { AppState } from '../searchreducer';
 
 @Component({
   selector: 'annotations-selector',

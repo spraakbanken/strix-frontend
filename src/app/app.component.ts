@@ -7,11 +7,8 @@ import { Store } from '@ngrx/store';
 import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
 import { DocumentsService } from './documents.service';
-import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE } from './searchreducer';
+import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState } from './searchreducer';
 
-interface AppState {
-  searchRedux: any;
-}
 
 @Component({
   selector: 'app-root',

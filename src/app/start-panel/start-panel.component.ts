@@ -1,11 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
-import { SEARCH, RELOAD, OPENDOCUMENT } from '../searchreducer';
-
-interface AppState {
-  searchRedux: any;
-}
+import { SEARCH, OPENDOCUMENT, AppState } from '../searchreducer';
 
 @Component({
   selector: 'start-panel',

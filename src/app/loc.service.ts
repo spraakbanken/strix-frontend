@@ -3,11 +3,7 @@ import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
-import { CHANGELANG, INITIATE } from './searchreducer';
-
-interface AppState {
-  searchRedux: any;
-}
+import { AppState, CHANGELANG, INITIATE } from './searchreducer';
 
 @Injectable()
 export class LocService {

@@ -11,11 +11,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY } from '../searchreducer';
-
-interface AppState {
-  searchRedux: any;
-}
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState } from '../searchreducer';
 
 @Component({
   selector: 'docselection',

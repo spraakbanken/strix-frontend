@@ -7,7 +7,7 @@ import { TimerObservable } from "rxjs/observable/TimerObservable";
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux } from './searchreducer';
 import { DocumentsService } from 'app/documents.service';
 import { QueryType } from './strixquery.model';
 
@@ -15,10 +15,6 @@ import { QueryType } from './strixquery.model';
    the ngrx-store app store in sync. It is the only piece of code that is allowed
    to change the browser's URL, and components should only communicate with this
    service by dispatching to the ngrx store. */
-
-interface AppState {
-  searchRedux: any;
-}
 
 enum FragmentType {
   STRING, STRINGARRAY, NUMBER, BASE64, BOOLEAN, URI
@@ -29,8 +25,8 @@ export class RoutingService {
 
   private searchRedux: Observable<any>;
   
-  private readonly urlFields = [
-    {tag : "type", type : FragmentType.STRING, default : QueryType.Normal},
+  private readonly urlFields: {tag: string, type: FragmentType, default: any}[] = [
+    {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
     {tag : "query", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 1},
@@ -43,53 +39,26 @@ export class RoutingService {
     {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
 
-  constructor(private store: Store<AppState>, private documentsService: DocumentsService) {
+  constructor(private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
     this.initializeStartingParameters();
 
-    // window.onpopstate = (event) => {
-    let prevState = null
-    Observable.fromEvent(window, "popstate").map(() => {
-      // console.log("popstate", "location: " + document.location + ", state: " + JSON.stringify(event.state));
-      let currentState = this.getCurrentState()
-      console.log("currentState", currentState)
-      // this.initializeStartingParameters()
-
-      // this.store.dispatch({ type : POPSTATE, payload : currentState});
-      let ret = [currentState, prevState];
-      prevState = currentState
-      return ret
-      
-    }).subscribe( ([current, prev] ) => {
-      console.log("current, prev", current, prev)
-
-      /*if(!current.documentID) {
-        this.store.dispatch({
-          type : CLOSEDOCUMENT
-        });
-
-      }*/
-      this.initializeStartingParameters();
-
-
-    })
-
-
-    this.searchRedux.subscribe((data) => {
-      console.log("the data", data);
+    // React on app state changes by pushing a new browser state.
+    // Set the encoded app state as the URL query string.
+    this.searchRedux.subscribe((state: SearchRedux) => {
+      console.log("the data", state);
       let urlString = _.compact(this.urlFields.map((field) => {
-        let key = field.tag
-        let val = this.stringify(field.type, data[field.tag])
+        const val = this.stringify(field.type, state[field.tag]);
         if(!val || val === this.stringify(field.type, field.default)) {
           return ""
         }
-        return `${encodeURI(key)}=${encodeURI(val)}`;
+        return `${encodeURI(field.tag)}=${encodeURI(val)}`;
       })).join("&");
       if (urlString) {
         urlString = "?" + urlString;
       }
-      if (data.latestAction !== INITIATE) {
-        if (data.history) {
+      if (state.latestAction !== INITIATE) {
+        if (state.history) {
           console.log("PUSHING STATE")
           window.history.pushState("", "", urlString)
         } else {
@@ -99,6 +68,10 @@ export class RoutingService {
       }
     });
 
+    // On browser back button, reload state from URL query string.
+    Observable.fromEvent(window, "popstate").subscribe(() => {
+      this.initializeStartingParameters();
+    });
   }
 
 
@@ -131,7 +104,7 @@ export class RoutingService {
     }
   }
 
-  private getCurrentState(): object {
+  private getCurrentState(): SearchRedux {
     const urlSearch: string = window.location.search;
     console.log("urlSearch", urlSearch)
     let startParams = {};
@@ -147,7 +120,7 @@ export class RoutingService {
     return state
   }
 
-  private initializeStartingParameters() {
+  private initializeStartingParameters(): void {
     const startState = this.getCurrentState();
     console.log("init startState", startState)
 
@@ -161,8 +134,8 @@ export class RoutingService {
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
     const timer = TimerObservable.create(0);
     timer.subscribe(() => {
-      if ((startState["documentID"] || startState["sentenceID"]) && startState["documentCorpus"]) {
-        console.log("autoopening document", startState["documentID"], startState["documentCorpus"]);
+      if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
+        console.log("autoopening document", startState.documentID, startState.documentCorpus);
         this.store.dispatch({
           type : OPENDOCUMENT_NOHISTORY,
           payload : {

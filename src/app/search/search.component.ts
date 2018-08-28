@@ -10,13 +10,9 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, INITIATE, CHANGE_IN_ORDER } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState } from '../searchreducer';
 import { Observer } from '../../../node_modules/rxjs';
 import { Filter, QueryType } from '../strixquery.model';
-
-interface AppState {
-  searchRedux: any;
-}
 
 @Component({
   selector: 'search',

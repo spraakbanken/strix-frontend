@@ -9,12 +9,8 @@ import { QueryType, StrixQuery } from './strixquery.model';
 import { StrixResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
-import { SEARCH, CLOSEDOCUMENT } from './searchreducer';
+import { SEARCH, CLOSEDOCUMENT, AppState } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
-
-interface AppState {
-  searchRedux: any;
-}
 
 /**
  * The Query service handles the main query resulting in

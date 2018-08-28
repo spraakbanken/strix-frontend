@@ -9,17 +9,15 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { SEARCH, CHANGELANG, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-         INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import {
+  SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
+  INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
+} from '../searchreducer';
 import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 // import { RangesliderComponent } from "./rangeslider.component";
 
 // import {Router} from '@angular/router';
-
-interface AppState {
-  searchRedux: any;
-}
 
 @Component({
   selector: 'leftcolumn',

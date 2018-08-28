@@ -13,13 +13,9 @@ import { StrixDocument } from './strixdocument.model';
 import { StrixResult } from './strixresult.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { OPENDOCUMENT } from './searchreducer';
+import { AppState, OPENDOCUMENT } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
-
-interface AppState {
-  searchRedux: any;
-}
 
 /**
  * The DocumentsService is responsible for collecting a document and making sure that all

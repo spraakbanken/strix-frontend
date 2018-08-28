@@ -13,13 +13,9 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
-import { CLOSEDOCUMENT } from '../searchreducer';
+import { AppState, CLOSEDOCUMENT } from '../searchreducer';
 import { ReaderCommunicationService } from '../reader-communication.service';
 import { SearchQuery } from '../strixsearchquery.model';
-
-interface AppState {
-  searchRedux: any;
-}
 
 
 @Component({

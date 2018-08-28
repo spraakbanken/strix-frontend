@@ -25,15 +25,34 @@ declare module '@ngrx/store' {
   }
 }
 
+export interface AppState {
+  searchRedux: SearchRedux;
+}
+
+export interface SearchRedux {
+  documentCorpus?: string;
+  documentID?: string;
+  filters?;
+  include_facets?: string[];
+  keyword_search?;
+  lang?: string;
+  latestAction?: string;
+  localQuery?: string;
+  history?: boolean;
+  page?: number;
+  query?: string;
+  sentenceID?: number;
+}
+
 
 /** This is an ngrx-store reducer which takes the current search state
  *  and returns a new state while performing an 'action'.
  *  The state is always immutable!
  */
 
-export function searchReducer(state: any = {}, action: Action) {
+export function searchReducer(state: SearchRedux = {}, action: Action): SearchRedux {
   console.log("reducing with action", action.type, action.payload);
-  let nextState = _.assign({}, state);
+  let nextState: SearchRedux = _.assign({}, state);
   nextState.latestAction = action.type;
   nextState.history = true; // Default value
   switch (action.type) {

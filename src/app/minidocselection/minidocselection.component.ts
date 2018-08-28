@@ -5,12 +5,8 @@ import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD, SEARCH } from '../searchreducer';
+import { OPENDOCUMENT, RELOAD, SEARCH, AppState } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
-
-interface AppState {
-  searchRedux: any;
-}
 
 @Component({
   selector: 'minidocselection',
