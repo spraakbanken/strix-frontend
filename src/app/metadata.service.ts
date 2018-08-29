@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs/Subject';
-import { Observable } from 'rxjs/Observable';
-import * as _ from 'lodash';
 
 import { CallsService } from './calls.service';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
@@ -21,19 +19,7 @@ export class MetadataService {
         console.log("corpus configs", answer);
         this.availableCorpora = answer;
 
-        // Temp workaround because the BE returns the structural attributes
-        // as dictionary so we need to make an array for consistency.
-        /* for (let corpus in this.availableCorpora) {
-          let attList = [];
-          for (let attributeKey in this.availableCorpora[corpus].structAttributes) {
-            attList.push({
-              attributes : this.availableCorpora[corpus].structAttributes[attributeKey],
-              name : attributeKey
-            });
-          }
-          this.availableCorpora[corpus].structAttributes = attList;
-        } */
-        // end of temp fix
+        // BE returns the structural attributes as dictionary so we need to make an array for consistency.
         for (let corpus in this.availableCorpora) {
           let attList = [];
           for (let attributeKey in this.availableCorpora[corpus].structAttributes) {

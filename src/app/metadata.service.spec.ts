@@ -8,7 +8,10 @@ describe('Service: Metadata', () => {
   let callsService: CallsService;
   let init: (any) => void;
   const sampleCorpusConfigs: {[key: string]: StrixCorpusConfig} = {
-    'corp' : new StrixCorpusConfig('corp', [], [], [], {'swe' : 'A nice corpus'}, {'swe' : 'NiceCorpus'}),
+    'corp' : new StrixCorpusConfig('corp', [],
+      [{'name' : 'pos'}],
+      [{'name' : 'sentence', 'attributes' : {'name' : 'speaker_id'}}],
+      {'swe' : 'A nice corpus'}, {'swe' : 'NiceCorpus'}),
   };
 
   beforeEach(() => {
@@ -22,10 +25,26 @@ describe('Service: Metadata', () => {
     }
   });
 
-  it('should initiate', () => {
+  it('should be initiated with corpus info', () => {
     const service = new MetadataService(callsService);
     init(sampleCorpusConfigs);
     expect(service).toBeTruthy();
     expect(service.getAvailableCorpora()).toBe(sampleCorpusConfigs);
+    expect(service.getName('corp')).toBe({'swe' : 'NiceCorpus'});
   });
+
+  it('should handle word annotations', () => {
+    const service = new MetadataService(callsService);
+    init(sampleCorpusConfigs);
+    expect(service.getWordAnnotationsFor('corp')).toBe([{'name' : 'pos'}]);
+  });
+
+  it('should handle structural annotations', () => {
+    const service = new MetadataService(callsService);
+    init(sampleCorpusConfigs);
+    expect(service.getStructuralAnnotationsFor('corp')).toBe([{'name' : 'sentence', 'attributes' : {'name' : 'speaker_id'}}]);
+  });
+
+
+
 });

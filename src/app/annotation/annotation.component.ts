@@ -17,18 +17,18 @@ export class AnnotationComponent implements OnInit {
   @Input() name: string; // Just for change detection's sake... but it doesn't wotk anyway :S
   @Input() noKarp = false;
 
-  private basePart: string;
-  private posPart: string;
-  private indexPart: string;
+  basePart: string;
+  posPart: string;
+  indexPart: string;
 
-  private stringPart: string = null;
-  private confidence: string = null;
+  stringPart: string = null;
+  confidence: string = null;
 
   /* IVIP */
-  private jwt: string = window["jwt"];
-  private currentResource: any;
+  jwt: string = window["jwt"];
+  currentResource: any;
+  currentText = '';
   private currentTime = 0;
-  private currentText = '';
   private modalRef: BsModalRef;
 
   constructor(
