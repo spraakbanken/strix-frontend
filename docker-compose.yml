@@ -2,6 +2,10 @@ version: '2'
 
 services:
 
+  unit-tests:
+    build: .
+    command: "ng test --single-run"
+
   strix-frontend:
     build: .
     # volumes:
@@ -18,7 +22,6 @@ services:
       - "STRIX_FRONTEND_DOCKER_HOST=strix-frontend"
     depends_on:
       - chrome
-
 
   hub:
     image: selenium/hub:3.7.1-argon

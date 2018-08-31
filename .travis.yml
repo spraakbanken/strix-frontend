@@ -22,7 +22,6 @@ install:
 
 script:
   - docker-compose up --build --exit-code-from strix-frontend
-  - npm test --single-run
 
 after_script:
   - docker-compose down
