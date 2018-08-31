@@ -41,7 +41,6 @@ export class AnnotationComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log("ngOnInit", this.translations, this.type, this.data, this.name);
     switch(this.type) {
       case 'lemgram':
         let lemgram_parts = this.data.split("..");

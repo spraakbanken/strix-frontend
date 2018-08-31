@@ -300,7 +300,7 @@ export class CallsService {
     params.set("text_query", searchQuery.annotationValue);
     params.set("size", "1");
     params.set("current_position", String(searchQuery.currentPosition));
-    params.set("forward", `${! searchQuery.forward}`);
+    params.set("forward", `${searchQuery.forward}`);
     return this.http.get(url, this.getOptions(params))
                     .map((res) => res.json())
                     .catch(this.handleError);

@@ -267,8 +267,7 @@ export class DocumentsService {
   public searchForAnnotation(documentIndex: number, searchQuery: SearchQuery): Observable<number> {
     let doc = this.documents[documentIndex];
     return this.callsService.searchDocumentForAnnotation(doc.corpusID, doc.doc_id, searchQuery).map((answer) => {
-      console.log("the real answer", answer);
-      return answer.highlight[0].attrs.wid;
+      return answer[0];
     });
   }
 
