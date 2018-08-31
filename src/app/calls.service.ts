@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, RequestOptions, URLSearchParams, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -22,39 +22,25 @@ export class CallsService {
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
   //private readonly STRIXBACKEND_URL = "http://localhost:8080";
 
-  constructor(private http : Http, private locService : LocService) { }
-
-  /* public getCorpora() : Observable<string[]> {
-    let url = `${this.STRIXBACKEND_URL}/config`;
-    return this.http.get(url)
-                    .map( (res: Response) => {
-                      let corpora : string[] = res.json()
-                      // TODO: Handle the LB corpora in a different way:
-                      corpora = _.filter(corpora, (corpusID) => ! _.startsWith(corpusID, "littb"));
-                      return corpora;
-                    }).catch(this.handleError);
-  } */
+  constructor(private http: HttpClient, private locService: LocService) { }
 
   /* IMPORTANT: we need to put the jwt on the window object since the calls service object used
     in the application init section isn't the same as the one injected in the bootstrapped app. */
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
-    let options = new RequestOptions({ withCredentials: true });
-    return this.http.get(url, options)
-                    .map(function(data) { window["jwt"] = data["_body"]; return true})
-                    .catch(this.handleError);
+    return this.http.get(url, {withCredentials : true})
+      .map(data => {
+        window["jwt"] = data["_body"];
+        return true;
+      })
+      .catch(this.handleError);
   }
 
-  private getOptions(params: URLSearchParams): RequestOptions {
-    let headers = new Headers();
-    let options: RequestOptions;
-    if (window["jwt"]) {
-      headers.append("Authorization", "Bearer " + window["jwt"])
-      options = new RequestOptions({headers: headers, search: params});
-    } else {
-      options = new RequestOptions({search: params});
-    }
-    return options;
+  private getOptions(params: HttpParams): {params: HttpParams, headers?: HttpHeaders} {
+    return {
+      params : params,
+      headers : window['jwt'] ? new HttpHeaders({'Authorization' : `Bearer ${window['jwt']}`}) : null,
+    };
   }
 
   // config
@@ -62,8 +48,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/config`;
     
     return this.http.get(url, this.getOptions(null))
-      .map((res: Response) => {
-        let data = res.json();
+      .map(data => {
         console.log("getCorpusInfo data", data, window["jwt"])
 
         // BE returns struct_attributes as an object; convert it to an array.
@@ -75,7 +60,7 @@ export class CallsService {
         }
 
         this.extractLocalizationKeys(data);
-        return _.mapValues(data, (corpusData, corpusID) => new StrixCorpusConfig(
+        return _.mapValues(data, (corpusData: any, corpusID) => new StrixCorpusConfig(
           corpusID,
           corpusData.attributes.text_attributes,
           corpusData.attributes.word_attributes,
@@ -195,7 +180,7 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/search`;
     // let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
-    let params = new URLSearchParams()
+    let params = new HttpParams();
 
     if(corpusIDs && corpusIDs.length > 0) {
       params.set("corpora", corpusIDs.join(","))  
@@ -214,9 +199,6 @@ export class CallsService {
     if(query.keyword_search) {
       params.set("in_order", (!query.keyword_search).toString())
     }
-    //let options = new RequestOptions({
-    //  search : params
-    //});
     return this.http.get(url, this.getOptions(params))
                     .map(this.preprocessResult)
                     .catch(this.handleError);
@@ -248,7 +230,7 @@ export class CallsService {
     let toPage = (query.pageIndex) * query.documentsPerPage;
     let url = `${this.STRIXBACKEND_URL}/aggs`;
     let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
-    let params = new URLSearchParams()
+    let params = new HttpParams();
     params.set("facet_count", '5')
     params.set("exclude_empty_buckets", "true")
 
@@ -268,9 +250,6 @@ export class CallsService {
     if (query.keyword_search) {
       params.set("in_order", (!query.keyword_search).toString())
     }
-    //let options = new RequestOptions({
-    //  search : params
-    //});
     return this.http.get(url, this.getOptions(params))
                     .map(this.preprocessResult)
                     .catch(this.handleError);
@@ -281,7 +260,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/search`;
     console.log('url', url);
     //let paramsString = `text_filter={"${annotationKey}" : "${annotationValue}"}`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set(annotationKey, annotationValue);
     //let options = new RequestOptions({
     //  search : new URLSearchParams(paramsString)
@@ -295,14 +274,13 @@ export class CallsService {
   public searchDocumentForAnnotation(corpusID: string, docID: string, searchQuery: SearchQuery): Observable<any> {
     console.log("searchDocumentForAnnotation()");
     let url = `${this.STRIXBACKEND_URL}/annotation_lookup/${corpusID}/${docID}`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set("text_query_field", searchQuery.annotationKey);
     params.set("text_query", searchQuery.annotationValue);
     params.set("size", "1");
     params.set("current_position", String(searchQuery.currentPosition));
     params.set("forward", `${searchQuery.forward}`);
     return this.http.get(url, this.getOptions(params))
-                    .map((res) => res.json())
                     .catch(this.handleError);
   }
 
@@ -327,7 +305,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}`;
     console.log('url', url);
     //let paramsString = `simple_highlight=false&token_lookup_from=${0}&token_lookup_to=${1000}&text_query=${query}`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set("simple_highlight", "false");
     params.set("token_lookup_from", "0");
     params.set("token_lookup_to", "1000");
@@ -350,7 +328,7 @@ export class CallsService {
     end++; // Because the API expects python style slicing indices
     let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
     //let paramsString = `include=token_lookup&token_lookup_from=${start}&token_lookup_to=${end}`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set("include", "token_lookup");
     params.set("token_lookup_from", `${start}`);
     params.set("token_lookup_to", `${end}`);
@@ -362,10 +340,8 @@ export class CallsService {
                     .catch(this.handleError);
   }
 
-  private preprocessResult(res: Response) : StrixResult {
+  private preprocessResult(body) : StrixResult {
     let strixResult = new StrixResult();
-    console.log("res", res);
-    let body = res.json();
     strixResult.count = body.hits;
     strixResult.data = body.data;
     strixResult.aggregations = body.aggregations;
@@ -373,8 +349,7 @@ export class CallsService {
     return strixResult;
   }
 
-  private extractDocumentData(res: Response): StrixDocument { // TODO: Update this
-    let body = res.json();
+  private extractDocumentData(body: any): StrixDocument { // TODO: Update this
     console.log('body', body);
     let strixDocument = new StrixDocument();
     let data = body.data || body; // Necessary now because the 'search' and 'document' data give different results (?)
@@ -395,8 +370,7 @@ export class CallsService {
     return strixDocument;
   }
 
-  private extractTokenData(res: Response): any {
-    let body = res.json();
+  private extractTokenData(body: any): any {
     console.log('body', body);
     return body;
   }
@@ -413,7 +387,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/related/${corpusID}/${documentID}`;
     console.log('url', url);
     //let paramsString = `exclude=token_lookup,dump,lines`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set("exclude", "token_lookup,dump,lines")
     //let options = new RequestOptions({
     //  search: new URLSearchParams(paramsString)
@@ -428,7 +402,7 @@ export class CallsService {
     let url = `${this.STRIXBACKEND_URL}/date_histogram/${corpusID}/year`;
     console.log('url', url);
     //let paramsString = `date_field=datefrom`;
-    let params = new URLSearchParams();
+    let params = new HttpParams();
     params.set("date_field", "datefrom");
     //let options = new RequestOptions({
     //  search: new URLSearchParams(paramsString)

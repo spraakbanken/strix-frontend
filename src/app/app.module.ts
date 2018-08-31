@@ -1,10 +1,7 @@
+import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { HttpModule } from '@angular/http';
-import { CommonModule } from '@angular/common';
-// import { RouterModule } from '@angular/router';
-
 import { StoreModule } from '@ngrx/store';
 import { TypeaheadModule,
          BsDropdownModule,
@@ -74,7 +71,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
   imports: [
     BrowserModule,
     FormsModule,
-    HttpModule,
+    HttpClientModule,
     // RouterModule.forRoot([]),
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
