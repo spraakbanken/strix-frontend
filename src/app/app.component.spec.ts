@@ -27,7 +27,7 @@ describe('App: Strix', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations : [AppComponent, LocPipeStub
+      declarations : [AppComponent, LocPipeStub,
         MockComponent({selector : 'leftcolumn'}),
         MockComponent({selector : 'search'}),
         MockComponent({selector : 'docselection'}),

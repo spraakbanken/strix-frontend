@@ -67,9 +67,9 @@ export class CallsService {
         console.log("getCorpusInfo data", data, window["jwt"])
 
         // BE returns struct_attributes as an object; convert it to an array.
-        for (let config of data) {
-          config.attributes.struct_attributes = _.values(_.mapValues(
-            config.attributes.struct_attributes,
+        for (let corpusID in data) {
+          data[corpusID].attributes.struct_attributes = _.values(_.mapValues(
+            data[corpusID].attributes.struct_attributes,
             (attr, name) => ({...attr, name: name})
           ));
         }
