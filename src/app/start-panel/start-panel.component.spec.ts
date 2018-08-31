@@ -1,17 +1,29 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { AppState } from '../searchreducer';
 
 import { StartPanelComponent } from './start-panel.component';
 
 describe('StartPanelComponent', () => {
   let component: StartPanelComponent;
   let fixture: ComponentFixture<StartPanelComponent>;
+  let appStateStore: Store<AppState>;
 
   beforeEach(async(() => {
+    appStateStore = <Store<AppState>>{
+      select : a => ({
+        filter : predicate => ({
+          subscribe : next => null,
+        }),
+      }),
+    };
+
     TestBed.configureTestingModule({
-      declarations: [ StartPanelComponent ]
+      declarations: [StartPanelComponent],
+      providers: [
+        {provide : Store, useValue : appStateStore},
+      ],
     })
     .compileComponents();
   }));

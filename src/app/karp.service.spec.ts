@@ -1,16 +1,17 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
+import { Http } from '@angular/http';
 import { KarpService } from './karp.service';
 
 describe('Service: Karp', () => {
+  let http: Http;
+  let service: KarpService;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [KarpService]
-    });
+    service = new KarpService(http);
   });
 
-  it('should ...', inject([KarpService], (service: KarpService) => {
+  it('should ...', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 });

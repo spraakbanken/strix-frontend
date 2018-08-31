@@ -5,46 +5,43 @@ import { MetadataService } from './metadata.service';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 
 describe('Service: Metadata', () => {
-  let callsService: CallsService;
-  let init: (any) => void;
+  let service: MetadataService;
+  let callsService = <CallsService>{
+    // Ctor will call getCorpusInfo and subscribe a handler to the result. Store that handler so we can invoke it.
+    getCorpusInfo : () => ({
+      subscribe : (next, error) => {
+        callsServiceInit = next;
+      },
+    }),
+  };
+  let callsServiceInit: (value: {[key: string]: StrixCorpusConfig}) => void;
+
   const sampleCorpusConfigs: {[key: string]: StrixCorpusConfig} = {
-    'corp' : new StrixCorpusConfig('corp', [],
-      [{'name' : 'pos'}],
-      [{'name' : 'sentence', 'attributes' : {'name' : 'speaker_id'}}],
-      {'swe' : 'A nice corpus'}, {'swe' : 'NiceCorpus'}),
+    corp : new StrixCorpusConfig('corp', [],
+      [{name : 'pos'}],
+      [{name : 'sentence', attributes : {name : 'speaker_id'}}],
+      {swe : 'A nice corpus'}, {swe : 'NiceCorpus'}),
   };
 
   beforeEach(() => {
-    callsService = <CallsService>{
-      // Ctor will call getCorpusInfo and subscribe a handler to the result. Store that handler so we can invoke it.
-      getCorpusInfo : () => ({
-        subscribe : (next, error) => {
-          init = next;
-        },
-      }),
-    }
+    service = new MetadataService(callsService);
   });
 
   it('should be initiated with corpus info', () => {
-    const service = new MetadataService(callsService);
-    init(sampleCorpusConfigs);
+    callsServiceInit(sampleCorpusConfigs);
     expect(service).toBeTruthy();
-    expect(service.getAvailableCorpora()).toBe(sampleCorpusConfigs);
-    expect(service.getName('corp')).toBe({'swe' : 'NiceCorpus'});
+    expect(service.getAvailableCorpora()).toEqual(sampleCorpusConfigs);
+    expect(service.getName('corp')).toEqual({swe : 'NiceCorpus'});
   });
 
   it('should handle word annotations', () => {
-    const service = new MetadataService(callsService);
-    init(sampleCorpusConfigs);
-    expect(service.getWordAnnotationsFor('corp')).toBe([{'name' : 'pos'}]);
+    callsServiceInit(sampleCorpusConfigs);
+    expect(service.getWordAnnotationsFor('corp')).toEqual([{name : 'pos'}]);
   });
 
   it('should handle structural annotations', () => {
-    const service = new MetadataService(callsService);
-    init(sampleCorpusConfigs);
-    expect(service.getStructuralAnnotationsFor('corp')).toBe([{'name' : 'sentence', 'attributes' : {'name' : 'speaker_id'}}]);
+    callsServiceInit(sampleCorpusConfigs);
+    expect(service.getStructuralAnnotationsFor('corp')).toEqual([{name : 'sentence', attributes : {name : 'speaker_id'}}]);
   });
-
-
 
 });

@@ -1,17 +1,51 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { MockComponent } from 'ng2-mock-component';
+import { Observable } from 'rxjs/Observable';
 
+import { DocumentsService } from '../documents.service';
+import { MetadataService } from '../metadata.service';
+import { LocPipeStub } from '../mocks/loc-stub.pipe';
+import { PrettynumberPipeStub } from '../mocks/prettynumber-stub.pipe';
+import { QueryService } from '../query.service';
+import { AppState } from '../searchreducer';
 import { DocselectionComponent } from './docselection.component';
 
 describe('DocselectionComponent', () => {
   let component: DocselectionComponent;
   let fixture: ComponentFixture<DocselectionComponent>;
 
+  const documentsService = <DocumentsService>{};
+  const queryService = <QueryService>{
+    searchResult$ : new Observable(noop),
+  };
+  const metadataService = <MetadataService>{
+    loadedMetadata$ : new Observable(noop),
+  };
+  const appStateStore = <Store<AppState>>{
+    select : a => ({
+      filter : predicate => new Observable(noop),
+    }),
+  };
+
+  function noop() {}
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ DocselectionComponent ]
+      imports : [FormsModule],
+      declarations : [DocselectionComponent, LocPipeStub, PrettynumberPipeStub,
+        MockComponent({selector : 'alert', inputs : ['type', 'dismissible']}),
+        MockComponent({selector : 'pagination',
+          inputs : ['totalItems', 'itemsPerPage', 'maxSize', 'pageChanged', 'previousText', 'nextText']}),
+      ],
+      providers : [
+        {provide : DocumentsService, useValue : documentsService},
+        {provide : QueryService, useValue : queryService},
+        {provide : MetadataService, useValue : metadataService},
+        {provide : Store, useValue : appStateStore},
+      ]
     })
     .compileComponents();
   }));

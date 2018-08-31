@@ -10,7 +10,6 @@ import { StrixResult } from './strixresult.model';
 import { Filter, StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
-
 import { environment } from '../environments/environment';
 import { SearchQuery } from './strixsearchquery.model';
 
@@ -59,13 +58,21 @@ export class CallsService {
   }
 
   // config
-  public getCorpusInfo() : Observable<{ [key: string] : StrixCorpusConfig}> {
+  public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {
     let url = `${this.STRIXBACKEND_URL}/config`;
     
     return this.http.get(url, this.getOptions(null))
       .map((res: Response) => {
         let data = res.json();
         console.log("getCorpusInfo data", data, window["jwt"])
+
+        // BE returns struct_attributes as an object; convert it to an array.
+        for (let config of data) {
+          config.attributes.struct_attributes = _.values(_.mapValues(
+            config.attributes.struct_attributes,
+            (attr, name) => ({...attr, name: name})
+          ));
+        }
 
         this.extractLocalizationKeys(data);
         return _.mapValues(data, (corpusData, corpusID) => new StrixCorpusConfig(
@@ -94,7 +101,7 @@ export class CallsService {
       // text_ and word_attributes are arrays but struct_attributes is an object.
       this.defaultAttrParse(corpusData.attributes.text_attributes)
       this.defaultAttrParse(corpusData.attributes.word_attributes)
-      this.defaultAttrParseObj(corpusData.attributes.struct_attributes)
+      this.defaultAttrParse(corpusData.attributes.struct_attributes)
     }
 
   }
@@ -108,13 +115,6 @@ export class CallsService {
       this.locService.updateDictionary(updateObj)
     }
   }
-
-  private defaultAttrParseObj(attrObj: object) {
-    // First convert {x: {a: b}, ...} to [{name: x, a: b}, ...].
-    this.defaultAttrParse(_.values(_.mapValues(attrObj,
-      (obj, key) => ({...obj, name: key}))));
-  }
-
 
 
   /*

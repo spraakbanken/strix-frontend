@@ -1,17 +1,26 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Store } from '@ngrx/store';
+import { TypeaheadModule } from 'ngx-bootstrap';
 
+import { LocPipeStub } from '../mocks/loc-stub.pipe';
+import { AppState } from '../searchreducer';
 import { IndocsearchComponent } from './indocsearch.component';
 
 describe('IndocsearchComponent', () => {
   let component: IndocsearchComponent;
   let fixture: ComponentFixture<IndocsearchComponent>;
 
+  const appStateStore = <Store<AppState>>{};
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ IndocsearchComponent ]
+      imports : [FormsModule, TypeaheadModule],
+      declarations : [IndocsearchComponent, LocPipeStub],
+      providers : [
+        {provide : Store, useValue : appStateStore},
+      ],
     })
     .compileComponents();
   }));

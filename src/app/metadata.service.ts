@@ -15,22 +15,9 @@ export class MetadataService {
 
   constructor(private callsService: CallsService) {
     this.callsService.getCorpusInfo().subscribe(
-      answer => {
+      (answer: {[key: string]: StrixCorpusConfig}) => {
         console.log("corpus configs", answer);
         this.availableCorpora = answer;
-
-        // BE returns the structural attributes as dictionary so we need to make an array for consistency.
-        for (let corpus in this.availableCorpora) {
-          let attList = [];
-          for (let attributeKey in this.availableCorpora[corpus].structAttributes) {
-            attList.push({
-              attributes : this.availableCorpora[corpus].structAttributes[attributeKey].attributes,
-              name : attributeKey
-            });
-          }
-          this.availableCorpora[corpus].structAttributes = attList;
-        }
-
         this.successfulLoad.next(true);
       },
       error => this.errorMessage = <any>error
