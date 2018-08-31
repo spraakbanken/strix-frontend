@@ -14,13 +14,13 @@ describe('Service: Metadata', () => {
       },
     }),
   };
-  let callsServiceInit: (any) => void;
+  let callsServiceInit: (value: {[key: string]: StrixCorpusConfig}) => void;
 
   const sampleCorpusConfigs: {[key: string]: StrixCorpusConfig} = {
-    'corp' : new StrixCorpusConfig('corp', [],
-      [{'name' : 'pos'}],
-      {'sentence': {'attributes' : {'name' : 'speaker_id'}}},
-      {'swe' : 'A nice corpus'}, {'swe' : 'NiceCorpus'}),
+    corp : new StrixCorpusConfig('corp', [],
+      [{name : 'pos'}],
+      [{name : 'sentence', attributes : {name : 'speaker_id'}}],
+      {swe : 'A nice corpus'}, {swe : 'NiceCorpus'}),
   };
 
   beforeEach(() => {
@@ -30,18 +30,18 @@ describe('Service: Metadata', () => {
   it('should be initiated with corpus info', () => {
     callsServiceInit(sampleCorpusConfigs);
     expect(service).toBeTruthy();
-    expect(service.getAvailableCorpora()).toBe(sampleCorpusConfigs);
-    expect(service.getName('corp')).toEqual({'swe' : 'NiceCorpus'});
+    expect(service.getAvailableCorpora()).toEqual(sampleCorpusConfigs);
+    expect(service.getName('corp')).toEqual({swe : 'NiceCorpus'});
   });
 
   it('should handle word annotations', () => {
     callsServiceInit(sampleCorpusConfigs);
-    expect(service.getWordAnnotationsFor('corp')).toEqual([{'name' : 'pos'}]);
+    expect(service.getWordAnnotationsFor('corp')).toEqual([{name : 'pos'}]);
   });
 
   it('should handle structural annotations', () => {
     callsServiceInit(sampleCorpusConfigs);
-    expect(service.getStructuralAnnotationsFor('corp')).toEqual([{'name' : 'sentence', 'attributes' : {'name' : 'speaker_id'}}]);
+    expect(service.getStructuralAnnotationsFor('corp')).toEqual([{name : 'sentence', attributes : {name : 'speaker_id'}}]);
   });
 
 });

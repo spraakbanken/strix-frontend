@@ -1,17 +1,33 @@
 /* tslint:disable:no-unused-variable */
 
+import { Component, ElementRef } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { CmDirective } from './cm.directive';
-import { ElementRef } from '@angular/core';
 
 describe('Directive: Cm', () => {
+  let component: HostComponent;
+  let fixture: ComponentFixture<HostComponent>;
   let elementRef: ElementRef;
 
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations : [HostComponent],
+    })
+      .compileComponents()
+  }));
+
   beforeEach(() => {
-    elementRef = jasmine.createSpyObj('ElementRef', []);
+    fixture = TestBed.createComponent(HostComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
   it('should create an instance', () => {
-    let directive = new CmDirective(elementRef);
-    expect(directive).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 });
+
+@Component({
+  template : '<textarea cm></textarea>',
+})
+class HostComponent {}
