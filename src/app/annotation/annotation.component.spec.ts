@@ -2,8 +2,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { BsModalService, TooltipModule } from 'ngx-bootstrap';
 
 import { DocumentsService } from '../documents.service';
-import { LocPipe } from '../loc.pipe';
-import { LocService } from '../loc.service';
+import { LocPipeStub } from '../mocks/loc-stub.pipe';
 import { AnnotationComponent } from './annotation.component';
 
 describe('AnnotationComponent', () => {
@@ -11,22 +10,16 @@ describe('AnnotationComponent', () => {
   let fixture: ComponentFixture<AnnotationComponent>;
   let documentsServiceStub: DocumentsService;
   let bsModalServiceStub: BsModalService;
-  let locServiceStub: LocService;
-  let el: HTMLElement
+  let el: HTMLElement;
 
   beforeEach(async(() => {
-    locServiceStub = <LocService>{
-      getTranslationFor : (v, d) => 'substantiv',
-      getCurrentLanguage : () => 'swe',
-    };
 
     TestBed.configureTestingModule({
       imports : [TooltipModule.forRoot()],
-      declarations : [AnnotationComponent, LocPipe],
+      declarations : [AnnotationComponent, LocPipeStub],
       providers : [
         {provide : DocumentsService, useValue : documentsServiceStub},
         {provide : BsModalService, useValue : bsModalServiceStub},
-        {provide : LocService, useValue : locServiceStub},
       ],
     })
       .compileComponents();

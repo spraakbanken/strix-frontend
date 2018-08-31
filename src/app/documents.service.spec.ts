@@ -1,16 +1,30 @@
 /* tslint:disable:no-unused-variable */
 
-import { TestBed, async, inject } from '@angular/core/testing';
+import { Store } from '@ngrx/store';
+import { CallsService } from './calls.service';
 import { DocumentsService } from './documents.service';
+import { QueryService } from './query.service';
+import { AppState } from './searchreducer';
 
 describe('Service: Documents', () => {
+  let service: DocumentsService;
+  let callsService = <CallsService>{};
+  let queryService = <QueryService>{};
+  let appStateStore = <Store<AppState>>{};
+
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [DocumentsService]
-    });
+    appStateStore = <Store<AppState>>{
+      select : a => ({
+        filter : predicate => ({
+          subscribe : next => null
+        })
+      })
+    };
+
+    service = new DocumentsService(callsService, queryService, appStateStore);
   });
 
-  it('should ...', inject([DocumentsService], (service: DocumentsService) => {
+  it('should ...', () => {
     expect(service).toBeTruthy();
-  }));
+  });
 });

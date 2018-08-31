@@ -1,17 +1,46 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
-import { DebugElement } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { MockComponent } from 'ng2-mock-component';
+import { Observable } from 'rxjs/Observable';
 
+import { MetadataService } from '../metadata.service';
+import { PrettynumberPipeStub } from '../mocks/prettynumber-stub.pipe';
+import { QueryService } from '../query.service';
+import { AppState } from '../searchreducer';
 import { LeftcolumnComponent } from './leftcolumn.component';
+import { LocPipeStub } from '../mocks/loc-stub.pipe';
 
 describe('LeftcolumnComponent', () => {
   let component: LeftcolumnComponent;
   let fixture: ComponentFixture<LeftcolumnComponent>;
 
+  const metadataService = <MetadataService>{
+    loadedMetadata$ : new Observable(noop),
+  };
+  const queryService = <QueryService>{
+    aggregationResult$ : new Observable(noop),
+  };
+  const appStateStore = <Store<AppState>>{
+    select : a => ({
+      filter : predicate => new Observable(noop),
+    }),
+  };
+
+  function noop() {}
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LeftcolumnComponent ]
+      declarations : [LeftcolumnComponent,
+        MockComponent({'selector' : 'minidocselection'}),
+        MockComponent({'selector' : 'multicomplete', 'inputs' : ['locConf', 'buckets']}),
+        MockComponent({'selector' : 'rangeslider', 'inputs' : ['min', 'max', 'value']}),
+        LocPipeStub, PrettynumberPipeStub],
+      providers : [
+        {provide : MetadataService, useValue : metadataService},
+        {provide : QueryService, useValue : queryService},
+        {provide : Store, useValue : appStateStore},
+      ]
     })
     .compileComponents();
   }));

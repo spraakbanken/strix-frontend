@@ -6,16 +6,15 @@ import { CallsService } from './calls.service';
 import { LocService } from './loc.service';
 
 describe('Service: Calls', () => {
-  let http: Http;
-  let locService: LocService;
+  let service: CallsService;
+  let http = <Http>{};
+  let locService = <LocService>{};
 
   beforeEach(() => {
-    http = jasmine.createSpyObj('Http', []);
-    locService = jasmine.createSpyObj('LocService', ['getTranslationFor', 'getCurrentLanguage']);
+    service = new CallsService(http, locService);
   });
 
   it('instantiate', () => {
-    let callsService = new CallsService(http, locService);
-    expect(callsService).toBeTruthy();
+    expect(service).toBeTruthy();
   });
 });
