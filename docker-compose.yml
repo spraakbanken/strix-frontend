@@ -4,7 +4,7 @@ services:
 
   unit-tests:
     build: .
-    command: "ng test --single-run"
+    command: "ng test --single-run --browsers Firefox"
 
   strix-frontend:
     build: .
