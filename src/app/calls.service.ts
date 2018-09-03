@@ -6,12 +6,13 @@ import 'rxjs/add/operator/catch';
 import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
-import { StrixResult } from './strixresult.model';
+import { SearchResult } from './strixresult.model';
 import { Filter, StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
 import { environment } from '../environments/environment';
 import { SearchQuery } from './strixsearchquery.model';
+import { tap } from 'rxjs/operators';
 
 @Injectable()
 export class CallsService {
@@ -101,36 +102,6 @@ export class CallsService {
     }
   }
 
-
-  /*
-
-  public getCorpusInfo(corpusIDs: string[]) : Observable<StrixCorpusConfig[]> {
-  let url = `${this.STRIXBACKEND_URL}/config/${corpusIDs.join(",")}`;
-  return this.http.get(url)
-                  .map((res: Response) => {
-                    let data = res.json();
-
-                    let strixCorpusConfigs : StrixCorpusConfig[] = [];
-
-                    for (let corpusID of corpusIDs) {
-                      let corpusConfig = new StrixCorpusConfig();
-                      corpusConfig.corpusID = corpusID;
-                      let corpusData = data[corpusID];
-                      corpusConfig.textAttributes = corpusData.attributes.text_attributes;
-                      corpusConfig.wordAttributes = corpusData.attributes.word_attributes;
-                      corpusConfig.structAttributes = corpusData.attributes.struct_attributes;
-                      corpusConfig.description = corpusData.description;
-                      corpusConfig.name = corpusData.name;
-                      strixCorpusConfigs.push(corpusConfig);
-                    }
-
-                    return strixCorpusConfigs;
-
-                  }).catch(this.handleError);
-  }
-
-  */
-
   private formatFilterObject(filters: Filter[]): string {
     for (let filter of filters) {
       console.log("filter", filter)
@@ -156,7 +127,7 @@ export class CallsService {
   }
 
   // search
-  public searchForString(query: StrixQuery) : Observable<StrixResult> {
+  public searchForString(query: StrixQuery) : Observable<SearchResult> {
     console.log("searchForString", query);
     //let corpusIDs = query.corpora;
     let corpusIDs: string[] = [];
@@ -199,8 +170,9 @@ export class CallsService {
     if(query.keyword_search) {
       params.set("in_order", (!query.keyword_search).toString())
     }
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
+    return this.http.get<SearchResult>(url, this.getOptions(params))
+      .pipe(tap(o => console.log('searchForString response', o)))
+      .map((res: any) => ({...res, counts : res.hits}))
                     .catch(this.handleError);
   }
 
@@ -251,22 +223,6 @@ export class CallsService {
       params.set("in_order", (!query.keyword_search).toString())
     }
     return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
-                    .catch(this.handleError);
-  }
-
-  public searchForAnnotation(corpus: string, annotationKey: string, annotationValue: string): Observable<StrixResult> {
-    //let url = `${this.STRIXBACKEND_URL}/search/${corpus}/${annotationKey}/${annotationValue}`;
-    let url = `${this.STRIXBACKEND_URL}/search`;
-    console.log('url', url);
-    //let paramsString = `text_filter={"${annotationKey}" : "${annotationValue}"}`;
-    let params = new HttpParams();
-    params.set(annotationKey, annotationValue);
-    //let options = new RequestOptions({
-    //  search : new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
                     .catch(this.handleError);
   }
 
@@ -340,15 +296,6 @@ export class CallsService {
                     .catch(this.handleError);
   }
 
-  private preprocessResult(body) : StrixResult {
-    let strixResult = new StrixResult();
-    strixResult.count = body.hits;
-    strixResult.data = body.data;
-    strixResult.aggregations = body.aggregations;
-    strixResult.unused_facets = body.unused_facets;
-    return strixResult;
-  }
-
   private extractDocumentData(body: any): StrixDocument { // TODO: Update this
     console.log('body', body);
     let strixDocument = new StrixDocument();
@@ -392,8 +339,7 @@ export class CallsService {
     //let options = new RequestOptions({
     //  search: new URLSearchParams(paramsString)
     //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
+    return this.http.get<SearchResult>(url, this.getOptions(params))
                     .catch(this.handleError);
   }
 

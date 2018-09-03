@@ -1,5 +1,7 @@
 // Maybe data should be more explicit, but we'll probably wait until the structure is more definite.
 
+import { StrixDocument } from './strixdocument.model';
+
 export interface Aggregations {
     [key : string] : Agg
 }
@@ -25,9 +27,12 @@ export interface Bucket {
     
 }
 
-export class StrixResult {
-    count: number;
-    data: any[];
-    aggregations: Aggregations;
-    unused_facets: string[];
+export class AggregationsResult {
+  aggregations: Aggregations;
+  unused_facets: string[];
+}
+
+export class SearchResult {
+  data: StrixDocument[];
+  count: number;
 }

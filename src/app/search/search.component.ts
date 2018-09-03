@@ -78,7 +78,7 @@ export class SearchComponent implements OnInit {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchStatusSubscription = queryService.searchStatus$.subscribe(
-      answer => {
+      (answer: StrixEvent) => {
         console.log("search status:", answer);
         switch (answer) { // TODO: Create an enum for this. Or a union type?
           case StrixEvent.SEARCHSTART:

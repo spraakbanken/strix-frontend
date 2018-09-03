@@ -42,6 +42,7 @@ import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
+import { HttpModule } from '@angular/http';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -71,6 +72,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
   imports: [
     BrowserModule,
     FormsModule,
+    HttpModule,
     HttpClientModule,
     // RouterModule.forRoot([]),
     TypeaheadModule.forRoot(),

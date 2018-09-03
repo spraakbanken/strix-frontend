@@ -12,6 +12,7 @@ import { StrixDocument } from '../strixdocument.model';
 import { StrixEvent } from '../strix-event.enum';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState } from '../searchreducer';
+import { SearchResult } from '../strixresult.model';
 
 @Component({
   selector: 'docselection',
@@ -70,7 +71,7 @@ export class DocselectionComponent implements OnInit {
     })
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
-      answer => {
+      (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
         this.totalNumberOfDocuments = answer.count;
