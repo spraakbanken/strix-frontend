@@ -22,6 +22,7 @@ import { CmComponent } from './reader/cm/cm.component';
 import { ReaderComponent } from './reader/reader.component';
 import { KarpService } from './karp.service';
 import { LemgramPipe } from './lemgram.pipe';
+import { LemgramPipeStub } from './mocks/lemgram-stub.pipe';
 import { LeftcolumnComponent } from './leftcolumn/leftcolumn.component';
 import { MultiCompleteComponent } from './leftcolumn/multicomplete/multicomplete.component';
 import { RangesliderComponent } from './leftcolumn/rangeslider.component';
@@ -35,12 +36,14 @@ import { MinidocselectionComponent } from './minidocselection/minidocselection.c
 import { HeaderComponent } from './header/header.component';
 import { LocService } from './loc.service';
 import { LocPipe } from './loc.pipe';
+import { LocPipeStub } from './mocks/loc-stub.pipe';
 import { IndocsearchComponent } from './indocsearch/indocsearch.component';
 import { HistogramComponent } from './histogram/histogram.component';
 import { AnnotationsSelectorComponent } from './annotations-selector/annotations-selector.component';
 import { ReaderCommunicationService } from './reader-communication.service';
 import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
+import { PrettynumberPipeStub } from './mocks/prettynumber-stub.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
@@ -51,6 +54,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     CmDirective,
     CmComponent,
     ReaderComponent,
+    LemgramPipeStub,
     LemgramPipe,
     LeftcolumnComponent,
     MultiCompleteComponent,
@@ -58,11 +62,13 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     SearchComponent,
     MinidocselectionComponent,
     HeaderComponent,
+    LocPipeStub,
     LocPipe,
     IndocsearchComponent,
     HistogramComponent,
     AnnotationsSelectorComponent,
     AnnotationComponent,
+    PrettynumberPipeStub,
     PrettynumberPipe,
     EnsurearrayPipe,
     RangesliderComponent,

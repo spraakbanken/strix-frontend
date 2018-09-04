@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
@@ -19,18 +19,14 @@ describe('DocselectionComponent', () => {
 
   const documentsService = <DocumentsService>{};
   const queryService = <QueryService>{
-    searchResult$ : new Observable(noop),
+    searchResult$ : new Observable(),
   };
   const metadataService = <MetadataService>{
-    loadedMetadata$ : new Observable(noop),
+    loadedMetadata$ : new Observable(),
   };
   const appStateStore = <Store<AppState>>{
-    select : a => ({
-      filter : predicate => new Observable(noop),
-    }),
+    select : a => new Observable(),
   };
-
-  function noop() {}
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

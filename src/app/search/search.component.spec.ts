@@ -3,7 +3,7 @@ import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { TypeaheadModule } from 'ngx-bootstrap';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
@@ -20,13 +20,11 @@ describe('SearchComponent', () => {
   const callsService = <CallsService>{};
   const karpService = <KarpService>{};
   const queryService = <QueryService>{
-    searchStatus$ : new Observable(noop),
+    searchStatus$ : new Observable(),
   };
   const appStateStore = <Store<AppState>>{
-    select : a => new Observable(noop),
+    select : a => new Observable(),
   };
-
-  function noop() {}
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

@@ -2,7 +2,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { DocumentsService } from '../documents.service';
 import { EnsurearrayPipe } from '../ensurearray.pipe';
 import { MetadataService } from '../metadata.service';
@@ -20,27 +20,23 @@ describe('ReaderComponent', () => {
   let metadataService: MetadataService;
   let readerCommunicationService: ReaderCommunicationService;
 
-  function noop() {}
-
   beforeEach(async(() => {
     documentsService = <DocumentsService>{
-      tokenInfoDone$ : new Observable(noop),
-      docLoadingStatus$ : new Observable(noop),
-      loadedDocument$ : new Observable(noop),
+      tokenInfoDone$ : new Observable(),
+      docLoadingStatus$ : new Observable(),
+      loadedDocument$ : new Observable(),
     };
 
     metadataService = <MetadataService>{
-      loadedMetadata$ : new Observable(noop),
+      loadedMetadata$ : new Observable(),
     };
 
     appStateStore = <Store<AppState>>{
-      select : a => ({
-        filter : predicate => new Observable(noop),
-      }),
+      select : a => new Observable(),
     };
 
     readerCommunicationService = <ReaderCommunicationService>{
-      event$: new Observable(noop),
+      event$: new Observable(),
     };
 
     TestBed.configureTestingModule({

@@ -2,7 +2,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 
 import { MetadataService } from '../metadata.service';
 import { PrettynumberPipeStub } from '../mocks/prettynumber-stub.pipe';
@@ -16,18 +16,14 @@ describe('LeftcolumnComponent', () => {
   let fixture: ComponentFixture<LeftcolumnComponent>;
 
   const metadataService = <MetadataService>{
-    loadedMetadata$ : new Observable(noop),
+    loadedMetadata$ : new Observable(),
   };
   const queryService = <QueryService>{
-    aggregationResult$ : new Observable(noop),
+    aggregationResult$ : new Observable(),
   };
   const appStateStore = <Store<AppState>>{
-    select : a => ({
-      filter : predicate => new Observable(noop),
-    }),
+    select : a => new Observable(),
   };
-
-  function noop() {}
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
