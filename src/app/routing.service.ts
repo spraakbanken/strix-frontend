@@ -1,14 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/operator/pairwise';
-import { TimerObservable } from "rxjs/observable/TimerObservable";
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { Observable, timer, fromEvent } from 'rxjs';
 import * as _ from 'lodash';
 
 import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux } from './searchreducer';
-import { DocumentsService } from 'app/documents.service';
 import { QueryType } from './strixquery.model';
 
 /** The Routing Service is responsible for keeping the web browser URL and 
@@ -69,7 +64,7 @@ export class RoutingService {
     });
 
     // On browser back button, reload state from URL query string.
-    Observable.fromEvent(window, "popstate").subscribe(() => {
+    fromEvent(window, "popstate").subscribe(() => {
       this.initializeStartingParameters();
     });
   }
@@ -132,8 +127,7 @@ export class RoutingService {
     // There probably is a better solution for this. Maybe we can use BehaviorSubjects?
 
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
-    const timer = TimerObservable.create(0);
-    timer.subscribe(() => {
+    timer(0).subscribe(() => {
       if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
         console.log("autoopening document", startState.documentID, startState.documentCorpus);
         this.store.dispatch({

@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { HttpHeaders, HttpParams, HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError } from 'rxjs';
+import { map, catchError, tap } from 'rxjs/operators';
 import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
-import { SearchResult } from './strixresult.model';
+import { SearchResult, AggregationsResult } from './strixresult.model';
 import { Filter, StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
@@ -28,12 +27,11 @@ export class CallsService {
     in the application init section isn't the same as the one injected in the bootstrapped app. */
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
-    return this.http.get(url, {withCredentials : true})
-      .map(data => {
-        window["jwt"] = data["_body"];
-        return true;
-      })
-      .catch(this.handleError);
+    return this.http.get(url, {withCredentials : true}).pipe(
+      tap(data => { console.log(data); window['jwt'] = data['_body'] }),
+      map(() => true),
+      catchError(this.handleError)
+    );
   }
 
   /**
@@ -48,8 +46,8 @@ export class CallsService {
   }
 
   public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {
-    return this.get('config')
-      .map(data => {
+    return this.get('config').pipe(
+      map(data => {
         console.log("getCorpusInfo data", data, window["jwt"])
 
         // BE returns struct_attributes as an object; convert it to an array.
@@ -70,14 +68,16 @@ export class CallsService {
           corpusData.name
         ));
 
-      }).catch(this.handleError);
+      }),
+      catchError(this.handleError)
+    );
   }
 
   private extractLocalizationKeys(config) {
     for (let corpusID in config) {
       let corpusData = config[corpusID];
       
-      let updateObj = _.mapValues(corpusData.name, (name) => {
+      let updateObj: any = _.mapValues(corpusData.name, (name) => {
          return _.fromPairs([[corpusID, name]])
       })
       this.locService.updateDictionary(updateObj)
@@ -93,7 +93,7 @@ export class CallsService {
   }
   private defaultAttrParse(attrObj: any[]) {
     for(let obj of attrObj) {
-      let updateObj = _.mapValues(obj.translation_name, (transationStr) => {
+      let updateObj: any = _.mapValues(obj.translation_name, (transationStr) => {
         let o = {}
         o[obj.name] = transationStr
         return o
@@ -153,14 +153,15 @@ export class CallsService {
       params.in_order = (!query.keyword_search).toString();
     }
 
-    return this.get<SearchResult>('search', params)
+    return this.get<SearchResult>('search', params).pipe(
       // Copy 'hits' to 'count'.
-      .map((res: any) => ({...res, count : res.hits}))
-      .catch(this.handleError);
+      map((res: any) => ({...res, count : res.hits})),
+      catchError(this.handleError)
+    );
   }
 
   /* Get aggregations for faceted search */
-  public getAggregations(query: StrixQuery) {
+  public getAggregations(query: StrixQuery): Observable<AggregationsResult> {
     console.log("getAggregations", query);
 
     let filters = _.cloneDeep(query.filters);
@@ -188,8 +189,9 @@ export class CallsService {
     if (query.keyword_search) {
       params.in_order = (!query.keyword_search).toString();
     }
-    return this.get('aggs', params)
-                    .catch(this.handleError);
+    return this.get<AggregationsResult>('aggs', params).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /* ------------------ Calls for searching in ONE document only ------------------ */
@@ -201,19 +203,22 @@ export class CallsService {
       current_position : String(searchQuery.currentPosition),
       forward : `${searchQuery.forward}`,
     };
-    return this.get(`annotation_lookup/${corpusID}/${docID}`, params)
-                    .catch(this.handleError);
+    return this.get(`annotation_lookup/${corpusID}/${docID}`, params).pipe(
+      catchError(this.handleError)
+    );
   }
 
   public getDocument(documentID: string, corpusID: string) : Observable<StrixDocument> {
-    return this.get(`document/${corpusID}/${documentID}`)
-                    .map(this.extractDocumentData)
-                    .catch(this.handleError);
+    return this.get(`document/${corpusID}/${documentID}`).pipe(
+      map(this.extractDocumentData),
+      catchError(this.handleError)
+    );
   }
   public getDocumentBySentenceID(corpusID: string, sentenceID: string) : Observable<StrixDocument> {
-    return this.get(`document/${corpusID}/sentence/${sentenceID}`)
-                    .map(this.extractDocumentData)
-                    .catch(this.handleError);
+    return this.get(`document/${corpusID}/sentence/${sentenceID}`).pipe(
+      map(this.extractDocumentData),
+      catchError(this.handleError)
+    );
   }
 
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true): Observable<StrixDocument> {
@@ -227,9 +232,10 @@ export class CallsService {
     if (!inOrder) {
       params.in_order = "false";
     }
-    return this.get(`search/${corpusID}/${documentID}`, params)
-                    .map(this.extractDocumentData)
-                    .catch(this.handleError);
+    return this.get(`search/${corpusID}/${documentID}`, params).pipe(
+      map(this.extractDocumentData),
+      catchError(this.handleError)
+    );
   }
 
   public getTokenDataFromDocument(documentID: string, corpusID: string, start: number, end: number) {
@@ -239,9 +245,10 @@ export class CallsService {
       token_lookup_from : `${start}`,
       token_lookup_to : `${end}`,
     };
-    return this.get(`document/${corpusID}/${documentID}`, params)
-                    .map(this.extractTokenData)
-                    .catch(this.handleError);
+    return this.get(`document/${corpusID}/${documentID}`, params).pipe(
+      map(this.extractTokenData),
+      catchError(this.handleError)
+    );
   }
 
   private extractDocumentData(body: any): StrixDocument { // TODO: Update this
@@ -270,11 +277,11 @@ export class CallsService {
     return body;
   }
 
-  private handleError(error: any) {
+  private handleError(error: HttpErrorResponse) {
     let errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
     console.error(errMsg);
-    return Observable.throw(errMsg);
+    return throwError(errMsg);
   }
 
   /* Related documents */
@@ -282,23 +289,26 @@ export class CallsService {
     let params = {
       exclude : 'token_lookup,dump,lines',
     };
-    return this.get<SearchResult>(`related/${corpusID}/${documentID}`, params)
-                    .catch(this.handleError);
+    return this.get<StrixDocument>(`related/${corpusID}/${documentID}`, params).pipe(
+      catchError(this.handleError)
+    );
   }
 
   /* get data for Date Histogram */
   public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
     let params = {date_field : "datefrom"};
-    return this.get(`date_histogram/${corpusID}/year`, params)
-                    .map(this.extractTokenData) // Rename this to extractData?
-                    .catch(this.handleError);
+    return this.get(`date_histogram/${corpusID}/year`, params).pipe(
+      map(this.extractTokenData),
+      catchError(this.handleError)
+    );
   }
 
   /* Get annotations values */
   public getValuesForAnnotation(corpusID: string, documentID, annotationName: string) {
-    return this.get(`aggs/${corpusID}/${documentID}/${annotationName}`)
-                    .map(this.extractTokenData)
-                    .catch(this.handleError);
+    return this.get(`aggs/${corpusID}/${documentID}/${annotationName}`).pipe(
+      map(this.extractTokenData),
+      catchError(this.handleError)
+    );
   }
 
 }

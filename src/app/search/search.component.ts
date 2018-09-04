@@ -1,9 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription }   from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Observable, Observer, Subscription } from 'rxjs';
+import { take, mergeMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import 'rxjs/add/operator/take';
-import * as _ from 'lodash';
 import * as moment from "moment";
 
 import { QueryService } from '../query.service';
@@ -11,7 +9,6 @@ import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
 import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState } from '../searchreducer';
-import { Observer } from '../../../node_modules/rxjs';
 import { Filter, QueryType } from '../strixquery.model';
 
 @Component({
@@ -95,7 +92,7 @@ export class SearchComponent implements OnInit {
     this.dataSource = Observable.create((observer: Observer<any>) => {
       // Runs on every autocompletion search
       observer.next(this.asyncSelected);
-    }).mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected));
+    }).pipe(mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected)));
 
 
     // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
@@ -122,7 +119,7 @@ export class SearchComponent implements OnInit {
   }
 
   ngOnInit() {
-     this.searchRedux.take(1).subscribe(data => {
+     this.searchRedux.pipe(take(1)).subscribe(data => {
       // this.getHistogramData(data.corpora);
       this.isPhraseSearch = !data.keyword_search
 
