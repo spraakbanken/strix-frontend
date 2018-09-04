@@ -6,7 +6,7 @@ import 'rxjs/add/operator/switchMapTo';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/observable/timer';
 import { QueryType, StrixQuery } from './strixquery.model';
-import { StrixResult } from './strixresult.model';
+import { SearchResult, AggregationsResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
 import { SEARCH, CLOSEDOCUMENT, AppState } from './searchreducer';
@@ -27,15 +27,15 @@ export class QueryService {
   /* Every query call becomes a stream in the stream of streams,
      but only the most recently added strean will actually be
      subscribed to. (I.e. all older pending streams will be unsubscribed) */
-  private streamOfStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
-  private streamOfAggregationStreams: Subject<Observable<StrixResult>> = new Subject<Observable<StrixResult>>();
+  private streamOfStreams: Subject<Observable<SearchResult>> = new Subject<Observable<SearchResult>>();
+  private streamOfAggregationStreams: Subject<Observable<AggregationsResult>> = new Subject<Observable<AggregationsResult>>();
 
   // The searchResult$ stream delivers the actual results after a finished search
-  private searchResultSubject = new Subject<any>();
+  private searchResultSubject = new Subject<SearchResult>();
   searchResult$ = this.searchResultSubject.asObservable();
 
   // The aggregationResult$ stream delivers the aggregated results after a finished aggregation search
-  private aggregationResultSubject = new Subject<any>();
+  private aggregationResultSubject = new Subject<AggregationsResult>();
   aggregationResult$ = this.aggregationResultSubject.asObservable();
 
   // Components should subscribe to the searchStatus$ stream
@@ -147,15 +147,11 @@ export class QueryService {
     /* switchMap makes sure only the most recently added query stream is listened to.
        All other streams are unsubscribed and the $http request should, as a
        consequence be cancelled. */
-    this.streamOfStreams.switchMap( obj => {
-      return obj;
-    }).subscribe( value => {
+    this.streamOfStreams.switchMap(obj => obj).subscribe( (value: SearchResult) => {
       this.signalEndedSearch();
       this.searchResultSubject.next(value);
     });
-    this.streamOfAggregationStreams.switchMap( obj => {
-      return obj;
-    }).subscribe( value => {
+    this.streamOfAggregationStreams.switchMap(obj => obj).subscribe((value: AggregationsResult) => {
       this.aggregationResultSubject.next(value);
     });
   }

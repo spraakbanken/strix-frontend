@@ -8,6 +8,7 @@ export class StrixDocument {
   corpusID: string;
   highlight: any;
   word_count: number;
+  preview: string;
 
   // Internal index for the frontend to keep track of.
   // It never changes after it's loaded, but it may

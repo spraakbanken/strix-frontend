@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
-import { Http, Response, RequestOptions, URLSearchParams, Headers } from '@angular/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
 import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
-import { StrixResult } from './strixresult.model';
+import { SearchResult } from './strixresult.model';
 import { Filter, StrixQuery } from './strixquery.model';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
 import { LocService } from './loc.service';
@@ -22,48 +22,34 @@ export class CallsService {
   //private readonly STRIXBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/strixlabb/";
   //private readonly STRIXBACKEND_URL = "http://localhost:8080";
 
-  constructor(private http : Http, private locService : LocService) { }
-
-  /* public getCorpora() : Observable<string[]> {
-    let url = `${this.STRIXBACKEND_URL}/config`;
-    return this.http.get(url)
-                    .map( (res: Response) => {
-                      let corpora : string[] = res.json()
-                      // TODO: Handle the LB corpora in a different way:
-                      corpora = _.filter(corpora, (corpusID) => ! _.startsWith(corpusID, "littb"));
-                      return corpora;
-                    }).catch(this.handleError);
-  } */
+  constructor(private http: HttpClient, private locService: LocService) { }
 
   /* IMPORTANT: we need to put the jwt on the window object since the calls service object used
     in the application init section isn't the same as the one injected in the bootstrapped app. */
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
-    let options = new RequestOptions({ withCredentials: true });
-    return this.http.get(url, options)
-                    .map(function(data) { window["jwt"] = data["_body"]; return true})
-                    .catch(this.handleError);
+    return this.http.get(url, {withCredentials : true})
+      .map(data => {
+        window["jwt"] = data["_body"];
+        return true;
+      })
+      .catch(this.handleError);
   }
 
-  private getOptions(params: URLSearchParams): RequestOptions {
-    let headers = new Headers();
-    let options: RequestOptions;
-    if (window["jwt"]) {
-      headers.append("Authorization", "Bearer " + window["jwt"])
-      options = new RequestOptions({headers: headers, search: params});
-    } else {
-      options = new RequestOptions({search: params});
-    }
-    return options;
+  /**
+   * Customized GET call for Strix backend.
+   */
+  private get<T>(endpoint: string, params?: {[param: string]: string}) {
+    const options = {
+      params : new HttpParams({fromObject : params}),
+      headers : window['jwt'] ? new HttpHeaders({'Authorization' : `Bearer ${window['jwt']}`}) : null,
+    };
+    return this.http.get<T>(this.STRIXBACKEND_URL + '/' + endpoint, options);
   }
 
-  // config
   public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {
-    let url = `${this.STRIXBACKEND_URL}/config`;
-    
-    return this.http.get(url, this.getOptions(null))
-      .map((res: Response) => {
-        let data = res.json();
+    return this.get('config')
+      .map(data => {
         console.log("getCorpusInfo data", data, window["jwt"])
 
         // BE returns struct_attributes as an object; convert it to an array.
@@ -75,7 +61,7 @@ export class CallsService {
         }
 
         this.extractLocalizationKeys(data);
-        return _.mapValues(data, (corpusData, corpusID) => new StrixCorpusConfig(
+        return _.mapValues(data, (corpusData: any, corpusID) => new StrixCorpusConfig(
           corpusID,
           corpusData.attributes.text_attributes,
           corpusData.attributes.word_attributes,
@@ -116,36 +102,6 @@ export class CallsService {
     }
   }
 
-
-  /*
-
-  public getCorpusInfo(corpusIDs: string[]) : Observable<StrixCorpusConfig[]> {
-  let url = `${this.STRIXBACKEND_URL}/config/${corpusIDs.join(",")}`;
-  return this.http.get(url)
-                  .map((res: Response) => {
-                    let data = res.json();
-
-                    let strixCorpusConfigs : StrixCorpusConfig[] = [];
-
-                    for (let corpusID of corpusIDs) {
-                      let corpusConfig = new StrixCorpusConfig();
-                      corpusConfig.corpusID = corpusID;
-                      let corpusData = data[corpusID];
-                      corpusConfig.textAttributes = corpusData.attributes.text_attributes;
-                      corpusConfig.wordAttributes = corpusData.attributes.word_attributes;
-                      corpusConfig.structAttributes = corpusData.attributes.struct_attributes;
-                      corpusConfig.description = corpusData.description;
-                      corpusConfig.name = corpusData.name;
-                      strixCorpusConfigs.push(corpusConfig);
-                    }
-
-                    return strixCorpusConfigs;
-
-                  }).catch(this.handleError);
-  }
-
-  */
-
   private formatFilterObject(filters: Filter[]): string {
     for (let filter of filters) {
       console.log("filter", filter)
@@ -171,21 +127,9 @@ export class CallsService {
   }
 
   // search
-  public searchForString(query: StrixQuery) : Observable<StrixResult> {
-    console.log("searchForString", query);
-    //let corpusIDs = query.corpora;
-    let corpusIDs: string[] = [];
-
-    /* temporary fix */
-    let filters: Filter[] = [];
-
-    for (let filter of query.filters) {
-      if (filter.field === "corpus_id") {
-        corpusIDs.push(filter.value);
-      } else {
-        filters.push(filter)
-      }
-    }
+  public searchForString(query: StrixQuery) : Observable<SearchResult> {
+    let filters = _.cloneDeep(query.filters);
+    let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
 
     let searchString = query.queryString;
     if (searchString === null) {
@@ -193,188 +137,114 @@ export class CallsService {
     }
     let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
     let toPage = (query.pageIndex) * query.documentsPerPage;
-    let url = `${this.STRIXBACKEND_URL}/search`;
-    // let paramsString = `exclude=lines,dump,token_lookup&from=${fromPage}&to=${toPage}&simple_highlight=true${corporaPart}&text_query=${searchString}`;
-    let params = new URLSearchParams()
+    let params: any = {
+      exclude : 'lines,dump,token_lookup',
+      from : fromPage.toString(),
+      to : toPage.toString(),
+      simple_highlight : String(true),
+      text_query : searchString,
+    };
 
     if(corpusIDs && corpusIDs.length > 0) {
-      params.set("corpora", corpusIDs.join(","))  
+      params.corpora = corpusIDs.join(",");
     }
-
-    params.set("exclude", 'lines,dump,token_lookup')
-    params.set("from", fromPage.toString())
-    params.set("to", toPage.toString())
-    params.set("simple_highlight", String(true))
-    params.set("text_query", searchString)
-
-    if (filters && _.size(filters) > 0) {
-      console.log("this.formatFilterObject(filters)", this.formatFilterObject(filters))
-      params.set("text_filter", this.formatFilterObject(filters))
-    }
+    params.text_filter = this.formatFilterObject(filters);
     if(query.keyword_search) {
-      params.set("in_order", (!query.keyword_search).toString())
+      params.in_order = (!query.keyword_search).toString();
     }
-    //let options = new RequestOptions({
-    //  search : params
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
-                    .catch(this.handleError);
+
+    return this.get<SearchResult>('search', params)
+      // Copy 'hits' to 'count'.
+      .map((res: any) => ({...res, count : res.hits}))
+      .catch(this.handleError);
   }
 
   /* Get aggregations for faceted search */
   public getAggregations(query: StrixQuery) {
     console.log("getAggregations", query);
-    //let corpusIDs = query.corpora;
-    let corpusIDs = [];
 
-    /* temporary fix */
-    let filters = []
-    for (let filter of query.filters) {
-      if (filter.field === "corpus_id") {
-        corpusIDs.push(filter.value);
-      } else {
-        filters.push(filter);
-      }
-    }
-    console.log("filters", filters);
+    let filters = _.cloneDeep(query.filters);
+    let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
 
-
-    let searchString = query.queryString;
-    if (searchString === null) {
-      searchString = ""
-    }
-    let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
-    let toPage = (query.pageIndex) * query.documentsPerPage;
-    let url = `${this.STRIXBACKEND_URL}/aggs`;
-    let corporaPart = (corpusIDs && corpusIDs.length > 0) ? `corpora=${corpusIDs.join(",")}` : "";
-    let params = new URLSearchParams()
-    params.set("facet_count", '5')
-    params.set("exclude_empty_buckets", "true")
+    let searchString = query.queryString || '';
+    let params: any = {
+      facet_count : 5,
+      exclude_empty_buckets : true,
+    };
 
     if(corpusIDs && corpusIDs.length > 0) {
-      params.set("corpora", corpusIDs.join(","))  
+      params.corpora = corpusIDs.join(",");
     }
 
     if (searchString.length !== 0) {
-      params.set('text_query', searchString)
+      params.text_query = searchString;
     }
     if (filters && _.size(filters) > 0) {
-      params.set('text_filter', this.formatFilterObject(filters))
+      params.text_filter = this.formatFilterObject(filters);
     }
     if (query.include_facets.length) {
-      params.set("include_facets", query.include_facets.join(","))
+      params.include_facets = query.include_facets.join(",");
     }
     if (query.keyword_search) {
-      params.set("in_order", (!query.keyword_search).toString())
+      params.in_order = (!query.keyword_search).toString();
     }
-    //let options = new RequestOptions({
-    //  search : params
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
-                    .catch(this.handleError);
-  }
-
-  public searchForAnnotation(corpus: string, annotationKey: string, annotationValue: string): Observable<StrixResult> {
-    //let url = `${this.STRIXBACKEND_URL}/search/${corpus}/${annotationKey}/${annotationValue}`;
-    let url = `${this.STRIXBACKEND_URL}/search`;
-    console.log('url', url);
-    //let paramsString = `text_filter={"${annotationKey}" : "${annotationValue}"}`;
-    let params = new URLSearchParams();
-    params.set(annotationKey, annotationValue);
-    //let options = new RequestOptions({
-    //  search : new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
+    return this.get('aggs', params)
                     .catch(this.handleError);
   }
 
   /* ------------------ Calls for searching in ONE document only ------------------ */
   public searchDocumentForAnnotation(corpusID: string, docID: string, searchQuery: SearchQuery): Observable<any> {
-    console.log("searchDocumentForAnnotation()");
-    let url = `${this.STRIXBACKEND_URL}/annotation_lookup/${corpusID}/${docID}`;
-    let params = new URLSearchParams();
-    params.set("text_query_field", searchQuery.annotationKey);
-    params.set("text_query", searchQuery.annotationValue);
-    params.set("size", "1");
-    params.set("current_position", String(searchQuery.currentPosition));
-    params.set("forward", `${searchQuery.forward}`);
-    return this.http.get(url, this.getOptions(params))
-                    .map((res) => res.json())
+    let params = {
+      text_query_field : searchQuery.annotationKey,
+      text_query : searchQuery.annotationValue,
+      size : '1',
+      current_position : String(searchQuery.currentPosition),
+      forward : `${searchQuery.forward}`,
+    };
+    return this.get(`annotation_lookup/${corpusID}/${docID}`, params)
                     .catch(this.handleError);
   }
 
   public getDocument(documentID: string, corpusID: string) : Observable<StrixDocument> {
-    console.log("getDocument()");
-    let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
-    console.log('url', url);
-    return this.http.get(url, this.getOptions(null))
+    return this.get(`document/${corpusID}/${documentID}`)
                     .map(this.extractDocumentData)
                     .catch(this.handleError);
   }
   public getDocumentBySentenceID(corpusID: string, sentenceID: string) : Observable<StrixDocument> {
-    let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/sentence/${sentenceID}`;
-    return this.http.get(url, this.getOptions(null))
+    return this.get(`document/${corpusID}/sentence/${sentenceID}`)
                     .map(this.extractDocumentData)
                     .catch(this.handleError);
   }
 
   public getDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true): Observable<StrixDocument> {
-    console.log("getDocumentWithQuery()");
-    //let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/doc_id/${documentID}/${query}`;
-    let url = `${this.STRIXBACKEND_URL}/search/${corpusID}/${documentID}`;
-    console.log('url', url);
-    //let paramsString = `simple_highlight=false&token_lookup_from=${0}&token_lookup_to=${1000}&text_query=${query}`;
-    let params = new URLSearchParams();
-    params.set("simple_highlight", "false");
-    params.set("token_lookup_from", "0");
-    params.set("token_lookup_to", "1000");
-    params.set("text_query", query);
+    let params: any = {
+      simple_highlight : 'false',
+      token_lookup_from : "0",
+      token_lookup_to : "1000",
+      text_query : query
+    };
 
     if (!inOrder) {
-      //paramsString += `&in_order=false`;
-      params.set("in_order", "false");
+      params.in_order = "false";
     }
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
+    return this.get(`search/${corpusID}/${documentID}`, params)
                     .map(this.extractDocumentData)
                     .catch(this.handleError);
   }
 
   public getTokenDataFromDocument(documentID: string, corpusID: string, start: number, end: number) {
-    console.log("getTokenDataFromDocument()");
     end++; // Because the API expects python style slicing indices
-    let url = `${this.STRIXBACKEND_URL}/document/${corpusID}/${documentID}`;
-    //let paramsString = `include=token_lookup&token_lookup_from=${start}&token_lookup_to=${end}`;
-    let params = new URLSearchParams();
-    params.set("include", "token_lookup");
-    params.set("token_lookup_from", `${start}`);
-    params.set("token_lookup_to", `${end}`);
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
+    let params = {
+      include : "token_lookup",
+      token_lookup_from : `${start}`,
+      token_lookup_to : `${end}`,
+    };
+    return this.get(`document/${corpusID}/${documentID}`, params)
                     .map(this.extractTokenData)
                     .catch(this.handleError);
   }
 
-  private preprocessResult(res: Response) : StrixResult {
-    let strixResult = new StrixResult();
-    console.log("res", res);
-    let body = res.json();
-    strixResult.count = body.hits;
-    strixResult.data = body.data;
-    strixResult.aggregations = body.aggregations;
-    strixResult.unused_facets = body.unused_facets;
-    return strixResult;
-  }
-
-  private extractDocumentData(res: Response): StrixDocument { // TODO: Update this
-    let body = res.json();
+  private extractDocumentData(body: any): StrixDocument { // TODO: Update this
     console.log('body', body);
     let strixDocument = new StrixDocument();
     let data = body.data || body; // Necessary now because the 'search' and 'document' data give different results (?)
@@ -395,8 +265,7 @@ export class CallsService {
     return strixDocument;
   }
 
-  private extractTokenData(res: Response): any {
-    let body = res.json();
+  private extractTokenData(body: any): any {
     console.log('body', body);
     return body;
   }
@@ -410,38 +279,24 @@ export class CallsService {
 
   /* Related documents */
   public getRelatedDocuments(documentID: string, corpusID: string): Observable<StrixDocument> {
-    let url = `${this.STRIXBACKEND_URL}/related/${corpusID}/${documentID}`;
-    console.log('url', url);
-    //let paramsString = `exclude=token_lookup,dump,lines`;
-    let params = new URLSearchParams();
-    params.set("exclude", "token_lookup,dump,lines")
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
-                    .map(this.preprocessResult)
+    let params = {
+      exclude : 'token_lookup,dump,lines',
+    };
+    return this.get<SearchResult>(`related/${corpusID}/${documentID}`, params)
                     .catch(this.handleError);
   }
 
   /* get data for Date Histogram */
   public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
-    let url = `${this.STRIXBACKEND_URL}/date_histogram/${corpusID}/year`;
-    console.log('url', url);
-    //let paramsString = `date_field=datefrom`;
-    let params = new URLSearchParams();
-    params.set("date_field", "datefrom");
-    //let options = new RequestOptions({
-    //  search: new URLSearchParams(paramsString)
-    //});
-    return this.http.get(url, this.getOptions(params))
+    let params = {date_field : "datefrom"};
+    return this.get(`date_histogram/${corpusID}/year`, params)
                     .map(this.extractTokenData) // Rename this to extractData?
                     .catch(this.handleError);
   }
 
   /* Get annotations values */
   public getValuesForAnnotation(corpusID: string, documentID, annotationName: string) {
-    let url = `${this.STRIXBACKEND_URL}/aggs/${corpusID}/${documentID}/${annotationName}`;
-    return this.http.get(url, this.getOptions(null))
+    return this.get(`aggs/${corpusID}/${documentID}/${annotationName}`)
                     .map(this.extractTokenData)
                     .catch(this.handleError);
   }
