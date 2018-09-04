@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Http, Response } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/catch';
@@ -9,7 +9,7 @@ export class KarpService {
 
   private readonly KARPBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/karp/v2";
 
-  constructor(private http: Http) { }
+  constructor(private http: HttpClient) { }
 
   public lemgramsFromWordform(wordform: string) : Observable<string[]> {
     if (wordform === "") return Observable.from([]);
@@ -21,8 +21,7 @@ export class KarpService {
                     .catch(this.handleError);
   }
 
-  private extractDocumentData(res: Response) : string[] {
-    let result = res.json();
+  private extractDocumentData(result: any): string[] {
     let lemgrams: string[] = [];
 
     if (result.hits !== 0) {

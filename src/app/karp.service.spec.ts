@@ -1,10 +1,10 @@
 /* tslint:disable:no-unused-variable */
 
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 import { KarpService } from './karp.service';
 
 describe('Service: Karp', () => {
-  let http: Http;
+  let http: HttpClient;
   let service: KarpService;
 
   beforeEach(() => {
