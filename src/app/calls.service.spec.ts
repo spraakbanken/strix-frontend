@@ -1,13 +1,13 @@
 /* tslint:disable:no-unused-variable */
 
-import { Http } from '@angular/http';
+import { HttpClient } from '@angular/common/http';
 
 import { CallsService } from './calls.service';
 import { LocService } from './loc.service';
 
 describe('Service: Calls', () => {
   let service: CallsService;
-  let http = <Http>{};
+  let http = <HttpClient>{};
   let locService = <LocService>{};
 
   beforeEach(() => {

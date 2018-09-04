@@ -147,11 +147,11 @@ export class QueryService {
     /* switchMap makes sure only the most recently added query stream is listened to.
        All other streams are unsubscribed and the $http request should, as a
        consequence be cancelled. */
-    this.streamOfStreams.switchMap(obj => obj).subscribe( (value: StrixResult) => {
+    this.streamOfStreams.switchMap(obj => obj).subscribe( (value: SearchResult) => {
       this.signalEndedSearch();
       this.searchResultSubject.next(value);
     });
-    this.streamOfAggregationStreams.switchMap(obj => obj).subscribe((value: StrixResult) => {
+    this.streamOfAggregationStreams.switchMap(obj => obj).subscribe((value: AggregationsResult) => {
       this.aggregationResultSubject.next(value);
     });
   }

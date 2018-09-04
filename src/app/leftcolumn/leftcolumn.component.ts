@@ -13,7 +13,7 @@ import {
   SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
   INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
 } from '../searchreducer';
-import { StrixResult, Bucket, Aggregations, Agg } from "../strixresult.model";
+import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 // import { RangesliderComponent } from "./rangeslider.component";
 
@@ -70,7 +70,7 @@ export class LeftcolumnComponent implements OnInit {
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.skip(1).subscribe(
-      (result : StrixResult) => {
+      (result : AggregationsResult) => {
         this.parseAggResults(result) 
       },
       error => null//this.errorMessage = <any>error
@@ -148,7 +148,7 @@ export class LeftcolumnComponent implements OnInit {
     this.updateFilters()
   }
 
-  private parseAggResults(result: StrixResult) {
+  private parseAggResults(result: AggregationsResult) {
     console.log("parseAggResults", result);
     if(_.keys(result.aggregations).length < 2) {
       return
@@ -268,7 +268,7 @@ export class LeftcolumnComponent implements OnInit {
       this.searchRedux.filter((d) => d.latestAction === INITIATE),
       this.metadataService.loadedMetadata$
 
-    ).subscribe(([result, {filters}, info] : [StrixResult, any, any]) => {
+    ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
       //this.zone.run(() => {  
         console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)

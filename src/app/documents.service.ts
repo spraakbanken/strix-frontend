@@ -10,7 +10,6 @@ import * as _ from 'lodash';
 import { CallsService } from './calls.service';
 import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
-import { StrixResult } from './strixresult.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
 import { AppState, OPENDOCUMENT } from './searchreducer';
