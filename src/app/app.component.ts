@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
-import { DocumentsService } from './documents.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState } from './searchreducer';
-import { filter } from 'rxjs/operators';
 
 
 @Component({
@@ -21,8 +20,8 @@ export class AppComponent {
   private openDocument = false;
   private loggedIn = false;
 
-  private languages: string[] = ["swe", "eng"]; // TODO: Move to some config
-  private selectedLanguage: string = "";
+  public languages: string[];
+  public selectedLanguage: string;
 
   constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService) {
     console.log(_.add(1, 3)); // Just to test lodash
@@ -34,7 +33,7 @@ export class AppComponent {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
-      this.selectedLanguage = data.lang
+      this.selectedLanguage = data.lang;
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
@@ -46,14 +45,21 @@ export class AppComponent {
       console.log("|closeDocument");
       this.openDocument = false;
     });
+
+    this.languages = this.locService.getAvailableLanguages();
+    // Get 3-letter correspondents of user's preferred languages.
+    let userLanguages = _.values(_.pick(LocService.LOCALE_MAP, window.navigator.languages || [window.navigator.language]));
+    // Choose first supported user language. If none, default to first supported language.
+    let language = _.head(_.intersection(userLanguages, this.languages)) || this.languages[0];
+    this.selectedLanguage = language;
+    this.locService.setCurrentLanguage(language);
   }
 
-  private changeLanguageTo(language: string) {
+  public changeLanguageTo(language: string) {
     this.store.dispatch({ type: CHANGELANG, payload : language});
-    // this.locService.setCurrentLanguage(language);
   }
 
-  private gotoLogin() {
+  public gotoLogin() {
     window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${window.location}`
   }
 

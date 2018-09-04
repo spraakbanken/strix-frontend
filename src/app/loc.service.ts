@@ -9,11 +9,15 @@ import { filter } from 'rxjs/operators';
 @Injectable()
 export class LocService {
 
-  static readonly MISSING: string = '-missing translation-';
+  static readonly MISSING = '-missing translation-';
+  static readonly LOCALE_MAP = { // TODO: Use 2-letter codes everywhere?
+    'sv' : 'swe',
+    'en' : 'eng',
+  };
 
   private searchRedux: Observable<any>;
 
-  private currentLanguage : string = "swe"; // TODO: The default language should be in some config (or chosen by locale)
+  private currentLanguage: string;
   private dictionaries: any = {
     'swe' : {
       'swe' : 'Svenska',
@@ -80,13 +84,17 @@ export class LocService {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE)).subscribe((data) => {
-      this.currentLanguage = data.lang;
+      this.setCurrentLanguage(data.lang);
     });
 
   }
 
   public updateDictionary(obj : {eng: Record<string, string>, swe: Record<string, string>}) {
     _.merge(this.dictionaries, obj);
+  }
+
+  public getAvailableLanguages(): string[] {
+    return _.keys(this.dictionaries);
   }
 
   public getCurrentLanguage(): string {
