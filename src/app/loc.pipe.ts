@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { LocService } from './loc.service';
+import { LangPhrase } from './loc.model';
 
 @Pipe({
   name: 'loc',
@@ -9,7 +10,7 @@ export class LocPipe implements PipeTransform {
 
   constructor(private locService: LocService) {}
   
-  transform(value: any, defaultValue?: any): any {
+  transform(value: string | LangPhrase, defaultValue?: string): string {
     if (value === undefined || value === null) {
       console.log("This shouldn't happen. A translatable value is undefined or null. Probably a metadata or data error.");
       return "-error-";
@@ -21,12 +22,7 @@ export class LocPipe implements PipeTransform {
       return this.locService.getTranslationFor(value, defaultValue);
     } else {
       /*
-        It's an object with this structure:
-          {
-            "swe" : "translated text",
-            "eng" : "translated text",
-            [...]
-          }
+        It's a LangPhrase object.
         We pick the translated text for the current language.
       */
       let currentLanguage = this.locService.getCurrentLanguage();

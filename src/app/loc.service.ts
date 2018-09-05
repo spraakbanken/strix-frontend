@@ -5,6 +5,7 @@ import * as _ from 'lodash';
 
 import { AppState, CHANGELANG, INITIATE } from './searchreducer';
 import { filter } from 'rxjs/operators';
+import { LangPhrases } from './loc.model';
 
 @Injectable()
 export class LocService {
@@ -18,7 +19,7 @@ export class LocService {
   private searchRedux: Observable<any>;
 
   private currentLanguage: string;
-  private dictionaries: any = {
+  private dictionaries: LangPhrases = {
     'swe' : {
       'swe' : 'Svenska',
       'eng' : 'Engelska',

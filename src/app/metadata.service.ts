@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 
 import { CallsService } from './calls.service';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';
+import { LangPhrase } from './loc.model';
 
 @Injectable()
 export class MetadataService {
@@ -36,7 +37,7 @@ export class MetadataService {
     return this.availableCorpora[corpusID].structAttributes || [];
   }
   
-  public getName(corpusID: string): {[lang: string]: string} {
+  public getName(corpusID: string): LangPhrase {
     return this.availableCorpora[corpusID].name;
   }
 

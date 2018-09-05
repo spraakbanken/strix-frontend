@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 
 import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
+import { LangPhrase } from '../loc.model';
 
 /**
  * The header component should let the user search in the open document and as well
@@ -19,7 +20,7 @@ export class HeaderComponent implements OnInit {
   
   private subscription: Subscription;
   public documentTitle: string;
-  public corpusName: {[lang: string]: string};
+  public corpusName: LangPhrase;
 
   constructor(private documentsService: DocumentsService, private metadataService: MetadataService) {
 
