@@ -29,7 +29,7 @@ import { RangesliderComponent } from './leftcolumn/rangeslider.component';
 import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
-import { searchReducer } from './searchreducer';
+import { searchReducer, uiStateReducer, documentStateReducer, queryStateReducer } from './searchreducer';
 import { RoutingService } from './routing.service';
 import { SearchComponent } from './search/search.component';
 import { MinidocselectionComponent } from './minidocselection/minidocselection.component';
@@ -86,7 +86,11 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     AccordionModule.forRoot(),
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
-    StoreModule.forRoot({searchRedux: searchReducer}),
+    StoreModule.forRoot({
+      query: queryStateReducer,
+      document: documentStateReducer,
+      ui: uiStateReducer,
+    }),
     NouisliderModule
   ],
   providers: [

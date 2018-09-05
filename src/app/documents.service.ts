@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, throwError, of } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { filter, mergeMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
 import { CallsService } from './calls.service';
 import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
-import { StrixMessage } from './strixmessage.model';
+import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT } from './searchreducer';
-import { CLOSEDOCUMENT } from './searchreducer';
+import { AppState, CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
 /**
@@ -25,8 +24,6 @@ import { SearchQuery } from './strixsearchquery.model';
 
 @Injectable()
 export class DocumentsService {
-
-  private searchRedux: Observable<SearchRedux>;
 
   private loadedDocument = new Subject<StrixMessage>();
   private errorMessage: string;
@@ -50,25 +47,27 @@ export class DocumentsService {
               private queryService: QueryService,
               private store: Store<AppState>) {
 
-    this.searchRedux = this.store.select('searchRedux');
-    console.log("in documents constructor");
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("open document with", data, this.queryService);
-      this.loadDocumentWithQuery(
-        data.documentID,
-        data.documentCorpus,
-        this.queryService.getSearchString() || "",
-        this.queryService.getInOrderFlag(),
-        data.sentenceID || null);
-    });
-    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCHINDOCUMENT)).subscribe((data) => {
-      this.loadDocumentWithQuery(
-          data.documentID,
-          data.documentCorpus,
-          data.localQuery || "",
-          null,
-          data.sentenceID || null);
-    });
+    this.store.select('document').pipe(filter(state => state.open)).subscribe(state => {
+      console.log("open document with", state, this.queryService);
+
+      if (state.localQuery && state.localQuery !== "") {
+        // Reopen the current document with the new query
+        this.loadDocumentWithQuery(
+           state.documentID,
+           state.documentCorpus,
+           state.localQuery || "",
+           null,
+           state.sentenceID || null);
+      } else {
+        // Open a new document in the ordinary way
+        this.loadDocumentWithQuery(
+           state.documentID,
+           state.documentCorpus,
+           this.queryService.getSearchString() || "",
+           this.queryService.getInOrderFlag(),
+           state.sentenceID || null);
+      }
+    })
   }
 
   /* A simple reference counting mechanism for keeping track of

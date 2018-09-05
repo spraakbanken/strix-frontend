@@ -1,16 +1,13 @@
-import { Component, OnInit, ViewChildren } from '@angular/core';
-import { Subscription, Observable, zip } from 'rxjs';
+import { Component, OnInit } from '@angular/core';
+import { Subscription, zip } from 'rxjs';
 import { filter, skip } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
-import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import {
-SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
-} from '../searchreducer';
+import { StrixCorpusConfig } from '../strixcorpusconfig.model';
+import { SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
 // import { RangesliderComponent } from "./rangeslider.component";
@@ -36,7 +33,6 @@ export class LeftcolumnComponent implements OnInit {
 
   private openDocument = false;
 
-  private searchRedux: Observable<any>;
   private include_facets : string[] = []
   private availableCorpora : { [key: string] : StrixCorpusConfig};
   private mem_guessConfFromAttributeName : Function;
@@ -57,13 +53,11 @@ export class LeftcolumnComponent implements OnInit {
         }
     });
 
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
+    this.store.select('ui').pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       this.openDocument = true;
     });
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+    this.store.select('ui').pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       this.openDocument = false;
     });
 
@@ -263,10 +257,10 @@ export class LeftcolumnComponent implements OnInit {
     // Filtrera på INITIATE nedan
     zip(
       this.queryService.aggregationResult$,
-      this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)),
+      this.store.pipe(filter((d) => d.ui.latestAction === INITIATE)),
       this.metadataService.loadedMetadata$
 
-    ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
+    ).subscribe(([result, {query: {filters}}, info] : [AggregationsResult, any, any]) => {
       //this.zone.run(() => {  
         console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)

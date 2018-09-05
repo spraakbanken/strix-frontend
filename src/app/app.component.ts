@@ -1,12 +1,10 @@
 import { Component } from '@angular/core';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { filter } from 'rxjs/operators';
 
 import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
-import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedux } from './searchreducer';
+import { CHANGELANG, AppState } from './searchreducer';
 
 
 @Component({
@@ -16,7 +14,6 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedu
 })
 export class AppComponent {
 
-  private searchRedux: Observable<SearchRedux>;
   private openDocument = false;
   private loggedIn = false;
 
@@ -30,20 +27,13 @@ export class AppComponent {
       this.loggedIn = true;
     }
 
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
-      this.selectedLanguage = data.lang;
+    this.store.select('ui').subscribe(ui => {
+      this.selectedLanguage = ui.lang;
     });
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("|openDocument");
-      this.openDocument = true;
-    });
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
-      console.log("|closeDocument");
-      this.openDocument = false;
+    this.store.select('document').subscribe((document) => {
+      console.log(document.open ? "|openDocument" : "|closeDocument");
+      this.openDocument = document.open;
     });
 
     this.languages = this.locService.getAvailableLanguages();

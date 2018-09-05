@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { Observable, timer, fromEvent } from 'rxjs';
+import { timer, fromEvent } from 'rxjs';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, } from './searchreducer';
 import { QueryType } from './strixquery.model';
 
 /** The Routing Service is responsible for keeping the web browser URL and
@@ -18,39 +18,36 @@ enum FragmentType {
 @Injectable()
 export class RoutingService {
 
-  private searchRedux: Observable<SearchRedux>;
-
-  private readonly urlFields: {tag: string, type: FragmentType, default: any}[] = [
-    {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
-    {tag : "query", type : FragmentType.URI, default : ""},
-    {tag : "localQuery", type : FragmentType.STRING, default : ""},
-    {tag : "page", type : FragmentType.NUMBER, default : 1},
-    {tag : "filters", type : FragmentType.BASE64, default : {}},
-    {tag : "include_facets", type : FragmentType.STRINGARRAY, default : []},
-    {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
-    {tag : "documentID", type : FragmentType.STRING, default : ""},
-    {tag : "sentenceID", type : FragmentType.STRING, default : ""},
-    {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
-    {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
+  private readonly urlFields: {tag: string[], type: FragmentType, default: any}[] = [
+    {tag : ['query', "type"], type : FragmentType.STRING, default : QueryType.Normal},
+    {tag : ['query', "query"], type : FragmentType.URI, default : ""},
+    {tag : ['document', "localQuery"], type : FragmentType.STRING, default : ""},
+    {tag : ['query', "page"], type : FragmentType.NUMBER, default : 1},
+    {tag : ['query', "filters"], type : FragmentType.BASE64, default : {}},
+    {tag : ['query', "include_facets"], type : FragmentType.STRINGARRAY, default : []},
+    {tag : ['query', "keyword_search"], type : FragmentType.BOOLEAN, default : false},
+    {tag : ['document', "documentID"], type : FragmentType.STRING, default : ""},
+    {tag : ['document', "sentenceID"], type : FragmentType.STRING, default : ""},
+    {tag : ['document', "documentCorpus"], type : FragmentType.STRING, default : ""},
+    {tag : ['ui', "lang"], type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
 
   constructor(private store: Store<AppState>) {
-    this.searchRedux = this.store.select('searchRedux');
     this.initializeStartingParameters();
 
     // React on app state changes by pushing a new browser state.
     // Set the encoded app state as the URL query string.
-    this.searchRedux.subscribe((state: SearchRedux) => {
-      console.log("the data", state);
+    this.store.subscribe(state => {
+      // let state: QueryState & DocumentState & UiState = _.concat(_.values(appState));
       let urlString = '?' + _.compact(this.urlFields.map((field) => {
-        const val = this.stringify(field.type, state[field.tag]);
+        const val = this.stringify(field.type, _.get(state, field.tag));
         if(!val || val === this.stringify(field.type, field.default)) {
           return ""
         }
-        return `${encodeURI(field.tag)}=${encodeURI(val)}`;
+        return `${encodeURI(_.get(state, field.tag))}=${encodeURI(val)}`;
       })).join("&");
-      if (state.latestAction !== INITIATE) {
-        if (state.history) {
+      if (state.ui.latestAction !== INITIATE) {
+        if (state.ui.history) {
           console.log("PUSHING STATE")
           window.history.pushState("", "", urlString)
         } else {
@@ -96,7 +93,7 @@ export class RoutingService {
     }
   }
 
-  private getCurrentState(): SearchRedux {
+  private getCurrentState(): AppState {
     const urlSearch: string = window.location.search;
     console.log("urlSearch", urlSearch)
     let startParams = {};
@@ -104,10 +101,10 @@ export class RoutingService {
       const urlPart = urlSearch.split("?")[1];
       startParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
     }
-    const state: object = {};
+    const state: AppState = {query : {}, document : {}, ui : {}};
     for (const field of this.urlFields) {
-      const item = startParams[field.tag] ? this.destringify(field.type, startParams[field.tag]) : field.default;
-      state[field.tag] = item || null;
+      const item = _.get(startParams, field.tag) ? this.destringify(field.type, _.get(startParams, field.tag)) : field.default;
+      _.set(state, field.tag, item || null);
     }
     return state
   }
@@ -125,8 +122,8 @@ export class RoutingService {
 
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
     timer(0).subscribe(() => {
-      if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
-        console.log("autoopening document", startState.documentID, startState.documentCorpus);
+      if ((startState.document.documentID || startState.document.sentenceID) && startState.document.documentCorpus) {
+        console.log("autoopening document", startState.document.documentID, startState.document.documentCorpus);
         this.store.dispatch({
           type : OPENDOCUMENT_NOHISTORY,
           payload : {

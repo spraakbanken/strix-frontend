@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Subject ,  BehaviorSubject ,  Observable } from 'rxjs';
+import { Subject, BehaviorSubject, Observable } from 'rxjs';
 
 import { QueryType, StrixQuery } from './strixquery.model';
 import { SearchResult, AggregationsResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
-import { SEARCH, CLOSEDOCUMENT, AppState, SearchRedux } from './searchreducer';
+import { CLOSEDOCUMENT, AppState } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
 import { filter, switchMap } from 'rxjs/operators';
+import * as _ from 'lodash';
 
 /**
  * The Query service handles the main query resulting in
@@ -43,8 +44,6 @@ export class QueryService {
   // state directly upon subscribing.
   private searchStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
   searchStatus$ = this.searchStatusSubject.asObservable();
-
-  private searchRedux: Observable<SearchRedux>;
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
@@ -113,31 +112,26 @@ export class QueryService {
 
   onInit() {
 
-    this.searchRedux = this.store.select('searchRedux');
+    this.store.select('query').subscribe(data => {
     /* React upon the action SEARCH, most likely triggering a main query search. */
-    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH)).subscribe((data) => {
+      const previousQuery = this.currentQuery;
       this.currentQuery = new StrixQuery();
       this.currentQuery.type = <QueryType>data.type;
       this.currentQuery.queryString = data.query;
       this.currentQuery.pageIndex = data.page;
       this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
-      /* console.log("data.corpora", data.corpora);
-      if ( data.corpora.length === 1 && data.corpora[0] === undefined) { // Because of "corpora=" in the URL
-        this.currentQuery.corpora = []; // All corpora (default)
-      } else {
-        this.currentQuery.corpora = data.corpora;
-      } */
-      
       this.currentQuery.filters = data.filters;
       this.currentQuery.include_facets = data.include_facets || [];
       if(data.keyword_search) {
         this.currentQuery.keyword_search = data.keyword_search
       }
-      this.runCurrentQuery(); // Perform the actual search
+      if (!_.isEqual(this.currentQuery, previousQuery)) {
+        this.runCurrentQuery(); // Perform the actual search
+      }
     });
 
     /* Redo the last query when the user closes the open document */
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+    this.store.select('ui').pipe(filter(ui => ui.latestAction === CLOSEDOCUMENT)).subscribe(() => {
       if (this.currentQuery) this.runCurrentQuery(); // REM: Don't know why it's sometimes null (and only in Firefox, it seems..)
     });
 

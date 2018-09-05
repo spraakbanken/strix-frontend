@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -8,7 +8,7 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, SearchRedux } from '../searchreducer';
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState } from '../searchreducer';
 import { SearchResult } from '../strixresult.model';
 import { filter } from 'rxjs/operators';
 
@@ -18,8 +18,6 @@ import { filter } from 'rxjs/operators';
   styleUrls: ['./docselection.component.css']
 })
 export class DocselectionComponent implements OnInit {
-
-  private searchRedux: Observable<SearchRedux>;
 
   private hasSearched = false;
   private disablePaginatorEvent = false;
@@ -44,7 +42,6 @@ export class DocselectionComponent implements OnInit {
               private queryService: QueryService,
               private metadataService: MetadataService,
               private store: Store<AppState>) {
-    this.searchRedux = this.store.select('searchRedux');
 
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
@@ -56,16 +53,15 @@ export class DocselectionComponent implements OnInit {
         }
     });
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
+    this.store.select('ui').pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe(() => {
       console.log("OPENDOCUMENT");
       this.documentsWithHits = [];
       this.totalNumberOfDocuments = 0;
       this.hasSearched = false;
       //this.show = false;
     });
-    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
-      //this.disablePaginatorEvent = true;
-      this.currentPaginatorPage = data.page
+    this.store.pipe(filter((d) => d.ui.latestAction === CHANGEQUERY)).subscribe((data) => {
+      this.currentPaginatorPage = data.query.page;
     })
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
@@ -83,10 +79,10 @@ export class DocselectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
+    this.store.pipe(filter((d) => d.ui.latestAction === INITIATE)).subscribe((data) => {
       console.log("init", data)
       //this.currentPaginatorPage = data.page
-      this.setPaginatorPage(data.page)
+      this.setPaginatorPage(data.query.page)
     })
   }
 
