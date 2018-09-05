@@ -6,7 +6,7 @@ import { filter } from 'rxjs/operators';
 
 import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
-import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState } from './searchreducer';
+import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedux } from './searchreducer';
 
 
 @Component({
@@ -16,7 +16,7 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState } from './s
 })
 export class AppComponent {
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
   private openDocument = false;
   private loggedIn = false;
 

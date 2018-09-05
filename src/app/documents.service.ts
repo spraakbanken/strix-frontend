@@ -9,7 +9,7 @@ import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT } from './searchreducer';
+import { AppState, OPENDOCUMENT, SearchRedux } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
@@ -26,7 +26,7 @@ import { SearchQuery } from './strixsearchquery.model';
 @Injectable()
 export class DocumentsService {
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
 
   private loadedDocument = new Subject<StrixMessage>();
   private errorMessage: string;

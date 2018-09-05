@@ -8,7 +8,7 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState } from '../searchreducer';
+import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, SearchRedux } from '../searchreducer';
 import { SearchResult } from '../strixresult.model';
 import { filter } from 'rxjs/operators';
 
@@ -19,7 +19,7 @@ import { filter } from 'rxjs/operators';
 })
 export class DocselectionComponent implements OnInit {
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
 
   private hasSearched = false;
   private disablePaginatorEvent = false;

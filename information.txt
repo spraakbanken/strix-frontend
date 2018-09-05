@@ -9,7 +9,7 @@ interface AppState {
 
 [...] // component boilerplate code here
 
-private searchRedux: Observable<any>;
+private searchRedux: Observable<SearchRedux>;
 
 constructor(private store: Store<AppState>) {
   this.searchRedux = this.store.select('searchRedux');

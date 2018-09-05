@@ -5,7 +5,7 @@ import { QueryType, StrixQuery } from './strixquery.model';
 import { SearchResult, AggregationsResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
-import { SEARCH, CLOSEDOCUMENT, AppState } from './searchreducer';
+import { SEARCH, CLOSEDOCUMENT, AppState, SearchRedux } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
 import { filter, switchMap } from 'rxjs/operators';
 
@@ -44,7 +44,7 @@ export class QueryService {
   private searchStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
   searchStatus$ = this.searchStatusSubject.asObservable();
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
@@ -117,7 +117,7 @@ export class QueryService {
     /* React upon the action SEARCH, most likely triggering a main query search. */
     this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH)).subscribe((data) => {
       this.currentQuery = new StrixQuery();
-      this.currentQuery.type = data.type;
+      this.currentQuery.type = <QueryType>data.type;
       this.currentQuery.queryString = data.query;
       this.currentQuery.pageIndex = data.page;
       this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded

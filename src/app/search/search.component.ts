@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
 
 @Component({
@@ -18,7 +18,7 @@ import { Filter, QueryType } from '../strixquery.model';
 })
 export class SearchComponent implements OnInit {
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
   
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
   private searchType = QueryType.Normal;

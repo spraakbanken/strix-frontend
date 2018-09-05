@@ -43,6 +43,7 @@ export interface SearchRedux {
   history?: boolean;
   page?: number;
   query?: string;
+  type?: string;
   sentenceID?: number;
 }
 

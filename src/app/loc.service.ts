@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
-import { AppState, CHANGELANG, INITIATE } from './searchreducer';
+import { AppState, CHANGELANG, INITIATE, SearchRedux } from './searchreducer';
 import { filter } from 'rxjs/operators';
 import { LangPhrases } from './loc.model';
 
@@ -16,7 +16,7 @@ export class LocService {
     'en' : 'eng',
   };
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
 
   private currentLanguage: string;
   private dictionaries: LangPhrases = {

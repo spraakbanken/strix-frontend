@@ -18,7 +18,7 @@ enum FragmentType {
 @Injectable()
 export class RoutingService {
 
-  private searchRedux: Observable<any>;
+  private searchRedux: Observable<SearchRedux>;
   
   private readonly urlFields: {tag: string, type: FragmentType, default: any}[] = [
     {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
