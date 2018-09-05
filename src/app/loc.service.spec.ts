@@ -1,10 +1,10 @@
 /* tslint:disable:no-unused-variable */
 
 import { Store } from '@ngrx/store';
+import { Observable, Subject } from 'rxjs';
 
 import { LocService } from './loc.service';
 import { AppState, INITIATE } from './searchreducer';
-import { Subject } from 'rxjs';
 
 describe('Service: Loc', () => {
   let service: LocService;
@@ -13,7 +13,7 @@ describe('Service: Loc', () => {
 
   beforeEach(() => {
     appStateStore = <Store<AppState>>{
-      select : a => searchRedux,
+      select : a => <Observable<AppState>>searchRedux,
     };
 
     service = new LocService(appStateStore);
