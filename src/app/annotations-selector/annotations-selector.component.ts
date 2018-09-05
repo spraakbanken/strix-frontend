@@ -26,11 +26,11 @@ export class AnnotationsSelectorComponent implements OnInit {
   private gotMetadata = false;
   private metadataSubscription: Subscription;
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
-  private wordAnnotations = [];
-  private selectedAnnotation: string;
-  private selectedAnnotationValue: string;
-  private selectedAnnotationStructuralType = 'token';
-  private structuralAnnotations = [];
+  public wordAnnotations = [];
+  public selectedAnnotation: string;
+  public selectedAnnotationValue: string;
+  public selectedAnnotationStructuralType = 'token';
+  public structuralAnnotations = [];
   private currentCorpusID: string;
   private currentDocumentID: string;
 
@@ -92,7 +92,7 @@ export class AnnotationsSelectorComponent implements OnInit {
     console.log("this.structuralAnnotations", this.structuralAnnotations);
   }
 
-  private selectAnnotationStructuralType(structuralType: string) {
+  public selectAnnotationStructuralType(structuralType: string) {
     this.selectedAnnotationStructuralType = structuralType || "token";
     this.selectedAnnotation = undefined;
     console.log("structural attributes", this.structuralAnnotations);
@@ -102,7 +102,7 @@ export class AnnotationsSelectorComponent implements OnInit {
     return _.find(this.structuralAnnotations, (obj) => obj.name === name);
   }
 
-  private selectAnnotation(annotation: string, structure: string = null) {
+  public selectAnnotation(annotation: string, structure: string = null) {
     console.log("selectAnnotation", annotation);
     this.selectedAnnotationValue = "";
     this.selectedAnnotation = annotation;
@@ -157,17 +157,19 @@ export class AnnotationsSelectorComponent implements OnInit {
     return this.getAnnotation()["type"];
   }
 
-  private getAnnotationTranslation() {
+  public getAnnotationTranslation() {
     let annotation = this.getAnnotation();
-    if (annotation["translation_value"]) {
-      return annotation["translation_value"];
+    if (!annotation) {
+      return null;
+    }
+    if (annotation["translation_name"]) {
+      return annotation["translation_name"];
     } else {
       if (annotation["type_info"] && annotation["type_info"].translation_value) {
         return annotation["type_info"].translation_value;
-      } else {
-        return {};
       }
     }
+    return null;
   }
 
 }

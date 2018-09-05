@@ -1,34 +1,54 @@
 <span>{{'color_mark_attribute' | loc}}&nbsp;</span>
-<select
-  class="form-control annotation-dropdown"
-  (change)="selectAnnotationStructuralType($event.target.value)"
-  [ngModel]="selectedAnnotationStructuralType">
-  <!--<optgroup [label]="word_attributes_label">-->
-    <option value="token">{{'word_attributes' | loc}}</option>
-  <!--</optgroup>-->
-  <optgroup [label]="'-'+getTranslation('structural_attributes')+':'">
-    <option *ngFor="let item of structuralAnnotations" value="{{item.name}}">{{item.name | loc}}</option>
-  </optgroup>
-</select>
-<select
-  class="form-control annotation-dropdown"
-  *ngIf="selectedAnnotationStructuralType === 'token'"
-  (change)="selectAnnotation($event.target.value)"
-  [ngModel]="selectedAnnotation" >
-  <option value="undefined" selected hidden disabled>&lt;{{'no_choice' | loc}}&gt;</option>
-  <option *ngFor="let item of wordAnnotations" value="{{item.name}}">{{item.translation_name | loc}}</option>
-</select>
-<select
-  class="form-control annotation-dropdown"
-  *ngIf="selectedAnnotationStructuralType !== 'token'"
-  (change)="selectAnnotation($event.target.value, selectedAnnotationStructuralType)"
-  [ngModel]="selectedAnnotation">
-    <option value="undefined" selected hidden disabled>&lt;{{'no_choice' | loc}}&gt;</option>
-    <option *ngFor="let item of getStructuralAttributeGroup(selectedAnnotationStructuralType).attributes" value="{{item.name}}">{{item.translation_name | loc}}</option>
-  </select>
-<!--<select (change)="selectAnnotationValue($event.target.value)" [ngModel]="selectedAnnotationValue" *ngIf="selectedAnnotation && !useTypeahead">
-  <option *ngFor="let item of annotationValues" value="{{item.key}}">{{item.key}}</option>
-</select>-->
+
+<div dropdown class="dropdown annotation-dropdown">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+    {{(selectedAnnotationStructuralType === 'token' ? 'word_attributes' : selectedAnnotationStructuralType) | loc}}
+  </button>
+  <div *dropdownMenu class="dropdown-menu">
+    <span class="dropdown-item"
+          (click)="selectAnnotationStructuralType('token')">
+      {{'word_attributes' | loc}}
+    </span>
+
+    <div class="dropdown-divider"></div>
+    <h4 class="dropdown-header">{{getTranslation('structural_attributes')}}</h4>
+
+    <span class="dropdown-item"
+          *ngFor="let item of structuralAnnotations"
+          (click)="selectAnnotationStructuralType(item.name)">
+       {{item.name | loc}}
+    </span>
+  </div>
+</div>
+
+<div dropdown class="dropdown annotation-dropdown"
+     *ngIf="selectedAnnotationStructuralType === 'token'">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+    {{getAnnotationTranslation() || 'no_choice' | loc}}
+  </button>
+  <div *dropdownMenu class="dropdown-menu">
+    <span class="dropdown-item"
+          *ngFor="let item of wordAnnotations"
+          (click)="selectAnnotation(item.name)">
+      {{item.translation_name | loc}}
+    </span>
+  </div>
+</div>
+
+<div dropdown class="dropdown annotation-dropdown"
+     *ngIf="selectedAnnotationStructuralType !== 'token'">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+    {{getAnnotationTranslation() || 'no_choice' | loc}}
+  </button>
+  <div *dropdownMenu class="dropdown-menu">
+    <span class="dropdown-item"
+          *ngFor="let item of getStructuralAttributeGroup(selectedAnnotationStructuralType).attributes"
+          (click)="selectAnnotation(item.name, selectedAnnotationStructuralType)">
+      {{item.translation_name | loc}}
+    </span>
+  </div>
+</div>
+
 <input
   *ngIf="selectedAnnotation"
   [(ngModel)]="selectedAnnotationValue"
