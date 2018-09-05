@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { map, catchError, tap } from 'rxjs/operators';
+import { Observable, throwError, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
+
 import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
@@ -27,10 +28,16 @@ export class CallsService {
     in the application init section isn't the same as the one injected in the bootstrapped app. */
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
-    return this.http.get(url, {withCredentials : true}).pipe(
-      tap(data => { console.log(data); window['jwt'] = data['_body'] }),
-      map(() => true),
-      catchError(this.handleError)
+    return this.http.get(url, {responseType : 'text', withCredentials : true}).pipe(
+      map(data => {
+        console.log('JWT', data);
+        window['jwt'] = data['_body'];
+        return true;
+      }),
+      catchError((error: HttpErrorResponse) =>
+        // "403 Forbidden" is fine, not an error.
+        error.status === 403 ? of(false) : this.handleError(error)
+      )
     );
   }
 

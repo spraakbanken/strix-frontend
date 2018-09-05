@@ -26,6 +26,8 @@ declare module '@ngrx/store' {
 }
 
 export interface AppState {
+  // TODO: Group props from SearchRedux directly in here?
+  // E.g. search : {query, keyword_search}, so SearchComponent can do store.select('search')
   searchRedux: SearchRedux;
 }
 

@@ -113,7 +113,7 @@ export function onAppInit(callsService: CallsService): () => Promise<any> {
     return new Promise((resolve, reject) => {
       callsService.testForLogin().subscribe(
         answer => {
-          console.log("the answer", answer);
+          console.log("Login", answer);
           resolve();
         },
         error => { resolve(); }
