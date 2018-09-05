@@ -16,35 +16,26 @@ import { filter } from 'rxjs/operators';
 export class MinidocselectionComponent implements OnInit, OnDestroy {
 
   private searchRedux: Observable<any>;
-
   private subscription: Subscription;
 
-  private searchResultSubscription: Subscription;
-  private documentsWithHits: StrixDocument[] = [];
-  private totalNumberOfDocuments: number = 0;
-  /* private page = 1; */
-
-  //private isLoading = false;
-  private show = false;
+  public documentsWithHits: StrixDocument[] = [];
+  public isMainDocumentLoaded = false;
 
   constructor(private queryService: QueryService,
               private store: Store<AppState>,
               private documentsService: DocumentsService) {
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      this.show = true;
-      /* this.page = data.page; */
-    });
-    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH || d.latestAction === RELOAD)).subscribe((data) => {
-      console.log("searched or changed page")
+    this.searchRedux.pipe(filter((d) => [OPENDOCUMENT, SEARCH, RELOAD].includes(d.latestAction)))
+      .subscribe(() => {
       this.documentsWithHits = [];
-      /* this.page = data.page; */
+      // Hide until main document is loaded.
+      this.isMainDocumentLoaded = false;
     });
 
     this.subscription = documentsService.loadedDocument$.subscribe(
       message => {
-        console.log("fetching related data.", message);
+        this.isMainDocumentLoaded = true;
         documentsService.getRelatedDocuments(message.documentIndex).subscribe(
           answer => {
             console.log("related data", answer["data"]);
@@ -52,34 +43,12 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
           }
         );
     });
-
-    /* this.searchResultSubscription = queryService.searchResult$.subscribe(
-      answer => {
-        console.log("answer", answer);
-        this.documentsWithHits = answer.data;
-        this.totalNumberOfDocuments = answer.count;
-        //this.isLoading = false;
-      },
-      error => null//this.errorMessage = <any>error
-    ); */
   }
 
-  private openDocument(docIndex: number) {
+  public openDocument(docIndex: number) {
     let doc = this.documentsWithHits[docIndex];
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
   }
-
-  /* private previousPage() {
-    this.store.dispatch({type : CHANGEPAGE, payload : this.page - 1});
-    this.store.dispatch({type : RELOAD, payload : null});
-    console.log("Dispatched CHANGEPAGE to", this.page - 1);
-  }
-
-  private nextPage() {
-    this.store.dispatch({type : CHANGEPAGE, payload : this.page + 1});
-    this.store.dispatch({type : RELOAD, payload : null});
-    console.log("Dispatched CHANGEPAGE to", this.page + 1);
-  } */
 
   ngOnInit() {
   }

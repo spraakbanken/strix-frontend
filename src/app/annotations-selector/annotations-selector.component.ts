@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
 import * as _ from 'lodash';
 
@@ -10,7 +9,6 @@ import { CallsService } from '../calls.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
-import { AppState } from '../searchreducer';
 
 @Component({
   selector: 'annotations-selector',
@@ -39,7 +37,6 @@ export class AnnotationsSelectorComponent implements OnInit {
   private annotationValues = [];
 
   constructor(private documentsService: DocumentsService,
-              private store: Store<AppState>,
               private metadataService: MetadataService,
               private callsService: CallsService,
               private readerCommunicationService: ReaderCommunicationService,

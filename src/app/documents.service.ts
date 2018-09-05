@@ -41,7 +41,7 @@ export class DocumentsService {
   private readonly DOC_ID_PREFIX_LENGTH = 4;
   private readonly LINE_NUM_PREFIX_LENGTH = 8;
 
-  loadedDocument$ = this.loadedDocument.asObservable();
+  loadedDocument$: Observable<StrixMessage> = this.loadedDocument.asObservable();
 
   private docLoadingStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
   docLoadingStatus$ = this.docLoadingStatusSubject.asObservable();
