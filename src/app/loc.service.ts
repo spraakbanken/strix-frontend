@@ -1,9 +1,10 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
 import { AppState, CHANGELANG, INITIATE } from './searchreducer';
+import { filter } from 'rxjs/operators';
 
 @Injectable()
 export class LocService {
@@ -82,7 +83,7 @@ export class LocService {
 
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE)).subscribe((data) => {
       this.setCurrentLanguage(data.lang);
     });
 

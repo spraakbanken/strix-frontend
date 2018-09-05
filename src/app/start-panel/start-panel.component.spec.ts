@@ -1,8 +1,9 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
-import { AppState } from '../searchreducer';
+import { Observable } from 'rxjs';
 
+import { AppState } from '../searchreducer';
 import { StartPanelComponent } from './start-panel.component';
 
 describe('StartPanelComponent', () => {
@@ -12,11 +13,7 @@ describe('StartPanelComponent', () => {
 
   beforeEach(async(() => {
     appStateStore = <Store<AppState>>{
-      select : a => ({
-        filter : predicate => ({
-          subscribe : next => null,
-        }),
-      }),
+      select : a => new Observable(),
     };
 
     TestBed.configureTestingModule({

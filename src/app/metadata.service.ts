@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 import { CallsService } from './calls.service';
 import { StrixCorpusConfig } from './strixcorpusconfig.model';

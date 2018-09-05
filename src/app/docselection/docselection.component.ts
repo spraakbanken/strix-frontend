@@ -1,7 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
-import { Subscription }   from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Component, OnInit } from '@angular/core';
+import { Subscription, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -9,10 +7,10 @@ import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
-import { StrixEvent } from '../strix-event.enum';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState } from '../searchreducer';
 import { SearchResult } from '../strixresult.model';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'docselection',
@@ -58,14 +56,14 @@ export class DocselectionComponent implements OnInit {
         }
     });
 
-    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("OPENDOCUMENT");
       this.documentsWithHits = [];
       this.totalNumberOfDocuments = 0;
       this.hasSearched = false;
       //this.show = false;
     });
-    this.searchRedux.filter((d) => d.latestAction === CHANGEQUERY).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
       //this.disablePaginatorEvent = true;
       this.currentPaginatorPage = data.page
     })
@@ -85,7 +83,7 @@ export class DocselectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchRedux.filter((d) => d.latestAction === INITIATE).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
       console.log("init", data)
       //this.currentPaginatorPage = data.page
       this.setPaginatorPage(data.page)

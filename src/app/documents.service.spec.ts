@@ -5,6 +5,7 @@ import { CallsService } from './calls.service';
 import { DocumentsService } from './documents.service';
 import { QueryService } from './query.service';
 import { AppState } from './searchreducer';
+import { Observable } from 'rxjs';
 
 describe('Service: Documents', () => {
   let service: DocumentsService;
@@ -14,11 +15,7 @@ describe('Service: Documents', () => {
 
   beforeEach(() => {
     appStateStore = <Store<AppState>>{
-      select : a => ({
-        filter : predicate => ({
-          subscribe : next => null
-        })
-      })
+      select : a => new Observable(),
     };
 
     service = new DocumentsService(callsService, queryService, appStateStore);

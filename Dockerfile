@@ -25,7 +25,7 @@ RUN echo "export const environment = { \
   auth: 'https://sp.spraakbanken.gu.se/auth' \
 };" > src/environments/environment.docker.ts
 
-RUN ng build --environment=docker
+RUN ng build --configuration=docker
 CMD [ "ng", "serve", "-H", "0.0.0.0" ]
 
 

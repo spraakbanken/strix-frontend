@@ -1,6 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
 
 import { DocumentsService } from '../documents.service';
 import { LocPipeStub } from '../mocks/loc-stub.pipe';
@@ -17,16 +18,10 @@ describe('MinidocselectionComponent', () => {
 
   beforeEach(async(() => {
     appStateStore = <Store<AppState>>{
-      select : a => ({
-        filter : predicate => ({
-          subscribe : next => null,
-        }),
-      }),
+      select : a => new Observable(),
     };
     documentsServiceStub = <DocumentsService>{
-      loadedDocument$ : {
-        subscribe : next => null,
-      },
+      loadedDocument$ : new Observable(),
     };
 
     TestBed.configureTestingModule({

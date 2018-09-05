@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject }    from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 /* This service is used for components to communicate with the open document. */
 @Injectable()

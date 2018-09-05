@@ -1,16 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/switchMapTo';
-import 'rxjs/add/operator/switchMap';
-import 'rxjs/add/observable/timer';
+import { Subject ,  BehaviorSubject ,  Observable } from 'rxjs';
+
 import { QueryType, StrixQuery } from './strixquery.model';
 import { SearchResult, AggregationsResult } from './strixresult.model';
 import { CallsService } from './calls.service';
 import { Store } from '@ngrx/store';
 import { SEARCH, CLOSEDOCUMENT, AppState } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
+import { filter, switchMap } from 'rxjs/operators';
 
 /**
  * The Query service handles the main query resulting in
@@ -118,7 +115,7 @@ export class QueryService {
 
     this.searchRedux = this.store.select('searchRedux');
     /* React upon the action SEARCH, most likely triggering a main query search. */
-    this.searchRedux.filter((d) => d.latestAction === SEARCH).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH)).subscribe((data) => {
       this.currentQuery = new StrixQuery();
       this.currentQuery.type = data.type;
       this.currentQuery.queryString = data.query;
@@ -140,18 +137,18 @@ export class QueryService {
     });
 
     /* Redo the last query when the user closes the open document */
-    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       if (this.currentQuery) this.runCurrentQuery(); // REM: Don't know why it's sometimes null (and only in Firefox, it seems..)
     });
 
     /* switchMap makes sure only the most recently added query stream is listened to.
        All other streams are unsubscribed and the $http request should, as a
        consequence be cancelled. */
-    this.streamOfStreams.switchMap(obj => obj).subscribe( (value: SearchResult) => {
+    this.streamOfStreams.pipe(switchMap(obj => obj)).subscribe( (value: SearchResult) => {
       this.signalEndedSearch();
       this.searchResultSubject.next(value);
     });
-    this.streamOfAggregationStreams.switchMap(obj => obj).subscribe((value: AggregationsResult) => {
+    this.streamOfAggregationStreams.pipe(switchMap(obj => obj)).subscribe((value: AggregationsResult) => {
       this.aggregationResultSubject.next(value);
     });
   }

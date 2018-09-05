@@ -1,9 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Subject } from 'rxjs/Subject';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Subscription }   from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-//import 'rxjs/add/observable/of';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { filter, map } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -55,7 +52,7 @@ export class DocumentsService {
 
     this.searchRedux = this.store.select('searchRedux');
     console.log("in documents constructor");
-    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("open document with", data, this.queryService);
 
       if (data.localQuery && data.localQuery !== "") {
@@ -265,9 +262,8 @@ export class DocumentsService {
   */
   public searchForAnnotation(documentIndex: number, searchQuery: SearchQuery): Observable<number> {
     let doc = this.documents[documentIndex];
-    return this.callsService.searchDocumentForAnnotation(doc.corpusID, doc.doc_id, searchQuery).map((answer) => {
-      return answer[0];
-    });
+    return this.callsService.searchDocumentForAnnotation(doc.corpusID, doc.doc_id, searchQuery)
+      .pipe(map(answer => answer[0]));
   }
 
   private signalStartedDocumentLoading() {

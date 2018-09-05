@@ -1,12 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription }   from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
+import { Subscription, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
 import { OPENDOCUMENT, RELOAD, SEARCH, AppState } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'minidocselection',
@@ -32,11 +32,11 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
               private documentsService: DocumentsService) {
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       this.show = true;
       /* this.page = data.page; */
     });
-    this.searchRedux.filter((d) => d.latestAction === SEARCH || d.latestAction === RELOAD).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH || d.latestAction === RELOAD)).subscribe((data) => {
       console.log("searched or changed page")
       this.documentsWithHits = [];
       /* this.page = data.page; */

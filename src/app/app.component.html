@@ -6,7 +6,7 @@
     <div *ngIf="!loggedIn" class="login pull-right"><a (click)="gotoLogin()">{{'login' | loc}}</a></div>
     <div class="language_choice pull-right">
       <span *ngFor="let lang of languages;let f = first">
-        <span *ngIf="!f">|&nbsp;</span><a class="link" [ngClass]="{selected: selectedLanguage === lang, disabled : selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
+        <span *ngIf="!f"> | </span><a class="link" [ngClass]="{selected: selectedLanguage === lang, disabled : selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
       </span>
     </div>
   </div>

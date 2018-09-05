@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChildren } from '@angular/core';
-import { Subscription }   from 'rxjs/Subscription';
-import 'rxjs/Rx';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/zip';
+import { Subscription, Observable, zip } from 'rxjs';
+import { filter, skip } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
@@ -10,8 +8,8 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
-  SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-  INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
+SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
+INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
 } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
@@ -61,15 +59,15 @@ export class LeftcolumnComponent implements OnInit {
 
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       this.openDocument = true;
     });
 
-    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       this.openDocument = false;
     });
 
-    this.aggregatedResultSubscription = queryService.aggregationResult$.skip(1).subscribe(
+    this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
       (result : AggregationsResult) => {
         this.parseAggResults(result) 
       },
@@ -263,9 +261,9 @@ export class LeftcolumnComponent implements OnInit {
 
   ngOnInit() {
     // Filtrera på INITIATE nedan
-    Observable.zip(
+    zip(
       this.queryService.aggregationResult$,
-      this.searchRedux.filter((d) => d.latestAction === INITIATE),
+      this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)),
       this.metadataService.loadedMetadata$
 
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {

@@ -1,8 +1,6 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, HostListener, OnDestroy } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import 'rxjs/add/operator/debounceTime';
+import { Component, AfterViewInit, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { debounceTime, filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -11,7 +9,7 @@ import { StrixSelection } from '../strixselection.model';
 import { StrixEvent } from '../strix-event.enum';
 import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
-import { StrixCorpusConfig } from '../strixcorpusconfig.model';
+import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
 import { AppState, CLOSEDOCUMENT } from '../searchreducer';
 import { ReaderCommunicationService } from '../reader-communication.service';
@@ -88,7 +86,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
     // If the user closes the main document:
     this.searchRedux = this.store.select('searchRedux');
-    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       this.showBox = false;
       this.singleWordSelection = false;
       if (this.cmViews.length !== 0) {
@@ -99,7 +97,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     // When the user changes the viewport, we wait until there is
     // a period of "radio silence" before we act on only THE LAST change.
     // This is to spare calls to the backend.
-    this.viewPortChange$.debounceTime(100).subscribe( (event) =>
+    this.viewPortChange$.pipe(debounceTime(100)).subscribe( (event) =>
       this.handleViewportChange(event)
     );
 

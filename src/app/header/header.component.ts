@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs/Subscription';
+import { Subscription } from 'rxjs';
 
 import { DocumentsService } from '../documents.service';
-import { LocService } from '../loc.service';
 import { MetadataService } from '../metadata.service';
 
 /**

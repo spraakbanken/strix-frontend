@@ -3,7 +3,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Store } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import { AppComponent } from './app.component';
 import { LocService } from './loc.service';
 import { LocPipeStub } from './mocks/loc-stub.pipe';
@@ -16,14 +16,13 @@ describe('App: Strix', () => {
   let el: HTMLElement;
 
   const routingService = <RoutingService>{};
-  const locService = <LocService>{};
-  const appStateStore = <Store<AppState>>{
-    select : a => ({
-      filter : predicate => new Observable(noop),
-    }),
+  const locService = <LocService>{
+    getAvailableLanguages : () => [],
+    setCurrentLanguage : (lang) => {},
   };
-
-  function noop() {}
+  const appStateStore = <Store<AppState>>{
+    select : a => new Observable(),
+  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({

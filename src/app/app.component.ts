@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
-import { Observable } from 'rxjs/Observable';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
+import { Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
+import { LocService } from './loc.service';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState } from './searchreducer';
-import { LocService } from './loc.service';
 
 
 @Component({
@@ -31,16 +32,16 @@ export class AppComponent {
 
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
       this.selectedLanguage = data.lang;
     });
 
-    this.searchRedux.filter((d) => d.latestAction === OPENDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("|openDocument");
       this.openDocument = true;
     });
 
-    this.searchRedux.filter((d) => d.latestAction === CLOSEDOCUMENT).subscribe((data) => {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       console.log("|closeDocument");
       this.openDocument = false;
     });

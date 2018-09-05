@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
+import { Observable, from, throwError } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 
 @Injectable()
 export class KarpService {
@@ -12,13 +11,14 @@ export class KarpService {
   constructor(private http: HttpClient) { }
 
   public lemgramsFromWordform(wordform: string) : Observable<string[]> {
-    if (wordform === "") return Observable.from([]);
+    if (wordform === "") return from([]);
     console.log("Getting Karp lemgrams from the wordform", wordform);
     let url = `${this.KARPBACKEND_URL}/autocomplete?q=${wordform}&resource=saldom`;
     console.log('url', url);
-    return this.http.get(url)
-                    .map(this.extractDocumentData)
-                    .catch(this.handleError);
+    return this.http.get(url).pipe(
+      map(this.extractDocumentData),
+      catchError(this.handleError)
+    );
   }
 
   private extractDocumentData(result: any): string[] {
@@ -39,7 +39,7 @@ export class KarpService {
     let errMsg = (error.message) ? error.message :
       error.status ? `${error.status} - ${error.statusText}` : 'Server error';
     console.error(errMsg);
-    return Observable.throw(errMsg);
+    return throwError(errMsg);
   }
 
 }
