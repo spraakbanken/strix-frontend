@@ -53,12 +53,8 @@ export class LeftcolumnComponent implements OnInit {
         }
     });
 
-    this.store.select('ui').pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      this.openDocument = true;
-    });
-
-    this.store.select('ui').pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
-      this.openDocument = false;
+    this.store.select('document').subscribe(documentState => {
+      this.openDocument = documentState.open;
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
@@ -67,10 +63,6 @@ export class LeftcolumnComponent implements OnInit {
       },
       error => null//this.errorMessage = <any>error
     );
-
-    /* this.searchRedux.filter((d) => d.latestAction === INITIATE).subscribe((data) => {
-      console.log("SHOULD INITIATE FILTERS WITH", data.filters);
-    }); */
   }
 
   private getTypeForAgg(aggregationKey : string, agg : any) {

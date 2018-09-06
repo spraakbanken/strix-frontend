@@ -1,7 +1,5 @@
-import { ActionReducer, Action } from '@ngrx/store';
+import { Action } from '@ngrx/store';
 import * as _ from 'lodash';
-import {StrixQuery} from './strixquery.model';
-import { Doc } from 'codemirror';
 
 export const CHANGEQUERY = "CHANGEQUERY";
 export const CHANGEFILTERS = "CHANGEFILTERS";
@@ -55,12 +53,13 @@ export interface UiState {
   history?: boolean;
 }
 
-export type SearchRedux = any
-
-
 export function queryStateReducer(state: QueryState = {}, action: Action): QueryState {
   let nextState: QueryState = {...state};
   switch (action.type) {
+    case INITIATE:
+      console.log("INITIATE.");
+      nextState = _.assign({}, nextState, action.payload.query);
+      break;
     case CHANGEQUERY:
       nextState.query = action.payload;
       nextState.page = 1;
@@ -87,13 +86,19 @@ export function queryStateReducer(state: QueryState = {}, action: Action): Query
 export function documentStateReducer(state: DocumentState, action: Action): DocumentState {
   let nextState: DocumentState = {...state};
   switch (action.type) {
+    case INITIATE:
+      console.log("INITIATE.");
+      nextState = _.assign({}, nextState, action.payload.document);
+      break;
     case OPENDOCUMENT:
     case OPENDOCUMENT_NOHISTORY:
+      nextState.open = true;
       nextState.documentID = action.payload.doc_id;
       nextState.documentCorpus = action.payload.corpus_id;
       break;
     case CLOSEDOCUMENT:
     case CLOSEDOCUMENT_NOHISTORY:
+      nextState.open = false;
       nextState.documentID = null;
       nextState.documentCorpus = null;
       nextState.localQuery = null;
@@ -112,7 +117,7 @@ export function uiStateReducer(state: UiState = {}, action: Action): UiState {
   switch (action.type) {
     case INITIATE:
       console.log("INITIATE.");
-      nextState = _.assign({}, nextState, action.payload);
+      nextState = _.assign({}, nextState, action.payload.ui);
       nextState.history = false;
       break;
     case CHANGELANG:
@@ -122,9 +127,6 @@ export function uiStateReducer(state: UiState = {}, action: Action): UiState {
     case CLOSEDOCUMENT_NOHISTORY:
       nextState.history = false;
       nextState.latestAction = CLOSEDOCUMENT;
-      break;
-    case SEARCHINDOCUMENT:
-      nextState.latestAction = "OPENDOCUMENT";
       break;
     case SEARCH:
       nextState.history = false;
@@ -136,78 +138,5 @@ export function uiStateReducer(state: UiState = {}, action: Action): UiState {
       nextState.history = false;
       break;
   }
-  return nextState;
-}
-
-export function searchReducer(state: SearchRedux = {}, action: Action): SearchRedux {
-  console.log("reducing with action", action.type, action.payload);
-  let nextState: SearchRedux = _.assign({}, state);
-  nextState.latestAction = action.type;
-  nextState.history = true; // Default value
-  switch (action.type) {
-    case INITIATE:
-      console.log("INITIATE.");
-      nextState = _.assign({}, nextState, action.payload);
-      nextState.history = false;
-      break;
-    case CHANGEQUERY:
-      nextState.query = action.payload;
-      nextState.page = 1
-      break;
-    case CHANGEFILTERS:
-      nextState.filters = action.payload;
-      break;
-    case CHANGE_INCLUDE_FACET:
-      nextState.include_facets = action.payload;
-      break;
-    case CHANGE_IN_ORDER:
-      nextState.keyword_search = action.payload;
-      break;
-    case CHANGEPAGE:
-      nextState.page = action.payload;
-      break;
-    case CHANGELANG:
-      nextState.lang = action.payload;
-      break;
-    case OPENDOCUMENT:
-      nextState.documentID = action.payload.doc_id;
-      nextState.documentCorpus = action.payload.corpus_id;
-      break;
-    case OPENDOCUMENT_NOHISTORY:
-      nextState.documentID = action.payload.doc_id;
-      nextState.documentCorpus = action.payload.corpus_id;
-      nextState.history = false;
-      nextState.latestAction = OPENDOCUMENT;
-      break;
-    case CLOSEDOCUMENT:
-      nextState.documentID = null;
-      nextState.documentCorpus = null;
-      nextState.localQuery = null;
-      nextState.sentenceID = null;
-      break;
-    case CLOSEDOCUMENT_NOHISTORY:
-      nextState.documentID = null;
-      nextState.documentCorpus = null;
-      nextState.localQuery = null;
-      nextState.sentenceID = null;
-      nextState.history = false;
-      nextState.latestAction = CLOSEDOCUMENT;
-      break;
-    case SEARCHINDOCUMENT:
-      nextState.localQuery = action.payload;
-      break;
-    case SEARCH:
-      nextState.page = 1;
-      nextState.localQuery = null;
-      nextState.history = false;
-      break;
-    case RELOAD:
-      // Like search but without changing the state.
-      // Used for the first load of the page.
-      nextState.latestAction = "SEARCH";
-      nextState.history = false;
-      break;
-  }
-
   return nextState;
 }

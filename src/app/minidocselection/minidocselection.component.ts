@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
@@ -15,7 +15,6 @@ import { filter } from 'rxjs/operators';
 })
 export class MinidocselectionComponent implements OnInit, OnDestroy {
 
-  private searchRedux: Observable<any>;
   private subscription: Subscription;
 
   public documentsWithHits: StrixDocument[] = [];
@@ -24,9 +23,7 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
   constructor(private queryService: QueryService,
               private store: Store<AppState>,
               private documentsService: DocumentsService) {
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.pipe(filter((d) => [OPENDOCUMENT, SEARCH, RELOAD].includes(d.latestAction)))
+    this.store.select('ui').pipe(filter((d) => [OPENDOCUMENT, SEARCH, RELOAD].includes(d.latestAction)))
       .subscribe(() => {
       this.documentsWithHits = [];
       // Hide until main document is loaded.

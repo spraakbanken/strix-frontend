@@ -4,16 +4,16 @@ import { Store } from '@ngrx/store';
 import { Observable, Subject } from 'rxjs';
 
 import { LocService } from './loc.service';
-import { AppState, INITIATE } from './searchreducer';
+import { AppState } from './searchreducer';
 
 describe('Service: Loc', () => {
   let service: LocService;
   let appStateStore: Store<AppState>;
-  let searchRedux = new Subject<AppState>();
+  let appState = new Subject<AppState>();
 
   beforeEach(() => {
     appStateStore = <Store<AppState>>{
-      select : a => <Observable<AppState>>searchRedux,
+      select : a => <Observable<AppState>>appState,
     };
 
     service = new LocService(appStateStore);
@@ -29,8 +29,8 @@ describe('Service: Loc', () => {
   });
 
   it('set language on init', () => {
-    searchRedux.next({searchRedux : {latestAction : INITIATE, lang : 'ger'}});
-    searchRedux.subscribe(() => {
+    appState.next({query : {}, document : {}, ui : {lang : 'ger'}});
+    appState.subscribe(() => {
       expect(service.getCurrentLanguage()).toBe('ger');
     });
   });

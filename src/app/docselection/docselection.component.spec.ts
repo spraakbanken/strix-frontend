@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { Store } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { MetadataService } from '../metadata.service';
 import { LocPipeStub } from '../mocks/loc-stub.pipe';
 import { PrettynumberPipeStub } from '../mocks/prettynumber-stub.pipe';
 import { QueryService } from '../query.service';
-import { AppState } from '../searchreducer';
+import { queryStateReducer, documentStateReducer, uiStateReducer } from '../searchreducer';
 import { DocselectionComponent } from './docselection.component';
 
 describe('DocselectionComponent', () => {
@@ -24,13 +24,13 @@ describe('DocselectionComponent', () => {
   const metadataService = <MetadataService>{
     loadedMetadata$ : new Observable(),
   };
-  const appStateStore = <Store<AppState>>{
-    select : a => new Observable(),
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      imports : [FormsModule],
+      imports : [
+        FormsModule,
+        StoreModule.forRoot({query : queryStateReducer, document : documentStateReducer, ui : uiStateReducer}),
+      ],
       declarations : [DocselectionComponent, LocPipeStub, PrettynumberPipeStub,
         MockComponent({selector : 'alert', inputs : ['type', 'dismissible']}),
         MockComponent({selector : 'pagination',
@@ -40,7 +40,6 @@ describe('DocselectionComponent', () => {
         {provide : DocumentsService, useValue : documentsService},
         {provide : QueryService, useValue : queryService},
         {provide : MetadataService, useValue : metadataService},
-        {provide : Store, useValue : appStateStore},
       ]
     })
     .compileComponents();

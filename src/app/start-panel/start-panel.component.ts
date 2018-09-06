@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import { SEARCH, OPENDOCUMENT, AppState } from '../searchreducer';
@@ -13,12 +12,8 @@ export class StartPanelComponent implements OnInit {
 
   private show = true;
 
-  private searchRedux: Observable<any>;
-
   constructor(private store: Store<AppState>) {
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.pipe(filter((d) => this.influences(d.latestAction))).subscribe((data) => {
+    this.store.select('ui').pipe(filter((d) => this.influences(d.latestAction))).subscribe(() => {
       this.show = false;
     });
   }

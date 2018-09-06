@@ -1,13 +1,13 @@
 /* tslint:disable:no-unused-variable */
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { Store } from '@ngrx/store';
+import { StoreModule } from '@ngrx/store';
 import { MockComponent } from 'ng2-mock-component';
 import { Observable } from 'rxjs';
 
 import { MetadataService } from '../metadata.service';
 import { PrettynumberPipeStub } from '../mocks/prettynumber-stub.pipe';
 import { QueryService } from '../query.service';
-import { AppState } from '../searchreducer';
+import { queryStateReducer, documentStateReducer, uiStateReducer } from '../searchreducer';
 import { LeftcolumnComponent } from './leftcolumn.component';
 import { LocPipeStub } from '../mocks/loc-stub.pipe';
 
@@ -21,12 +21,10 @@ describe('LeftcolumnComponent', () => {
   const queryService = <QueryService>{
     aggregationResult$ : new Observable(),
   };
-  const appStateStore = <Store<AppState>>{
-    select : a => new Observable(),
-  };
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
+      imports : [StoreModule.forRoot({query : queryStateReducer, document : documentStateReducer, ui : uiStateReducer})],
       declarations : [LeftcolumnComponent,
         MockComponent({'selector' : 'minidocselection'}),
         MockComponent({'selector' : 'multicomplete', 'inputs' : ['locConf', 'buckets']}),
@@ -35,7 +33,6 @@ describe('LeftcolumnComponent', () => {
       providers : [
         {provide : MetadataService, useValue : metadataService},
         {provide : QueryService, useValue : queryService},
-        {provide : Store, useValue : appStateStore},
       ]
     })
     .compileComponents();

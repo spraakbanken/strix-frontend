@@ -29,7 +29,7 @@ import { RangesliderComponent } from './leftcolumn/rangeslider.component';
 import { QueryService } from './query.service';
 import { MetadataService } from './metadata.service';
 import { StartPanelComponent } from './start-panel/start-panel.component';
-import { searchReducer, uiStateReducer, documentStateReducer, queryStateReducer } from './searchreducer';
+import { uiStateReducer, documentStateReducer, queryStateReducer } from './searchreducer';
 import { RoutingService } from './routing.service';
 import { SearchComponent } from './search/search.component';
 import { MinidocselectionComponent } from './minidocselection/minidocselection.component';
@@ -45,7 +45,6 @@ import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
 import { PrettynumberPipeStub } from './mocks/prettynumber-stub.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
-// import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
   declarations: [
@@ -86,11 +85,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     AccordionModule.forRoot(),
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
-    StoreModule.forRoot({
-      query: queryStateReducer,
-      document: documentStateReducer,
-      ui: uiStateReducer,
-    }),
+    StoreModule.forRoot({query : queryStateReducer, document : documentStateReducer, ui : uiStateReducer}),
     NouisliderModule
   ],
   providers: [
