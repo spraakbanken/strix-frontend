@@ -21,14 +21,15 @@ export class RoutingService {
   private readonly urlFields: {tag: string[], type: FragmentType, default: any}[] = [
     {tag : ['query', "type"], type : FragmentType.STRING, default : QueryType.Normal},
     {tag : ['query', "query"], type : FragmentType.URI, default : ""},
-    {tag : ['document', "localQuery"], type : FragmentType.STRING, default : ""},
     {tag : ['query', "page"], type : FragmentType.NUMBER, default : 1},
     {tag : ['query', "filters"], type : FragmentType.BASE64, default : {}},
     {tag : ['query', "include_facets"], type : FragmentType.STRINGARRAY, default : []},
     {tag : ['query', "keyword_search"], type : FragmentType.BOOLEAN, default : false},
+    {tag : ['document', 'open'], type : FragmentType.BOOLEAN, default : false},
     {tag : ['document', "documentID"], type : FragmentType.STRING, default : ""},
-    {tag : ['document', "sentenceID"], type : FragmentType.STRING, default : ""},
     {tag : ['document', "documentCorpus"], type : FragmentType.STRING, default : ""},
+    {tag : ['document', "localQuery"], type : FragmentType.STRING, default : ""},
+    {tag : ['document', "sentenceID"], type : FragmentType.STRING, default : ""},
     {tag : ['ui', "lang"], type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
   ];
 
@@ -38,13 +39,12 @@ export class RoutingService {
     // React on app state changes by pushing a new browser state.
     // Set the encoded app state as the URL query string.
     this.store.subscribe(state => {
-      // let state: QueryState & DocumentState & UiState = _.concat(_.values(appState));
       let urlString = '?' + _.compact(this.urlFields.map((field) => {
         const val = this.stringify(field.type, _.get(state, field.tag));
         if(!val || val === this.stringify(field.type, field.default)) {
           return ""
         }
-        return `${encodeURI(_.get(state, field.tag))}=${encodeURI(val)}`;
+        return `${encodeURI(field.tag.join('.'))}=${encodeURI(val)}`;
       })).join("&");
       if (state.ui.latestAction !== INITIATE) {
         if (state.ui.history) {
@@ -94,12 +94,12 @@ export class RoutingService {
   }
 
   private getCurrentState(): AppState {
-    const urlSearch: string = window.location.search;
-    console.log("urlSearch", urlSearch)
     let startParams = {};
-    if (urlSearch && urlSearch.length > 1) {
-      const urlPart = urlSearch.split("?")[1];
-      startParams = _.fromPairs(urlPart.split("&").map((item) => item.split("=")));
+    if (window.location.search) {
+      for (let kv of window.location.search.substr(1).split('&')) {
+        let [k, v] = kv.split('=');
+        _.set(startParams, k.split('.'), v);
+      }
     }
     const state: AppState = {query : {}, document : {}, ui : {}};
     for (const field of this.urlFields) {
