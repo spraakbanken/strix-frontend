@@ -85,7 +85,7 @@ export class CallsService {
   private extractLocalizationKeys(config) {
     for (let corpusID in config) {
       let corpusData = config[corpusID];
-      
+
       let updateObj: any = _.mapValues(corpusData.name, (name) => {
          return _.fromPairs([[corpusID, name]])
       })
@@ -119,7 +119,7 @@ export class CallsService {
         filter.value.range.lte = filter.value.range.lte + "1231";
         filter.value.range.gte = filter.value.range.gte + "0101";
       }
-      
+
       // filterStrings.push(`"${filter.field}":${JSON.stringify(value)}`);
     }
 
@@ -131,7 +131,7 @@ export class CallsService {
     let rangeFilters = _.filter(filters, {type: "range"});
     let output = wrapValuesInArray(notRangeFilters)
     let rangeObj = _.fromPairs(_.map(rangeFilters, (item) => [item.field, item.value]))
-    
+
     return JSON.stringify(_.merge(output, rangeObj))
   }
 
@@ -204,7 +204,7 @@ export class CallsService {
   }
 
   /* ------------------ Calls for searching in ONE document only ------------------ */
-  public searchDocumentForAnnotation(corpusID: string, docID: string, searchQuery: SearchQuery): Observable<any> {
+  public searchDocumentForAnnotation(corpusID: string, docID: string, searchQuery: SearchQuery): Observable<number[]> {
     let params = {
       text_query_field : searchQuery.annotationKey,
       text_query : searchQuery.annotationValue,
@@ -212,7 +212,7 @@ export class CallsService {
       current_position : String(searchQuery.currentPosition),
       forward : `${searchQuery.forward}`,
     };
-    return this.get(`annotation_lookup/${corpusID}/${docID}`, params).pipe(
+    return this.get<number[]>(`annotation_lookup/${corpusID}/${docID}`, params).pipe(
       catchError(this.handleError)
     );
   }

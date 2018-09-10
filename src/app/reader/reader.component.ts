@@ -141,7 +141,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             }
             this.selectToken(0, 0);
             this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
-            
+
           }, 0);
         } else { // THE CODE BELOW CANNOT HAPPEN RIGHT NOW
           this.clearBookmarks();
@@ -154,7 +154,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             this.addHighlight(message.documentIndex, h.wid);
           }
         }
-        
+
         this.updateTitles();
     });
 
@@ -229,12 +229,12 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
         console.log("currentAnnotations", this.currentAnnotations);
       }
-      
+
     }
 
   }
   /* Selects <tokenID> in the currently selected codemirror */
-  private selectToken(cmIndex: number, tokenID) {
+  private selectToken(cmIndex: number, tokenID: number) {
 
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     let doc = this.documentsService.getDocument(selectedDocumentIndex);
@@ -320,7 +320,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       answer => {
         console.log("call success. the wid is", answer);
         this.selectToken(cmIndex, answer);
-      });
+      }, () => {});
   }
 
   private clearBookmarks() {
@@ -344,7 +344,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     }
     let text = fragments.join(" ");
 
-    
+
     cmInstance.markText(fromCursor, toCursor, {"css" : "text-decoration: underline"});
     this.bookmarks.push({
       "from" : fromCursor,
@@ -404,8 +404,8 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     console.log("should close the document now.");
   }
 
-  /* @HostListener('window:resize', ['$event.target']) 
-  onResize() { 
+  /* @HostListener('window:resize', ['$event.target'])
+  onResize() {
     console.log("ON THE RISE");
     if (this.mirrors.first) {
       //this.mirrors.first.codeMirrorInstance.setSize(null, "100%");

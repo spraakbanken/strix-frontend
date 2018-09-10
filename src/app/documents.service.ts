@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject, throwError, of } from 'rxjs';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -263,7 +263,7 @@ export class DocumentsService {
   public searchForAnnotation(documentIndex: number, searchQuery: SearchQuery): Observable<number> {
     let doc = this.documents[documentIndex];
     return this.callsService.searchDocumentForAnnotation(doc.corpusID, doc.doc_id, searchQuery)
-      .pipe(map(answer => answer[0]));
+      .pipe(mergeMap(answer => answer.length ? of(answer[0]) : throwError('No tokens found.')));
   }
 
   private signalStartedDocumentLoading() {
@@ -282,7 +282,7 @@ export class DocumentsService {
   public extendTokenInfoIfNecessary(docIndex: number, fromLine: number, toLine: number): void {
     // First convert line numbers to token numbers
     let doc = this.documents[docIndex];
-    
+
     // Get some more lines so we more likely have enough for the viewport when coloring
     fromLine = Math.max(fromLine - 20, 0);
 
@@ -295,7 +295,7 @@ export class DocumentsService {
       console.log("getting the LAST token in the document.")
       lastToken = doc.getLastTokenFromDocument();
     }
-    
+
     console.log("from token ", firstToken, " to ", lastToken);
 
     // Only make calls if we don't have the data already!
