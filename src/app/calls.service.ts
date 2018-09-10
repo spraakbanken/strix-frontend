@@ -239,7 +239,7 @@ export class CallsService {
     if (!inOrder) {
       params.in_order = "false";
     }
-    return this.get(`search/${corpusID}/${documentID}`, params).pipe(
+    return this.get<StrixDocument>(`search/${corpusID}/${documentID}`, params).pipe(
       map(this.extractDocumentData),
       catchError(this.handleError)
     );

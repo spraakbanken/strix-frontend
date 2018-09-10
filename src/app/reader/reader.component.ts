@@ -137,8 +137,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             console.log("highlight data", openedDocument);
             this.clearBookmarks();
             for (let h of openedDocument.highlight || []) {
-              let tokenID = h.position;
-              this.addHighlight(message.documentIndex, tokenID);
+              this.addHighlight(message.documentIndex, h.wid);
             }
             this.selectToken(0, 0);
             this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
@@ -152,8 +151,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
           // Show the highlights // TODO: Get rid of code doubling (use setTimeout for both cases probably anyway)
           console.log("highlight data", openedDocument);
           for (let h of openedDocument.highlight) {
-            let tokenID = h.position;
-            this.addHighlight(message.documentIndex, tokenID);
+            this.addHighlight(message.documentIndex, h.wid);
           }
         }
         
