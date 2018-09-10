@@ -13,9 +13,9 @@ export class StartPanelComponent implements OnInit {
   private show = true;
 
   constructor(private store: Store<AppState>) {
-    this.store.select('ui').pipe(filter((d) => this.influences(d.latestAction))).subscribe(() => {
-      this.show = false;
-    });
+    // this.store.select('ui').pipe(filter((d) => this.influences(d.latestAction))).subscribe(() => {
+    //   this.show = false;
+    // });
   }
 
   private influences(action: string): boolean {

@@ -21,7 +21,7 @@ export class DocselectionComponent implements OnInit {
 
   private hasSearched = false;
   private disablePaginatorEvent = false;
-  
+
   private currentPaginatorPage: number = 1; // Needs to be 1-based because of the paginator widget
 
   private documentsWithHits: StrixDocument[] = [];//StrixDocHit[] = [];
@@ -53,16 +53,9 @@ export class DocselectionComponent implements OnInit {
         }
     });
 
-    this.store.select('ui').pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe(() => {
-      console.log("OPENDOCUMENT");
-      this.documentsWithHits = [];
-      this.totalNumberOfDocuments = 0;
-      this.hasSearched = false;
-      //this.show = false;
+    this.store.select('query').subscribe(queryState => {
+      this.currentPaginatorPage = queryState.page;
     });
-    this.store.pipe(filter((d) => d.ui.latestAction === CHANGEQUERY)).subscribe((data) => {
-      this.currentPaginatorPage = data.query.page;
-    })
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       (answer: SearchResult) => {
@@ -71,7 +64,7 @@ export class DocselectionComponent implements OnInit {
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
 
-        
+
       },
       error => null//this.errorMessage = <any>error
     );
@@ -79,10 +72,8 @@ export class DocselectionComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.store.pipe(filter((d) => d.ui.latestAction === INITIATE)).subscribe((data) => {
-      console.log("init", data)
-      //this.currentPaginatorPage = data.page
-      this.setPaginatorPage(data.query.page)
+    this.store.select('query').subscribe(queryState => {
+      this.setPaginatorPage(queryState.page)
     })
   }
 

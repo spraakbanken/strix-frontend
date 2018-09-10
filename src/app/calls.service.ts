@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpHeaders, HttpParams, HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
 import { map, catchError, tap } from 'rxjs/operators';
-
 import * as _ from 'lodash';
 
 import { StrixDocument } from './strixdocument.model';
@@ -45,13 +44,13 @@ export class CallsService {
    * Customized GET call for Strix backend.
    */
   private get<T>(endpoint: string, params?: {[param: string]: string}) {
-    console.log('GET', endpoint, params);
+    console.log('GET Request', endpoint, params, !!window['jwt']);
     const options = {
       params : new HttpParams({fromObject : params}),
       headers : window['jwt'] ? new HttpHeaders({'Authorization' : `Bearer ${window['jwt']}`}) : null,
     };
     return this.http.get<T>(this.STRIXBACKEND_URL + '/' + endpoint, options)
-      .pipe(tap(data => console.log('Response', endpoint, params, data)));
+      .pipe(tap(data => console.log('GET Response', endpoint, params, data)));
   }
 
   public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {

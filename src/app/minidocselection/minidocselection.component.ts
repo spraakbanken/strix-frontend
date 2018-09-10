@@ -4,8 +4,9 @@ import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
-import { OPENDOCUMENT, RELOAD, SEARCH, AppState } from '../searchreducer';
+import { OPENDOCUMENT, AppState } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
+import { StrixEvent } from '../strix-event.enum';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -23,13 +24,17 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
   constructor(private queryService: QueryService,
               private store: Store<AppState>,
               private documentsService: DocumentsService) {
-    this.store.select('ui').pipe(filter((d) => [OPENDOCUMENT, SEARCH, RELOAD].includes(d.latestAction)))
-      .subscribe(() => {
-      this.documentsWithHits = [];
-      // Hide until main document is loaded.
-      this.isMainDocumentLoaded = false;
+
+    // Reset when a new document is being opened.
+    this.documentsService.docLoadingStatus$.subscribe(event => {
+      if (event === StrixEvent.DOCLOADSTART) {
+        this.documentsWithHits = [];
+        // Hide until main document is loaded.
+        this.isMainDocumentLoaded = false;
+      }
     });
 
+    // Appear when a new document is being opened. Start fetching related documents.
     this.subscription = documentsService.loadedDocument$
       .pipe(filter(() => !this.isMainDocumentLoaded))
       .subscribe(message => {

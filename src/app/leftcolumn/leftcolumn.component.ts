@@ -26,7 +26,7 @@ export class LeftcolumnComponent implements OnInit {
   private metadataSubscription: Subscription;
   private aggregatedResultSubscription: Subscription;
 
-  private aggregations : Aggregations = {};
+  public aggregations: Aggregations = {};
   private aggregationKeys: string[] = [];
   //private currentFilters: any[] = []; // TODO: Make some interface
   private unusedFacets : string[] = [];
@@ -249,10 +249,10 @@ export class LeftcolumnComponent implements OnInit {
     // Filtrera på INITIATE nedan
     zip(
       this.queryService.aggregationResult$,
-      this.store.pipe(filter((d) => d.ui.latestAction === INITIATE)),
+      this.store.select('query'),
       this.metadataService.loadedMetadata$
 
-    ).subscribe(([result, {query: {filters}}, info] : [AggregationsResult, any, any]) => {
+    ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
       //this.zone.run(() => {  
         console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)

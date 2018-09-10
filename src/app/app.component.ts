@@ -31,9 +31,8 @@ export class AppComponent {
       this.selectedLanguage = ui.lang;
     });
 
-    this.store.select('document').subscribe((document) => {
-      console.log(document.open ? "|openDocument" : "|closeDocument");
-      this.openDocument = document.open;
+    this.store.select('document').subscribe((documentState) => {
+      this.openDocument = documentState.open;
     });
 
     this.languages = this.locService.getAvailableLanguages();

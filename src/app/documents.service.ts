@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, throwError, of } from 'rxjs';
-import { filter, mergeMap } from 'rxjs/operators';
+import { filter, mergeMap, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -41,7 +41,7 @@ export class DocumentsService {
   loadedDocument$: Observable<StrixMessage> = this.loadedDocument.asObservable();
 
   private docLoadingStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
-  docLoadingStatus$ = this.docLoadingStatusSubject.asObservable();
+  docLoadingStatus$ = this.docLoadingStatusSubject.asObservable().pipe(tap(o => console.log('docLoadingStatus', o)));
 
   constructor(private callsService: CallsService,
               private queryService: QueryService,

@@ -49,15 +49,14 @@ export interface DocumentState {
 
 export interface UiState {
   lang?: string;
-  latestAction?: string;
   history?: boolean;
 }
 
 export function queryStateReducer(state: QueryState = {}, action: Action): QueryState {
+  console.log('Action', action.type, action.payload);
   let nextState: QueryState = {...state};
   switch (action.type) {
     case INITIATE:
-      console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload.query);
       break;
     case CHANGEQUERY:
@@ -87,7 +86,6 @@ export function documentStateReducer(state: DocumentState, action: Action): Docu
   let nextState: DocumentState = {...state};
   switch (action.type) {
     case INITIATE:
-      console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload.document);
       break;
     case OPENDOCUMENT:
@@ -111,12 +109,10 @@ export function documentStateReducer(state: DocumentState, action: Action): Docu
 export function uiStateReducer(state: UiState = {}, action: Action): UiState {
   let nextState: UiState = {
     ...state,
-    latestAction : action.type,
     history : true,
   };
   switch (action.type) {
     case INITIATE:
-      console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload.ui);
       nextState.history = false;
       break;
@@ -125,16 +121,8 @@ export function uiStateReducer(state: UiState = {}, action: Action): UiState {
       break;
     case OPENDOCUMENT_NOHISTORY:
     case CLOSEDOCUMENT_NOHISTORY:
-      nextState.history = false;
-      nextState.latestAction = CLOSEDOCUMENT;
-      break;
     case SEARCH:
-      nextState.history = false;
-      break;
     case RELOAD:
-      // Like search but without changing the state.
-      // Used for the first load of the page.
-      nextState.latestAction = "SEARCH";
       nextState.history = false;
       break;
   }

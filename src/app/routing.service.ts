@@ -46,14 +46,12 @@ export class RoutingService {
         }
         return `${encodeURI(field.tag.join('.'))}=${encodeURI(val)}`;
       })).join("&");
-      if (state.ui.latestAction !== INITIATE) {
-        if (state.ui.history) {
-          console.log("PUSHING STATE")
-          window.history.pushState("", "", urlString)
-        } else {
-          window.history.replaceState("", "", urlString)
-        }
 
+      if (state.ui.history) {
+        console.log("PUSHING STATE")
+        window.history.pushState("", "", urlString)
+      } else {
+        window.history.replaceState("", "", urlString)
       }
     });
 
