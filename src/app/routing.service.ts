@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux } from './searchreducer';
 import { QueryType } from './strixquery.model';
 
-/** The Routing Service is responsible for keeping the web browser URL and 
+/** The Routing Service is responsible for keeping the web browser URL and
    the ngrx-store app store in sync. It is the only piece of code that is allowed
    to change the browser's URL, and components should only communicate with this
    service by dispatching to the ngrx store. */
@@ -19,7 +19,7 @@ enum FragmentType {
 export class RoutingService {
 
   private searchRedux: Observable<SearchRedux>;
-  
+
   private readonly urlFields: {tag: string, type: FragmentType, default: any}[] = [
     {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
     {tag : "query", type : FragmentType.URI, default : ""},
@@ -42,16 +42,13 @@ export class RoutingService {
     // Set the encoded app state as the URL query string.
     this.searchRedux.subscribe((state: SearchRedux) => {
       console.log("the data", state);
-      let urlString = _.compact(this.urlFields.map((field) => {
+      let urlString = '?' + _.compact(this.urlFields.map((field) => {
         const val = this.stringify(field.type, state[field.tag]);
         if(!val || val === this.stringify(field.type, field.default)) {
           return ""
         }
         return `${encodeURI(field.tag)}=${encodeURI(val)}`;
       })).join("&");
-      if (urlString) {
-        urlString = "?" + urlString;
-      }
       if (state.latestAction !== INITIATE) {
         if (state.history) {
           console.log("PUSHING STATE")
@@ -59,7 +56,7 @@ export class RoutingService {
         } else {
           window.history.replaceState("", "", urlString)
         }
-       
+
       }
     });
 
@@ -133,7 +130,7 @@ export class RoutingService {
         this.store.dispatch({
           type : OPENDOCUMENT_NOHISTORY,
           payload : {
-            doc_id : startState["documentID"], 
+            doc_id : startState["documentID"],
             sentence_id : startState["sentenceID"],
             corpus_id : startState["documentCorpus"]
           }
