@@ -9,7 +9,7 @@ import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT, SearchRedux } from './searchreducer';
+import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
@@ -54,27 +54,21 @@ export class DocumentsService {
     console.log("in documents constructor");
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("open document with", data, this.queryService);
-
-      if (data.localQuery && data.localQuery !== "") {
-        // Reopen the current document with the new query
-        console.log("way 1")
-        this.loadDocumentWithQuery(
-           data.documentID,
-           data.documentCorpus,
-           data.localQuery || "",
-           null,
-           data.sentenceID || null);
-      } else {
-        // Open a new document in the ordinary way
-        console.log("way 2")
-        this.loadDocumentWithQuery(
-           data.documentID,
-           data.documentCorpus,
-           this.queryService.getSearchString() || "",
-           this.queryService.getInOrderFlag(),
-           data.sentenceID || null);
-      }
-    })
+      this.loadDocumentWithQuery(
+        data.documentID,
+        data.documentCorpus,
+        this.queryService.getSearchString() || "",
+        this.queryService.getInOrderFlag(),
+        data.sentenceID || null);
+    });
+    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCHINDOCUMENT)).subscribe((data) => {
+      this.loadDocumentWithQuery(
+          data.documentID,
+          data.documentCorpus,
+          data.localQuery || "",
+          null,
+          data.sentenceID || null);
+    });
   }
 
   /* A simple reference counting mechanism for keeping track of

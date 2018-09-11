@@ -33,8 +33,9 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
       this.isMainDocumentLoaded = false;
     });
 
-    this.subscription = documentsService.loadedDocument$.subscribe(
-      message => {
+    this.subscription = documentsService.loadedDocument$
+      .pipe(filter(() => !this.isMainDocumentLoaded))
+      .subscribe(message => {
         this.isMainDocumentLoaded = true;
         documentsService.getRelatedDocuments(message.documentIndex).subscribe(
           answer => {

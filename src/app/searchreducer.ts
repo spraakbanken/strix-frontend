@@ -109,7 +109,6 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       break;
     case SEARCHINDOCUMENT:
       nextState.localQuery = action.payload;
-      nextState.latestAction = "OPENDOCUMENT";
       break;
     case SEARCH:
       nextState.page = 1;
