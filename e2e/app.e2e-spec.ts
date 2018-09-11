@@ -1,4 +1,4 @@
-import { browser, by, element } from 'protractor';
+import { browser, by, element, Key } from 'protractor';
 
 describe('strix App', function() {
 
@@ -16,5 +16,36 @@ describe('strix App', function() {
 
     element(by.css(".aggregation_item")).click()
     expect(getNum()).toBeLessThan(num);
+  });
+
+  describe('Search', () => {
+    beforeEach(() => {
+      browser.get('/');
+    });
+
+    it('is in phrase mode by default', () => {
+      expect(element(by.model('isPhraseSearch')).getAttribute('checked')).toBeTruthy();
+    });
+
+    it('by "impossible" phrase', () => {
+      element(by.model('asyncSelected')).sendKeys('talman fru tack', Key.ENTER);
+      expect(element(by.css('no_hits_area')).isPresent()).toBe(true);
+      expect(element(by.css('hits_area')).isPresent()).toBe(false);
+    });
+
+    it('by phrase', () => {
+      element(by.model('asyncSelected')).sendKeys('tack fru talman', Key.ENTER);
+      expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      element(by.css('.hit_document_title')).click();
+      expect(element(by.css('.CodeMirror-code')).getText()).toMatch(/tack fru talman/i);
+    });
+
+    it('by keywords', () => {
+      element(by.model('isPhraseSearch')).click();
+      element(by.model('asyncSelected')).sendKeys('talman fru tack', Key.ENTER);
+      expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      element(by.css('.hit_document_title')).click();
+      expect(element(by.css('.CodeMirror-code')).getText()).toMatch(/tack fru talman/i);
+    });
   });
 });
