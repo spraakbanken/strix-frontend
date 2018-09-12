@@ -20,37 +20,38 @@ describe('strix App', function() {
     const num = await getNum();
 
     await element.all(by.css(".aggregation_item")).first().click();
-    expect(getNum()).toBeLessThan(num);
+    expect(await getNum()).toBeLessThan(num);
   });
 
   describe('Search', () => {
-    beforeEach(() => {
-      browser.get('/');
+    beforeEach(async () => {
+      await browser.get('/');
     });
 
-    it('is in phrase mode by default', () => {
-      expect(element(by.model('isPhraseSearch')).getAttribute('checked')).toBeTruthy();
+    it('is in phrase mode by default', async () => {
+      let checkbox = element(by.id('keyword_search'));
+      await expect(checkbox.getAttribute('checked')).toBeTruthy();
     });
 
-    it('by "impossible" phrase', () => {
-      element(by.model('asyncSelected')).sendKeys('talman fru tack', Key.ENTER);
-      expect(element(by.css('no_hits_area')).isPresent()).toBe(true);
-      expect(element(by.css('hits_area')).isPresent()).toBe(false);
+    it('by "impossible" phrase', async () => {
+      await element(by.css('.search_widget [type=text]')).sendKeys('sociala den i utvecklingen land vårt', Key.ENTER);
+      await expect(element(by.css('.no_hits_area')).isPresent()).toBe(true);
+      await expect(element(by.css('.hits_area')).isPresent()).toBe(false);
     });
 
-    it('by phrase', () => {
-      element(by.model('asyncSelected')).sendKeys('tack fru talman', Key.ENTER);
-      expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
-      element(by.css('.hit_document_title')).click();
-      expect(element(by.css('.CodeMirror-code')).getText()).toMatch(/tack fru talman/i);
+    it('by phrase', async () => {
+      await element(by.css('.search_widget [type=text]')).sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
+      await expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      await element.all(by.css('.hit_document_title')).first().click();
+      await expect(element(by.css('.CodeMirror-code')).getText()).toMatch('den sociala utvecklingen i vårt land');
     });
 
-    it('by keywords', () => {
-      element(by.model('isPhraseSearch')).click();
-      element(by.model('asyncSelected')).sendKeys('talman fru tack', Key.ENTER);
-      expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
-      element(by.css('.hit_document_title')).click();
-      expect(element(by.css('.CodeMirror-code')).getText()).toMatch(/tack fru talman/i);
+    it('by keywords', async () => {
+      await element(by.css('.search_widget [type=text]')).click();
+      await element(by.css('.search_widget [type=text]')).sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
+      await expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      await element.all(by.css('.hit_document_title')).first().click();
+      await expect(element(by.css('.CodeMirror-code')).getText()).toMatch('den sociala utvecklingen i vårt land');
     });
   });
 });
