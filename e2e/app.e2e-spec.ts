@@ -47,10 +47,10 @@ describe('Strix', function() {
       const newFacet = await $$('.unused_facets .aggregation_item').first();
       const newFacetName = await newFacet.getText();
       await newFacet.click();
+      // TODO: Added facet is not necessarily last.
       expect(await $$('.aggregation_list h4').last().getText()).toMatch(newFacetName);
       expect(await $$('.aggregation_list').last().$$('.aggregation_item').count()).toBeGreaterThan(0);
     });
-
   });
 
   describe('Search', () => {
@@ -137,6 +137,25 @@ describe('Strix', function() {
       const title = await $('.doc_header b').getText();
       // Corpus name not included in check, because browser locale is unknown.
       await expect(title).toMatch('Knölpåkar');
+    });
+
+    it('supports local search', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await $('.search_area [type=text]').sendKeys('slå', Key.ENTER);
+
+      // Highlight.
+      // TODO: How to check for highlight?
+      // await browser.sleep(1000);
+      // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
+
+      // Sidebar.
+      await $('accordion-group .fa-search').click();
+      await $$('.bookmark').first().click();
+      const textBefore = await $('.CodeMirror-code').getText();
+      await $$('.bookmark').get(1).click();
+      await browser.sleep(1000);
+      // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
+      expect(await $('.CodeMirror-code').getText).not.toMatch(textBefore);
     });
   })
 });
