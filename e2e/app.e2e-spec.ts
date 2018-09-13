@@ -65,28 +65,30 @@ describe('Strix', function() {
     });
 
     it('by "impossible" phrase', async () => {
-      await element(by.css('.search_widget [type=text]')).sendKeys('sociala den i utvecklingen land vårt', Key.ENTER);
+      await $('.search_widget [type=text]').sendKeys('sociala den i utvecklingen land vårt', Key.ENTER);
       expect(await browser.getCurrentUrl()).toMatch('query=sociala');
-      await expect(element(by.css('.no_hits_area')).isPresent()).toBe(true);
-      await expect(element(by.css('.hits_area')).isPresent()).toBe(false);
+      await expect($('.no_hits_area').isPresent()).toBe(true);
+      await expect($('.hits_area').isPresent()).toBe(false);
     });
 
     it('by phrase', async () => {
-      await element(by.css('.search_widget [type=text]')).sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
+      await $('.search_widget [type=text]').sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
       expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
-      await expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      await expect($('no_hits_area').isPresent()).toBe(false);
 
-      await element.all(by.css('.hit_document_title')).first().click();
-      await expect(element(by.css('.CodeMirror-code')).getText()).toMatch('den sociala utvecklingen i vårt land');
+      await $$('.hit_document_title').first().click();
+      // The CodeMirror text is '1' sometimes. Does Protractor not know to wait for it to load? Maybe sleeping will help.
+      await browser.sleep(1000);
+      await expect($('.CodeMirror-code').getText()).toMatch('den sociala utvecklingen i vårt land');
     });
 
     it('by keywords', async () => {
       await element(by.id('keyword_search')).click();
       expect(await browser.getCurrentUrl()).toMatch('keyword_search=true');
 
-      await element(by.css('.search_widget [type=text]')).sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
+      await $('.search_widget [type=text]').sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
       expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
-      await expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
+      await expect($('no_hits_area').isPresent()).toBe(false);
 
       await expect($('.hits_area').getText()).toMatch('den sociala utvecklingen i vårt land');
     });
@@ -132,7 +134,7 @@ describe('Strix', function() {
 
     it('should open by URL', async () => {
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
-      const title = await element(by.css('.doc_header b')).getText();
+      const title = await $('.doc_header b').getText();
       // Corpus name not included in check, because browser locale is unknown.
       await expect(title).toMatch('Knölpåkar');
     });
