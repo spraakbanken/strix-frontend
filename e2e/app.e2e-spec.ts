@@ -81,15 +81,14 @@ describe('Strix', function() {
     });
 
     it('by keywords', async () => {
-      await element(by.css('.search_widget [type=text]')).click();
+      await element(by.id('keyword_search')).click();
       expect(await browser.getCurrentUrl()).toMatch('keyword_search=true');
 
       await element(by.css('.search_widget [type=text]')).sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
       expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
       await expect(element(by.css('no_hits_area')).isPresent()).toBe(false);
 
-      await element.all(by.css('.hit_document_title')).first().click();
-      await expect(element(by.css('.CodeMirror-code')).getText()).toMatch('den sociala utvecklingen i vårt land');
+      await expect($('.hits_area').getText()).toMatch('den sociala utvecklingen i vårt land');
     });
 
     it('by URL', async () => {
