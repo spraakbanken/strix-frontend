@@ -1,29 +1,24 @@
 import { browser, by, element, Key } from 'protractor';
 
-describe('strix App', function() {
+describe('Strix', function() {
 
-  it('should show the relevant document', async () => {
-    await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
-    const title = await element(by.css('.doc_header b')).getText();
-    // Corpus name not included in check, because browser locale is unknown.
-    await expect(title).toMatch('Knölpåkar');
-  });
+  describe('Filters', () => {
 
-  it('should filter when clicking a button in left sidebar', async () => {
-    await browser.get('/');
+    it('should filter when clicking a button in left sidebar', async () => {
+      async function getNum() {
+        let t = await element(by.css(".hits_header .num")).getText();
+        return Number(t.replace(/[^0-9]/g, ''));
+      }
 
-    async function getNum() {
-      let t = await element(by.css(".hits_header .num")).getText();
-      return Number(t.replace(/[^0-9]/g, ''));
-    }
-
-    const num = await getNum();
-
-    await element.all(by.css(".aggregation_item")).first().click();
-    expect(await getNum()).toBeLessThan(num);
+      await browser.get('/');
+      const num = await getNum();
+      await element.all(by.css(".aggregation_item")).first().click();
+      expect(await getNum()).toBeLessThan(num);
+    });
   });
 
   describe('Search', () => {
+
     beforeEach(async () => {
       await browser.get('/');
     });
@@ -54,4 +49,14 @@ describe('strix App', function() {
       await expect(element(by.css('.CodeMirror-code')).getText()).toMatch('den sociala utvecklingen i vårt land');
     });
   });
+
+  describe('Document', () => {
+
+    it('should open by URL', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      const title = await element(by.css('.doc_header b')).getText();
+      // Corpus name not included in check, because browser locale is unknown.
+      await expect(title).toMatch('Knölpåkar');
+    });
+  })
 });
