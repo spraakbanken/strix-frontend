@@ -132,6 +132,24 @@ describe('Strix', function() {
 
   describe('Document', () => {
 
+    function findToken(n) {
+      return $$('.CodeMirror-code .cm-even, .CodeMirror-code .cm-odd').get(n);
+    }
+
+    it('can be opened and closed', async () => {
+      await browser.get('/');
+
+      // Open.
+      const title = await $$('.hit_document_title').first().getText();
+      await $$('.hit_document_title').first().click();
+      expect(await $('.doc_header b').getText()).toMatch(await title);
+
+      // Close.
+      await $('.doc_header .close_box').click();
+      expect(await $('.doc_header b').isPresent()).toBe(false);
+      expect(await $('docselection').isDisplayed()).toBe(true);
+    });
+
     it('should open by URL', async () => {
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
       const title = await $('.doc_header b').getText();
@@ -157,5 +175,26 @@ describe('Strix', function() {
       // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
       expect(await $('.CodeMirror-code').getText).not.toMatch(textBefore);
     });
-  })
+
+    xit('sidebar is updated when token is clicked', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      const accordion = $('accordion').getWebElement();
+      let sidebarBefore = await accordion.getText();
+
+      await findToken(10).click();
+      let sidebarAfter = await accordion.getText();
+      await expect(sidebarBefore).not.toMatch(sidebarAfter);
+
+      // TODO: Timeout while waiting for element with locator.
+      await findToken(7).click();
+      await expect(sidebarAfter).not.toMatch(await accordion.getText());
+    });
+
+    it('related', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      expect(await $('minidocselection').isDisplayed()).toBe(true);
+      await $('minidocselection .hit_box a').click();
+      expect(await $('.doc_header b').getText()).not.toMatch('Knölpåkar');
+    });
+  });
 });
