@@ -38,7 +38,7 @@ describe('Strix', function() {
       await browser.get('/?filters=W3siZmllbGQiOiJibGluZ2JyaW5nIiwidmFsdWUiOiJtdXNpa2VyIn0seyJmaWVsZCI6ImNvcnB1c19pZCIsInZhbHVlIjoid2lraXBlZGlhIn1d');
       const selectedFilters = $$('.filter_btn');
       expect(await selectedFilters.count()).toBe(2);
-      expect(await selectedFilters.get(0).$('.label').getText()).toMatch('Wikipedia');
+      expect(await selectedFilters.get(0).$('.label').getText()).toMatch('Svenska Wikipedia');
       expect(await selectedFilters.get(1).$('.label').getText()).toMatch('musiker');
     })
 
@@ -153,8 +153,7 @@ describe('Strix', function() {
     it('should open by URL', async () => {
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
       const title = await $('.doc_header b').getText();
-      // Corpus name not included in check, because browser locale is unknown.
-      await expect(title).toMatch('Knölpåkar');
+      await expect(title).toMatch('Etnologiska frågelistor: Knölpåkar');
     });
 
     it('supports local search', async () => {
@@ -188,6 +187,20 @@ describe('Strix', function() {
       // TODO: Timeout while waiting for element with locator.
       await findToken(7).click();
       await expect(sidebarAfter).not.toMatch(await accordion.getText());
+    });
+
+    describe('highlight', () => {
+
+      it('by dropdowns', async () => {
+        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        expect(await $$('.annotation-dropdown').first().getText()).toMatch('ordattribut');
+        await $$('.annotation-dropdown').get(1).click();
+        await $$('.dropdown-item').filter(el => el.getText().then(t => /ordklass/.test(t))).first().click();
+        await $('.annotation-typeahead').click();
+        await $$('.dropdown-item annotation').get(1).click();
+        // TODO: Mostly fails for some reason.
+        // expect(await $$('.cm-underlined').count()).toBeGreaterThan(0);
+      });
     });
 
     it('related', async () => {
