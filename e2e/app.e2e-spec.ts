@@ -257,7 +257,7 @@ describe('Strix', function() {
     it('Collaborator links', async () => {
       await browser.get('/');
       expect(await $('a[href="https://spraakbanken.gu.se"]').isDisplayed()).toBe(true);
-      expect(await $('a[href="https://spraakbanken.gu.se"]').isDisplayed()).toBe(true);
+      expect(await $('a[href="https://sweclarin.se"]').isDisplayed()).toBe(true);
     });
 
     it('Login link present', async () => {
