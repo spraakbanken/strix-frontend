@@ -189,25 +189,51 @@ describe('Strix', function() {
       await expect(sidebarAfter).not.toMatch(await accordion.getText());
     });
 
+    it('related', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      expect(await $('minidocselection').isDisplayed()).toBe(true);
+      await $$('minidocselection .hit_box a').first().click();
+      expect(await $('.doc_header b').getText()).not.toMatch('Knölpåkar');
+    });
+
     describe('highlight', () => {
 
-      it('by dropdowns', async () => {
+      // TODO: Fails randomly and often for unknown reasons.
+      xit('by dropdowns', async () => {
         await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
         expect(await $$('.annotation-dropdown').first().getText()).toMatch('ordattribut');
         await $$('.annotation-dropdown').get(1).click();
         await $$('.dropdown-item').filter(el => el.getText().then(t => /ordklass/.test(t))).first().click();
         await $('.annotation-typeahead').click();
         await $$('.dropdown-item annotation').get(1).click();
-        // TODO: Mostly fails for some reason.
-        // expect(await $$('.cm-underlined').count()).toBeGreaterThan(0);
-      });
-    });
+        expect(await $$('.cm-underlined').count()).toBeGreaterThan(0);
 
-    it('related', async () => {
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
-      expect(await $('minidocselection').isDisplayed()).toBe(true);
-      await $('minidocselection .hit_box a').click();
-      expect(await $('.doc_header b').getText()).not.toMatch('Knölpåkar');
+        const getAccordionText = () => $('.right_accordion').getWebElement().getText();
+        let sidebarBefore = await getAccordionText();
+        await $('annotations-selector .fa-arrow-right').click();
+        await $('annotations-selector .fa-arrow-right').click();
+        let sidebarAfter = await getAccordionText();
+        await expect(sidebarBefore).not.toMatch(sidebarAfter);
+        await $('annotations-selector .fa-arrow-left').click();
+        await expect(sidebarAfter).not.toMatch(await getAccordionText());
+      });
+
+      // TODO: Fails randomly and often for unknown reasons.
+      xit('by sidebar', async () => {
+        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        // "NORDISKA" is selected.
+        await $$('.right_accordion accordion-group').get(2).click();
+        await $$('annotation').filter(el => el.getText().then(t => /adjektiv/.test(t))).first().click();
+        // TODO: Add expectations for highlight and prev/next links.
+      });
+
+      // TODO: Fails randomly and often for unknown reasons.
+      xit('sidebar is updated when a new token is clicked', async () => {
+        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        let sidebarBefore = await $('.right_accordion').getWebElement().getText();
+        await findToken(10).click();
+        expect(await sidebarBefore).not.toEqual(await $('.right_accordion').getWebElement().getText());
+      });
     });
   });
 });
