@@ -236,4 +236,37 @@ describe('Strix', function() {
       });
     });
   });
+
+  describe('Other', () => {
+
+    it('Change language', async () => {
+      await browser.get('/');
+      expect(await $('.language_choice a.disabled').getText()).toMatch('swe');
+      expect(await $('.search_area .btn-primary').getText()).toMatch('Sök');
+      expect(await $('.language_choice a:not(.disabled)').getText()).toMatch('eng');
+      await $('.language_choice a:not(.disabled)').click();
+      expect(await $('.search_area .btn-primary').getText()).toMatch('Search');
+    });
+
+    it('Home link', async () => {
+      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await $('.logo_block img').click();
+      expect(await browser.getCurrentUrl()).toMatch(/:4200\/\??$/);
+    });
+
+    it('Collaborator links', async () => {
+      await browser.get('/');
+      expect(await $('a[href="https://spraakbanken.gu.se"]').isDisplayed()).toBe(true);
+      expect(await $('a[href="https://spraakbanken.gu.se"]').isDisplayed()).toBe(true);
+    });
+
+    it('Login link present', async () => {
+      await browser.get('/');
+      expect(await $('.login a').getText()).toMatch('Logga in');
+      browser.ignoreSynchronization = true;
+      await $('.login a').click();
+      expect(await $('body').getText()).toMatch('identify yourself');
+      browser.ignoreSynchronization = false;
+    });
+  });
 });
