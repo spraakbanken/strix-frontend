@@ -31,7 +31,7 @@ export class CallsService {
     return this.http.get(url, {responseType : 'text', withCredentials : true}).pipe(
       map(data => {
         console.log('JWT', data);
-        window['jwt'] = data['_body'];
+        window['jwt'] = data;
         return true;
       }),
       catchError((error: HttpErrorResponse) =>
