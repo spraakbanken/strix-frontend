@@ -1,7 +1,7 @@
 <ng-template [ngIf]="type === 'lemgram'">
-  <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{translations[posPart] | loc}}</span>) 
-  <a 
-    *ngIf="!noKarp" 
+  <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{translations[posPart] | loc}}</span>)
+  <a
+    *ngIf="!noKarp"
     [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Clemgram%7Cequals%7C'+data"
     target="_blank"
     (click)="clickedKarp($event)">
@@ -15,7 +15,7 @@
 <ng-template [ngIf]="type === 'sense'">
     <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>
     <a
-      *ngIf="!noKarp" 
+      *ngIf="!noKarp"
       [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Csense%7Cequals%7C'+data"
       target="_blank"
       (click)="clickedKarp($event)">
@@ -55,7 +55,7 @@
         (timeupdate)="updateTime(movieplayer.currentTime)"
         (loadedmetadata)="loadedMetadata(movieplayer)">
         <source
-          [src]="'https://ws.spraakbanken.gu.se/ws/strixlabb/resource/ivip/' + currentResource.path + '?jwt=' + jwt"
+          [src]="getResourceUrl()"
           [type]="currentResource.type"
           />
         Your browser does not support HTML videos.

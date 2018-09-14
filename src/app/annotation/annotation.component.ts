@@ -63,7 +63,7 @@ export class AnnotationComponent implements OnInit {
           let regexp = /.*:\d+.?\d*/;
           if (regexp.test(this.data)) {
             this.stringPart = this.data.split(":")[0];
-            this.confidence = this.data.split(":")[1]; 
+            this.confidence = this.data.split(":")[1];
           }
         }
 
@@ -81,6 +81,13 @@ export class AnnotationComponent implements OnInit {
   private openResource() {
     this.currentResource = this.data;
     //this.currentTime = 4000;
+  }
+
+  public getResourceUrl(): string {
+    return 'https://ws.spraakbanken.gu.se/ws/strixlabb/resource/'
+      + this.documentsService.getDocument(0).corpusID
+      + '/' + this.currentResource.path
+      + (this.jwt ? '?jwt=' + this.jwt : '');
   }
 
   private updateTime(time) {
