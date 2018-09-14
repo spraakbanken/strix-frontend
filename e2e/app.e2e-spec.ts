@@ -249,9 +249,11 @@ describe('Strix', function() {
     });
 
     it('Home link', async () => {
+      await browser.get('/');
+      const startUrl = await browser.getCurrentUrl();
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
       await $('.logo_block img').click();
-      expect(await browser.getCurrentUrl()).toMatch(/:4200\/\??$/);
+      expect(await browser.getCurrentUrl()).toBe(startUrl);
     });
 
     it('Collaborator links', async () => {
