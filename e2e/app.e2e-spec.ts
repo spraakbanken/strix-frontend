@@ -71,6 +71,7 @@ describe('Strix', function() {
       await expect($('.hits_area').isPresent()).toBe(false);
     });
 
+    // TODO: Fails sometimes.
     it('by phrase', async () => {
       await $('.search_widget [type=text]').sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
       expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
@@ -82,6 +83,7 @@ describe('Strix', function() {
       await expect($('.CodeMirror-code').getText()).toMatch('den sociala utvecklingen i vårt land');
     });
 
+    // TODO: Fails sometimes.
     it('by keywords', async () => {
       await element(by.id('keyword_search')).click();
       expect(await browser.getCurrentUrl()).toMatch('keyword_search=true');
@@ -93,6 +95,7 @@ describe('Strix', function() {
       await expect($('.hits_area').getText()).toMatch('den sociala utvecklingen i vårt land');
     });
 
+    // TODO: Fails sometimes.
     it('by URL', async () => {
       await browser.get('/?query=svamp');
       expect(await $('.search_widget [type=text]').getAttribute('value')).toBe('svamp');
@@ -104,6 +107,7 @@ describe('Strix', function() {
 
   describe('Document selection', () => {
 
+    // TODO: Fails sometimes.
     it('is paginated', async () => {
       await browser.get('/');
       expect(await $('.pagination-page.active').getText()).toBe('1');
@@ -136,6 +140,7 @@ describe('Strix', function() {
       return $$('.CodeMirror-code .cm-even, .CodeMirror-code .cm-odd').get(n);
     }
 
+    // TODO: Fails sometimes.
     it('can be opened and closed', async () => {
       await browser.get('/');
 
