@@ -1,3 +1,5 @@
+import { ModalModule } from 'ngx-bootstrap';
+import { LocPipeStub } from '../mocks/loc-stub.pipe';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LoginDialogComponent } from './login-dialog.component';
@@ -8,7 +10,8 @@ describe('LoginDialogComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ LoginDialogComponent ]
+      imports: [ModalModule.forRoot()],
+      declarations: [LoginDialogComponent, LocPipeStub],
     })
     .compileComponents();
   }));

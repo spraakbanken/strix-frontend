@@ -33,6 +33,7 @@ describe('App: Strix', () => {
         MockComponent({selector : 'indocsearch'}),
         MockComponent({selector : 'header'}),
         MockComponent({selector : 'reader'}),
+        MockComponent({selector : 'login-dialog'}),
       ],
       providers : [
         {provide : RoutingService, useValue : routingService},

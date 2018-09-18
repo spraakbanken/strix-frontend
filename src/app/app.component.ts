@@ -65,7 +65,7 @@ export class AppComponent {
   }
 
   public gotoLogin() {
-    window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${encodeURIComponent(window.location)}`
+    window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${encodeURIComponent(window.location.toString())}`
   }
 
 }
