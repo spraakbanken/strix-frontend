@@ -47,7 +47,7 @@ export class DocumentsService {
               private queryService: QueryService,
               private store: Store<AppState>) {
 
-    this.store.select('document').pipe(filter(state => state.open)).subscribe(state => {
+    this.store.select('document').pipe(filter(state => !!state.documentID)).subscribe(state => {
       console.log("open document with", state, this.queryService);
 
       if (state.localQuery && state.localQuery !== "") {

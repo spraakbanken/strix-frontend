@@ -40,7 +40,6 @@ export interface QueryState {
 }
 
 export interface DocumentState {
-  open?: boolean;
   documentID?: string;
   documentCorpus?: string;
   localQuery?: string;
@@ -90,17 +89,18 @@ export function documentStateReducer(state: DocumentState, action: Action): Docu
       break;
     case OPENDOCUMENT:
     case OPENDOCUMENT_NOHISTORY:
-      nextState.open = true;
       nextState.documentID = action.payload.doc_id;
       nextState.documentCorpus = action.payload.corpus_id;
       break;
     case CLOSEDOCUMENT:
     case CLOSEDOCUMENT_NOHISTORY:
-      nextState.open = false;
       nextState.documentID = null;
       nextState.documentCorpus = null;
       nextState.localQuery = null;
       nextState.sentenceID = null;
+      break;
+    case SEARCHINDOCUMENT:
+      nextState.localQuery = action.payload;
       break;
   }
   return nextState;

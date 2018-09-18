@@ -54,12 +54,12 @@ export class LeftcolumnComponent implements OnInit {
     });
 
     this.store.select('document').subscribe(documentState => {
-      this.openDocument = documentState.open;
+      this.openDocument = !!documentState.documentID;
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
       (result : AggregationsResult) => {
-        this.parseAggResults(result) 
+        this.parseAggResults(result)
       },
       error => null//this.errorMessage = <any>error
     );

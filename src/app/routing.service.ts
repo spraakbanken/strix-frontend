@@ -125,9 +125,9 @@ export class RoutingService {
         this.store.dispatch({
           type : OPENDOCUMENT_NOHISTORY,
           payload : {
-            doc_id : startState["documentID"],
-            sentence_id : startState["sentenceID"],
-            corpus_id : startState["documentCorpus"]
+            doc_id : startState.document.documentID,
+            sentence_id : startState.document.sentenceID,
+            corpus_id : startState.document.documentCorpus,
           }
         });
       } else {

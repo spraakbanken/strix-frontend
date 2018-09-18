@@ -35,6 +35,8 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
     });
 
     // Appear when a new document is being opened. Start fetching related documents.
+    // TODO: Don't wait with this until main document has *finished* loading.
+    // TODO: Don't do this on local search.
     this.subscription = documentsService.loadedDocument$
       .pipe(filter(() => !this.isMainDocumentLoaded))
       .subscribe(message => {

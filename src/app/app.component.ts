@@ -32,7 +32,7 @@ export class AppComponent {
     });
 
     this.store.select('document').subscribe((documentState) => {
-      this.openDocument = documentState.open;
+      this.openDocument = !!documentState.documentID;
     });
 
     this.languages = this.locService.getAvailableLanguages();

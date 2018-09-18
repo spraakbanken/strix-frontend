@@ -83,7 +83,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     });
 
     // If the user closes the main document:
-    this.store.select('document').pipe(filter(documentState => documentState.open)).subscribe(documentState => {
+    this.store.select('document').pipe(filter(documentState => !!documentState.documentID)).subscribe(documentState => {
       this.showBox = false;
       this.singleWordSelection = false;
       if (this.cmViews.length !== 0) {
