@@ -28,9 +28,9 @@ export class CallsService {
   public testForLogin(): Observable<boolean> {
     let url = this.AUTH_URL + '/jwt';
     return this.http.get(url, {responseType : 'text', withCredentials : true}).pipe(
-      map(data => {
-        console.log('JWT', data);
-        window['jwt'] = data['_body'];
+      map(jwt => {
+        console.log('JWT', jwt);
+        window['jwt'] = jwt;
         return true;
       }),
       catchError((error: HttpErrorResponse) =>

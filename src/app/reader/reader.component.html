@@ -9,7 +9,7 @@
     (onScroll)="onViewportChange($event)"
     (onKeydown)="onKeydown($event)"
     [index]="0"></cm>
-  
+
   <accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0 && gotMetadata">
 
     <!-- Search Hits -->
@@ -34,10 +34,10 @@
       <div class="text_annotations_list">
          <ul class="annotations_list_ul">
           <ng-template ngFor let-annotation [ngForOf]="availableCorpora[mainDocument.corpusID].textAttributes">
-            <li *ngIf="!(annotation.visible === false) && annotation.searchable">
+            <li *ngIf="!(annotation.visible === false)">
               <div class="annotations_local_area">
                 <span>
-                  <span 
+                  <span
                     class="annotation_title"
                     [ngClass]="{empty : isEmpty(mainDocument.textAttributes[annotation.name])}">{{annotation.translation_name | loc}}</span>
                   <ul class="annotations_list">

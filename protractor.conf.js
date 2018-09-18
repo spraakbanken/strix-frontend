@@ -9,7 +9,12 @@ exports.config = {
     './e2e/**/*.e2e-spec.ts'
   ],
   capabilities: {
-    'browserName': 'chrome'
+    browserName: 'chrome',
+    chromeOptions: {
+      prefs: {
+        intl: { accept_languages: "sv" },
+      },
+    },
   },
   seleniumAddress: "http://" + (process.env.SELENIUM || "localhost") + ":4444/wd/hub",
   // directConnect: true,
