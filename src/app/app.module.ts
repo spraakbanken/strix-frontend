@@ -45,6 +45,7 @@ import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
 import { PrettynumberPipeStub } from './mocks/prettynumber-stub.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
+import { LoginDialogComponent } from './login-dialog/login-dialog.component';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -72,6 +73,7 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     PrettynumberPipe,
     EnsurearrayPipe,
     RangesliderComponent,
+    LoginDialogComponent,
     // SearchFilterComponent
   ],
   imports: [

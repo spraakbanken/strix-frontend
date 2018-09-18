@@ -1,0 +1,11 @@
+<ng-template #loginContent>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">{{'login' | loc}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    {{ 'document_requires' | loc }} <a (click)="gotoLogin()">{{'login' | loc}}</a>.
+  </div>
+</ng-template>

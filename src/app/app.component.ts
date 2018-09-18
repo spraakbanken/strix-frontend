@@ -19,6 +19,7 @@ export class AppComponent {
   private searchRedux: Observable<SearchRedux>;
   private openDocument = false;
   private loggedIn = false;
+  public promptLogin;
 
   public languages: string[];
   public selectedLanguage: string;
@@ -46,6 +47,10 @@ export class AppComponent {
       this.openDocument = false;
     });
 
+    this.searchRedux.subscribe(state => {
+      this.promptLogin = state.promptLogin;
+    });
+
     this.languages = this.locService.getAvailableLanguages();
     // Get 3-letter correspondents of user's preferred languages.
     let userLanguages = _.values(_.pick(LocService.LOCALE_MAP, window.navigator.languages || [window.navigator.language]));
@@ -60,7 +65,7 @@ export class AppComponent {
   }
 
   public gotoLogin() {
-    window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${window.location}`
+    window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${encodeURIComponent(window.location)}`
   }
 
 }
