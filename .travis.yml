@@ -20,14 +20,8 @@ install:
   - sudo pip install docker-compose
   - docker-compose version
 
-before_script:
-  - docker-compose up --build --detach
-  - export SELENIUM=hub
-  - export STRIX_FRONTEND_DOCKER_HOST=strix-frontend
-
 script:
-  - ng test --single-run
-  - ng e2e
+  - docker-compose up --build --exit-code-from test
 
 after_script:
   - docker-compose down

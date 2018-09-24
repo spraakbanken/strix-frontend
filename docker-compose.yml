@@ -2,6 +2,12 @@ version: '2'
 
 services:
 
+  test:
+    build: .
+    depends_on:
+      - chrome
+    command: /bin/sh -c "ng test && ng e2e"
+
   hub:
     image: selenium/hub:3.7.1-argon
     environment:
