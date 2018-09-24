@@ -1,4 +1,4 @@
-<div class="left_column d-none d-lg-block col-3"> 
+<div class="left_column d-none d-lg-block col-3">
   <leftcolumn></leftcolumn>
 </div>
 <div class="right_column col-lg-9">
@@ -23,6 +23,7 @@
   <reader [hidden]="!openDocument"></reader>
   <!-- <start-panel *ngIf="!openDocument"></start-panel> -->
   <!--<div class="bottom_bar" *ngIf="openDocument">
-    
+
   </div>-->
+  <login-dialog *ngIf="promptLogin"></login-dialog>
 </div>

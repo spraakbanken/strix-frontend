@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, throwError, of } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { filter, mergeMap, catchError } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
@@ -9,7 +9,7 @@ import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT } from './searchreducer';
+import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT, PROMPTLOGIN } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
@@ -166,7 +166,13 @@ export class DocumentsService {
     this.addDocumentReference(documentID);
 
     let service$ : Observable<any> = sentenceID ? this.callsService.getDocumentBySentenceID(corpusID, sentenceID) : this.callsService.getDocumentWithQuery(documentID, corpusID, query, inOrder)
-    service$.subscribe(
+    service$
+      .pipe(catchError(error => {
+        this.store.dispatch({type: PROMPTLOGIN});
+        this.docLoadingStatusSubject.next(StrixEvent.DOCLOADEND);
+        return throwError(error);
+      }))
+      .subscribe(
           answer => {
             console.log("answer", answer);
 

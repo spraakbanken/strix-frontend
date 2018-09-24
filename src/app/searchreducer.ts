@@ -16,6 +16,7 @@ export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
+export const PROMPTLOGIN = 'LOGINDIALOG';
 
 // payload was removed from Action in lib, brought it back.
 declare module '@ngrx/store' {
@@ -45,6 +46,7 @@ export interface SearchRedux {
   query?: string;
   type?: string;
   sentenceID?: number;
+  promptLogin?: boolean;
 }
 
 
@@ -82,6 +84,9 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       break;
     case CHANGELANG:
       nextState.lang = action.payload;
+      break;
+    case PROMPTLOGIN:
+      nextState.promptLogin = true;
       break;
     case OPENDOCUMENT:
       nextState.documentID = action.payload.doc_id;

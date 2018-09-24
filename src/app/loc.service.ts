@@ -47,7 +47,8 @@ export class LocService {
       'color_mark_attribute' : 'Färgmarkera',
       'loading' : "Laddar",
       'THOUSANDS_SEPARATOR' : " ",
-      "login" : "Logga in"
+      "login" : "Logga in",
+      'document_requires' : 'För detta dokument måste du',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -76,7 +77,8 @@ export class LocService {
       'color_mark_attribute' : 'Colorize',
       'loading' : "Loading",
       'THOUSANDS_SEPARATOR' : ",",
-      "login" : "Log in"
+      "login" : "Log in",
+      'document_requires' : 'This document requires you to',
     }
   };
 
