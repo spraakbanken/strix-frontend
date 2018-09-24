@@ -147,7 +147,7 @@ describe('Strix', function() {
       // Open.
       const title = await $$('.hit_document_title').first().getText();
       await $$('.hit_document_title').first().click();
-      expect(await $('.doc_header b').getText()).toMatch(await title);
+      expect((await $('.doc_header b').getText()).includes(await title)).toBe(true);
 
       // Close.
       await $('.doc_header .close_box').click();
@@ -177,7 +177,7 @@ describe('Strix', function() {
       await $$('.bookmark').get(1).click();
       await browser.sleep(1000);
       // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
-      expect(await $('.CodeMirror-code').getText).not.toMatch(textBefore);
+      expect(await $('.CodeMirror-code').getText()).not.toEqual(textBefore);
     });
 
     xit('sidebar is updated when token is clicked', async () => {
@@ -187,11 +187,11 @@ describe('Strix', function() {
 
       await findToken(10).click();
       let sidebarAfter = await accordion.getText();
-      await expect(sidebarBefore).not.toMatch(sidebarAfter);
+      await expect(sidebarBefore).not.toEqual(sidebarAfter);
 
       // TODO: Timeout while waiting for element with locator.
       await findToken(7).click();
-      await expect(sidebarAfter).not.toMatch(await accordion.getText());
+      await expect(sidebarAfter).not.toEqual(await accordion.getText());
     });
 
     it('related', async () => {
@@ -218,9 +218,9 @@ describe('Strix', function() {
         await $('annotations-selector .fa-arrow-right').click();
         await $('annotations-selector .fa-arrow-right').click();
         let sidebarAfter = await getAccordionText();
-        await expect(sidebarBefore).not.toMatch(sidebarAfter);
+        await expect(sidebarBefore).not.toEqual(sidebarAfter);
         await $('annotations-selector .fa-arrow-left').click();
-        await expect(sidebarAfter).not.toMatch(await getAccordionText());
+        await expect(sidebarAfter).not.toEqual(await getAccordionText());
       });
 
       // TODO: Fails randomly and often for unknown reasons.
