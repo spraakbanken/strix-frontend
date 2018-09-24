@@ -3,5 +3,6 @@ export enum StrixEvent {
     SEARCHSTART,
     SEARCHEND,
     DOCLOADSTART,
-    DOCLOADEND
+    DOCLOADEND,
+    LOCALSEARCHSTART,
 }

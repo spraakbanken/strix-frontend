@@ -104,6 +104,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         console.log("load status:", answer);
         switch (answer) {
           case StrixEvent.DOCLOADSTART:
+          case StrixEvent.LOCALSEARCHSTART:
             this.isLoading = true;
             break;
           case StrixEvent.DOCLOADEND:

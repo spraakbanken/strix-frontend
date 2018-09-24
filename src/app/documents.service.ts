@@ -157,7 +157,7 @@ export class DocumentsService {
 
   public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true, sentenceID = null): void {
     console.log("loading the document in the main reader.", inOrder)
-    this.signalStartedDocumentLoading();
+    this.signalStartedDocumentLoading(this.hasDocument(documentID));
     // Decrease the count (and possibly delete) the old main document
     if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
     this.mainReaderDocumentID = documentID;
@@ -203,6 +203,15 @@ export class DocumentsService {
 
   public getDocument(index: number) : StrixDocument {
     return this.documents[index];
+  }
+
+  /**
+   * Find whether a given document is loaded.
+   *
+   * @param documentID The document id.
+   */
+  public hasDocument(documentID: string): boolean {
+    return _.filter(this.documents, {doc_id: documentID}).length > 0;
   }
 
   /* Add a document to the first empty (null) spot of this.documents, or
@@ -259,8 +268,8 @@ export class DocumentsService {
       .pipe(mergeMap(answer => answer.length ? of(answer[0]) : throwError('No tokens found.')));
   }
 
-  private signalStartedDocumentLoading() {
-    this.docLoadingStatusSubject.next(StrixEvent.DOCLOADSTART);
+  private signalStartedDocumentLoading(isLocalSearch = false) {
+    this.docLoadingStatusSubject.next(isLocalSearch ? StrixEvent.LOCALSEARCHSTART : StrixEvent.DOCLOADSTART);
   }
   private signalEndedDocumentLoading() {
     this.docLoadingStatusSubject.next(StrixEvent.DOCLOADEND);
