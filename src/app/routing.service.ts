@@ -25,7 +25,6 @@ export class RoutingService {
     {tag : ['query', "filters"], type : FragmentType.BASE64, default : {}},
     {tag : ['query', "include_facets"], type : FragmentType.STRINGARRAY, default : []},
     {tag : ['query', "keyword_search"], type : FragmentType.BOOLEAN, default : false},
-    {tag : ['document', 'open'], type : FragmentType.BOOLEAN, default : false},
     {tag : ['document', "documentID"], type : FragmentType.STRING, default : ""},
     {tag : ['document', "documentCorpus"], type : FragmentType.STRING, default : ""},
     {tag : ['document', "localQuery"], type : FragmentType.STRING, default : ""},
