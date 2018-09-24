@@ -44,7 +44,7 @@ export class RoutingService {
         if(!val || val === this.stringify(field.type, field.default)) {
           return ""
         }
-        return `${encodeURI(field.tag.join('.'))}=${encodeURI(val)}`;
+        return `${encodeURI(field.tag[1])}=${encodeURI(val)}`;
       })).join("&");
 
       if (state.ui.history) {
@@ -96,12 +96,12 @@ export class RoutingService {
     if (window.location.search) {
       for (let kv of window.location.search.substr(1).split('&')) {
         let [k, v] = kv.split('=');
-        _.set(startParams, k.split('.'), v);
+        startParams[k] = v;
       }
     }
     const state: AppState = {query : {}, document : {}, ui : {}};
     for (const field of this.urlFields) {
-      const item = _.get(startParams, field.tag) ? this.destringify(field.type, _.get(startParams, field.tag)) : field.default;
+      const item = startParams[field.tag[1]] ? this.destringify(field.type, startParams[field.tag[1]]) : field.default;
       _.set(state, field.tag, item || null);
     }
     return state
