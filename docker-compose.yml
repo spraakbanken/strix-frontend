@@ -2,24 +2,6 @@ version: '2'
 
 services:
 
-  strix-frontend:
-    build: .
-    # volumes:
-      # - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      
-    # ports:
-    #   - "4200:4200"
-    # expose:
-    #   - 49152
-    entrypoint: "ng e2e --host strix-frontend"
-
-    environment:
-      - SELENIUM=hub
-      - "STRIX_FRONTEND_DOCKER_HOST=strix-frontend"
-    depends_on:
-      - chrome
-
-
   hub:
     image: selenium/hub:3.7.1-argon
     environment:
@@ -31,7 +13,7 @@ services:
       - hub
     environment:
         - HUB_PORT_4444_TCP_ADDR=hub
-        - HUB_PORT_4444_TCP_PORT=4444 
+        - HUB_PORT_4444_TCP_PORT=4444
         - "JAVA_OPTS=-Dselenium.LOGGER.level=WARNING"
     volumes:
       - /dev/shm:/dev/shm

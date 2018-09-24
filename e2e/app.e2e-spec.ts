@@ -180,7 +180,7 @@ describe('Strix', function() {
       expect(await $('.CodeMirror-code').getText()).not.toEqual(textBefore);
     });
 
-    xit('sidebar is updated when token is clicked', async () => {
+    it('sidebar is updated when token is clicked', async () => {
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
       const accordion = $('accordion').getWebElement();
       let sidebarBefore = await accordion.getText();
@@ -204,7 +204,7 @@ describe('Strix', function() {
     describe('highlight', () => {
 
       // TODO: Fails randomly and often for unknown reasons.
-      xit('by dropdowns', async () => {
+      it('by dropdowns', async () => {
         await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
         expect(await $$('.annotation-dropdown').first().getText()).toMatch('ordattribut');
         await $$('.annotation-dropdown').get(1).click();
@@ -224,7 +224,7 @@ describe('Strix', function() {
       });
 
       // TODO: Fails randomly and often for unknown reasons.
-      xit('by sidebar', async () => {
+      it('by sidebar', async () => {
         await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
         // "NORDISKA" is selected.
         await $$('.right_accordion accordion-group').get(2).click();
@@ -233,7 +233,7 @@ describe('Strix', function() {
       });
 
       // TODO: Fails randomly and often for unknown reasons.
-      xit('sidebar is updated when a new token is clicked', async () => {
+      it('sidebar is updated when a new token is clicked', async () => {
         await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
         let sidebarBefore = await $('.right_accordion').getWebElement().getText();
         await findToken(10).click();
@@ -254,7 +254,7 @@ describe('Strix', function() {
     });
 
     // TODO: Passes locally but not on Travis.
-    xit('Home link', async () => {
+    it('Home link', async () => {
       await browser.get('/');
       const startUrl = await browser.getCurrentUrl();
       await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
