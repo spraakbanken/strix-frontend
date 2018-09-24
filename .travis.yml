@@ -21,13 +21,13 @@ install:
   - docker-compose version
 
 before_script:
-  - docker-compose up --build
+  - docker-compose up --build --detach
   - export SELENIUM=hub
   - export STRIX_FRONTEND_DOCKER_HOST=strix-frontend
 
 script:
   - ng test --single-run
-  - ng e2e --host strix-frontend
+  - ng e2e
 
 after_script:
   - docker-compose down
