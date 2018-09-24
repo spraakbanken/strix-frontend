@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
 
 @Component({
@@ -18,8 +18,6 @@ import { Filter, QueryType } from '../strixquery.model';
 })
 export class SearchComponent implements OnInit {
 
-  private searchRedux: Observable<SearchRedux>;
-  
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
   private searchType = QueryType.Normal;
 
@@ -72,8 +70,6 @@ export class SearchComponent implements OnInit {
               private karpService: KarpService,
               private queryService: QueryService,
               private store: Store<AppState>) {
-    this.searchRedux = this.store.select('searchRedux');
-
     this.searchStatusSubscription = queryService.searchStatus$.subscribe(
       (answer: StrixEvent) => {
         console.log("search status:", answer);
@@ -93,33 +89,10 @@ export class SearchComponent implements OnInit {
       // Runs on every autocompletion search
       observer.next(this.asyncSelected);
     }).pipe(mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected)));
-
-
-    // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
-    //   console.log("picked up filters change", filters);
-      
-    //   this.currentFilters = filters; // Not sure we really should overwrite the whole tree.
-    //   let didFilter = false;
-    //   for (let filter of this.currentFilters) {
-    //     if (filter.field === "datefrom") {
-    //       didFilter = true;
-    //       let gte = filter.values[0].range.gte;
-    //       let lte = filter.values[0].range.lte;
-    //       console.log("control it 1", gte, lte, this.fromYear, this.toYear);
-    //       if (gte !== this.fromYear || lte !== this.toYear) {
-    //         console.log("control it 2");
-    //         this.histogramSelection = {"from" : moment(gte+"", "YYYY"), "to" : moment(lte+"", "YYYY")};
-    //       }
-    //     }
-    //   }
-    //   if (! didFilter) {
-    //     this.histogramSelection = {"from" : undefined, "to" : undefined};
-    //   }
-    // });
   }
 
   ngOnInit() {
-     this.searchRedux.pipe(take(1)).subscribe(data => {
+     this.store.select('query').pipe(take(1)).subscribe(data => {
       // this.getHistogramData(data.corpora);
       this.isPhraseSearch = !data.keyword_search
 
@@ -127,11 +100,6 @@ export class SearchComponent implements OnInit {
         this.asyncSelected = data.query
       }
     }); 
-
-    /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
-      console.log("acting upon", data.latestAction);
-      this.getHistogramData(data.corpora);
-    }); */
   }
 
   private searchTypeChange(val) {

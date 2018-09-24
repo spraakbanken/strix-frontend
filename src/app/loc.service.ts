@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
-import { AppState, CHANGELANG, INITIATE, SearchRedux } from './searchreducer';
-import { filter } from 'rxjs/operators';
+import { AppState } from './searchreducer';
 import { LangPhrases } from './loc.model';
 
 @Injectable()
@@ -15,8 +13,6 @@ export class LocService {
     'sv' : 'swe',
     'en' : 'eng',
   };
-
-  private searchRedux: Observable<SearchRedux>;
 
   private currentLanguage: string;
   private dictionaries: LangPhrases = {
@@ -82,10 +78,8 @@ export class LocService {
 
   constructor(private store: Store<AppState>) {
 
-    this.searchRedux = this.store.select('searchRedux');
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG || d.latestAction === INITIATE)).subscribe((data) => {
-      this.setCurrentLanguage(data.lang);
+    this.store.select('ui').subscribe(ui => {
+      this.setCurrentLanguage(ui.lang);
     });
 
   }
@@ -102,7 +96,9 @@ export class LocService {
     return this.currentLanguage;
   }
   public setCurrentLanguage(isoCode: string) {
-    console.log("changing language to " + isoCode);
+    if (isoCode !== this.currentLanguage) {
+      console.log("changing language to " + isoCode);
+    }
     this.currentLanguage = isoCode;
   }
   public getTranslationFor(source: string, defaultVal? : string): string {

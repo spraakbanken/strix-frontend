@@ -1,16 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, Subject, throwError, of } from 'rxjs';
-import { filter, map, mergeMap } from 'rxjs/operators';
+import { filter, mergeMap, tap } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
 import { CallsService } from './calls.service';
 import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
-import { StrixMessage } from './strixmessage.model';
+import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT } from './searchreducer';
-import { CLOSEDOCUMENT } from './searchreducer';
+import { AppState, CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
 /**
@@ -25,8 +24,6 @@ import { SearchQuery } from './strixsearchquery.model';
 
 @Injectable()
 export class DocumentsService {
-
-  private searchRedux: Observable<SearchRedux>;
 
   private loadedDocument = new Subject<StrixMessage>();
   private errorMessage: string;
@@ -44,31 +41,33 @@ export class DocumentsService {
   loadedDocument$: Observable<StrixMessage> = this.loadedDocument.asObservable();
 
   private docLoadingStatusSubject = new BehaviorSubject<StrixEvent>(StrixEvent.INIT);
-  docLoadingStatus$ = this.docLoadingStatusSubject.asObservable();
+  docLoadingStatus$ = this.docLoadingStatusSubject.asObservable().pipe(tap(o => console.log('docLoadingStatus', o)));
 
   constructor(private callsService: CallsService,
               private queryService: QueryService,
               private store: Store<AppState>) {
 
-    this.searchRedux = this.store.select('searchRedux');
-    console.log("in documents constructor");
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("open document with", data, this.queryService);
-      this.loadDocumentWithQuery(
-        data.documentID,
-        data.documentCorpus,
-        this.queryService.getSearchString() || "",
-        this.queryService.getInOrderFlag(),
-        data.sentenceID || null);
-    });
-    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCHINDOCUMENT)).subscribe((data) => {
-      this.loadDocumentWithQuery(
-          data.documentID,
-          data.documentCorpus,
-          data.localQuery || "",
-          null,
-          data.sentenceID || null);
-    });
+    this.store.select('document').pipe(filter(state => !!state.documentID)).subscribe(state => {
+      console.log("open document with", state, this.queryService);
+
+      if (state.localQuery && state.localQuery !== "") {
+        // Reopen the current document with the new query
+        this.loadDocumentWithQuery(
+           state.documentID,
+           state.documentCorpus,
+           state.localQuery || "",
+           null,
+           state.sentenceID || null);
+      } else {
+        // Open a new document in the ordinary way
+        this.loadDocumentWithQuery(
+           state.documentID,
+           state.documentCorpus,
+           this.queryService.getSearchString() || "",
+           this.queryService.getInOrderFlag(),
+           state.sentenceID || null);
+      }
+    })
   }
 
   /* A simple reference counting mechanism for keeping track of
@@ -158,7 +157,7 @@ export class DocumentsService {
 
   public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true, sentenceID = null): void {
     console.log("loading the document in the main reader.", inOrder)
-    this.signalStartedDocumentLoading();
+    this.signalStartedDocumentLoading(this.hasDocument(documentID));
     // Decrease the count (and possibly delete) the old main document
     if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
     this.mainReaderDocumentID = documentID;
@@ -204,6 +203,15 @@ export class DocumentsService {
 
   public getDocument(index: number) : StrixDocument {
     return this.documents[index];
+  }
+
+  /**
+   * Find whether a given document is loaded.
+   *
+   * @param documentID The document id.
+   */
+  public hasDocument(documentID: string): boolean {
+    return _.filter(this.documents, {doc_id: documentID}).length > 0;
   }
 
   /* Add a document to the first empty (null) spot of this.documents, or
@@ -260,8 +268,8 @@ export class DocumentsService {
       .pipe(mergeMap(answer => answer.length ? of(answer[0]) : throwError('No tokens found.')));
   }
 
-  private signalStartedDocumentLoading() {
-    this.docLoadingStatusSubject.next(StrixEvent.DOCLOADSTART);
+  private signalStartedDocumentLoading(isLocalSearch = false) {
+    this.docLoadingStatusSubject.next(isLocalSearch ? StrixEvent.LOCALSEARCHSTART : StrixEvent.DOCLOADSTART);
   }
   private signalEndedDocumentLoading() {
     this.docLoadingStatusSubject.next(StrixEvent.DOCLOADEND);

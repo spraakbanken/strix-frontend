@@ -35,7 +35,7 @@ describe('Strix', function() {
 
     it('should be activated from URL', async () => {
       // Collection: Wikipedia. Blingbring: musiker.
-      await browser.get('/?filters=W3siZmllbGQiOiJibGluZ2JyaW5nIiwidmFsdWUiOiJtdXNpa2VyIn0seyJmaWVsZCI6ImNvcnB1c19pZCIsInZhbHVlIjoid2lraXBlZGlhIn1d');
+      await browser.get('/?query.filters=W3siZmllbGQiOiJibGluZ2JyaW5nIiwidmFsdWUiOiJtdXNpa2VyIn0seyJmaWVsZCI6ImNvcnB1c19pZCIsInZhbHVlIjoid2lraXBlZGlhIn1d');
       const selectedFilters = $$('.filter_btn');
       expect(await selectedFilters.count()).toBe(2);
       expect(await selectedFilters.get(0).$('.label').getText()).toMatch('Svenska Wikipedia');
@@ -66,7 +66,7 @@ describe('Strix', function() {
 
     it('by "impossible" phrase', async () => {
       await $('.search_widget [type=text]').sendKeys('sociala den i utvecklingen land vårt', Key.ENTER);
-      expect(await browser.getCurrentUrl()).toMatch('query=sociala');
+      expect(await browser.getCurrentUrl()).toMatch('query.query=sociala');
       await expect($('.no_hits_area').isPresent()).toBe(true);
       await expect($('.hits_area').isPresent()).toBe(false);
     });
@@ -74,7 +74,7 @@ describe('Strix', function() {
     // TODO: Fails sometimes.
     it('by phrase', async () => {
       await $('.search_widget [type=text]').sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
-      expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
+      expect(await browser.getCurrentUrl()).toMatch(/query\.query=den.*sociala/);
       await expect($('no_hits_area').isPresent()).toBe(false);
 
       await $$('.hit_document_title').first().click();
@@ -86,10 +86,10 @@ describe('Strix', function() {
     // TODO: Fails sometimes.
     it('by keywords', async () => {
       await element(by.id('keyword_search')).click();
-      expect(await browser.getCurrentUrl()).toMatch('keyword_search=true');
+      expect(await browser.getCurrentUrl()).toMatch('query.keyword_search=true');
 
       await $('.search_widget [type=text]').sendKeys('den sociala utvecklingen i vårt land', Key.ENTER);
-      expect(await browser.getCurrentUrl()).toMatch(/query=den.*sociala/);
+      expect(await browser.getCurrentUrl()).toMatch(/query\.query=den.*sociala/);
       await expect($('no_hits_area').isPresent()).toBe(false);
 
       await expect($('.hits_area').getText()).toMatch('den sociala utvecklingen i vårt land');
@@ -97,7 +97,7 @@ describe('Strix', function() {
 
     // TODO: Fails sometimes.
     it('by URL', async () => {
-      await browser.get('/?query=svamp');
+      await browser.get('/?query.query=svamp');
       expect(await $('.search_widget [type=text]').getAttribute('value')).toBe('svamp');
       await $$('.hit_area').map(async el => {
         expect(await el.getText()).toMatch('svamp')
@@ -115,11 +115,11 @@ describe('Strix', function() {
       // Go to second page.
       await $$('.pagination-page').get(1).click();
       expect(await $('.pagination-page.active').getText()).toBe('2');
-      expect(await browser.getCurrentUrl()).toMatch('page=2');
+      expect(await browser.getCurrentUrl()).toMatch('query.page=2');
 
       // Go back to first.
       await $$('.pagination-page').get(0).click();
-      expect(await browser.getCurrentUrl()).not.toMatch('page=');
+      expect(await browser.getCurrentUrl()).not.toMatch('query.page=');
 
       // Browse by prev/next.
       expect(await $('.pagination-prev').getAttribute('class')).toMatch(/\bdisabled\b/);
@@ -129,7 +129,7 @@ describe('Strix', function() {
       expect(await $('.pagination-page.active').getText()).toBe('1');
 
       // Go from URL.
-      await browser.get('/?page=3');
+      await browser.get('/?query.page=3');
       expect(await $('.pagination-page.active').getText()).toBe('3');
     });
   });
@@ -156,13 +156,13 @@ describe('Strix', function() {
     });
 
     it('should open by URL', async () => {
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
       const title = await $('.doc_header b').getText();
       await expect(title).toMatch('Etnologiska frågelistor: Knölpåkar');
     });
 
     it('supports local search', async () => {
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
       await $('.search_area [type=text]').sendKeys('slå', Key.ENTER);
 
       // Highlight.
@@ -171,9 +171,12 @@ describe('Strix', function() {
       // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
 
       // Sidebar.
+      expect(await $$('.right_accordion accordion-group').count()).toBe(4);
       await $('accordion-group .fa-search').click();
       await $$('.bookmark').first().click();
       const textBefore = await $('.CodeMirror-code').getText();
+      // Due to a Bootstrap bug (?) the last accordion-group will have spontaneously opened. We have to open the search results again.
+      await $('accordion-group .fa-search').click();
       await $$('.bookmark').get(1).click();
       await browser.sleep(1000);
       // expect(await $('.CodeMirror-line span[style*="background-color"]').getText()).toMatch(/^sl(år?|og)/);
@@ -181,7 +184,7 @@ describe('Strix', function() {
     });
 
     xit('sidebar is updated when token is clicked', async () => {
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
       const accordion = $('accordion').getWebElement();
       let sidebarBefore = await accordion.getText();
 
@@ -195,7 +198,7 @@ describe('Strix', function() {
     });
 
     it('related', async () => {
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
       expect(await $('minidocselection').isDisplayed()).toBe(true);
       await $$('minidocselection .hit_box a').first().click();
       expect(await $('.doc_header b').getText()).not.toMatch('Knölpåkar');
@@ -205,7 +208,7 @@ describe('Strix', function() {
 
       // TODO: Fails randomly and often for unknown reasons.
       xit('by dropdowns', async () => {
-        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
         expect(await $$('.annotation-dropdown').first().getText()).toMatch('ordattribut');
         await $$('.annotation-dropdown').get(1).click();
         await $$('.dropdown-item').filter(el => el.getText().then(t => /ordklass/.test(t))).first().click();
@@ -225,7 +228,7 @@ describe('Strix', function() {
 
       // TODO: Fails randomly and often for unknown reasons.
       xit('by sidebar', async () => {
-        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
         // "NORDISKA" is selected.
         await $$('.right_accordion accordion-group').get(2).click();
         await $$('annotation').filter(el => el.getText().then(t => /adjektiv/.test(t))).first().click();
@@ -234,7 +237,7 @@ describe('Strix', function() {
 
       // TODO: Fails randomly and often for unknown reasons.
       xit('sidebar is updated when a new token is clicked', async () => {
-        await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+        await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
         let sidebarBefore = await $('.right_accordion').getWebElement().getText();
         await findToken(10).click();
         expect(await sidebarBefore).not.toEqual(await $('.right_accordion').getWebElement().getText());
@@ -257,7 +260,7 @@ describe('Strix', function() {
     xit('Home link', async () => {
       await browser.get('/');
       const startUrl = await browser.getCurrentUrl();
-      await browser.get('?documentID=20d:0&documentCorpus=fragelistor');
+      await browser.get('?document.documentID=20d:0&document.documentCorpus=fragelistor');
       await $('.logo_block img').click();
       expect(await browser.getCurrentUrl()).toBe(startUrl);
     });

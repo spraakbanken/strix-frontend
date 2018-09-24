@@ -1,11 +1,12 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
-import { OPENDOCUMENT, RELOAD, SEARCH, AppState } from '../searchreducer';
+import { OPENDOCUMENT, AppState } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
+import { StrixEvent } from '../strix-event.enum';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -15,7 +16,6 @@ import { filter } from 'rxjs/operators';
 })
 export class MinidocselectionComponent implements OnInit, OnDestroy {
 
-  private searchRedux: Observable<any>;
   private subscription: Subscription;
 
   public documentsWithHits: StrixDocument[] = [];
@@ -24,15 +24,18 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
   constructor(private queryService: QueryService,
               private store: Store<AppState>,
               private documentsService: DocumentsService) {
-    this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.pipe(filter((d) => [OPENDOCUMENT, SEARCH, RELOAD].includes(d.latestAction)))
-      .subscribe(() => {
-      this.documentsWithHits = [];
-      // Hide until main document is loaded.
-      this.isMainDocumentLoaded = false;
+    // Reset when a new document is being opened.
+    this.documentsService.docLoadingStatus$.subscribe(event => {
+      if (event === StrixEvent.DOCLOADSTART) {
+        this.documentsWithHits = [];
+        // Hide until main document is loaded.
+        this.isMainDocumentLoaded = false;
+      }
     });
 
+    // Appear when a new document is being opened. Start fetching related documents.
+    // TODO: Don't wait with this until main document has *finished* loading.
     this.subscription = documentsService.loadedDocument$
       .pipe(filter(() => !this.isMainDocumentLoaded))
       .subscribe(message => {

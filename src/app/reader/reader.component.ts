@@ -56,8 +56,6 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   private showSidebar = true;
   private bookmarks: any = [];
 
-  private searchRedux: Observable<any>;
-
   private viewPortEvent = new Subject<any>();
   private viewPortChange$: Observable<any> = this.viewPortEvent.asObservable();
 
@@ -85,8 +83,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     });
 
     // If the user closes the main document:
-    this.searchRedux = this.store.select('searchRedux');
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+    this.store.select('document').pipe(filter(documentState => !!documentState.documentID)).subscribe(documentState => {
       this.showBox = false;
       this.singleWordSelection = false;
       if (this.cmViews.length !== 0) {
@@ -107,6 +104,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         console.log("load status:", answer);
         switch (answer) {
           case StrixEvent.DOCLOADSTART:
+          case StrixEvent.LOCALSEARCHSTART:
             this.isLoading = true;
             break;
           case StrixEvent.DOCLOADEND:

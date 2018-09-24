@@ -22,6 +22,7 @@ describe('MinidocselectionComponent', () => {
     };
     documentsServiceStub = <DocumentsService>{
       loadedDocument$ : new Observable(),
+      docLoadingStatus$ : new Observable(),
     };
 
     TestBed.configureTestingModule({
