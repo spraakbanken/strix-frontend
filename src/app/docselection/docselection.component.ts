@@ -23,7 +23,7 @@ export class DocselectionComponent implements OnInit {
 
   private hasSearched = false;
   private disablePaginatorEvent = false;
-  
+
   private currentPaginatorPage: number = 1; // Needs to be 1-based because of the paginator widget
 
   private documentsWithHits: StrixDocument[] = [];//StrixDocHit[] = [];
@@ -34,7 +34,7 @@ export class DocselectionComponent implements OnInit {
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   private checkedCorpora: any = {};
 
-  private show = true;
+  public show = true;
 
   private searchResultSubscription: Subscription;
   private metadataSubscription: Subscription;
@@ -75,7 +75,7 @@ export class DocselectionComponent implements OnInit {
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
 
-        
+
       },
       error => null//this.errorMessage = <any>error
     );

@@ -11,7 +11,7 @@ import { SEARCH, OPENDOCUMENT, AppState } from '../searchreducer';
 })
 export class StartPanelComponent implements OnInit {
 
-  private show = true;
+  public show = true;
 
   private searchRedux: Observable<any>;
 

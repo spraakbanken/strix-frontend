@@ -19,15 +19,15 @@ import { Filter, QueryType } from '../strixquery.model';
 export class SearchComponent implements OnInit {
 
   private searchRedux: Observable<SearchRedux>;
-  
+
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
-  private searchType = QueryType.Normal;
+  public searchType = QueryType.Normal;
 
   private asyncSelected: string = "";
   private dataSource: Observable<any>;
   private errorMessage: string;
 
-  private currentFilters: Filter[] = [];
+  public currentFilters: Filter[] = [];
 
   private histogramData: any;
   private histogramSelection: any;
@@ -65,7 +65,7 @@ export class SearchComponent implements OnInit {
   */
 
   private searchStatusSubscription: Subscription;
-  private isSearching = false;
+  public isSearching = false;
   private isPhraseSearch : boolean = true;
 
   constructor(private callsService: CallsService,
@@ -97,7 +97,7 @@ export class SearchComponent implements OnInit {
 
     // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
     //   console.log("picked up filters change", filters);
-      
+
     //   this.currentFilters = filters; // Not sure we really should overwrite the whole tree.
     //   let didFilter = false;
     //   for (let filter of this.currentFilters) {
@@ -126,7 +126,7 @@ export class SearchComponent implements OnInit {
       if(data.query) {
         this.asyncSelected = data.query
       }
-    }); 
+    });
 
     /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
       console.log("acting upon", data.latestAction);
@@ -147,7 +147,7 @@ export class SearchComponent implements OnInit {
     });
   }
 
-  private simpleSearch() {
+  public simpleSearch() {
     this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
   }

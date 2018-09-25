@@ -17,8 +17,8 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedu
 export class AppComponent {
 
   private searchRedux: Observable<SearchRedux>;
-  private openDocument = false;
-  private loggedIn = false;
+  public openDocument = false;
+  public loggedIn = false;
 
   public languages: string[];
   public selectedLanguage: string;

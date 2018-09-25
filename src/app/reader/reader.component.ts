@@ -26,20 +26,20 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   subscription : Subscription;
 
   private docLoadStatusSubscription: Subscription;
-  private isLoading = false;
+  public isLoading = false;
   private openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
 
   private mainDocument: StrixDocument;
 
   /* Metadata */
-  private gotMetadata = false;
+  public gotMetadata = false;
   private metadataSubscription: Subscription;
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   //private availableCorporaKeys: string[] = [];
 
   // Each item in cmViews is an index number of the DocumentsService documents.
   // They need not be in order!!
-  private cmViews = [];
+  public cmViews = [];
 
   private titles = [""];
   private selectedMirrorIndex = 0;

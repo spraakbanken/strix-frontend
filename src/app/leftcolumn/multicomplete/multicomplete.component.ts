@@ -21,11 +21,11 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
     @Output() onSelect = new EventEmitter<Bucket>();
     @Output() onRemove = new EventEmitter<Bucket>();
 
-    private typeaheadSelected : string = "";
+    public typeaheadSelected : string = "";
 
-    private selected : Bucket[] = [];
-    private remaining : Bucket[] = [];
-    private head : Bucket[] = [];
+    public selected : Bucket[] = [];
+    public remaining : Bucket[] = [];
+    public head : Bucket[] = [];
 
     constructor() {
 
@@ -56,17 +56,17 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
         return key
       }
     }
-    private getRemaining() {
+    public getRemaining() {
         return this.remaining;
     }
 
-    private onInputClick(event) {
+    public onInputClick(event) {
       if(window.outerHeight - event.target.getBoundingClientRect().bottom < 300) {
           event.target.scrollIntoView()
       }
     }
     private onDeselect(bucket : Bucket) {
-        this.remaining.push(bucket) 
+        this.remaining.push(bucket)
         this.remaining = _.orderBy(this.remaining, "doc_count", "desc")
         this.selected.splice(this.selected.indexOf(bucket), 1)
         this.onRemove.emit(bucket)
@@ -75,7 +75,7 @@ export class MultiCompleteComponent implements OnInit, OnChanges {
       bucket.selected = true
       this.onSelect.emit(bucket)
     }
-    private dropdownSelected(match) {
+    public dropdownSelected(match) {
       let selectedItem : Bucket = match.item;
       console.log("dropdownSelected", selectedItem)
       // let bucket : Bucket = _.find(this.aggregations[aggKey].buckets, (item) => item.key == selectedItem.item.key)

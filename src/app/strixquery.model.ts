@@ -16,5 +16,6 @@ export class Filter {
 }
 
 export enum QueryType {
-    Normal = 'normal'
+    Normal = 'normal',
+    Lemgram = 'lemgram',
 }

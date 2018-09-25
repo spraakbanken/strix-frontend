@@ -23,8 +23,8 @@ import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.mo
   styleUrls: ['./leftcolumn.component.css']
 })
 export class LeftcolumnComponent implements OnInit {
-  
-  private gotMetadata = false;
+
+  public gotMetadata = false;
 
   private metadataSubscription: Subscription;
   private aggregatedResultSubscription: Subscription;
@@ -34,13 +34,13 @@ export class LeftcolumnComponent implements OnInit {
   //private currentFilters: any[] = []; // TODO: Make some interface
   private unusedFacets : string[] = [];
 
-  private openDocument = false;
+  public openDocument = false;
 
   private searchRedux: Observable<any>;
   private include_facets : string[] = []
   private availableCorpora : { [key: string] : StrixCorpusConfig};
   private mem_guessConfFromAttributeName : Function;
-  
+
 
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
@@ -69,7 +69,7 @@ export class LeftcolumnComponent implements OnInit {
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
       (result : AggregationsResult) => {
-        this.parseAggResults(result) 
+        this.parseAggResults(result)
       },
       error => null//this.errorMessage = <any>error
     );
@@ -92,7 +92,7 @@ export class LeftcolumnComponent implements OnInit {
       } else {
         return "list"
       }
-      
+
     } else {
       return ret
     }
@@ -130,7 +130,7 @@ export class LeftcolumnComponent implements OnInit {
       }
       return item.to
     }).to
-    
+
     agg.min = _.minBy(agg.buckets, "from").from
     agg.max = max
     agg.value = {range: {lte: agg.max, gte: agg.min}}
@@ -176,7 +176,7 @@ export class LeftcolumnComponent implements OnInit {
           if(target && target.length) {
             target[0].selected = true
           } else {
-            // make sure selected filters don't disappear by adding them 
+            // make sure selected filters don't disappear by adding them
             // to incoming aggs array
             newValue.push(target)
           }
@@ -194,7 +194,7 @@ export class LeftcolumnComponent implements OnInit {
                             .value()
     this.unusedFacets = _.difference(result.unused_facets, ["datefrom", "dateto"]);
   }
-  
+
   private chooseBucket(aggregationKey: string, bucket: Bucket) {
     bucket.selected = true
 
@@ -246,7 +246,7 @@ export class LeftcolumnComponent implements OnInit {
     this.store.dispatch({ type: SEARCH, payload : null});
   }
 
-  private reloadStrix() {
+  public reloadStrix() {
     window.location.href = window.location.pathname;
   }
 
@@ -267,10 +267,10 @@ export class LeftcolumnComponent implements OnInit {
       this.metadataService.loadedMetadata$
 
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
-      //this.zone.run(() => {  
+      //this.zone.run(() => {
         console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)
-        
+
         let filterData = filters || [];
         // Clear all filters first (could probably be optimized)
         for (let agg in this.aggregations) {

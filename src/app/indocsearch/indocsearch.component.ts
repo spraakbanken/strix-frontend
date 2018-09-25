@@ -9,14 +9,14 @@ import { AppState, SEARCHINDOCUMENT } from '../searchreducer';
   styleUrls: ['./indocsearch.component.css']
 })
 export class IndocsearchComponent implements OnInit {
-  private asyncSelected: string = "";
+  public asyncSelected: string = "";
 
   constructor(private store: Store<AppState>) { }
 
   ngOnInit() {
   }
 
-  private simpleSearch() {
+  public simpleSearch() {
     this.store.dispatch({ type: SEARCHINDOCUMENT, payload : this.asyncSelected});
   }
 

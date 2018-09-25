@@ -22,7 +22,7 @@
           (keydown.Enter)="simpleSearch()"/>
 
           <label for="keyword_search">{{'keyword_search' | loc}}</label>
-          <input type="checkbox" class="" id="keyword_search" 
+          <input type="checkbox" class="" id="keyword_search"
             [(ngModel)]="isPhraseSearch"
             (change)="searchTypeChange(isPhraseSearch)"
           >
@@ -40,7 +40,7 @@
           [typeaheadItemTemplate]="lemgramItemTemplate"
           (typeaheadOnSelect)="typeaheadOnSelect($event)"/>
         </div>
-        <button (click)="simpleSearch(false)" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;{{'search' | loc}}</button>
+        <button (click)="simpleSearch()" class="btn btn-sm btn-primary"><i class="fa fa-search"></i>&nbsp;{{'search' | loc}}</button>
     </div>
   <div class="clear"></div>
   <!--<div class="histogram_box">
