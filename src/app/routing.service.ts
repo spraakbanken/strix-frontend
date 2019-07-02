@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { Observable, timer, fromEvent } from 'rxjs';
 import * as _ from 'lodash';
 
-import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux } from './searchreducer';
+import { INITIATE, RELOAD, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, AppState, SearchRedux, CHANGEQUERY } from './searchreducer';
 import { QueryType } from './strixquery.model';
 
 /** The Routing Service is responsible for keeping the web browser URL and
@@ -52,7 +52,10 @@ export class RoutingService {
       if (state.latestAction !== INITIATE) {
         if (state.history) {
           console.log("PUSHING STATE")
+          const referrer = location.search
           window.history.pushState("", "", urlString)
+          ;(window as any)._paq.push(['setReferrerUrl', referrer], ['setCustomUrl', urlString])
+          ;(window as any)._paq.push(state.latestAction === CHANGEQUERY ? ['trackSiteSearch', state.query] : ['trackPageView'])
         } else {
           window.history.replaceState("", "", urlString)
         }
