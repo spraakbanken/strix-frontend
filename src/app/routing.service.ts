@@ -24,9 +24,11 @@ export class RoutingService {
     {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
     {tag : "query", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
-    {tag : "page", type : FragmentType.NUMBER, default : 1},
+    {tag : "page", type : FragmentType.NUMBER, default : 0},
+    {tag : "documentsPerPage", type : FragmentType.NUMBER, default : 10},
     {tag : "filters", type : FragmentType.BASE64, default : {}},
-    {tag : "include_facets", type : FragmentType.STRINGARRAY, default : []},
+    {tag : "include_facets", type : FragmentType.STRINGARRAY, default : ["corpus_id"]},
+    {tag : "modeSelected", type : FragmentType.STRINGARRAY, default : ["modern"]},
     {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "sentenceID", type : FragmentType.STRING, default : ""},
@@ -41,7 +43,7 @@ export class RoutingService {
     // React on app state changes by pushing a new browser state.
     // Set the encoded app state as the URL query string.
     this.searchRedux.subscribe((state: SearchRedux) => {
-      console.log("the data", state);
+      // console.log("the data", state);
       let urlString = '?' + _.compact(this.urlFields.map((field) => {
         const val = this.stringify(field.type, state[field.tag]);
         if(!val || val === this.stringify(field.type, field.default)) {
@@ -51,7 +53,7 @@ export class RoutingService {
       })).join("&");
       if (state.latestAction !== INITIATE) {
         if (state.history) {
-          console.log("PUSHING STATE")
+          // console.log("PUSHING STATE")
           const referrer = location.search
           window.history.pushState("", "", urlString)
           ;(window as any)._paq.push(['setReferrerUrl', referrer], ['setCustomUrl', urlString])
@@ -69,6 +71,27 @@ export class RoutingService {
     });
   }
 
+  private encodeFilter(obj: string): string {
+    let _1 = "";
+    let _2 = {};
+    let _3 = [];
+    for (let i = 0; i < obj.length; i++) {
+      if (_.keys(_2).includes(obj[i]['field'])) {
+        _2[obj[i]['field']].push(obj[i]['value'])
+      } else {
+        _2[obj[i]['field']] = [obj[i]['value']]
+        _3.push(obj[i]['field'])
+      }
+    }
+    for (let i = 0; i < _3.length; i++) {
+      _1 += _3[i]
+      _1 += ":" + _2[_3[i]].join(",")
+      if (i !== _3.length -1) {
+        _1 += ";"
+      }
+    }
+    return _1;
+  }
 
   private stringify(type: FragmentType, obj): string {
     if (!obj) return "";
@@ -76,10 +99,24 @@ export class RoutingService {
       case FragmentType.STRINGARRAY:
         return obj.join(",");
       case FragmentType.BASE64:
-        return btoa(JSON.stringify(obj));
+        // return btoa(JSON.stringify(obj));
+        return this.encodeFilter(obj);
       default:
         return String(obj);
     }
+  }
+
+  private decodeFilter(str: string): any {
+    let _1 = str.split(";");
+    let _2 = {};
+    let _3 = 0;
+    for (let i in _1) {
+      for (let j of _1[i].split(":")[1].split(",")) {
+        _2[_3] = {'field': _1[i].split(":")[0], 'value': j}
+        _3++;
+      }
+    }
+    return _2;
   }
 
   private destringify(type: FragmentType, str: string): any {
@@ -93,7 +130,8 @@ export class RoutingService {
       case FragmentType.NUMBER:
         return parseInt(str, 10);
       case FragmentType.BASE64:
-        return JSON.parse(atob(str));
+        // return JSON.parse(atob(str));
+        return this.decodeFilter(str);
       case FragmentType.BOOLEAN:
         return str === "true";
     }
@@ -129,7 +167,7 @@ export class RoutingService {
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
     timer(0).subscribe(() => {
       if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
-        console.log("autoopening document", startState.documentID, startState.documentCorpus);
+        // console.log("autoopening document", startState.documentID, startState.documentCorpus);
         this.store.dispatch({
           type : OPENDOCUMENT_NOHISTORY,
           payload : {

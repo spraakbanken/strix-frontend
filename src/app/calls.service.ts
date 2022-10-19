@@ -30,7 +30,7 @@ export class CallsService {
     let url = this.AUTH_URL + '/jwt';
     return this.http.get(url, {responseType : 'text', withCredentials : true}).pipe(
       map(jwt => {
-        console.log('JWT', jwt);
+        // console.log('JWT', jwt);
         window['jwt'] = jwt;
         return true;
       }),
@@ -45,7 +45,7 @@ export class CallsService {
    * Customized GET call for Strix backend.
    */
   private get<T>(endpoint: string, params?: {[param: string]: string}) {
-    console.log('GET Request', endpoint, params);
+    // console.log('GET Request', endpoint, params);
     const options = {
       params : new HttpParams({fromObject : params}),
       headers : window['jwt'] ? new HttpHeaders({'Authorization' : `Bearer ${window['jwt']}`}) : null,
@@ -55,9 +55,9 @@ export class CallsService {
   }
 
   public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {
-    return this.get('config').pipe(
+    return this.get<StrixCorpusConfig>('config').pipe(
       map(data => {
-        console.log("getCorpusInfo data", data, window["jwt"])
+        // console.log("getCorpusInfo data", data, window["jwt"])
 
         // BE returns struct_attributes as an object; convert it to an array.
         for (let corpusID in data) {
@@ -74,7 +74,11 @@ export class CallsService {
           corpusData.attributes.word_attributes,
           corpusData.attributes.struct_attributes,
           corpusData.description,
-          corpusData.name
+          corpusData.name,
+          corpusData.mode,
+          corpusData.protected,
+          corpusData.folderName,
+          corpusData.tokenInCorpora
         ));
 
       }),
@@ -113,7 +117,7 @@ export class CallsService {
 
   private formatFilterObject(filters: Filter[]): string {
     for (let filter of filters) {
-      console.log("filter", filter)
+      // console.log("filter", filter)
       if (filter.field === "datefrom") {
         // Rewrite years to full dates, currently required by the backend (and converts to strings as well!)
         filter.value.range.lte = filter.value.range.lte + "1231";
@@ -144,8 +148,8 @@ export class CallsService {
     if (searchString === null) {
       searchString = ""
     }
-    let fromPage = (query.pageIndex - 1) * query.documentsPerPage;
-    let toPage = (query.pageIndex) * query.documentsPerPage;
+    let fromPage = (query.pageIndex) * query.documentsPerPage;
+    let toPage = (query.pageIndex + 1) * query.documentsPerPage;
     let params: any = {
       exclude : 'lines,dump,token_lookup',
       from : fromPage.toString(),
@@ -171,7 +175,7 @@ export class CallsService {
 
   /* Get aggregations for faceted search */
   public getAggregations(query: StrixQuery): Observable<AggregationsResult> {
-    console.log("getAggregations", query);
+    // console.log("getAggregations", query);
 
     let filters = _.cloneDeep(query.filters);
     let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
@@ -182,8 +186,12 @@ export class CallsService {
       exclude_empty_buckets : true,
     };
 
-    if(corpusIDs && corpusIDs.length > 0) {
-      params.corpora = corpusIDs.join(",");
+    // if(corpusIDs && corpusIDs.length > 0) {
+    //   params.corpora = corpusIDs.join(",");
+    // }
+
+    if (query.corpora) {
+      params.corpora = query.corpora.join(",")
     }
 
     if (searchString.length !== 0) {
@@ -198,7 +206,63 @@ export class CallsService {
     if (query.keyword_search) {
       params.in_order = (!query.keyword_search).toString();
     }
+    if (query.modes) {
+      params.modes = query.modes.join(',');
+    }
     return this.get<AggregationsResult>('aggs', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  public getStatistics(query: StrixQuery): Observable<any> {
+    // query.filters.push.apply(query.filters, {"year": {"range": {"gte": 1904, "lte": 1920}}})
+    let filters = _.cloneDeep(query.filters);
+    let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
+
+    let searchString = query.queryString || '';
+    let params: any = {
+      facet_count : 5,
+      exclude_empty_buckets : true,
+    };
+
+    if(corpusIDs && corpusIDs.length > 0) {
+      params.corpora = corpusIDs.join(",");
+    }
+
+    // if (query.corpora) {
+    //   params.corpora = query.corpora.join(",")
+    // }
+
+    if (searchString.length !== 0) {
+      params.text_query = searchString;
+    }
+    if (filters && _.size(filters) > 0) {
+      params.text_filter = this.formatFilterObject(filters);
+    }
+    if (query.include_facets.length) {
+      params.include_facets = query.include_facets.join(",");
+    }
+    if (query.keyword_search) {
+      params.in_order = (!query.keyword_search).toString();
+    }
+    if (query.modes) {
+      params.modes = query.modes.join(',');
+    }
+    return this.get<any>('stats', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  public getModeStatistics(corpara: string[], modes: string[]): Observable<any> {
+    let params: any = {};
+
+    if (corpara) {
+      params.corpora = corpara.join(",");
+    }
+    if (modes) {
+      params.modes = modes.join(",");
+    }
+    return this.get<any>('modeStats', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -261,7 +325,7 @@ export class CallsService {
   }
 
   private extractDocumentData(body: any): StrixDocument { // TODO: Update this
-    console.log('body', body);
+    // console.log('body', body);
     let strixDocument = new StrixDocument();
     let data = body.data || body; // Necessary now because the 'search' and 'document' data give different results (?)
     strixDocument.doc_id = data.doc_id;
@@ -278,11 +342,12 @@ export class CallsService {
     strixDocument.token_lookup = data.token_lookup;
     strixDocument.corpusID = data.corpus_id;
     strixDocument.highlight = data.highlight;
+    strixDocument.mostCommonWords = data.most_common_words
     return strixDocument;
   }
 
   private extractTokenData(body: any): any {
-    console.log('body', body);
+    // console.log('body', body);
     return body;
   }
 
@@ -299,6 +364,18 @@ export class CallsService {
       exclude : 'token_lookup,dump,lines',
     };
     return this.get<StrixDocument>(`related/${corpusID}/${documentID}`, params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  /* Related documents */
+  public getSimilarDocuments(modeID: string, documentID: string, corpusID: string, relDoc: string): Observable<StrixDocument> {
+    let params: any = {
+      exclude : 'token_lookup,dump,lines',
+    };
+    params.relatedDocSelection = relDoc;
+    // params.text_filter = this.formatFilterObject([{field: "mode_id", value: modeID}]);
+    return this.get<StrixDocument>(`similar/${modeID}/${corpusID}/${documentID}`, params).pipe(
       catchError(this.handleError)
     );
   }

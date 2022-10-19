@@ -20,6 +20,7 @@ export interface Bucket {
     selected : boolean,
     parent: string,
     doc_count : number,
+    mode : string,
 
     // TODO: move range props to seprate type?
     from?: number,

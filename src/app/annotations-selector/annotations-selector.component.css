@@ -1,8 +1,15 @@
 .annotation-typeahead {
     width: 340px;
     display: inline-block;
+    font-size: small;
+    font-weight: 400;
 }
 .annotation-dropdown {
     display: inline-block;
     margin-right: 1em;
+}
+
+.annotation-dropdown .dropdown-item {
+    font-size: small;
+    font-weight: 400px;
 }

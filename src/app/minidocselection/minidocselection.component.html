@@ -1,11 +1,22 @@
-<div class="mini_doc_selection_area" *ngIf="isMainDocumentLoaded">
+<div class="mini_doc_selection_area" *ngIf="isMainDocumentLoaded && !isCompare">
   <div class="mini_doc_header">
     <b>{{'related_documents' | loc}}</b>
   </div>
   <div *ngFor="let doc of documentsWithHits; let i = index" class="hit_box">
-    <a (click)="openDocument(i)">{{doc.title}}</a>
+    <li (click)="openDocument(i)"><b>Title: </b>{{doc.title}}</li>
+    <li><b>Word count: </b>{{doc.word_count}}</li>
+    <li><b>Corpus Name: </b> {{doc.corpus_id}} 
+      <button title="Compare" mat-button color="primary" (click)="openCompareBox()"
+    style="line-height: 10px; padding: 0px; background: #e9ecef; margin: 0px 0px 0px 10px; min-width: 34px;" >
+      <mat-icon>compare_arrows</mat-icon></button>
+    </li>
   </div>
   <div *ngIf="documentsWithHits.length === 0">
     <i class="fa fa-spinner fa-pulse"></i>
+  </div>
+</div>
+<div *ngIf="isCompare">
+  <div class="close_box" (click)="closeDocumentCompare()">
+    <i class="fa fa-times fa-border"></i>
   </div>
 </div>

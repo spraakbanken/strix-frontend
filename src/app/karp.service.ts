@@ -6,7 +6,9 @@ import { map, catchError } from 'rxjs/operators';
 @Injectable()
 export class KarpService {
 
-  private readonly KARPBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/karp/v2";
+  private readonly KARPBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/karp/v4";
+
+  // https://ws.spraakbanken.gu.se/ws/karp/v4/autocomplete?mode=external&multi=" + ",".join(terms) + "&resource=saldom
 
   constructor(private http: HttpClient) { }
 

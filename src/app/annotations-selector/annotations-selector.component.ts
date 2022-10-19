@@ -58,7 +58,7 @@ export class AnnotationsSelectorComponent implements OnInit {
       wasSuccess => {
         if (wasSuccess) {
           this.availableCorpora = this.metadataService.getAvailableCorpora();
-          console.log("the metadata", this.availableCorpora);
+          // console.log("the metadata", this.availableCorpora);
           this.gotMetadata = true;
         } else {
           this.availableCorpora = {}; // TODO: Show some error message
@@ -66,12 +66,12 @@ export class AnnotationsSelectorComponent implements OnInit {
     });
 
     this.readerCommunicationService.event$.subscribe((data) => {
-      console.log("message from the reader communication service", data);
+      // console.log("message from the reader communication service", data);
       const message = data["message"];
       const payload = data["payload"];
       if (message === "changeAnnotationHighlight") {
         //this.selectedAnnotation = payload["annotation"];
-        console.log("payload av", payload["annotationValue"]);
+        // console.log("payload av", payload["annotationValue"]);
         if (payload["annotationStructuralType"] !== this.selectedAnnotationStructuralType) {
           this.selectAnnotationStructuralType(payload["annotationStructuralType"]);
         }
@@ -86,13 +86,13 @@ export class AnnotationsSelectorComponent implements OnInit {
   private updateAnnotationsLists(corpusID: string) {
     this.wordAnnotations = this.metadataService.getWordAnnotationsFor(corpusID);
     this.structuralAnnotations = this.metadataService.getStructuralAnnotationsFor(corpusID);
-    console.log("this.structuralAnnotations", this.structuralAnnotations);
+    // console.log("this.structuralAnnotations", this.structuralAnnotations);
   }
 
   public selectAnnotationStructuralType(structuralType: string) {
     this.selectedAnnotationStructuralType = structuralType || "token";
     this.selectedAnnotation = undefined;
-    console.log("structural attributes", this.structuralAnnotations);
+    // console.log("structural attributes", this.structuralAnnotations);
   }
 
   private getStructuralAttributeGroup(name: string) {
@@ -100,7 +100,7 @@ export class AnnotationsSelectorComponent implements OnInit {
   }
 
   public selectAnnotation(annotation: string, structure: string = null) {
-    console.log("selectAnnotation", annotation);
+    // console.log("selectAnnotation", annotation);
     this.selectedAnnotationValue = "";
     this.selectedAnnotation = annotation;
     this.annotationValues = [];

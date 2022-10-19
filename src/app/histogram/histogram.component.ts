@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Renderer, Output, Input, ElementRef, EventEmitter } from '@angular/core';
+import { Component, OnInit, ViewChild, Renderer2, Output, Input, ElementRef, EventEmitter } from '@angular/core';
 import * as Rickshaw from "rickshaw";
 import * as moment from "moment";
 import * as _ from 'lodash';
@@ -33,7 +33,7 @@ export class HistogramComponent implements OnInit {
 
   private initiated = false;
 
-  constructor(private renderer : Renderer) { }
+  constructor(private renderer : Renderer2) { }
 
   ngOnInit() {
     

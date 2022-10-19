@@ -9,7 +9,7 @@ import { QueryService } from './query.service';
 import { StrixDocument } from './strixdocument.model';
 import { StrixMessage } from './strixmessage.model';
 import { StrixEvent } from './strix-event.enum';
-import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT } from './searchreducer';
+import { AppState, OPENDOCUMENT, SearchRedux, SEARCHINDOCUMENT, CLOSECOMPAREDOC } from './searchreducer';
 import { CLOSEDOCUMENT } from './searchreducer';
 import { SearchQuery } from './strixsearchquery.model';
 
@@ -89,6 +89,10 @@ export class DocumentsService {
     // Notify the GUI
     this.store.dispatch({type: CLOSEDOCUMENT, payload : ""});
     //this.signalClosedMainDocument()
+  }
+
+  public closeMainDocumentCompare() {
+    this.store.dispatch({type: CLOSECOMPAREDOC, payload : ""});
   }
 
   private addDocumentReference(documentID): void {
@@ -329,6 +333,7 @@ export class DocumentsService {
 
   public getRelatedDocuments(docIndex: number) {
     let doc = this.documents[docIndex];
+    // console.log(doc.doc_id, doc.corpusID);
     return this.callsService.getRelatedDocuments(doc.doc_id, doc.corpusID);
   }
 

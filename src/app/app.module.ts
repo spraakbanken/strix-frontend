@@ -1,15 +1,16 @@
 import { HttpClientModule } from '@angular/common/http';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule, APP_INITIALIZER } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { StoreModule } from '@ngrx/store';
-import { TypeaheadModule,
-         BsDropdownModule,
-         AlertModule,
-         PaginationModule,
-         AccordionModule,
-         TooltipModule,
-         ModalModule } from 'ngx-bootstrap';
+import { AccordionModule } from 'ngx-bootstrap/accordion';
+import { TypeaheadModule } from 'ngx-bootstrap/typeahead';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
+import { AlertModule } from 'ngx-bootstrap/alert';
+import { TooltipModule  } from 'ngx-bootstrap/tooltip';
+import { PaginationModule } from 'ngx-bootstrap/pagination';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { NouisliderModule } from 'ng2-nouislider';
 
@@ -45,6 +46,59 @@ import { AnnotationComponent } from './annotation/annotation.component';
 import { PrettynumberPipe } from './prettynumber.pipe';
 import { PrettynumberPipeStub } from './mocks/prettynumber-stub.pipe';
 import { EnsurearrayPipe } from './ensurearray.pipe';
+import { NgxBootstrapIconsModule, allIcons } from 'ngx-bootstrap-icons';
+import {MatFormFieldModule} from '@angular/material/form-field';
+import {A11yModule} from '@angular/cdk/a11y';
+import {ClipboardModule} from '@angular/cdk/clipboard';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {PortalModule} from '@angular/cdk/portal';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {CdkStepperModule} from '@angular/cdk/stepper';
+import {CdkTableModule} from '@angular/cdk/table';
+import {CdkTreeModule} from '@angular/cdk/tree';
+import {MatAutocompleteModule} from '@angular/material/autocomplete';
+import {MatBadgeModule} from '@angular/material/badge';
+import {MatBottomSheetModule} from '@angular/material/bottom-sheet';
+import {MatButtonModule} from '@angular/material/button';
+import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import {MatCardModule} from '@angular/material/card';
+import {MatCheckboxModule} from '@angular/material/checkbox';
+import {MatChipsModule} from '@angular/material/chips';
+import {MatStepperModule} from '@angular/material/stepper';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatDialogModule} from '@angular/material/dialog';
+import {MatDividerModule} from '@angular/material/divider';
+import {MatExpansionModule} from '@angular/material/expansion';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatIconModule} from '@angular/material/icon';
+import {MatInputModule} from '@angular/material/input';
+import {MatListModule} from '@angular/material/list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatNativeDateModule, MatRippleModule} from '@angular/material/core';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
+import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatSelectModule} from '@angular/material/select';
+import {MatSidenavModule} from '@angular/material/sidenav';
+import {MatSliderModule} from '@angular/material/slider';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import {MatSnackBarModule} from '@angular/material/snack-bar';
+import {MatSortModule} from '@angular/material/sort';
+import {MatTableModule} from '@angular/material/table';
+import {MatTabsModule} from '@angular/material/tabs';
+import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatTooltipModule} from '@angular/material/tooltip';
+import {MatTreeModule} from '@angular/material/tree';
+import {OverlayModule} from '@angular/cdk/overlay';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { StatcolumnComponent } from './statcolumn/statcolumn.component';
+import { RightcolumnComponent } from './rightcolumn/rightcolumn.component';
+import { SimilarDocsComponent } from './similardocs/similardocs.component';
+import { DataselectionComponent } from './dataselection/dataselection.compoment';
+import { ModeselectionComponent } from './modeselection/modeselection.component';
+import { NgxSliderModule } from '@angular-slider/ngx-slider';
+import { NgChartsModule } from 'ng2-charts';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -57,6 +111,11 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     LemgramPipeStub,
     LemgramPipe,
     LeftcolumnComponent,
+    StatcolumnComponent,
+    RightcolumnComponent,
+    SimilarDocsComponent,
+    DataselectionComponent,
+    ModeselectionComponent,
     MultiCompleteComponent,
     StartPanelComponent,
     SearchComponent,
@@ -75,9 +134,52 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     // SearchFilterComponent
   ],
   imports: [
+    MatAutocompleteModule,
+    MatBadgeModule,
+    MatBottomSheetModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatDividerModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule,
+    MatTreeModule,
+    OverlayModule,
+    PortalModule,
+    ScrollingModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    CdkTreeModule,
+    BrowserAnimationsModule,
+    MatIconModule,
     BrowserModule,
     FormsModule,
     HttpClientModule,
+    NgxSliderModule,
     // RouterModule.forRoot([]),
     TypeaheadModule.forRoot(),
     BsDropdownModule.forRoot(),
@@ -87,7 +189,10 @@ import { EnsurearrayPipe } from './ensurearray.pipe';
     TooltipModule.forRoot(),
     ModalModule.forRoot(),
     StoreModule.forRoot({searchRedux: searchReducer}),
-    NouisliderModule
+    NouisliderModule,
+    NgxBootstrapIconsModule.pick(allIcons),
+    PopoverModule.forRoot(),
+    NgChartsModule
   ],
   providers: [
               CallsService,
@@ -110,13 +215,13 @@ export class AppModule { }
 
 export function onAppInit(callsService: CallsService): () => Promise<any> {
   return (): Promise<any> => {
-    return new Promise((resolve, reject) => {
+    return new Promise<boolean>((resolve, reject) => {
       callsService.testForLogin().subscribe(
         answer => {
           console.log("Login", answer);
-          resolve();
+          resolve(true);
         },
-        error => { resolve(); }
+        error => { resolve(false); }
       );
     });
   };

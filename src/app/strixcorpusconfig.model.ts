@@ -8,5 +8,9 @@ export class StrixCorpusConfig {
     public structAttributes: any[],
     public description: LangPhrase,
     public name: LangPhrase,
+    public mode: string,
+    public protectedX: boolean,
+    public folderName: string,
+    public tokenInCorpora: number,
   ) {}
 }

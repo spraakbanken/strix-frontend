@@ -29,3 +29,9 @@
 .button_next {
     cursor : pointer;
 }
+
+.close_box {
+    display: inline-block;
+    padding: 2px;
+    cursor: pointer;
+  }

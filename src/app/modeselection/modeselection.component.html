@@ -1,0 +1,28 @@
+<div>
+    <ul class="navbar-nav">
+        <a [style.color]="this.modeSelection['Modern'] ? 'blue' : 'black'" style="padding-right: 10px;" (click)="chooseMode('Modern');">
+            {{ 'Modern' | loc }}
+        </a>
+        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('Mink');">
+            {{ 'Mink' | loc }}
+        </a>
+        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('Parallel');">
+            {{ 'Parallel' | loc }}
+        </a>
+       <!-- <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('LB');">
+            {{ 'LB' | loc }}
+        </a> -->
+        <li class="nav-item dropright">
+            <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" style="padding: 0px; color: black;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
+            {{'more' | loc}} <i-bs name="chevron-double-down" width="15" height="15" style="padding-right: 0px;"></i-bs>
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding: 0px;">
+                <ng-container *ngFor="let item of modeCollection | keyvalue">
+                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key);" *ngIf="item.key !== 'Modern'">
+                        {{ item.key | loc }}
+                    </a>
+                </ng-container>
+            </div>
+        </li>
+    </ul>
+</div>

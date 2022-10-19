@@ -1,0 +1,308 @@
+<div>
+    <div class="box-container">
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a tabindex><b>{{data.title}}</b></a> <!--style="color:lightseagreen"-->
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">Text:</div>
+          </div>
+          <div class="col-xl-9">
+            <div class="hit_document_body">
+              <ng-template [ngIf]="data.highlight">
+                <span *ngFor="let highlight of data.highlight; let l = last" [innerHTML]="highlight+'&nbsp;'">
+                  <br *ngIf="last"/> <!-- ??? -->
+                </span>
+              </ng-template>
+              <ng-template [ngIf]="data.preview">
+                <span>
+                  {{data.preview}} <span class="dots">...</span>
+                </span>
+              </ng-template>
+            </div>
+          </div>
+          <!-- <div class="col-xl-9">
+            <a>{{data.preview}}</a>
+          </div> -->
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
+          </div>
+          <div class="col-xl-9" *ngIf="data.text_attributes.year !== '2050'">
+            <a>{{data.text_attributes.year}}</a>
+          </div>
+          <div class="col-xl-9" *ngIf="data.text_attributes.year === '2050'">
+            <a>{{'NA'}}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{data.word_count}}</a>
+          </div>
+        </div>
+        <!-- <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">Document type:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{data.doc_type}}</a>
+          </div>
+        </div> -->
+        <div class="row" *ngIf="data.text_attributes.author">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{data.text_attributes.author}}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'corpusName' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <div class="hit_appendix">
+              <span class="hit_collection_title">
+                {{availableCorpora[data.corpus_id].name | loc}}
+              </span>&nbsp;
+            </div>
+          </div>
+        </div>
+        <!-- <div class="row" style="padding: 10px 0px 10px 0px;">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+          </div>
+          <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+            <span class="mostCommonWords" *ngFor="let item of data.most_common_words.split(' ') | slice:0:10; let i = index;">
+              <i>{{item}}</i>
+            </span>
+          </div>
+        </div> -->
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+          </div>
+          <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+            <span *ngFor="let item of data.most_common_words.split(', ') | slice:0:10; let i = index;">
+              <i *ngIf="i < 9" style="padding-right: 10px;">{{item}},</i>
+              <i *ngIf="i == 9">{{item}}</i>
+            </span>
+          </div>
+        </div>
+        <div class="row" *ngIf="data.ner_tags">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
+          </div>
+          <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+            <span *ngFor="let item of data.ner_tags.split(', ') | slice:0:5; let i = index;">
+              <i *ngIf="i < 4" style="padding-right: 10px;">{{item}},</i>
+              <i *ngIf="i == 4">{{item}}</i>
+            </span>
+          </div>
+        </div>
+      </div>
+</div>
+<div class="mainBlock">
+    <div class="leftBlock">
+        <div class="hits_left_column row">
+            <div class="hits_inner list-group">
+                <div class="paginatorClass">
+                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                </div>
+              <div class="dataCollect">
+              <div class="hit_area list-group-item" *ngFor="let doc of filteredData | async; let i = index">
+                <div class="box-container">
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a tabindex><b>{{doc.title}}</b></a> <!--style="color:lightseagreen"-->
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">Text:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a>{{doc.text}}</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" *ngIf="doc.year !== '2050'">
+                      <a>{{doc.year}}</a>
+                    </div>
+                    <div class="col-xl-9" *ngIf="doc.year === '2050'">
+                      <a>{{'NA'}}</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a>{{doc.tokens}}</a>
+                    </div>
+                  </div>
+                  <!-- <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">Document type:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a>{{doc.docType}}</a>
+                    </div>
+                  </div> -->
+                  <div class="row" *ngIf="doc.authors">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a>{{doc.authors}}</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'corpusName' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <div class="hit_appendix">
+                        <span class="hit_collection_title">
+                          {{ availableCorpora[doc.corpusID].name | loc }}
+                        </span>&nbsp;
+                      </div>
+                    </div>
+                  </div>
+                  <!-- <div class="row" style="padding: 10px 0px 10px 0px;">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+                      <span class="mostCommonWords" *ngFor="let item of doc.most_common_words.split(' ') | slice:0:10; let i = index;">
+                        <i>{{item}}</i>
+                      </span>
+                    </div>
+                  </div> -->
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+                      <span *ngFor="let item of doc.most_common_words.split(', ') | slice:0:10; let i = index;">
+                        <i *ngIf="i < 9" style="padding-right: 10px;">{{item}},</i>
+                        <i *ngIf="i == 9">{{item}}</i>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.ner_tags">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+                      <span *ngFor="let item of doc.ner_tags.split(', ') | slice:0:5; let i = index;">
+                        <i *ngIf="i < 4" style="padding-right: 10px;">{{item}},</i>
+                        <i *ngIf="i == 4">{{item}}</i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="rightBlock" *ngIf="finishLoading">
+        <div class="tab-pane fade show active" id="tempSelect" role="tabpanel" aria-labelledby="home-tab"
+        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 20px;">
+          <mat-accordion style="width: 400px; padding-bottom: 20px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'authorS' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div style="display: block; padding-bottom: 20px;">
+                <canvas baseChart 
+                  [datasets]="authorData"
+                  [labels]="authorLabels"
+                  [options]="barChartOptions"
+                  [plugins]="barChartPlugins"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType">
+                </canvas>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <mat-accordion style="width: 400px; padding-bottom: 20px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'corpus' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div style="display: block; padding-bottom: 20px;">
+                <canvas baseChart 
+                  [datasets]="corpusData"
+                  [labels]="corpusLabels"
+                  [options]="barChartOptions"
+                  [plugins]="barChartPlugins"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType">
+                </canvas>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <mat-accordion style="width: 400px; padding-bottom: 20px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'yearS' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <ngx-slider [(value)]="minYear" [(highValue)]="maxYear" [options]="options" (userChange)="onUserChange($event)"></ngx-slider>
+              <div style="display: block; padding-bottom: 20px;">
+                <canvas baseChart 
+                  [datasets]="yearData"
+                  [labels]="yearLabels"
+                  [options]="barChartOptions"
+                  [plugins]="barChartPlugins"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType">
+                </canvas>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <mat-accordion style="width: 400px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'tokens' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <ngx-slider [(value)]="lowerLimit" [(highValue)]="upperLimit" [options]="optionsToken" (userChange)="onTokenChange($event)"></ngx-slider>
+              <div style="display: block; padding-bottom: 20px;">
+                <canvas baseChart 
+                  [datasets]="documentData"
+                  [labels]="documentLabels"
+                  [options]="barChartOptions"
+                  [plugins]="barChartPlugins"
+                  [legend]="barChartLegend"
+                  [chartType]="barChartType">
+                </canvas>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+    </div>
+</div>

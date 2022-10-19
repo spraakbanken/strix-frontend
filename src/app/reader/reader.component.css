@@ -1,6 +1,6 @@
 :host {
   display: block;
-  max-height: 80vh;
+  max-height: 120vh;
 }
 
 /* .all_texts_area {
@@ -72,6 +72,17 @@ ul {
   overflow-x: auto;
   position: relative;
   height: 100%;
+  max-height: 120vh;
+  border: 1px solid #ddd;
+}
+
+.attributeArea {
+  display: flex; 
+  align-items: baseline; 
+  justify-content: space-between; 
+  flex-wrap: wrap; 
+  padding: 0px;
+  border: 1px solid #ddd;
 }
 
 .text_header {
@@ -114,10 +125,10 @@ ul {
 }
 
 .right_accordion {
-  background-color: #f7f7f7;
-  width: 200px;
-  height: 100%;
-  padding: 4px;
+  /* background-color: #f7f7f7; */
+  width: 427px;
+  /* height: 100%; */
+  padding: 20px;
   position: absolute;
   top: 0px;
   right: 0px;
@@ -178,4 +189,18 @@ ul {
 .empty_span {
   font-variant: italic;
   color: #ddd;
+}
+
+.text_annotations_list {
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  font-size: small;
+}
+
+.token_annotations_list {
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  font-size: small;
+}
+
+::ng-deep .attributeArea .right_accordion .mat-expansion-panel {
+  margin: 0;
 }

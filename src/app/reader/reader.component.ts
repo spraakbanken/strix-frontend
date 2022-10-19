@@ -40,6 +40,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   // Each item in cmViews is an index number of the DocumentsService documents.
   // They need not be in order!!
   public cmViews = [];
+  public showAccordion = false;
 
   private titles = [""];
   private selectedMirrorIndex = 0;
@@ -140,7 +141,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
               this.addHighlight(message.documentIndex, h.wid);
             }
             this.selectToken(0, 0);
-            this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : false, 'TOKENATTRIBUTES' : false};
+            this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : true, 'TOKENATTRIBUTES' : true};
 
           }, 0);
         } else { // THE CODE BELOW CANNOT HAPPEN RIGHT NOW
@@ -223,6 +224,8 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
       if (this.singleWordSelection) {
         this.openness["TOKENATTRIBUTES"] = true;
+        this.openness["TEXTATTRIBUTES"] = true;
+        this.openness["STRUCTURALATTRIBUTES"] = true;
         let currentToken = activeDocument.token_lookup[this.selectionEndTokenID];
         this.currentAnnotations = currentToken.attrs;
 

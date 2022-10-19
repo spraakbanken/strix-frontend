@@ -1,0 +1,207 @@
+:host {
+    /*background-color: lightyellow;*/
+    /*background: linear-gradient(to bottom, rgba(100,100,100,1) 0%,rgba(40,40,40,1) 100%); */ /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    /*box-shadow: 2px 3px 8px grey;*/
+    border-right: 0px solid grey;
+    display: block;
+    min-height : 80vh;
+    height: 100%;
+  }
+  
+  :host:before {
+    display: block;
+    /*height: 4px;
+    background-color : #F0C808;
+    content: "";*/
+  }
+  
+  h3,h4,h5 {
+    color : white;
+  }
+  h4::first-letter {
+    text-transform: uppercase;
+  }
+  .unused_facets h5 {
+    font-variant: small-caps;
+    text-transform: lowercase;
+    font-size: 0.9em;
+    margin-top: 2em;
+  }
+  .unused_facets ul {
+    font-size : 0.8em;
+  }
+  
+  
+  .filters_area {
+    padding: 10px;
+  }
+  
+  .corpus_item {
+    cursor: pointer;
+  }
+  .aggregation_list {
+    margin-top: 1px;
+  }
+  .aggregation_list ul li {
+    font-size : 0.8em;
+  }
+  .aggregation_item {
+    cursor: pointer;
+  }
+  .purge_aggregation_button {
+    cursor: pointer;
+    display: block;
+    position: static;
+    right: 2px;
+  }
+  .purge_corpus_button {
+    cursor: pointer;
+    display: inline-block;
+  }
+  
+  .selected_frame {
+    /*border: 1px solid black;*/
+    padding-left: 4px;
+    padding-right: 4px;
+    background-color: #f1f8fc;
+    box-shadow: 1px 1px grey;
+  }
+  
+  .logo_block {
+    cursor: pointer;
+    margin: 2em 0 1em 0;
+  }
+  .logo_block img {
+    display: block;
+    margin: 0 auto;
+  }
+  
+  ::ng-deep .ui-select-match-item {
+    max-width: 100%;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+  }
+  
+  ::ng-deep .ui-select-choices-row > a {
+    padding-left : 10px !important;
+  }
+  
+  .range {
+    padding-left: 0.4em;
+    padding-right: 1em;
+  }
+  
+  
+  /* make dropdown arrow align better in buttons 
+  .menuTrigger .mat-icon {
+      margin-right: -8px;
+  }
+  
+  /* handle visiblity of checkboxes in simple menu 
+  .mat-menu-item .mat-icon.checked {
+      display: none;
+      pointer-events: none;
+    }
+    .mat-menu-item .mat-icon.empty {
+      pointer-events: none;
+    }
+  
+  .mat-menu-item.selected .mat-icon.empty {
+      display: none;
+    }
+    .mat-menu-item.selected .mat-icon.checked {
+      display: unset;
+    } */
+  
+  
+    .example-tree-invisible {
+      display: none;
+    }
+    
+    .example-tree ul,
+    .example-tree li {
+      margin-top: 0;
+      margin-bottom: 0;
+      list-style-type: none;
+    }
+    
+    /*
+     * This padding sets alignment of the nested nodes.
+     */
+    .example-tree .mat-nested-tree-node div[role=group] {
+      padding-left: 10px;
+    }
+    
+    /*
+     * Padding for leaf nodes.
+     * Leaf nodes need to have padding so as to align with other non-leaf nodes
+     * under the same parent.
+     */
+    .example-tree div[role=group] > .mat-tree-node {
+      padding-left: 40px;
+    }
+  
+    .pad {
+      width: 40px;
+  }
+
+  .left_column a {
+    font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+    font-size: 14px;
+    background-color: rgb(241, 240, 240);
+    color: black
+  }
+
+  .left_column a.active {
+    background-color: #fff;
+  }
+
+  .left_column ul {
+    padding: 0px;
+    border: 0px;
+    border-radius: 1px;
+  }
+
+  
+  .charge-table {
+    padding: 0px;
+    white-space: nowrap;
+    border-right: 1px solid #AAAAAA;
+    border-bottom: 1px solid #AAAAAA;
+    background-color: white;
+    text-align: left;
+    vertical-align: bottom;
+}
+.charge-table {
+    font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif; /* Helvetica; */ /* "Trebuchet MS", Arial, Helvetica, sans-serif; */
+    border-collapse: collapse;
+    width: 100%;
+}
+.charge-table td,
+.charge-table th {
+    border: 1px solid #ddd;
+    padding: 10px;
+    font-style: normal;
+    overflow-x: scroll;
+}
+/*.charge-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}*/
+.charge-table tr:hover {
+    background-color: rgb(214, 205, 205);
+}
+.charge-table th {
+    font-weight: bold;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: rgb(252, 248, 248);
+}
+.charge-table thead tr th {
+  position: -webkit-sticky;
+  position: -moz-sticky;
+  position: -ms-sticky;
+  position: -o-sticky;
+  position: sticky;
+  top: 0;
+}

@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { AppState, SEARCHINDOCUMENT } from '../searchreducer';
+import { AppState, SEARCHINDOCUMENT, SearchRedux } from '../searchreducer';
+import { Subscription, Observable, zip } from 'rxjs';
+import { filter, skip } from 'rxjs/operators';
 
 @Component({
   selector: 'indocsearch',
@@ -10,8 +12,17 @@ import { AppState, SEARCHINDOCUMENT } from '../searchreducer';
 })
 export class IndocsearchComponent implements OnInit {
   public asyncSelected: string = "";
+  private searchRedux: Observable<SearchRedux>;
 
-  constructor(private store: Store<AppState>) { }
+  constructor(private store: Store<AppState>) { 
+    this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === SEARCHINDOCUMENT)).subscribe((data) => {
+      // console.log("----", this.locService.getTranslationFor('docPs'));
+      // this.paginator._intl.itemsPerPageLabel = this.locService.getTranslationFor('docPs')
+      this.asyncSelected = data.localQuery;
+    });
+  }
 
   ngOnInit() {
   }

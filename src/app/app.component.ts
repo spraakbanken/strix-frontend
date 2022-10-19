@@ -5,9 +5,13 @@ import { Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { LocService } from './loc.service';
+import { CallsService } from './calls.service';
+import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
-import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedux } from './searchreducer';
-
+import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
+        AppState, SearchRedux, CHANGEPAGE, RELOAD,
+        OPENCOMPAREDOC, CLOSECOMPAREDOC, MODE_SELECTED 
+      } from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -16,18 +20,31 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, AppState, SearchRedu
 })
 export class AppComponent {
 
+  public listTabs = ['Hits'];
+  public selectedTab = new FormControl(0);
+  public similarParam: any;
+  public relatedDocType: string;
+  
   private searchRedux: Observable<SearchRedux>;
   public openDocument = false;
+  public searchBox = true;
   public loggedIn = false;
+  public selectSwe = false;
+  public selectEng = true;
+  public openCompare = false;
+  public loginStatus = "login";
 
   public languages: string[];
   public selectedLanguage: string;
 
-  constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService) {
+  constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService, private callsService: CallsService) {
     console.log(_.add(1, 3)); // Just to test lodash
 
     if (window["jwt"]) {
       this.loggedIn = true;
+      this.loginStatus = "logout";
+    } else {
+      this.loginStatus = "login";
     }
 
     this.searchRedux = this.store.select('searchRedux');
@@ -39,12 +56,34 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("|openDocument");
       this.openDocument = true;
+      this.searchBox = false;
+      
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       console.log("|closeDocument");
       this.openDocument = false;
+      this.searchBox = true;
+      this.openCompare = false;
     });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENCOMPAREDOC)).subscribe((data) => {
+      console.log("|openDocumentCompare");
+      this.openCompare = true;
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSECOMPAREDOC)).subscribe((data) => {
+      console.log("|closeDocumentCompare");
+      this.openCompare = false;
+    });
+
+    // this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+    //   console.log("this.callsService", data.modeSelected, data.corporaInMode);
+    //   this.callsService.getModeStatistics(data.corporaInMode, data.modeSelected).subscribe((result) => {
+    //     this.dataInMode = result.aggregations;
+    //     console.log("--------", result);
+    //   });
+    // });
 
     this.languages = this.locService.getAvailableLanguages();
     // Get 3-letter correspondents of user's preferred languages.
@@ -57,10 +96,38 @@ export class AppComponent {
 
   public changeLanguageTo(language: string) {
     this.store.dispatch({ type: CHANGELANG, payload : language});
+    if (language === "swe") {
+      this.selectSwe = true;
+      this.selectEng = false;
+    }
+    if (language === "eng") {
+      this.selectSwe = false;
+      this.selectEng = true;
+    }
+  }
+
+  public addTab() {
+    this.listTabs.push('Tab');
+    this.selectedTab.setValue(this.listTabs.length - 1);
+  }
+
+  public removeTab(index: number) {
+    this.listTabs.splice(index, 1);
   }
 
   public gotoLogin() {
     window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${window.location}`
   }
 
+  public gotoLogout() {
+    window.location.href = `https://sp.spraakbanken.gu.se/Shibboleth.sso/Logout`
+  }
+
+  public reloadStrix() {
+    window.location.href = window.location.pathname;
+  }
+
+  public getLangchange(iKey: string) {
+    return this.locService.getDataLanguage(iKey)
+  }
 }

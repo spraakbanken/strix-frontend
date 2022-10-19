@@ -3,7 +3,7 @@ import { Component, OnInit, EventEmitter, Input, Output, ChangeDetectionStrategy
 
 import { Bucket } from "../../strixresult.model";
 import * as _ from 'lodash';
-import { OnChanges } from '@angular/core/src/metadata/lifecycle_hooks';
+import { OnChanges } from '@angular/core';
 
 
 

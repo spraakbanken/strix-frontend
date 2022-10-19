@@ -9,7 +9,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
 SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
+INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState, MODE_SELECTED
 } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
@@ -52,7 +52,7 @@ export class LeftcolumnComponent implements OnInit {
         if (wasSuccess) {
           this.gotMetadata = true;
           this.availableCorpora = this.metadataService.getAvailableCorpora();
-          console.log("this.availableCorpora subsc", this.availableCorpora)
+          // console.log("this.availableCorpora subsc", this.availableCorpora)
           this.mem_guessConfFromAttributeName = _.memoize(this.guessConfFromAttributeName)
         }
     });
@@ -137,7 +137,7 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private onRangeChange(aggregationKey, payload) {
-    console.log("onRangeChange", payload)
+    // console.log("onRangeChange", payload)
     // let [gte, lte] = this.aggregations[aggregationKey].value
 
     this.aggregations[aggregationKey].selected = true
@@ -147,7 +147,7 @@ export class LeftcolumnComponent implements OnInit {
   }
 
   private parseAggResults(result: AggregationsResult) {
-    console.log("parseAggResults", result);
+    // console.log("parseAggResults", result);
     if(_.keys(result.aggregations).length < 2) {
       return
     }
@@ -186,7 +186,7 @@ export class LeftcolumnComponent implements OnInit {
     }
 
     this.aggregations = _.mergeWith(this.aggregations, result.aggregations, customizer)
-    console.log("aggregations", this.aggregations)
+    // console.log("aggregations", this.aggregations)
     this.aggregationKeys = _(result.aggregations)
                             .omit(["datefrom", "dateto"])
                             .keys()
@@ -207,7 +207,7 @@ export class LeftcolumnComponent implements OnInit {
     this.updateFilters();
   }
   private purgeFilter(aggregationKey: string, bucket: Bucket) {
-    console.log("YES", bucket, this.aggregations, this.aggregationKeys)
+    // console.log("YES", bucket, this.aggregations, this.aggregationKeys)
     bucket.selected = false
     this.updateFilters();
   }
@@ -241,7 +241,7 @@ export class LeftcolumnComponent implements OnInit {
                                 }
                               })
                               .value()
-
+    // console.log("HHHH", selectedBuckets, selectedAggs);
     this.store.dispatch({ type: CHANGEFILTERS, payload : [...selectedBuckets, ...selectedAggs]});
     this.store.dispatch({ type: SEARCH, payload : null});
   }
@@ -268,7 +268,7 @@ export class LeftcolumnComponent implements OnInit {
 
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
       //this.zone.run(() => {
-        console.log("Leftcolumn init", result, filters)
+        // console.log("Leftcolumn init", result, filters)
         this.parseAggResults(result)
 
         let filterData = filters || [];
@@ -276,7 +276,7 @@ export class LeftcolumnComponent implements OnInit {
         for (let agg in this.aggregations) {
           _.forEach(this.aggregations[agg].buckets, (bucket) => {
             if (bucket.selected) {
-              console.log("Deleting bucket.selected for", bucket)
+              // console.log("Deleting bucket.selected for", bucket)
               //delete bucket.selected
               bucket.selected = false
             }
@@ -284,9 +284,9 @@ export class LeftcolumnComponent implements OnInit {
         }
         // Then select from the URL data
         for (let filter of filterData) {
-          console.log("filter", filter)
+          // console.log("filter", filter)
           if(filter.type == "range") {
-            console.log("filter.value", filter.value)
+            // console.log("filter.value", filter.value)
             this.aggregations[filter.field].value = filter.value
           } else {
             let bucket = _.find(this.aggregations[filter.field].buckets, (item) => item.key === filter.value)
@@ -302,3 +302,71 @@ export class LeftcolumnComponent implements OnInit {
   }
 }
 
+
+// import { Component, Input, OnInit } from '@angular/core';
+// import { Subscription, Observable, zip } from 'rxjs';
+// import { filter } from 'rxjs/operators';
+// import * as _ from 'lodash';
+// import { Store } from '@ngrx/store';
+// import { SEARCH,
+// INITIATE, AppState, MODE_SELECTED, SELECTED_CORPORA
+// } from '../searchreducer';
+// import {FormControl } from '@angular/forms';
+
+// @Component({
+//   selector: 'dataselection',
+//   templateUrl: 'dataselection.component.html',
+//   styleUrls: ['dataselection.component.css']
+// })
+// export class DataselectionComponent implements OnInit {
+
+//   public corpusesInMode: [];
+//   public corpusList = new FormControl();
+//   public gotMetadata = false;
+
+//   @Input() changeDisable: any;
+//   private selectedCorpus: [];
+//   private searchRedux: Observable<any>;
+
+//   constructor(private store: Store<AppState>)
+//   {
+//     this.searchRedux = this.store.select('searchRedux');
+//     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+//       // console.log("---------- ", data.corporaInMode)
+//       this.corpusesInMode = data.corporaInMode[0];
+//       this.corpusList.reset();
+      
+//       // this.selectedCorpus = [];
+//       // this.updateFilters();
+//     });
+//   }
+
+//   public selectCorpuses(event) {
+//     // console.log("++++++++++ ", event.value)
+//     if (event.value.length === 0) {
+//       this.selectedCorpus = this.corpusesInMode;
+//     } else {
+//       this.selectedCorpus = event.value;
+//     }
+//     this.updateFilters();
+//   }
+
+//   private updateFilters() {
+//     this.store.dispatch({ type: SELECTED_CORPORA, payload : this.selectedCorpus});
+//     this.store.dispatch({ type: SEARCH, payload : null});
+//   }
+
+//   ngOnInit() {
+//   //   this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((filters : any) => {
+//   //     let filterData = filters || [];
+//   //     let _tempList = [];
+//   //     for (let i in filterData.filters) {
+//   //       if (filterData.filters[i]['field'] === "corpus_id") {
+//   //         _tempList.push(filterData.filters[i]['value'])
+//   //       }
+//   //     }
+//   //     // this.corpusList.setValue(_tempList);
+//   //     // console.log("In dataselection1", filterData, _tempList)
+//   // })
+// }
+// }

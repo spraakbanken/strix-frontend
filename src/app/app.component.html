@@ -1,28 +1,69 @@
-<div class="left_column d-none d-lg-block col-3"> 
-  <leftcolumn></leftcolumn>
-</div>
-<div class="right_column col-lg-9">
-  <div class="header">
-    <div *ngIf="!loggedIn" class="login pull-right"><a (click)="gotoLogin()">{{'login' | loc}}</a></div>
-    <div class="language_choice pull-right">
-      <span *ngFor="let lang of languages;let f = first">
-        <span *ngIf="!f"> | </span><a class="link" [ngClass]="{selected: selectedLanguage === lang, disabled : selectedLanguage === lang}" (click)="changeLanguageTo(lang)">{{lang}}</a>
-      </span>
+<div class="container-fluid">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="modeSetting">
+      <modeselection></modeselection>
+    </div>
+    <div class="topRight">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a style="padding-left: 10px;" (click)="loginStatus === 'login' ? gotoLogin() : gotoLogout()">{{ loginStatus | loc}}</a></li>
+        <!-- <li class="nav-item"><a style="padding-left: 10px;" (click)="gotoLogout()">{{'logout' | loc}}</a></li> -->
+        <li class="nav-item"><a style="padding-left: 10px;" [style.color]="this.selectSwe ? 'blue' : 'black'" (click)="changeLanguageTo('swe')">{{getLangchange('swe')}}</a></li>
+        <li class="nav-item"><a style="padding-left: 4px; color: grey;">|</a></li>
+        <li class="nav-item"><a style="padding-left: 4px;" [style.color]="this.selectEng ? 'blue' : 'black'" (click)="changeLanguageTo('eng')">{{getLangchange('eng')}}</a></li>
+      <li class="nav-item dropdown" style="padding-right: 10px;">
+        <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: inline-flex;">
+          {{'topMenu' | loc}} <mat-icon style="height: 10px; width: 10px;">view_headline</mat-icon>
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <a class="dropdown-item" href="#">{{ 'aboutS' | loc }}</a>
+          <a class="dropdown-item" title="Korp" href="https://spraakbanken.gu.se/korp/" target="_blank">Korp</a>
+          <a class="dropdown-item" title="Sparv" href="https://spraakbanken.gu.se/sparv/" target="_blank">Sparv</a>
+        </div>
+      </li>
+    </ul>
+    </div>
+  </nav>
+  <div class="topnav">
+    <div class="strixLogo" title="Strix SB" (click)="reloadStrix()">
+      <img width="200" src="assets/logoStrix.jpg"/>
+    </div>
+    <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
+    <div style="margin-left: auto;margin-right: 0;">
+      <a title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 10px 0px 1px;"><img width="340" src="assets/sbText.svg" alt=""></a>
+      <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 10px 0px 1px;"><img width="70" src="assets/sweClarin.png" alt=""></a>
+      <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 35px 10px 0px 8px;"><img width="40" src="assets/guLogo.png" alt=""></a>
     </div>
   </div>
-  <search *ngIf="!openDocument"></search> <!-- should we really have *ngIf="!openDocument" ? It looses the metadata when closing a document...-->
-  <div class="row">
-    <docselection class="col-lg-9" [style.display]="(!openDocument)?'block':'none'" ></docselection><!-- We can't use ngIf because we want the component to stay in memory -->
-    <div *ngIf="!openDocument" class="logos d-none d-lg-block col-3 align-self-right">
-      <div><a href="https://spraakbanken.gu.se"><img src="assets/sb_logo.jpg" alt=""></a></div>
-      <div><a href="https://sweclarin.se"><img src="assets/sweclarin_logo.png" alt=""></a></div>
-    </div>
+  <div class="statDiv" [hidden]="openDocument || listTabs[selectedTab.value] !== 'Hits'">
+    <statcolumn class="statColumn"></statcolumn>
   </div>
-  <indocsearch *ngIf="openDocument"></indocsearch>
-  <header *ngIf="openDocument" style="flex: 0 1 auto"></header>
-  <reader [hidden]="!openDocument"></reader>
-  <!-- <start-panel *ngIf="!openDocument"></start-panel> -->
-  <!--<div class="bottom_bar" *ngIf="openDocument">
-    
-  </div>-->
+  <mat-tab-group [selectedIndex]="selectedTab.value"
+               (selectedIndexChange)="selectedTab.setValue($event)">
+    <mat-tab *ngFor="let tab of listTabs; let index = index" [label]="tab + index">
+      <ng-template mat-tab-label>
+        <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
+        <div class="col" *ngIf="tab !== 'Hits'">{{tab}}</div>
+        <button *ngIf="tab !== 'Hits'" style="color:black" mat-icon-button (click)="removeTab(index)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </ng-template>
+      <div class="mainContent" *ngIf="tab === 'Hits'">
+        <div class="fixDoc">
+          <div class="right_column" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
+            <div class="row">
+              <docselection class="col-lg-12" [style.display]="(!openDocument)?'block':'none'" ></docselection>
+            </div>
+            <header *ngIf="openDocument" style="flex: 0 1 auto; padding: 10px;"></header>
+            <indocsearch *ngIf="openDocument"></indocsearch>
+            <reader [hidden]="!openDocument"></reader>
+          </div>
+          <!-- <div class="left_column d-none d-lg-block" [style.width]="(!openDocument)?'0%':'0%'"> 
+          </div> -->
+        </div>
+      </div>
+      <div class="mainContent" *ngIf="tab !== 'Hits'">
+        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType"></similardocs>       
+      </div>
+    </mat-tab>
+  </mat-tab-group>
 </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Observer, Subscription } from 'rxjs';
-import { take, mergeMap } from 'rxjs/operators';
+import { Observable, Observer, Subscription, Subject } from 'rxjs';
+import { take, mergeMap, switchMap, filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as moment from "moment";
 
@@ -8,8 +8,10 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
+import { FormControl } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'search',
@@ -18,16 +20,25 @@ import { Filter, QueryType } from '../strixquery.model';
 })
 export class SearchComponent implements OnInit {
 
+  public myControl = new FormControl();
+
   private searchRedux: Observable<SearchRedux>;
 
   private searchableAnnotations: string[] = ["lemgram", "betydelse"];
   public searchType = QueryType.Normal;
 
-  private asyncSelected: string = "";
+  private asyncSelected: string = '';
   private dataSource: Observable<any>;
   private errorMessage: string;
 
   public currentFilters: Filter[] = [];
+
+  public karpResult = [];
+  public showHits = false;
+  public valueChanged: Subject<string> = new Subject<string>();
+
+  public selectSearch = 'Search tokens';
+  public selectedOption = 'Search phrase';
 
   private histogramData: any;
   private histogramSelection: any;
@@ -42,12 +53,12 @@ export class SearchComponent implements OnInit {
   };
 
   private updateInterval() {
-    console.log("new interval", this.fromYear + "-" + this.toYear);
+    // console.log("new interval", this.fromYear + "-" + this.toYear);
     let isSet = false;
     let value = {"range" : {"gte" : this.fromYear, "lte" : this.toYear}};
-    console.log("currentFilter*", this.currentFilters.length);
+    // console.log("currentFilter*", this.currentFilters.length);
     for (let currentFilter of this.currentFilters) {
-      console.log("currentFilter*", currentFilter);
+      // console.log("currentFilter*", currentFilter);
       if (currentFilter.field === "datefrom") {
         currentFilter.value = value;
         isSet = true;
@@ -66,13 +77,31 @@ export class SearchComponent implements OnInit {
 
   private searchStatusSubscription: Subscription;
   public isSearching = false;
-  private isPhraseSearch : boolean = true;
+  public isPhraseSearch : boolean = false;
+  private isInitialPart : boolean = false;
+  private isMiddlePart : boolean = false;
+  private isFinalPart : boolean = false;
+  private isCaseSensitive : boolean = false;
 
   constructor(private callsService: CallsService,
               private karpService: KarpService,
               private queryService: QueryService,
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+      this.isPhraseSearch = !data.keyword_search;
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      // this.isPhraseSearch = !data.keyword_search;
+      this.asyncSelected = '';
+      this.isPhraseSearch = true;
+      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
+      // this.store.dispatch({ type: SEARCH, payload : null});
+        // this.simpleSearch();
+    });
 
     this.searchStatusSubscription = queryService.searchStatus$.subscribe(
       (answer: StrixEvent) => {
@@ -94,6 +123,25 @@ export class SearchComponent implements OnInit {
       observer.next(this.asyncSelected);
     }).pipe(mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected)));
 
+    this.valueChanged
+      .pipe(debounceTime(1000), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue)))
+      .subscribe(value => {
+        this.karpResult = value;
+        console.log(value);
+      })
+
+    this.myControl.valueChanges.pipe(
+      debounceTime(2000),
+      switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue)),
+   ).subscribe((karpResult) => {
+    this.karpResult = karpResult;
+    if (this.karpResult.length > 0) {
+      this.showHits = true;
+    } else {
+      this.showHits = false;
+    }
+   }
+    );
 
     // this.searchRedux.filter((d) => d.latestAction === CHANGEFILTERS).subscribe(({ filters }) => {
     //   console.log("picked up filters change", filters);
@@ -134,9 +182,33 @@ export class SearchComponent implements OnInit {
     }); */
   }
 
-  private searchTypeChange(val) {
+  public searchTypeChange(val) {
     console.log("searchTypeChange", val)
     this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
+  }
+
+  private clearSimpleSearch() {
+    this.asyncSelected = '';
+    this.simpleSearch();
+    // this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
+  }
+
+  private onChangeEvent(event: any) {
+    if (event.target.value.length > 0) {
+      this.valueChanged.next(event.target.value);
+    } else {
+      this.karpResult = [];
+    }
+  }
+
+  public changeSearchType(item) {
+    if (item === 'Search phrase') {
+      this.isPhraseSearch = false;
+      this.store.dispatch({type : CHANGE_IN_ORDER, payload: !this.isPhraseSearch})
+    } else {
+      this.isPhraseSearch = true;
+      this.store.dispatch({type : CHANGE_IN_ORDER, payload: !this.isPhraseSearch})
+    }
   }
 
   private getHistogramData(corpora: string[]) {
@@ -148,6 +220,19 @@ export class SearchComponent implements OnInit {
   }
 
   public simpleSearch() {
+    if (this.asyncSelected.includes('""') || this.asyncSelected.includes('" "')) {
+      this.isPhraseSearch = true;
+      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+    } else if (this.asyncSelected[0] === '"' && this.asyncSelected.charAt(this.asyncSelected.length -1) === '"') {
+      this.isPhraseSearch = true;
+      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+    } else if (this.asyncSelected === '') {
+      this.isPhraseSearch = true;
+      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+    } else {
+      this.isPhraseSearch = false;
+      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+    }
     this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
     this.store.dispatch({ type: SEARCH, payload : null});
   }

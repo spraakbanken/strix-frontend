@@ -1,0 +1,22 @@
+<div class="left_column">
+    <minidocselection *ngIf="openDocument"></minidocselection>
+    <reader *ngIf="openCompare" [hidden]="!openDocument" style="padding: 10px;"></reader>
+    <div *ngIf="!openDocument">
+        <div class="sideView" *ngFor="let item of rightSide | keyvalue" style="max-height: 244px; overflow-y: scroll;">
+            <table class="charge-table">
+                <thead>
+                <tr>
+                  <th>{{item.key | loc}}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container *ngFor="let i of item.value">
+                  <tr>
+                  <td>{{i.charAt(0).toUpperCase()+i.substring(1)}}</td>
+                  </tr>
+                </ng-container>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

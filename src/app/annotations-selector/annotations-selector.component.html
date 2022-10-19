@@ -1,7 +1,7 @@
 <span>{{'color_mark_attribute' | loc}}&nbsp;</span>
 
 <div dropdown class="dropdown annotation-dropdown">
-  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic" style="background-color: lightblue; color: black; font-size: small; font-weight: 400;">
     {{(selectedAnnotationStructuralType === 'token' ? 'word_attributes' : selectedAnnotationStructuralType) | loc}}
   </button>
   <div *dropdownMenu class="dropdown-menu">
@@ -23,7 +23,7 @@
 
 <div dropdown class="dropdown annotation-dropdown"
      *ngIf="selectedAnnotationStructuralType === 'token'">
-  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic" style="background-color: lightblue; color: black; font-size: small; font-weight: 400;">
     {{getAnnotationTranslation() || 'no_choice' | loc}}
   </button>
   <div *dropdownMenu class="dropdown-menu">
@@ -37,7 +37,7 @@
 
 <div dropdown class="dropdown annotation-dropdown"
      *ngIf="selectedAnnotationStructuralType !== 'token'">
-  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic">
+  <button dropdownToggle class="btn btn-secondary dropdown-toggle" aria-controls="dropdown-basic" style="background-color: lightblue; color: black; font-size: small; font-weight: 400;">
     {{getAnnotationTranslation() || 'no_choice' | loc}}
   </button>
   <div *dropdownMenu class="dropdown-menu">
@@ -66,12 +66,22 @@
     [data]="item.key"
     [translations]="getAnnotationTranslation()"
     [type]="getAnnotationType()"
-    [noKarp]="true"></annotation> ({{item.doc_count | prettynumber}})
+    [noKarp]="true"  style="font-size: small; font-weight: 400;"></annotation> ({{item.doc_count | prettynumber}})
   
 </ng-template>
-<button *ngIf="selectedAnnotationValue" (click)="goToPreviousAnnotation()">
-  <i class="fa fa-arrow-left"></i>
+<button *ngIf="selectedAnnotationValue" (click)="goToPreviousAnnotation()" style="margin-left: 10px; background-color: lightblue;">
+  <!-- <i class="fa-light fa-arrow-left"></i> -->
+  <!-- <mat-icon>arrow_back</mat-icon> -->
+  <i-bs name="arrow-left"
+            width="20"
+              height="20">
+</i-bs>
 </button>
-<button *ngIf="selectedAnnotationValue" (click)="goToNextAnnotation()">
-  <i class="fa fa-arrow-right"></i>
+<button *ngIf="selectedAnnotationValue" (click)="goToNextAnnotation()" style="margin-left: 10px; background-color: lightblue;">
+  <!-- <i class="fa-light fa-arrow-right"></i> -->
+  <!-- <mat-icon>arrow_forward</mat-icon> -->
+  <i-bs name="arrow-right"
+            width="20"
+              height="20">
+</i-bs>
 </button>

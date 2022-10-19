@@ -1,16 +1,65 @@
-<div class="doc_header" *ngIf="documentTitle && corpusName">
-  <b>{{corpusName | loc}}: {{documentTitle}}</b>
-  <div class="close_box" (click)="closeDocument()">
-    <i class="fa fa-times fa-border"></i>
+<div *ngIf="documentTitle && corpusName">
+  <div class="box-container">
+    <div class="row" style="padding-top: 8px;">
+      <div class="col-xl-10">
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a style="color:lightseagreen" tabindex>{{documentTitle}}</a>
+            
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'corpus' | loc }} ID:</div>
+          </div>
+          <div class="col-xl-9">
+            <div class="hit_appendix">
+              <span class="hit_collection_title">
+                {{corpusName | loc }}
+              </span>&nbsp;
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{wordCount}}</a>
+          </div>
+        </div>
+        
+        <div class="row" style="padding: 10px 0px 4px 0px;">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+          </div>
+          <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+            <span class="mostCommonWords" *ngFor="let item of mostCommonWords; let i = index;">
+              <i *ngIf="i < 9" style="padding-right: 10px;" (click)="simpleSearch(item)">{{item}},</i>
+              <i *ngIf="i == 9" (click)="simpleSearch(item)">{{item}}</i>
+            </span>
+            <!-- <span class="mostCommonWords" *ngFor="let item of mostCommonWords; let i = index;">
+              <!- <button class="closeButton" mat-button (click)="simpleSearch(item)">{{ item }}</button> ->
+              <i (click)="simpleSearch(item)">{{item}}</i>
+            </span> -->
+          </div>
+      </div>
+      </div>
+      <div class="col-xl-2">
+        <div class="row" style="padding: 0px 0px 0px 0px; justify-content: right; margin-right: 90px;">
+          <div class="col-xl-2">
+            <button class="closeButton" mat-button (click)="closeDocument()">{{ 'close_doc' | loc }}</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 <div class="tools_area">
-  <!--<div class="tools_list">
-    <a (click)="showAnnotationsSelector = true">Annoteringar</a>
-  </div>-->
   <div class="actual_tools">
-    <!--<annotations-selector [hidden]="!showAnnotationsSelector"></annotations-selector>-->
     <annotations-selector></annotations-selector>
   </div>
-  
 </div>

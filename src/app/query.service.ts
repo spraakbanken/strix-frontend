@@ -8,6 +8,7 @@ import { Store } from '@ngrx/store';
 import { SEARCH, CLOSEDOCUMENT, AppState, SearchRedux } from './searchreducer';
 import { StrixEvent } from './strix-event.enum';
 import { filter, switchMap } from 'rxjs/operators';
+import { result, values } from 'lodash';
 
 /**
  * The Query service handles the main query resulting in
@@ -26,6 +27,7 @@ export class QueryService {
      subscribed to. (I.e. all older pending streams will be unsubscribed) */
   private streamOfStreams: Subject<Observable<SearchResult>> = new Subject<Observable<SearchResult>>();
   private streamOfAggregationStreams: Subject<Observable<AggregationsResult>> = new Subject<Observable<AggregationsResult>>();
+  private streamOfStatsStreams: Subject<Observable<any>> = new Subject<Observable<any>>();
 
   // The searchResult$ stream delivers the actual results after a finished search
   private searchResultSubject = new Subject<SearchResult>();
@@ -45,6 +47,9 @@ export class QueryService {
   searchStatus$ = this.searchStatusSubject.asObservable();
 
   private searchRedux: Observable<SearchRedux>;
+
+  private statResultSubject = new Subject<any>();
+  statResult$ = this.statResultSubject.asObservable();
 
   constructor(private callsService: CallsService,
               private store: Store<AppState>) {
@@ -87,15 +92,16 @@ export class QueryService {
   }
 
   public runCurrentQuery() {
-    console.log(":runCurrentQuery", this.currentQuery);
+    // console.log(":runCurrentQuery", this.currentQuery);
     this.signalStartedSearch();
     this.runQuery(this.currentQuery);
     this.runAggregationQuery(this.currentQuery);
+    this.runStatsQuery(this.currentQuery);
   }
 
   private runQuery(query: StrixQuery) {
     if (query.type === QueryType.Normal) {
-      console.log("adding a search to the stream of streams");
+      // console.log("adding a search to the stream of streams");
       this.streamOfStreams.next(this.callsService.searchForString(query));
     } else {
       // ... we'll see what the future brings
@@ -104,8 +110,17 @@ export class QueryService {
   
   private runAggregationQuery(query: StrixQuery) {
     if (query.type === QueryType.Normal) {
-      console.log("adding an aggregation search to the stream of streams");
+      // console.log("adding an aggregation search to the stream of streams");
       this.streamOfAggregationStreams.next(this.callsService.getAggregations(query));
+    } else {
+      // ... we'll see what the future brings
+    }
+  }
+
+  private runStatsQuery(query: StrixQuery) {
+    if (query.type === QueryType.Normal) {
+      // console.log("adding stats to the stream of streams");
+      this.streamOfStatsStreams.next(this.callsService.getStatistics(query));
     } else {
       // ... we'll see what the future brings
     }
@@ -120,19 +135,25 @@ export class QueryService {
       this.currentQuery.type = <QueryType>data.type;
       this.currentQuery.queryString = data.query;
       this.currentQuery.pageIndex = data.page;
-      this.currentQuery.documentsPerPage = 10; // TODO: Make non hardcoded
+      this.currentQuery.documentsPerPage = data.documentsPerPage; // TODO: Make non hardcoded
       /* console.log("data.corpora", data.corpora);
       if ( data.corpora.length === 1 && data.corpora[0] === undefined) { // Because of "corpora=" in the URL
         this.currentQuery.corpora = []; // All corpora (default)
       } else {
         this.currentQuery.corpora = data.corpora;
       } */
-      
+      // if (data.selectedCorpora) {
+      //   this.currentQuery.corpora = data.selectedCorpora;
+      // } else {
+      //   this.currentQuery.corpora = data.corporaInMode;
+      // }
+      this.currentQuery.corpora = data.corporaInMode;
       this.currentQuery.filters = data.filters;
       this.currentQuery.include_facets = data.include_facets || [];
       if(data.keyword_search) {
         this.currentQuery.keyword_search = data.keyword_search
       }
+      this.currentQuery.modes = data.modeSelected;
       this.runCurrentQuery(); // Perform the actual search
     });
 
@@ -151,6 +172,9 @@ export class QueryService {
     this.streamOfAggregationStreams.pipe(switchMap(obj => obj)).subscribe((value: AggregationsResult) => {
       this.aggregationResultSubject.next(value);
     });
+    this.streamOfStatsStreams.pipe(switchMap(obj => obj)).subscribe((value: any) => {
+      this.statResultSubject.next(value);
+    })
   }
 
 }

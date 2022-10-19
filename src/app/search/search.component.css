@@ -15,16 +15,27 @@
 }
 
 .search_widget {
-  display: inline-block;
+  /* display: inline-block; */
+  display: flex;
   vertical-align: middle;
+  position:relative; 
+  padding-left: 7px; 
+  font-size: small;
 }
+
 .search_widget + button {
   vertical-align: middle;
   padding: 7px 10px;
   height: 100%;
 }
 .simple_searchbox {
-  margin-right: 5px;
+  width: 70%;
+  height: 50px;
+  padding: 10px;
+  border-radius: 4px;
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif !important;
+    font-size: 0.95rem !important;
+  /* margin-right: 5px; */
 }
 
 .filters_area {
@@ -50,4 +61,67 @@
 .histogram_box {
   margin-top: 10px;
   width: 600px;
+}
+
+.search_widget label {
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif !important;
+    font-size: small !important;
+    padding-right: 10px;
+    padding-left: 4px;
+}
+
+.icon {
+  padding: 10px 0px;
+  color: grey;
+  min-width: 5px;
+  text-align: center;
+}
+
+.search_widget i {
+  position: absolute;
+  right: 30px;
+  padding-top: 18px;
+}
+
+.form-control {
+  background-color: transparent !important;
+}
+
+.menuButton {
+  border: 1px solid #ddd;
+  padding-right: 30px;
+  background-color: lightgray; 
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+  font-size: small;
+}
+
+.radioButton {
+  padding-left: 10px;
+  padding-top: 8px; 
+  font-size: small; 
+  font-family: inherit;
+  display: flex;
+}
+
+::ng-deep .cdk-overlay-pane{
+  padding: 0px !important;
+}
+
+/* ::ng-deep .mat-menu-panel {
+  min-height: 50px !important;
+  width: 120px !important;
+} */
+
+::ng-deep .mat-menu-panel {
+  height: 400px !important;
+  min-width: 600px !important;
+}
+
+::ng-deep .mat-menu-content {
+  padding: 0px !important;
+}
+
+::ng-deep .mat-menu-item {
+  font-size: small !important;
 }

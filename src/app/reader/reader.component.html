@@ -1,141 +1,137 @@
 <div class="readerLoading" *ngIf="isLoading">
   <i class="fa fa-spinner fa-pulse"></i>&nbsp;{{'loading' | loc}}...
 </div>
-<div class="readerArea">
-  <cm *ngIf="cmViews.length !== 0 && gotMetadata"
-    [style.width.px]="width"
-    (onSelectionChange)="onSelectionChange($event)"
-    (onFocus)="onFocus($event)"
-    (onScroll)="onViewportChange($event)"
-    (onKeydown)="onKeydown($event)"
-    [index]="0"></cm>
-
-  <accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0 && gotMetadata">
-
-    <!-- Search Hits -->
-    <accordion-group [isOpen]="openness['HITS']" *ngIf="bookmarks.length > 0">
-      <div accordion-heading>
-        <i class="fa fa-search"></i> {{"hits" | loc}} <span *ngIf="bookmarks.length > 0">({{bookmarks.length}})</span>
+<div class="col" style="margin-left: 0px; margin-right: 0px; padding: 0px; display: inline-flex; justify-content: space-between; min-height: 878px;">
+  <div class="readerArea" style="padding: 0px; flex: 0 0 70%; max-width: 70%;">
+    <cm *ngIf="cmViews.length !== 0 && gotMetadata"
+      [style.width.px]="width"
+      (onSelectionChange)="onSelectionChange($event)"
+      (onFocus)="onFocus($event)"
+      (onScroll)="onViewportChange($event)"
+      (onKeydown)="onKeydown($event)"
+      [index]="0"></cm>
+  </div>
+  <div class="attributeArea" style="flex: 0 0 30%; max-width: 30%;">
+    <mat-accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0 && gotMetadata">
+      <div style="padding-bottom: 20px;">
+        <mat-expansion-panel hideToggle expanded>
+          <mat-expansion-panel-header style="height: 50px; padding: 0px; background-color: cadetblue;">
+            <mat-panel-title style="padding-left: 24px;">
+              {{ 'sidebar_text_attributes' | loc }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div class="text_annotations_list">
+            <ul class="annotations_list_ul">
+              <ng-template ngFor let-annotation [ngForOf]="availableCorpora[mainDocument.corpusID].textAttributes">
+                <li *ngIf="!(annotation.visible === false)">
+                  <div class="annotations_local_area">
+                    <span>
+                      <span
+                        class="annotation_title"
+                        [ngClass]="{empty : isEmpty(mainDocument.textAttributes[annotation.name])}">{{annotation.translation_name | loc}}</span>
+                      <ul class="annotations_list">
+                        <li *ngFor="let item of mainDocument.textAttributes[annotation.name] | ensurearray">
+                          <annotation
+                            [data]="item"
+                            [type]="annotation.type"
+                            [translations]="annotation.translation_value"></annotation>
+                        </li>
+                      </ul>
+                    </span>
+                  </div>
+                </li>
+              </ng-template>
+            </ul>
+          </div>
+        </mat-expansion-panel>
       </div>
-      <div class="text_right_column" *ngIf="cmViews.length !== 0" class="bookmarks_area">
-        <div class="bookmark" *ngFor="let bookmark of bookmarks" (click)="gotoBookmark(0, bookmark)">
-          <i *ngIf="bookmark.type === 'user'" class="fa fa-bookmark"></i>
-          <i *ngIf="bookmark.type === 'highlight'" class="fa fa-flag" style="color:#337ab7"></i>
-          &nbsp;{{bookmark.text}}
-        </div>
-        <div *ngIf="bookmarks.length === 0">
-          <i>inga träffar.</i>
-        </div>
+      <div style="padding-bottom: 20px;">
+        <mat-expansion-panel hideToggle expanded>
+          <mat-expansion-panel-header style="height: 50px;  padding: 0px; background-color: cadetblue;">
+            <mat-panel-title style="padding-left: 24px;">
+              {{ 'sidebar_structural_attributes' | loc }}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <div
+            class="token_annotations_list"
+            *ngIf="!isLoading && showBox && singleWordSelection">
+            <div *ngFor="let annotationGroup of availableCorpora[mainDocument.corpusID].structAttributes">
+              <div *ngIf="currentAnnotations[annotationGroup.name]">
+                <em>{{annotationGroup.name | loc}}</em>
+                <ul class="annotations_list_ul">
+                  <li *ngFor="let annotation of annotationGroup.attributes">
+                    <span class="annotations_local_area">
+                      <span>
+                        <span
+                          class="annotation_title"
+                          [ngClass]="{empty : isEmpty(currentAnnotations[annotationGroup.name].attrs[annotation.name])}">
+                          {{annotation.translation_name | loc}}
+                        </span>
+                        <ul class="annotations_list">
+                          <li
+                            *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name] | ensurearray"
+                            (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, item, 'set')"
+                            class="highlightable_annotation">
+                            <!--{{item}}-->
+                            <annotation
+                              [data]="item"
+                              [translations]="annotation.translation_value"
+                              [type]="annotation.type"></annotation>
+                          </li>
+                        </ul>
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div *ngIf="!singleWordSelection">
+            <i>{{'select_a_word' | loc}}</i>
+          </div>
+        </mat-expansion-panel>
       </div>
-    </accordion-group>
-
-    <!-- Text Attributes -->
-    <accordion-group [heading]="'sidebar_text_attributes' | loc" [isOpen]="openness['TEXTATTRIBUTES']">
-      <div class="text_annotations_list">
-         <ul class="annotations_list_ul">
-          <ng-template ngFor let-annotation [ngForOf]="availableCorpora[mainDocument.corpusID].textAttributes">
-            <li *ngIf="!(annotation.visible === false)">
-              <div class="annotations_local_area">
+      <mat-expansion-panel hideToggle expanded>
+        <mat-expansion-panel-header style="height: 50px; padding: 0px; background-color: cadetblue;">
+          <mat-panel-title style="padding-left: 24px;">
+            {{ 'sidebar_word_attributes' | loc }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div
+          class="token_annotations_list"
+          *ngIf="!isLoading && showBox && singleWordSelection">
+          <ul class="annotations_list_ul">
+            <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].wordAttributes">
+              <span class="annotations_local_area">
                 <span>
                   <span
                     class="annotation_title"
-                    [ngClass]="{empty : isEmpty(mainDocument.textAttributes[annotation.name])}">{{annotation.translation_name | loc}}</span>
+                    [ngClass]="{empty : isEmpty(currentAnnotations[annotation.name])}">
+                    {{annotation.translation_name | loc}}
+                  </span>
                   <ul class="annotations_list">
-                    <li *ngFor="let item of mainDocument.textAttributes[annotation.name] | ensurearray">
+                    <li
+                      *ngFor="let item of currentAnnotations[annotation.name] | ensurearray"
+                      (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, item, 'set')"
+                      class="highlightable_annotation">
                       <annotation
                         [data]="item"
-                        [type]="annotation.type"
-                        [translations]="annotation.translation_value"></annotation>
+                        [translations]="getTranslations(annotation)"
+                        [type]="annotation.type"></annotation>
                     </li>
                   </ul>
+                  <!--<span *ngIf="currentAnnotations[annotation.name].length === 0" class="empty_span">
+                      (tom)
+                  </span>-->
                 </span>
-              </div>
-            </li>
-          </ng-template>
-        </ul>
-      </div>
-    </accordion-group>
-
-    <!-- Structural attributes -->
-    <accordion-group [heading]="'sidebar_structural_attributes' | loc" [isOpen]="openness['STRUCTURALATTRIBUTES']">
-      <div
-        class="token_annotations_list"
-        *ngIf="!isLoading && showBox && singleWordSelection">
-        <div *ngFor="let annotationGroup of availableCorpora[mainDocument.corpusID].structAttributes">
-          <div *ngIf="currentAnnotations[annotationGroup.name]">
-            <em>{{annotationGroup.name | loc}}</em>
-            <ul class="annotations_list_ul">
-              <li *ngFor="let annotation of annotationGroup.attributes">
-                <span class="annotations_local_area">
-                  <span>
-                    <span
-                      class="annotation_title"
-                      [ngClass]="{empty : isEmpty(currentAnnotations[annotationGroup.name].attrs[annotation.name])}">
-                      {{annotation.translation_name | loc}}
-                    </span>
-                    <ul class="annotations_list">
-                      <li
-                        *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name] | ensurearray"
-                        (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, item, 'set')"
-                        class="highlightable_annotation">
-                        <!--{{item}}-->
-                        <annotation
-                          [data]="item"
-                          [translations]="annotation.translation_value"
-                          [type]="annotation.type"></annotation>
-                      </li>
-                    </ul>
-                  </span>
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div *ngIf="!singleWordSelection">
-        <i>{{'select_a_word' | loc}}</i>
-      </div>
-    </accordion-group>
-      <!--<span *ngIf="selection">selection from line {{selection.startRow+1}} to {{selection.endRow+1}}</span><br/>
-      <span *ngIf="selection">selection from char {{selection.startChar+1}} to {{selection.endChar+1}}</span><br/>
-      <span *ngIf="selection">token {{selectionStartTokenID}} to {{selectionEndTokenID}}</span>-->
-
-    <!-- Token attributes -->
-    <accordion-group [heading]="'sidebar_word_attributes' | loc" [isOpen]="openness['TOKENATTRIBUTES']">
-      <div
-        class="token_annotations_list"
-        *ngIf="!isLoading && showBox && singleWordSelection">
-        <ul class="annotations_list_ul">
-          <li *ngFor="let annotation of availableCorpora[mainDocument.corpusID].wordAttributes">
-            <span class="annotations_local_area">
-              <span>
-                <span
-                  class="annotation_title"
-                  [ngClass]="{empty : isEmpty(currentAnnotations[annotation.name])}">
-                  {{annotation.translation_name | loc}}
-                </span>
-                <ul class="annotations_list">
-                  <li
-                    *ngFor="let item of currentAnnotations[annotation.name] | ensurearray"
-                    (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, null, item, 'set')"
-                    class="highlightable_annotation">
-                    <annotation
-                      [data]="item"
-                      [translations]="getTranslations(annotation)"
-                      [type]="annotation.type"></annotation>
-                  </li>
-                </ul>
-                <!--<span *ngIf="currentAnnotations[annotation.name].length === 0" class="empty_span">
-                    (tom)
-                </span>-->
               </span>
-            </span>
-          </li>
-        </ul>
-      </div>
-      <div *ngIf="!singleWordSelection">
-        <i>{{'select_a_word' | loc}}</i>
-      </div>
-    </accordion-group>
-  </accordion>
+            </li>
+          </ul>
+        </div>
+        <div *ngIf="!singleWordSelection">
+          <i>{{'select_a_word' | loc}}</i>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </div>
 </div>
