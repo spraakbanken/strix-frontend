@@ -25,6 +25,7 @@ export class HeaderComponent implements OnInit {
   public documentTitle: string;
   public corpusName: LangPhrase;
   public wordCount: number;
+  public yearInfo: string;
   public mostCommonWords: string[];
 
   public asyncSelected: string = "";
@@ -37,6 +38,7 @@ export class HeaderComponent implements OnInit {
       this.documentTitle = openedDocument.title;
       this.corpusName = metadataService.getName(openedDocument.corpusID);
       this.wordCount = openedDocument.word_count;
+      this.yearInfo = openedDocument.textAttributes.year;
       this.mostCommonWords = openedDocument.mostCommonWords.split(', ').slice(0,10);
     });
 

@@ -22,9 +22,9 @@
         class="form-control simple_searchbox"
         [(ngModel)]="asyncSelected"
         (keydown.Enter)="simpleSearch()"/>
-        <i *ngIf="asyncSelected" style="right: 39%; padding-top: 14px;" (click)="clearSimpleSearch()"><mat-icon style="height: 10px; width: 10px;">close</mat-icon></i>
-        <i style="border-left: 1px solid lightgrey; height: 50px; right: 36.5%;"></i>
-        <i (click)="simpleSearch()" style="right: 32.7%; padding-top: 16px;"><i-bs name="search" width="20" height="20"></i-bs></i>
+        <i *ngIf="asyncSelected" style="right: 37%; padding-top: 14px;" (click)="clearSimpleSearch()"><mat-icon style="height: 10px; width: 10px;">close</mat-icon></i>
+        <i style="border-left: 1px solid lightgrey; height: 50px; width: 50px; right: 30.8%;"></i>
+        <i (click)="simpleSearch()" style="right: 31.9%; padding-top: 17px;"><i-bs name="search" width="20" height="20"></i-bs></i>
         <button mat-button [matMenuTriggerFor]="menu" style="border: 1px solid #ddd; padding: 0px; min-width: 50px;"><i-bs name="info-circle"
           width="20"
             height="20">

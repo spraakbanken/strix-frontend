@@ -27,8 +27,10 @@
     <div class="strixLogo" title="Strix SB" (click)="reloadStrix()">
       <img width="200" src="assets/logoStrix.jpg"/>
     </div>
-    <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
-    <div style="margin-left: auto;margin-right: 0;">
+    <div style="padding: 34px 20px 10px 0px; margin-left: auto; margin-right: 25%;"> <!--width: 56%; -->
+      <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
+    </div>
+    <div style="margin-left: auto;margin-right: 0; padding-right: 8px;">
       <a title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 10px 0px 1px;"><img width="340" src="assets/sbText.svg" alt=""></a>
       <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 10px 0px 1px;"><img width="70" src="assets/sweClarin.png" alt=""></a>
       <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 35px 10px 0px 8px;"><img width="40" src="assets/guLogo.png" alt=""></a>
@@ -50,19 +52,19 @@
       <div class="mainContent" *ngIf="tab === 'Hits'">
         <div class="fixDoc">
           <div class="right_column" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
-            <div class="row">
-              <docselection class="col-lg-12" [style.display]="(!openDocument)?'block':'none'" ></docselection>
+            <div class="row" style="margin-left: 0px; margin-right: 0px;">
+              <docselection class="col-lg-12" [style.display]="(!openDocument)?'block':'none'" style="padding: 0px;"></docselection>
             </div>
-            <header *ngIf="openDocument" style="flex: 0 1 auto; padding: 10px;"></header>
+            <header *ngIf="openDocument" style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
             <indocsearch *ngIf="openDocument"></indocsearch>
-            <reader [hidden]="!openDocument"></reader>
+            <reader [hidden]="!openDocument" ></reader>
           </div>
           <!-- <div class="left_column d-none d-lg-block" [style.width]="(!openDocument)?'0%':'0%'"> 
           </div> -->
         </div>
       </div>
       <div class="mainContent" *ngIf="tab !== 'Hits'">
-        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType"></similardocs>       
+        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" style="padding: 4px 15px 0px 15px;"></similardocs>       
       </div>
     </mat-tab>
   </mat-tab-group>

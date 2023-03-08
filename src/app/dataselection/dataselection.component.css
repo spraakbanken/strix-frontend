@@ -16,7 +16,7 @@
     align-items: baseline; 
     justify-content: space-between; 
     flex-wrap: wrap; 
-    padding: 35px 20px 0px 160px;
+    /* padding: 35px 20px 0px 160px; */
     font-size: small;
     position: absolute;
 }
@@ -80,7 +80,7 @@
 }
 
 .selectCorpus {
-  width: 500px; 
+  width: 550px; 
   text-align: left; 
   border: 1px solid #ddd; 
   height: 45px;
@@ -152,15 +152,73 @@
 }
 
 .closeButton {
-  padding: 0px 25px 0px 25px;
+  padding: 0px 12px 0px 12px;
   font-size: small;
   font-weight: 400;
   background-color: lightblue;
   margin-right: 20px;
-  margin-left: 20px;
+  margin-left: 14px;
 }
 
 .mat-tree-node {
   background-color: lightblue;
   margin-bottom: 1px;
 }
+
+.graphChart {
+  display: block; 
+  padding-bottom: 20px; 
+  padding-top: 10px;
+}
+
+::ng-deep .yearFilter .ngx-slider .ngx-slider-bar {
+    background: lightblue;
+    height: 4px;
+  }
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-selection {
+    background: #17a2b8;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-pointer {
+    width: 8px;
+    height: 16px;
+    top: auto; /* to remove the default positioning */
+    bottom: 0;
+    background-color: #333;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-pointer:after {
+    display: none;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-bubble {
+    bottom: 14px;
+    font-size: 12px;
+    top: 8px;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-limit {
+    font-weight: normal;
+    color: orange;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-tick {
+    width: 1px;
+    height: 10px;
+    margin-left: 4px;
+    border-radius: 0;
+    background: #ffe4d1;
+    top: -1px;
+  }
+
+  ::ng-deep .yearFilter .ngx-slider .ngx-slider-tick.ngx-slider-selected {
+    background: rgb(255, 165, 0);
+  }
+
+  ::ng-deep .yearFilter .ngx-slider {
+    width: 81%;
+    height: 10px;
+    margin: 0px 0px 0px 68px;
+  }

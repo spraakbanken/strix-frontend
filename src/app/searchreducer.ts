@@ -63,6 +63,7 @@ export interface SearchRedux {
   selectedCorpora?: string[];
   docSize?: string;
   yearInterval?: string;
+  yearRoot?: string;
   wordCount?: number[];
   yearRange?: number[];
   undefinedYear?: boolean;
@@ -172,7 +173,8 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       nextState.docSize = action.payload;
       break;
     case YEAR_INTERVAL:
-      nextState.yearInterval = action.payload;
+      nextState.yearInterval = action.payload.getInterval;
+      nextState.yearRoot = action.payload.getRoot;
       break;
     case WORD_COUNT:
       nextState.wordCount = action.payload;

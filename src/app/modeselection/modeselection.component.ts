@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { Subscription, Observable, zip } from 'rxjs';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-
-import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { SEARCH, AppState, MODE_SELECTED, INITIATE } from '../searchreducer';
+import { AppState, MODE_SELECTED, INITIATE } from '../searchreducer';
 import { RoutingService } from 'app/routing.service';
-import { filter, skip } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'modeselection',
@@ -20,6 +18,7 @@ export class ModeselectionComponent implements OnInit {
 
   public modeCollection = {};
   public modeSelection = {};
+  public listMode = {};
 
   private modeItem : { mode : string[], corpuses : string[] };
   public addFacet = [];
@@ -61,23 +60,24 @@ export class ModeselectionComponent implements OnInit {
     this.modeSelection = {};
     if (window["jwt"]) {
       for (let key in this.availableCorpora) {
-        if (this.availableCorpora[key]['mode']['eng'] in this.modeCollection) {
-          this.modeCollection[this.availableCorpora[key]['mode']['eng']].push(this.availableCorpora[key]['corpusID'])
+        if (this.availableCorpora[key]['modeID'] in this.modeCollection) {
+          this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
         } else {
-          this.modeCollection[this.availableCorpora[key]['mode']['eng']] = []
-          this.modeCollection[this.availableCorpora[key]['mode']['eng']].push(this.availableCorpora[key]['corpusID'])
-          this.modeSelection[this.availableCorpora[key]['mode']['eng']] = false
+          this.modeCollection[this.availableCorpora[key]['modeID']] = []
+          this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
+          this.modeSelection[this.availableCorpora[key]['modeID']] = false
         }
       }
     } else {
       for (let key in this.availableCorpora) {
         if (!this.availableCorpora[key]['protectedX']) {
-          if (this.availableCorpora[key]['mode']['eng'] in this.modeCollection) {
-            this.modeCollection[this.availableCorpora[key]['mode']['eng']].push(this.availableCorpora[key]['corpusID'])
+          if (this.availableCorpora[key]['modeID'] in this.modeCollection) {
+            this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
           } else {
-            this.modeCollection[this.availableCorpora[key]['mode']['eng']] = []
-            this.modeCollection[this.availableCorpora[key]['mode']['eng']].push(this.availableCorpora[key]['corpusID'])
-            this.modeSelection[this.availableCorpora[key]['mode']['eng']] = false
+            this.modeCollection[this.availableCorpora[key]['modeID']] = []
+            this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
+            this.modeSelection[this.availableCorpora[key]['modeID']] = false
+            this.listMode[this.availableCorpora[key]['modeID']] = this.availableCorpora[key]['mode']
           }
         }    
       }
@@ -100,6 +100,7 @@ export class ModeselectionComponent implements OnInit {
 
   private updateFilters() {
     this.store.dispatch({ type: MODE_SELECTED, payload : this.modeItem});
+    // this.store.dispatch({ type: SELECTED_CORPORA, payload : this.modeItem.corpuses})
     // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
@@ -108,7 +109,7 @@ export class ModeselectionComponent implements OnInit {
     this.metadataService.loadedMetadata$, 
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE))).subscribe(([info, data]: [any, any]) => {
       this.collectMode();
-      this.chooseMode('Modern');
+      this.chooseMode('default');
     });
   }
 }

@@ -7,10 +7,10 @@ import { FormControl } from '@angular/forms';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
-import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
-import { SelectionChange } from '@angular/cdk/collections';
+import { ChartOptions, ChartType } from 'chart.js';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
+import { LocService } from 'app/loc.service';
 
 @Component({
   selector: 'similardocs',
@@ -58,6 +58,11 @@ export class SimilarDocsComponent implements OnInit{
 
   public barChartOptions: ChartOptions = {
     responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom'
+      }
+    },
     scales: {
       x: {
         ticks: {
@@ -70,6 +75,10 @@ export class SimilarDocsComponent implements OnInit{
       y: {
         ticks: {
           precision: 0
+        },
+        title: {
+          display: true,
+          text:this.locService.getTranslationFor('frequency')
         },
       }
     },
@@ -88,33 +97,6 @@ export class SimilarDocsComponent implements OnInit{
       }
     }
   };
-
-  // public barChartOptions: ChartOptions = {
-  //   responsive: true,
-  //   scales: {
-  //     x: {
-  //       ticks: {
-  //         display: false
-  //       }
-  //     }
-  //   },
-    
-  //   onClick: (evt, chart, chartItem) => {
-  //     if (chartItem.config.data.datasets[0].label === "Corpus") {
-  //       this.corpusC.reset();
-  //       this.authorC.reset();
-  //       this.corpusC.setValue([chartItem.tooltip.title[0]]);
-  //       this.filterData();
-  //     }
-  //     if (chartItem.config.data.datasets[0].label === "Author") {
-  //       this.authorC.reset();
-  //       this.corpusC.reset();
-  //       this.authorC.setValue([chartItem.tooltip.title[0]]);
-  //       this.filterData();
-  //     }
-  //   }
-  // };
-
   
   public yearLabels = [];
   public barChartType: ChartType = 'bar';
@@ -133,7 +115,7 @@ export class SimilarDocsComponent implements OnInit{
   public availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   public gotMetadata = false;
 
-  constructor(private callsService: CallsService, private metadataService: MetadataService) {
+  constructor(private callsService: CallsService, private metadataService: MetadataService, private locService: LocService) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         
@@ -153,7 +135,10 @@ export class SimilarDocsComponent implements OnInit{
           this.similarDocs = answer["data"];
           let tempData = [];
           for(let i = 0; i < this.similarDocs.length; i++) {
-            this.authors.push(this.similarDocs[i]['text_attributes']['author']);
+            if (this.similarDocs[i]['text_attributes']['author']) {
+              this.authors.push(this.similarDocs[i]['text_attributes']['author']);
+            }
+            
             this.corpuses.push(this.similarDocs[i]['corpus_id']);
             if (typeof(this.similarDocs[i]['text_attributes']['year']) === "string") {
                 this.years.push.apply(this.years, this.similarDocs[i]['text_attributes']['year'].split(', '));
@@ -174,13 +159,13 @@ export class SimilarDocsComponent implements OnInit{
         this.filteredData = this.filteredDataNew.connect();
         let authorsData = _.groupBy(this.authors.map(i=>i));
         this.authorLabels = _.keys(authorsData);
-        this.authorData = [{data: _.values(authorsData).map(x => x.length), label: 'Author'}];
+        this.authorData = [{data: _.values(authorsData).map(x => x.length), label: this.locService.getTranslationFor('authorS')}];
         let corpusesData = _.groupBy(this.corpuses.map(i=>i));
         this.corpusLabels = _.keys(corpusesData);
-        this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label: 'Corpus'}];
+        this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label: this.locService.getTranslationFor('corpus')}];
         let dataYear = _.groupBy(this.years.map(i=>Number(i)));
         this.yearLabels = _.keys(dataYear);
-        this.yearData = [{data: _.values(dataYear).map(x => x.length), label: 'Year'}];
+        this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS')}];
         this.years = this.years.map(i=>Number(i)).filter((x, i, a) => a.indexOf(x) == i).sort();
         this.minYear = this.years[0];
         this.maxYear = this.years.splice(-1)[0];
@@ -190,7 +175,7 @@ export class SimilarDocsComponent implements OnInit{
           this.documentLabels.push(i);
           this.documentData.push(this.tokens[i])
         }
-        this.documentData = [{data: this.documentData, label: 'Document Size'}];
+        this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens')}];
         this.lowerLimit = this.tokens[0]
         this.upperLimit = this.tokens.splice(-1)[0];
         this.minToken = this.lowerLimit;
@@ -237,16 +222,16 @@ export class SimilarDocsComponent implements OnInit{
       this.documentLabels.push(i);
       this.documentData.push(this.tokens[i])
     }
-    this.documentData = [{data: this.documentData, label: 'Document Size'}];
+    this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens')}];
     let authorsData = _.groupBy(_.map(tempData, 'authors'));
     this.authorLabels = _.keys(authorsData);
-    this.authorData = [{data: _.values(authorsData).map(x => x.length), label: 'Author'}];
+    this.authorData = [{data: _.values(authorsData).map(x => x.length), label: this.locService.getTranslationFor('authorS')}];
     let corpusesData = _.groupBy(_.map(tempData, 'corpusID'));
     this.corpusLabels = _.keys(corpusesData);
-    this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label: 'Corpus'}];
+    this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label:this.locService.getTranslationFor('corpus')}];
     let dataYear = _.groupBy(_.concat(_.map(tempData, 'year').map(x=>x.split(', '))).map(i=>Number(i)));
     this.yearLabels = _.keys(dataYear);
-    this.yearData = [{data: _.values(dataYear).map(x => x.length), label: 'Year'}];
+    this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS')}];
     this.filteredDataNew = new MatTableDataSource<StrixDocument>(tempData);
     this.filteredDataNew.paginator = this.paginator;
     this.filteredData = this.filteredDataNew.connect();

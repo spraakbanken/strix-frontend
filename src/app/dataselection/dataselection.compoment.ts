@@ -1,30 +1,22 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Subscription, Observable, zip } from 'rxjs';
+import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { SEARCH,
-INITIATE, AppState, MODE_SELECTED, SELECTED_CORPORA, CHANGELANG
-} from '../searchreducer';
+import { YEAR_INTERVAL, AppState, MODE_SELECTED, SELECTED_CORPORA } from '../searchreducer';
 import {FormControl } from '@angular/forms';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 
 import {SelectionModel} from '@angular/cdk/collections';
 import {FlatTreeControl} from '@angular/cdk/tree';
-import { Injectable} from '@angular/core';
 import {MatTreeFlatDataSource, MatTreeFlattener} from '@angular/material/tree';
 import {BehaviorSubject} from 'rxjs';
+import { CallsService } from 'app/calls.service';
+import { Options, ChangeContext } from '@angular-slider/ngx-slider';
+import { ChartOptions, ChartType, Chart } from 'chart.js';
+import { BaseChartDirective } from 'ng2-charts';
 
-/**
- * Checklist database, it can build a tree structured Json object.
- * Each node in Json object represents a to-do item or a category.
- * If a node is a category, it has children items and new items can be added under the category.
- */
-
-/**
- * Node for to-do item
- */
  export class TodoItemNode {
   children: TodoItemNode[];
   item: string;
@@ -38,93 +30,24 @@ export class TodoItemFlatNode {
 }
 
 /**
- * The Json object for to-do list data.
- */
-const TREE_DATA = {
-  Groceries: {
-    'Almond Meal flour': null,
-    'Organic eggs': null,
-    'Protein Powder': null,
-    Fruits: {
-      Apple: null,
-      Berries: ['Blueberry', 'Raspberry'],
-      Orange: null
-    }
-  },
-  Reminders: [
-    'Cook dinner',
-    'Read the Material Design spec',
-    'Upgrade Application to Angular'
-  ]
-};
-
-/**
  * Checklist database, it can build a tree structured Json object.
  * Each node in Json object represents a to-do item or a category.
  * If a node is a category, it has children items and new items can be added under the category.
  */
-@Injectable()
-export class ChecklistDatabase {
-  // dataChange = new BehaviorSubject<TodoItemNode[]>([]);
-
-  // get data(): TodoItemNode[] { return this.dataChange.value; }
-
-  // constructor() {
-  //   this.initialize();
-  // }
-
-  // initialize() {
-  //   // Build the tree nodes from Json object. The result is a list of `TodoItemNode` with nested
-  //   //     file node as children.
-  //   const data = this.buildFileTree(this.treeData, 0);
-  //   console.log("----", data)
-  //   // Notify the change.
-  //   this.dataChange.next(data);
-  // }
-
-  // /**
-  //  * Build the file structure tree. The `value` is the Json object, or a sub-tree of a Json object.
-  //  * The return value is the list of `TodoItemNode`.
-  //  */
-  // buildFileTree(obj: {[key: string]: any}, level: number): TodoItemNode[] {
-  //   return Object.keys(obj).reduce<TodoItemNode[]>((accumulator, key) => {
-  //     const value = obj[key];
-  //     const node = new TodoItemNode();
-  //     node.item = key;
-
-  //     if (value != null) {
-  //       if (typeof value === 'object') {
-  //         node.children = this.buildFileTree(value, level + 1);
-  //       } else {
-  //         node.item = value;
-  //       }
-  //     }
-
-  //     return accumulator.concat(node);
-  //   }, []);
-  // }
-
-  // /** Add an item to to-do list */
-  // insertItem(parent: TodoItemNode, name: string) {
-  //   if (parent.children) {
-  //     parent.children.push({item: name} as TodoItemNode);
-  //     this.dataChange.next(this.data);
-  //   }
-  // }
-
-  // updateItem(node: TodoItemNode, name: string) {
-  //   node.item = name;
-  //   this.dataChange.next(this.data);
-  // }
-}
+// @Injectable()
+// export class ChecklistDatabase {
+  
+// }
 
 @Component({
   selector: 'dataselection',
   templateUrl: 'dataselection.component.html',
   styleUrls: ['dataselection.component.css'],
-  providers: [ChecklistDatabase]
+  // providers: [ChecklistDatabase]
 })
 export class DataselectionComponent implements OnInit {
+
+  @ViewChild(BaseChartDirective) chart?: BaseChartDirective | undefined;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap = new Map<TodoItemFlatNode, TodoItemNode>();
@@ -149,6 +72,8 @@ export class DataselectionComponent implements OnInit {
   checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
 
   public corpusesInMode: [];
+  public corporaListYear = [];
+  public selectedYear = {};
   public selectedMode = '';
   public corpusesCount = 0;
   public corpusList = new FormControl();
@@ -167,12 +92,66 @@ export class DataselectionComponent implements OnInit {
   public selectedCorpus: any[];
   public selectedCount = 0;
   public totalTokens = 0;
+  public totalDocs = 0;
   public selectedTokens = 0;
+  public selectedDocs = 0;
   public disableList = {};
   private unitlist = ["", "K", "M", "G"];
   public showCorpusDetail = {};
   public selectedLanguage : string;
   private inputText: string = "";
+  public updateGraph = false;
+  public yearButton = "lightblue"
+
+  public minYear: number = 0;
+  public maxYear: number = 0;
+  public globalMinYear: number = 0;
+  public globalMaxYear: number = 0;
+  public yearData = [];
+
+  public options: Options = {
+    floor: 0,
+    ceil: 2022
+  };
+
+  public barChartOptions: ChartOptions = {
+    responsive: true,
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        ticks: {
+          display: false,
+        },
+        grid: {
+          display: false,
+        },
+        title: {
+          display: true,
+          text: 'Year'
+        },
+      },
+      y: {
+        ticks: {
+          precision: 0
+        },
+        grid: {
+          display: true,
+        },
+        title: {
+          display: true,
+          text: 'Documents'
+        },
+      }
+    },
+    plugins: { 
+      legend: {
+        display: false
+      }
+    }
+  };
+  public barChartType: ChartType = 'bar';
+  public barChartLegend = false;
+  public barChartPlugins = [];
 
   private searchRedux: Observable<any>;
 
@@ -229,7 +208,7 @@ export class DataselectionComponent implements OnInit {
     this.dataChange.next(this.data);
   }
 
-  constructor(private store: Store<AppState>, private metadataService: MetadataService,)
+  constructor(private store: Store<AppState>, private metadataService: MetadataService, private callsService: CallsService,)
   {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
@@ -254,20 +233,79 @@ export class DataselectionComponent implements OnInit {
 
     this.searchRedux = this.store.select('searchRedux');
 
-    this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
-      this.selectedLanguage = data.lang;
+    this.searchRedux.pipe(filter((d) => d.latestAction === YEAR_INTERVAL)).subscribe((data) => {
+      this.corporaListYear = [];
+      let rangeYear = data.yearInterval
+      if (data.yearRoot === "modeRoot") {
+      this.callsService.getCorpusId(data.modeSelected, rangeYear).subscribe((result) => {
+        this.corporaListYear = _.map(result["aggregations"]["corpus_id"].buckets.filter(item => item.doc_count != 0), 'key')
+        if (this.corporaListYear) {
+          this.yearCorpora();
+        }
+        for (let item of result["aggregations"]["year"].buckets) {
+          if (item.doc_count === 0) {
+            this.selectedYear[item.key] = "lightblue"
+          } else {
+            this.selectedYear[item.key] = "#17a2b8"
+          }
+        }
+        
+        this.yearData[0]["values"][0]["backgroundColor"] = _.values(this.selectedYear)
+        this.chart.chart.data.datasets = this.yearData[0];
+        this.chart.render();
+      });
+      } 
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
       this.totalTokens = 0;
       this.selectedTokens = 0;
+      this.totalDocs = 0;
+      this.selectedDocs = 0;
       this.selectedMode = data.modeSelected[0];
       this.corpusesInMode = data.corporaInMode[0];
       this.selectedCount = this.corpusesInMode.length;
       this.corpusesCount = this.corpusesInMode.length;
       this.checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
+      this.yearData = [];
+      this.callsService.getYearStatistics(this.corpusesInMode, data.modeSelected).subscribe((result) => {
+        if (result["aggregations"]['year']) {
+          let yearRange = result["aggregations"]['year'].buckets.filter(item => item.doc_count != 0)
+          let newYearRange = []
+          for (let i of _.map(yearRange, 'key')) {
+            newYearRange.push.apply(newYearRange, i.replace(/[^0-9.]/g, '$').replace(/\$+/g, ',').split(','))
+          }
+          let yearRangeX = _.uniq(_.remove(newYearRange, function(n) { return n.length > 0})).sort((a,b) => (a as any) - (b as any));
+          // if (yearRangeX.includes('2050')) {
+          //   this.store.dispatch({ type: YEAR_NA, payload: true})
+          // } else {
+          //   this.store.dispatch({ type: YEAR_NA, payload: false})
+          // }
+          let x1 = Number(yearRangeX[0]);
+          let y1 = 0;
+          if (yearRangeX.includes('2050')) {
+            y1 = Number(yearRangeX.splice(-2)[0]);
+          } else {
+            y1 = Number(yearRangeX.splice(-1)[0]);
+          }
+          this.minYear = x1
+          this.maxYear = y1
+          this.globalMinYear = x1
+          this.globalMaxYear = y1
+          this.setNewOptions(this.maxYear, this.minYear, 'yearRange');
+          let yearDataX = {};
+          for (let i of yearRange) {
+            yearDataX[i.key] = i.doc_count
+            this.selectedYear[i.key] = "#17a2b8"
+          }
+          this.yearData.push({'labels': _.keys(yearDataX), 'values': [{'data': _.values(yearDataX), 'backgroundColor': _.values(this.selectedYear)}]})
+        }
+      });
       for (let item of this.corpusesInMode) {
         this.totalTokens = this.totalTokens + this.availableCorpora[item].tokenInCorpora;
+      }
+      for (let item of this.corpusesInMode) {
+        this.totalDocs = this.totalDocs + this.availableCorpora[item].docInCorpora;
       }
       this.treeData = {};
 
@@ -286,7 +324,7 @@ export class DataselectionComponent implements OnInit {
       this.currentLang = data.lang;
       this.corpusDescription = {};
       for (let item in this.availableCorpora) {
-        if (this.availableCorpora[item].mode['eng'].toLowerCase() === this.selectedMode) {
+        if (this.availableCorpora[item].modeID.toLowerCase() === this.selectedMode) {
           this.corpusDescription[item] = this.availableCorpora[item];
           if (this.availableCorpora[item].folderName) {
             if (_.keys(this.treeData).includes(this.availableCorpora[item].folderName)) {
@@ -305,9 +343,9 @@ export class DataselectionComponent implements OnInit {
         this.initialize(this.treeData);
       }
       this.selectedTokens = this.totalTokens;
+      this.selectedDocs = this.totalDocs;
       this.corpusList.reset();
-      // this.selectedCorpus = [];
-      // this.updateFilters();
+      this.defaultSelection("modeRoot");
     });
   }
 
@@ -338,6 +376,8 @@ export class DataselectionComponent implements OnInit {
   }
 
   checkAll(){
+    this.store.dispatch({ type: YEAR_INTERVAL, payload : {'getInterval': '', 'getRoot': 'dataRoot'}})
+    this.setNewOptions(this.globalMaxYear, this.globalMinYear, 'dataRoot');
     this.clearInputText();
     for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
       if (!this.disableList[this.treeControl.dataNodes[i].item]) {
@@ -347,10 +387,12 @@ export class DataselectionComponent implements OnInit {
       this.treeControl.expand(this.treeControl.dataNodes[i])
       }
     }
-    this.updateFiltersX();
+    this.updateFiltersX('checkAll');
   }
 
   deselectAll(){
+    this.store.dispatch({ type: YEAR_INTERVAL, payload : {'getInterval': '', 'getRoot': 'dataRoot'}})
+    this.setNewOptions(this.globalMaxYear, this.globalMinYear, 'dataRoot');
     this.clearInputText();
     for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
       if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item])
@@ -358,31 +400,77 @@ export class DataselectionComponent implements OnInit {
         this.checklistSelection.deselect(this.treeControl.dataNodes[i])
       this.treeControl.expand(this.treeControl.dataNodes[i])
     }
-    this.updateFiltersX();
+    this.updateFiltersX('deselectAll');
   }
-
-  defaultSelection() {
-    if (this.selectedMode === 'modern') {
-      this.clearInputText();
-      for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
-        if (this.treeControl.dataNodes[i].item === 'wikipedia') {
-          if (!this.disableList[this.treeControl.dataNodes[i].item]) {
-            if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i]))
-            this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
-            this.checklistSelection.select(this.treeControl.dataNodes[i])
-          this.treeControl.expand(this.treeControl.dataNodes[i])
-          }
-        } else {
-          if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item])
-            this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
-            this.checklistSelection.deselect(this.treeControl.dataNodes[i])
-          this.treeControl.expand(this.treeControl.dataNodes[i])
+  
+  public yearCorpora(){
+    this.clearInputText();
+    for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+      if (this.corporaListYear.includes(this.treeControl.dataNodes[i].item)) {
+        if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+          if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i]))
+          this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+          this.checklistSelection.select(this.treeControl.dataNodes[i])
+        this.treeControl.expand(this.treeControl.dataNodes[i])
         }
       }
-      this.updateFiltersX();
-    } else {
-      this.checkAll();
     }
+    this.updateFiltersX('yearCorpora');
+  }
+
+  public defaultSelection(inputMode) {
+    if (inputMode === "modeRoot") {
+      if (this.selectedMode === 'default') {
+        this.clearInputText();
+        for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+          if (this.treeControl.dataNodes[i].item === 'vivill') {
+            if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+              if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
+                this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+                this.checklistSelection.select(this.treeControl.dataNodes[i]);
+                this.treeControl.expand(this.treeControl.dataNodes[i])
+              }
+            }
+          } else {
+            if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item]) {
+              this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+              this.checklistSelection.deselect(this.treeControl.dataNodes[i])
+            this.treeControl.expand(this.treeControl.dataNodes[i])
+            } 
+          }
+        }
+        this.updateFiltersX("default");
+      } else {
+        this.checkAll();
+      }
+    } 
+    if (inputMode !== "modeRoot") {
+      this.store.dispatch({ type: YEAR_INTERVAL, payload : {'getInterval': '', 'getRoot': 'dataRoot'}})
+      this.setNewOptions(this.globalMaxYear, this.globalMinYear, 'dataRoot');
+      if (this.selectedMode === 'default') {
+        this.clearInputText();
+        for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+          if (this.treeControl.dataNodes[i].item === 'vivill') {
+            if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+              if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
+                this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+                this.checklistSelection.select(this.treeControl.dataNodes[i]);
+                this.treeControl.expand(this.treeControl.dataNodes[i])
+              }
+            }
+          } else {
+            if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item]) {
+              this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+              this.checklistSelection.deselect(this.treeControl.dataNodes[i])
+            this.treeControl.expand(this.treeControl.dataNodes[i])
+            } 
+          }
+        }
+        this.updateFiltersX("default");
+      } else {
+        this.checkAll();
+      }
+    } 
   }
 
   /** Whether all the descendants of the node are selected. */
@@ -401,13 +489,9 @@ export class DataselectionComponent implements OnInit {
     for (let i of descendants) {
       if (this.checklistSelection.isSelected(i)) {
         this.selectedList.push(i.item)
-        // console.log(i)
       }
     }
     const result = descendants.some(child => this.checklistSelection.isSelected(child));
-    // if (this.selectedList.length > 0) {
-    //   this.updateFiltersX();
-    // }
     return result && !this.descendantsAllSelected(node);
   }
 
@@ -437,7 +521,7 @@ export class DataselectionComponent implements OnInit {
       this.checkRootNodeSelection(parent);
       parent = this.getParentNode(parent);
     }
-    this.updateFiltersX();
+    this.updateFiltersX("checkTree");
   }
 
   /** Check root node checked state and change it accordingly */
@@ -477,7 +561,6 @@ export class DataselectionComponent implements OnInit {
   private showDetails(item) {
     this.showInformation = true;
     this.showCorpusDetail = this.availableCorpora[item]
-    // console.log(this.showCorpusDetail);
   }
 
   private closeDetails() {
@@ -497,6 +580,40 @@ export class DataselectionComponent implements OnInit {
       this.simpleSearch = true;
       this.openClose = 'unfold_less';
     }
+  }
+
+  public showYearDistribution() {
+    if (!this.updateGraph) {
+      this.updateGraph = true;
+      this.yearButton = 'orange';
+    } else {
+      this.updateGraph = false;
+      this.yearButton = 'lightblue';
+    }
+  }
+
+  public setNewOptions(newCeil: number, newFloor: number, optionName: string): void {
+    if (optionName === "yearRange") {
+      const newOptions: Options = Object.assign({}, this.options);
+      newOptions.ceil = newCeil;
+      newOptions.floor = newFloor;
+      this.options = newOptions;
+    }
+    if (optionName === "dataRoot") {
+      const newOptions: Options = Object.assign({}, this.options);
+      newOptions.ceil = newCeil;
+      newOptions.floor = newFloor;
+      this.options = newOptions;
+      this.minYear = newFloor;
+      this.maxYear = newCeil;
+    }
+  }
+
+  public onYearChange(changeContext: ChangeContext): void {
+    this.deselectAll();
+    this.minYear = changeContext.value;
+    this.maxYear = changeContext.highValue;
+    this.store.dispatch({ type: YEAR_INTERVAL, payload : {'getInterval': this.minYear.toString()+"-"+this.maxYear.toString(), 'getRoot': 'modeRoot'}})
   }
 
   public selectSearchT() {
@@ -573,7 +690,6 @@ export class DataselectionComponent implements OnInit {
     this.checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
 
     this.applyFilter("");
-    // this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
   public countNode(item) {
@@ -581,7 +697,6 @@ export class DataselectionComponent implements OnInit {
   }
 
   public selectCorpuses(event) {
-    // console.log("++++++++++ ", event.value)
     if (event.value.length === 0) {
       this.selectedCorpus = this.corpusesInMode;
     } else {
@@ -590,7 +705,7 @@ export class DataselectionComponent implements OnInit {
     this.updateFilters();
   }
 
-  private updateFiltersX() {
+  private updateFiltersX(inputString) {
     let XselectedCorpus = [];
     for (let i of this.checklistSelection.selected) {
       if (!i['expandable']) {
@@ -603,17 +718,25 @@ export class DataselectionComponent implements OnInit {
       this.selectedCorpus = this.corpusesInMode;
     }
     this.selectedCount = 0;
-    this.selectedCount = this.selectedCorpus.length
+    if (inputString === 'deselectAll') {
+      this.selectedCount = 0
+    } else {
+      this.selectedCount = this.selectedCorpus.length
+    }
     this.selectedTokens = 0;
     for (let x of this.selectedCorpus) {
       this.selectedTokens = this.selectedTokens + this.availableCorpora[x].tokenInCorpora;
+    }
+    this.selectedDocs = 0;
+    for (let x of this.selectedCorpus) {
+      this.selectedDocs = this.selectedDocs + this.availableCorpora[x].docInCorpora;
     }
     this.updateFilters();
   }
 
   private updateFilters() {
     this.store.dispatch({ type: SELECTED_CORPORA, payload : this.selectedCorpus});
-    this.store.dispatch({ type: SEARCH, payload : null});
+    // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   ngOnInit() {

@@ -28,17 +28,25 @@
             <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <a>{{wordCount}}</a>
+            <a>{{wordCount}} {{ 'token' | loc }}</a>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{yearInfo}}</a>
           </div>
         </div>
         
-        <div class="row" style="padding: 10px 0px 4px 0px;">
+        <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonWords.length > 1">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
           </div>
           <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
             <span class="mostCommonWords" *ngFor="let item of mostCommonWords; let i = index;">
-              <i *ngIf="i < 9" style="padding-right: 10px;" (click)="simpleSearch(item)">{{item}},</i>
+              <i *ngIf="i < 9" style="padding-right: 10px;" (click)="simpleSearch(item)">{{item}}</i>
               <i *ngIf="i == 9" (click)="simpleSearch(item)">{{item}}</i>
             </span>
             <!-- <span class="mostCommonWords" *ngFor="let item of mostCommonWords; let i = index;">

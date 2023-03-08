@@ -157,7 +157,7 @@
 }
 
 .mat-paginator {
-  background-color: #eeeeee; /* #d9eaeb; */
+  background-color: #F8F9F9!important; /* #eeeeee; */ /* #d9eaeb; */
   border-radius: 2px;
   height: 51px;
 }
@@ -264,7 +264,7 @@ top: 0;
 }
 
 .accordionView {
-  width: 400px; 
+  width: 100%; 
   padding-bottom: 10px;
 }
 

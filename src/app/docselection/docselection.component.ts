@@ -9,14 +9,12 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, SearchRedux,
-   CHANGEFILTERS, DOC_SIZE, MODE_SELECTED, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG,
-  SELECTED_CORPORA, SEARCH, UNDEFINED_YEAR, YEAR_NA } from '../searchreducer';
+   CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR } from '../searchreducer';
 import { SearchResult, AggregationsResult } from '../strixresult.model';
-import { filter, skip } from 'rxjs/operators';
+import { filter } from 'rxjs/operators';
 import { AppComponent } from '../app.component'
-import { FormControl } from '@angular/forms';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
-import { ChartOptions, ChartType, ChartDataset, LogarithmicScale } from 'chart.js';
+import { ChartOptions, ChartType } from 'chart.js';
 import {PageEvent} from '@angular/material/paginator';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { LocService } from 'app/loc.service';
@@ -80,10 +78,23 @@ export class DocselectionComponent implements OnInit {
           precision: 0
         },
       }
-    }
+    },
+    plugins: { 
+      tooltip: {
+        callbacks: {
+          label: function(context) {
+            let label = '';
+            if (context.parsed.y !== null) {
+                label += context.parsed.y;
+            }
+            return label;
+        }
+        }
+      }
+    } 
   };
   public barChartType: ChartType = 'bar';
-  public barChartLegend = true;
+  public barChartLegend = false;
   public barChartPlugins = [];
 
   public lowerLimit: number = 0;
@@ -126,7 +137,6 @@ export class DocselectionComponent implements OnInit {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG)).subscribe((data) => {
-      // console.log("----", this.locService.getTranslationFor('docPs'));
       // this.paginator._intl.itemsPerPageLabel = this.locService.getTranslationFor('docPs')
       this._MatPaginatorIntl.itemsPerPageLabel = this.locService.getTranslationFor('docPs');
     });
@@ -135,40 +145,25 @@ export class DocselectionComponent implements OnInit {
       this.documentsWithHits = [];
       this.totalNumberOfDocuments = 0;
       this.hasSearched = false;
-      //this.show = false;
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
-      //this.disablePaginatorEvent = true;
       this.currentPaginatorPage = data.page
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEFILTERS)).subscribe((data) => {
-      //this.disablePaginatorEvent = true;
       this.currentPaginatorPage = data.page
     });
-    // this.searchRedux.pipe(filter((d) => d.latestAction === YEAR_NA)).subscribe((data) => {
-    //   //this.disablePaginatorEvent = true;
-    //   this.yearNA = data.yearNA
-    // });
-    // this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
-    //   //this.disablePaginatorEvent = true;
-    //   this.undefYears = false;
-    //   this.selectUndefinedYears();
-    // });
+    
     this.searchRedux.pipe(filter((d) => d.latestAction === WORD_COUNT)).subscribe((data) => {
       this.lowerLimit = data.wordCount[0];
       this.upperLimit = data.wordCount[1];
       this.minToken = this.lowerLimit;
       this.maxToken = this.upperLimit;
       this.setNewOptions(this.maxToken,this.minToken, 'tokenRange');
-      // this.setNewOptions(data.wordCount[1], data.wordCount[0], 'tokenRange');
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === YEAR_RANGE)).subscribe((data) => {
       this.minYear = data.yearRange[0];
       this.maxYear = data.yearRange[1];
-      // this.minToken = this.lowerLimit;
-      // this.maxToken = this.upperLimit;
       this.setNewOptions(this.maxYear,this.minYear, 'yearRange');
-      // this.setNewOptions(data.wordCount[1], data.wordCount[0], 'tokenRange');
     });
 
     this.statResultSubscription = queryService.statResult$.subscribe(
@@ -201,10 +196,6 @@ export class DocselectionComponent implements OnInit {
             this.yearNA = 'No';
           }
         }
-        // for (let i of this.yearData[0].labels) {
-        //   console.log(i.replace(/[^0-9.]/g, '$').replace(/\$+/g, ','))
-        // }
-        // console.log(this.yearData[0].labels)
         this.statData = this.statData.filter(item => item.key != 'year');        
       },
       error => null//this.errorMessage = <any>error
@@ -224,9 +215,6 @@ export class DocselectionComponent implements OnInit {
   }
 
   private setPaginatorPage(page) {
-    // Workaround to supress the paginator event when set by the back button or similar
-    // We need to check that it actually changes, else the next paginator interaction will
-    // still be disabled.
     if (page !== this.currentPaginatorPage) {
       this.disablePaginatorEvent = false;
       this.currentPaginatorPage = page;
@@ -234,19 +222,15 @@ export class DocselectionComponent implements OnInit {
   }
 
   public paginatorPageChanged(event: any) {
-    if (! this.disablePaginatorEvent ) { // So we don't get an extra search from the back-button
-      // console.log("Changed paginator page", event);
-      //this.queryService.setPage(event.page); // Should probably be a dispatch to the store
+    if (! this.disablePaginatorEvent ) { 
       this.paginator.pageIndex = event.pageIndex;
       this.paginator.pageSize = event.pageSize;
 
-      this.itemsPerPage = event.pageSize; // event.itemsPerPage;
+      this.itemsPerPage = event.pageSize;
       this.currentPaginatorPage = event.pageIndex;
       this.store.dispatch({type : CHANGEPAGE, payload: event});
       this.store.dispatch({type : RELOAD, payload : null});
-      //this.simpleSearch(true);
     } else {
-      // console.log("Supressed paginator event.")
       this.disablePaginatorEvent = false;
     }
   }
@@ -257,7 +241,6 @@ export class DocselectionComponent implements OnInit {
   }
   private openDocumentInNew(docIndex: number) { // <- Not currently in use
     let doc = this.documentsWithHits[docIndex];
-    //this.documentsService.loadDocumentWithQuery(doc.doc_id, doc.corpusID, doc.highlights, this.queryService.getSearchString(), true);
   }
 
   private displayCorpusInfo(docIndex: number) {
@@ -303,21 +286,11 @@ export class DocselectionComponent implements OnInit {
 
   public addTab(docIndex: number, docType: string) {
     let doc = this.documentsWithHits[docIndex];
-    // console.log("doc doc", doc.title.split(' ').slice(0,2).join(' ')+'...');
     this.appComponent.listTabs.push(doc.title.split(' ').slice(0,2).join(' ')+'...'); // ('DocSim-' + docIndex);
     this.appComponent.selectedTab.setValue(this.appComponent.listTabs.length - 1);
     this.appComponent.similarParam = doc;
     this.appComponent.relatedDocType = docType
-    // this.similarComponent.data.push(doc);
   }
-
-  // public adjustSlider(dataArray) {
-  //   let wordCount = [];
-  //   wordCount = _.map(dataArray, 'key').sort((a,b) => (a as any) - (b as any))
-  //   this.lowerLimit = wordCount[0];
-  //   this.upperLimit = wordCount.splice(-1)[0];
-  //   this.setNewOptions(this.upperLimit, this.lowerLimit, 'tokenRange');
-  // }
 
   public setNewOptions(newCeil: number, newFloor: number, optionName: string): void {
     if (optionName === "tokenRange") {
@@ -354,19 +327,6 @@ export class DocselectionComponent implements OnInit {
     }
   }
 
-  // public updateCheckedItems(item) {
-  //   if (this.filterCorpora.includes(item)) {
-  //     this.filterCorpora = _.pull(this.filterCorpora, item);
-  //     this.store.dispatch({ type: SELECTED_CORPORA, payload : this.filterCorpora});
-  //     // this.store.dispatch({ type: SEARCH, payload : null});
-  //   } else {
-  //     this.filterCorpora.push(item);
-  //     this.store.dispatch({ type: SELECTED_CORPORA, payload : this.filterCorpora});
-  //     // this.store.dispatch({ type: SEARCH, payload : null});
-  //   }
-  //   console.log(item)
-  // }
-
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   ngOnInit() {
@@ -374,11 +334,7 @@ export class DocselectionComponent implements OnInit {
       this.queryService.aggregationResult$,
       this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)),
     ).subscribe(([result, data] : [AggregationsResult, any]) => {
-      this.setPaginatorPage(data.page)
-      // this.adjustSlider(result.aggregations.word_count.buckets)
+      this.setPaginatorPage(data.page) 
     });
-    // this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
-    //   this.setPaginatorPage(data.page)
-    // })
   }
 }

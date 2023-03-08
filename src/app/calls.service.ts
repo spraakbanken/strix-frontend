@@ -78,7 +78,9 @@ export class CallsService {
           corpusData.mode,
           corpusData.protected,
           corpusData.folderName,
-          corpusData.tokenInCorpora
+          corpusData.tokenInCorpora,
+          corpusData.modeID,
+          corpusData.docInCorpora
         ));
 
       }),
@@ -263,6 +265,34 @@ export class CallsService {
       params.modes = modes.join(",");
     }
     return this.get<any>('modeStats', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  public getYearStatistics(corpara: string[], modes: string[]): Observable<any> {
+    let params: any = {};
+
+    if (corpara) {
+      params.corpora = corpara.join(",");
+    }
+    if (modes) {
+      params.modes = modes.join(",");
+    }
+    return this.get<any>('yearStats', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
+  public getCorpusId(modes: string[], yearInfo: string): Observable<any> {
+    let params: any = {};
+
+    if (modes) {
+      params.modes = modes.join(",");
+    }
+    if (yearInfo) {
+      params.text_filter = JSON.stringify({'yearR': [yearInfo]});
+    }
+    return this.get<any>('getCorpora', params).pipe(
       catchError(this.handleError)
     );
   }

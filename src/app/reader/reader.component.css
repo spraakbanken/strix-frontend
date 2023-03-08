@@ -126,7 +126,7 @@ ul {
 
 .right_accordion {
   /* background-color: #f7f7f7; */
-  width: 427px;
+  /* width: inherit; */
   /* height: 100%; */
   padding: 20px;
   position: absolute;
@@ -203,4 +203,8 @@ ul {
 
 ::ng-deep .attributeArea .right_accordion .mat-expansion-panel {
   margin: 0;
+}
+
+::ng-deep .attributeArea .right_accordion {
+  width: inherit !important;
 }

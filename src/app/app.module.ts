@@ -99,6 +99,7 @@ import { DataselectionComponent } from './dataselection/dataselection.compoment'
 import { ModeselectionComponent } from './modeselection/modeselection.component';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { NgChartsModule } from 'ng2-charts';
+import { FilterdataComponent } from './filterdata/filterdata.component';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -131,6 +132,7 @@ import { NgChartsModule } from 'ng2-charts';
     PrettynumberPipe,
     EnsurearrayPipe,
     RangesliderComponent,
+    FilterdataComponent,
     // SearchFilterComponent
   ],
   imports: [

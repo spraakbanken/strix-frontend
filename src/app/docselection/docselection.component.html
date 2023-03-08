@@ -22,7 +22,7 @@
       <li class="divider dropdown-divider" style="width: 98.5%;"></li>
     </div>
     <div class="hits_left_column row" *ngIf="gotMetadata">
-      <div class="hits_inner list-group" style="padding-left: 15px;">
+      <div class="hits_inner list-group" style="padding-left: 24px;">
         <div class="hit_area list-group-item" *ngFor="let doc of documentsWithHits; let i = index"  style="padding: 1px 2px 1px 8px; width: 98%;">
           <div class="box-container">
             <div class="row">
@@ -68,7 +68,7 @@
                 <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
               </div>
               <div class="col-xl-9">
-                <a>{{doc.word_count}}</a>
+                <a>{{doc.word_count}} {{ 'token' | loc }}</a>
               </div>
             </div>
             <div class="row">
@@ -99,11 +99,12 @@
               </div>
               <div class="col-xl-9" style="display: flex;">
                 <!-- <img src="assets/similarDocument.png" width="20" height="20" (click)="addTab(i)"/> -->
-                <button class="closeButton" mat-button (click)="addTab(i, 'currentCorpus')" style="margin-right: 10px;">{{ 'sameCorpus' | loc }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
-                <button class="closeButton" mat-button (click)="addTab(i, 'currentMode')">{{ 'sameMode' | loc }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
+                <button class="closeButton" mat-button (click)="addTab(i, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length > 3">{{ (availableCorpora[doc.corpus_id].name | loc).split(' ').splice(0,3).join(' ') }}...<mat-icon style="font-size: 20px;">tab</mat-icon></button>
+                <button class="closeButton" mat-button (click)="addTab(i, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length <= 3">{{ (availableCorpora[doc.corpus_id].name | loc) }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
+                <button class="closeButton" mat-button (click)="addTab(i, 'currentMode')">{{ availableCorpora[doc.corpus_id].mode | loc }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
               </div>
             </div>
-            <div class="row">
+            <div class="row" *ngIf="doc.most_common_words">
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
               </div>
@@ -138,178 +139,11 @@
   </div>
 </div>
 <div class="filterSide">
-  <div class="searchBox">
+  <!-- <div class="searchBox">
     <div class="viewRight">
-      <span><b>{{ 'statSelection' | loc }}</b></span>
+      <span><b>{{ 'text_attributes' | loc }}</b></span>
     </div>
-  </div>
-  <div class="tableGraph" *ngIf="yearData.length > 0">
-    <mat-accordion class="accordionView">
-      <mat-expansion-panel hideToggle expanded disabled>
-        <mat-expansion-panel-header style="height: 50px;">
-          <mat-panel-title>
-            {{ 'yearS' | loc }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <div class="yearFilter" *ngIf="yearCheck">
-          <div class="col-md-12" *ngIf="yearData.length > 0" style="padding: 0px; height: 200px;">
-            <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport" style="max-height: 200px;">
-              <table class="charge-table">
-                <!-- <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th>Count</th>
-                  </tr>
-                </thead> -->
-                <tbody>
-                  <tr *cdkVirtualFor="let row of yearData[0].ttValues; let j = index">
-                    <td>{{row[0]}}</td>
-                    <td>{{row[1]}}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </cdk-virtual-scroll-viewport>
-          </div>
-        </div>
-        <div class="yearFilter" *ngIf="yearRange">
-          <ngx-slider [(value)]="minYear" [(highValue)]="maxYear" [options]="options" (userChangeEnd)="onYearChange($event)"></ngx-slider>
-        </div>
-        <div style="margin-left: 0px; display: inline-block; padding: 10px;">
-          <!-- <span>
-            <button *ngIf="yearCheck" (click)="yearMode('slider');"><i style="font-size: x-small;">Slider option</i></button>
-            <button *ngIf="yearRange" (click)="yearMode('checkbox');"><i style="font-size: x-small;">Checkbox option</i></button>
-          </span> -->
-          <!-- <section class="example-section">
-            <label class="example-margin">Documents with year info NA: </label>
-            <span>{{ yearNA }}</span>
-          </section> -->
-          <mat-checkbox
-          class="example-margin"
-          [(ngModel)]="undefYears"
-          [(indeterminate)]="indeterminate"
-          [labelPosition]="labelPosition"
-          [disabled]="disabled"
-          (ngModelChange)="selectUndefinedYears()">
-          {{ 'yearNA' | loc }}
-        </mat-checkbox>
-        </div>
-        <div class="graphChart" *ngIf="yearData.length > 0">
-          <canvas baseChart 
-            [datasets]="yearData[0].values"
-            [labels]="yearData[0].labels"
-            [options]="barChartOptions"
-            [plugins]="barChartPlugins"
-            [legend]="barChartLegend"
-            [chartType]="barChartType">
-          </canvas>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>  
-  <div class="tableGraph">
-    <mat-accordion style="width: 400px;">
-      <mat-expansion-panel hideToggle expanded disabled>
-        <mat-expansion-panel-header style="height: 50px;">
-          <mat-panel-title>
-            {{ 'tokens' | loc }}
-          </mat-panel-title>
-        </mat-expansion-panel-header>
-        <ngx-slider [(value)]="lowerLimit" [(highValue)]="upperLimit" [options]="optionsToken" (userChangeEnd)="onTokenChange($event)"></ngx-slider>
-        <div class="graphChart" *ngIf="docData.length > 0" style="padding-top: 0px;">
-          <canvas baseChart 
-            [datasets]="docData[0].values"
-            [labels]="docData[0].labels"
-            [options]="barChartOptions"
-            [plugins]="barChartPlugins"
-            [legend]="barChartLegend"
-            [chartType]="barChartType">
-          </canvas>
-        </div>
-      </mat-expansion-panel>
-    </mat-accordion>
-  </div>                
-  <div class="tableGraph" *ngFor="let item of statData; let i = index"
-        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 20px;">
-        <mat-accordion class="accordionView">
-          <mat-expansion-panel hideToggle expanded disabled>
-            <mat-expansion-panel-header style="height: 50px;">
-              <mat-panel-title>
-                <!-- {{item.key.charAt(0).toUpperCase()+item.key.substring(1)}} -->
-                {{ item.key+'S' | loc }}
-              </mat-panel-title>
-            </mat-expansion-panel-header>
-            <mat-accordion class="accordionView">
-              <mat-expansion-panel expanded style="background-color: transparent;">
-                <mat-expansion-panel-header style="height: 50px;">
-                  <mat-panel-title>
-                    Table
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div class="tableView" style="display: block;" *ngIf="item.key === 'corpus_id'">
-                  <div class="col-md-12" style="padding: 0px; height: 200px;">
-                    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport" style="height: 200px;">
-                      <table class="charge-table">
-                        <!-- <thead>
-                          <tr>
-                            <th>Name</th> let item of statData | slice:0:4; let i = index"
-                            <th>Count</th>  *ngIf="statisticsView === 'table'" *ngIf="statisticsView === 'graph'"
-                          </tr>
-                        </thead> -->
-                        <tbody>
-                          <tr *cdkVirtualFor="let row of item.ttValues; let j = index" style="height: 50px;">
-                            <td style="width: 80%">{{ availableCorpora[row[0]].name | loc }}</td>
-                            <td style="width: 20%">{{row[1]}}</td>
-                            <!-- <td><mat-checkbox (change)="updateCheckedItems(row[0])"></mat-checkbox></td>-->
-                          </tr>
-                        </tbody>
-                      </table>
-                    </cdk-virtual-scroll-viewport>
-                  </div>
-                </div>
-                <div class="tableView" style="display: block;" *ngIf="item.key !== 'corpus_id'">
-                  <div class="col-md-12" style="padding: 0px; height: 200px;">
-                    <cdk-virtual-scroll-viewport itemSize="50" class="example-viewport" style="height: 200px;">
-                      <table class="charge-table">
-                        <!-- <thead>
-                          <tr>
-                            <th>Name</th> let item of statData | slice:0:4; let i = index"
-                            <th>Count</th>  *ngIf="statisticsView === 'table'" *ngIf="statisticsView === 'graph'"
-                          </tr>
-                        </thead> -->
-                        <tbody>
-                          <tr *cdkVirtualFor="let row of item.ttValues; let j = index" style="height: 50px;">
-                            <td style="width: 80%">{{ row[0] }}</td>
-                            <td style="width: 20%">{{row[1]}}</td>
-                            <!-- <td><mat-checkbox (change)="updateCheckedItems(row[0])"></mat-checkbox></td>-->
-                          </tr>
-                        </tbody>
-                      </table>
-                    </cdk-virtual-scroll-viewport>
-                  </div>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-            <mat-accordion class="accordionView">
-              <mat-expansion-panel expanded style="background-color: transparent;">
-                <mat-expansion-panel-header style="height: 50px;">
-                  <mat-panel-title>
-                    Graph
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <div style="display: block; padding: 10px;">
-                  <canvas baseChart 
-                    [datasets]="item.values"
-                    [labels]="item.labels"
-                    [options]="barChartOptions"
-                    [plugins]="barChartPlugins"
-                    [legend]="barChartLegend"
-                    [chartType]="barChartType">              
-                  </canvas>
-                </div>
-              </mat-expansion-panel>
-            </mat-accordion>
-          </mat-expansion-panel>
-        </mat-accordion>
-  </div>
+  </div> -->
+  <filterdata></filterdata>
 </div>
 </div>

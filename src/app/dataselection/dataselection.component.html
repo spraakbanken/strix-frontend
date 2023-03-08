@@ -3,7 +3,7 @@
       <div class="col-xl-12" style="padding: 0px;">
         <button class="selectCorpus" mat-button (click)="selectSearch()">
           <!-- {{ 'corpus_idS' | loc }} -->
-          {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
+          {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
           <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
           </button>
       </div>
@@ -14,7 +14,26 @@
           <div style="height: 60px; width: 498px; background-color: transparent; padding: 12px 10px 0px 19px; margin-left: -15px; border-bottom: 1px solid #ddd;">
             <button class="closeButton" mat-button (click)="checkAll()">{{ 'selectAll' | loc }}</button>
             <button class="closeButton" mat-button (click)="deselectAll()">{{ 'selectNone' | loc }}</button>
-            <button class="closeButton" mat-button (click)="defaultSelection()">{{ 'default' | loc }}</button>
+            <button class="closeButton" mat-button (click)="defaultSelection('dataRoot')">{{ 'default' | loc }}</button>
+            <button class="closeButton" mat-button (click)="showYearDistribution()" [style.background-color]="yearButton">Year <i-bs name="bar-chart-line-fill"
+              width="20"
+                height="20">
+  </i-bs></button>
+          </div>
+          <div style="height: 165px; width: 498px; background-color: transparent; margin-left: -15px; border-bottom: 1px solid #ddd;" *ngIf="updateGraph">
+            <div style="display: block; padding-bottom: 0px; width: 90%; margin-left: 22px; height: 120px; margin-top:10px;">
+              <canvas baseChart 
+                [datasets]="yearData[0].values"
+                [labels]="yearData[0].labels"
+                [options]="barChartOptions"
+                [plugins]="barChartPlugins"
+                [legend]="barChartLegend"
+                [chartType]="barChartType">
+              </canvas>
+            </div>
+            <div class="yearFilter">
+              <ngx-slider [(value)]="minYear" [(highValue)]="maxYear" [options]="options" (userChangeEnd)="onYearChange($event)"></ngx-slider>
+            </div>
           </div>
           <div class="dropDownTree" *ngIf="simpleSearch">
             <div style="padding: 0px 10px 0px 40px; display: inline-flex;">
@@ -22,12 +41,12 @@
                 <span style="font-style: italic; padding-right: 10px;"><b>{{ 'searchC' | loc}}:</b></span>
               </div>
               
-              <mat-form-field appearance="outline" style="width: 300px; padding-top: 20px;">
+              <mat-form-field appearance="outline" style="width: 320px; padding-top: 20px;">
                 <!-- <mat-label>Filter</mat-label> -->
                 <input [(ngModel)]="inputText" matInput minlength="2" (keyup)="applyFilter($event.target['value'])" placeholder="" #input>
               </mat-form-field>
             </div>
-            <div style="padding: 0px 50px 0px 40px;">
+            <div style="padding: 0px 30px 0px 30px;">
               <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
                 <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
                   <button mat-icon-button disabled></button>
@@ -74,6 +93,14 @@
               </div>
               <div class="col-xl-7">
                 <a tabindex>{{this.showCorpusDetail.corpusID}}</a>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-xl-5">
+                <span>{{ 'numDoc' | loc }}:</span>
+              </div>
+              <div class="col-xl-7">
+                <a tabindex>{{this.showCorpusDetail.docInCorpora}}</a>
               </div>
             </div>
             <div class="row">

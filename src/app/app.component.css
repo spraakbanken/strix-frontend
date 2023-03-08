@@ -79,7 +79,7 @@
 
 reader {
   height: 100%;
-  padding: 0px 10px 10px 10px;
+  padding: 0px 14px 10px 14px;
 }
 
 .bottom_bar {
@@ -104,7 +104,7 @@ reader {
   right: 0;
   color: black;
   text-align: center;
-  padding: 10px 0px 10px 10px;
+  padding: 10px 10px 10px 10px;
   text-decoration: none;
   font-size: small;
   font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
@@ -211,6 +211,7 @@ reader {
 } */
 
 .modeSetting {
+  padding-left: 8px;
   margin-left: 0; 
   margin-right: auto;
 }
@@ -222,7 +223,7 @@ reader {
 }
 
 .strixLogo {
-  padding: 15px 15px 15px 30px;
+  padding: 8px 0px 0px 30px;
 }
 
 .statColumn {
@@ -242,4 +243,8 @@ reader {
 .fixDoc {
   display: flex; 
   justify-content: space-between;
+}
+
+::ng-deep .mat-tab-body-content {
+  overflow: hidden !important;
 }

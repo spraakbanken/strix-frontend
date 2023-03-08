@@ -28,7 +28,7 @@ export class RoutingService {
     {tag : "documentsPerPage", type : FragmentType.NUMBER, default : 10},
     {tag : "filters", type : FragmentType.BASE64, default : {}},
     {tag : "include_facets", type : FragmentType.STRINGARRAY, default : ["corpus_id"]},
-    {tag : "modeSelected", type : FragmentType.STRINGARRAY, default : ["modern"]},
+    {tag : "modeSelected", type : FragmentType.STRINGARRAY, default : ["default"]},
     {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "sentenceID", type : FragmentType.STRING, default : ""},

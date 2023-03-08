@@ -12,5 +12,7 @@ export class StrixCorpusConfig {
     public protectedX: boolean,
     public folderName: string,
     public tokenInCorpora: number,
+    public modeID : string,
+    public docInCorpora: number
   ) {}
 }

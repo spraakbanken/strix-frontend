@@ -98,7 +98,11 @@ export class LocService {
       'corpusName' : 'Korpusnamn',
       'sameCorpus' : 'Nuvarande korpus',
       'sameMode' : 'Alla korpusar',
-      'yearNA' : 'Inkludera dokument med årsuppgifter NA'
+      'yearNA' : 'Inkludera dokument med årsuppgifter NA',
+      'applyFilter' : 'Använda filter',
+      'frequency' : 'Frekvens',
+      'name' : 'Namn',
+      'numDoc': 'Antal dokument'
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -159,7 +163,7 @@ export class LocService {
       'authorS' : 'Author',
       'mostCommonNoun' : 'Most common nouns',
       'text_attributes' : 'Text filters',
-      'add_filter' : 'Add filter',
+      'add_filter' : 'Add filters',
       'selected_filters': 'Selected filters',
       'selected_corpora' : 'corpora selected',
       'of' : 'of',
@@ -176,7 +180,11 @@ export class LocService {
       'corpusName' : 'Corpus name',
       'sameCorpus' : 'Current corpus',
       'sameMode' : 'All corpora',
-      'yearNA' : 'Include documents with year information NA'
+      'yearNA' : 'Include documents with year information NA',
+      'applyFilter' : 'Apply filters',
+      'frequency' : 'Frequency',
+      'name' : 'Name',
+      'numDoc': '# Documents'
     }
   };
 

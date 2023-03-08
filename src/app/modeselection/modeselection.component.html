@@ -1,12 +1,12 @@
 <div>
     <ul class="navbar-nav">
-        <a [style.color]="this.modeSelection['Modern'] ? 'blue' : 'black'" style="padding-right: 10px;" (click)="chooseMode('Modern');">
+        <a [style.color]="this.modeSelection['default'] ? 'blue' : 'black'" style="padding-right: 10px;" (click)="chooseMode('default');">
             {{ 'Modern' | loc }}
         </a>
-        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('Mink');">
+        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('mink');">
             {{ 'Mink' | loc }}
         </a>
-        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('Parallel');">
+        <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('parallel');">
             {{ 'Parallel' | loc }}
         </a>
        <!-- <a [style.color]="'gray'" style="padding-right: 10px; cursor: default; pointer-events: none;" (click)="chooseMode('LB');">
@@ -18,8 +18,8 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding: 0px;">
                 <ng-container *ngFor="let item of modeCollection | keyvalue">
-                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key);" *ngIf="item.key !== 'Modern'">
-                        {{ item.key | loc }}
+                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key);" *ngIf="item.key !== 'default'">
+                        {{ listMode[item.key] | loc }}
                     </a>
                 </ng-container>
             </div>
