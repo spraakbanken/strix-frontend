@@ -66,6 +66,7 @@ export class ModeselectionComponent implements OnInit {
           this.modeCollection[this.availableCorpora[key]['modeID']] = []
           this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
           this.modeSelection[this.availableCorpora[key]['modeID']] = false
+          this.listMode[this.availableCorpora[key]['modeID']] = this.availableCorpora[key]['mode']
         }
       }
     } else {

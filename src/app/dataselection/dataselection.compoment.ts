@@ -3,7 +3,7 @@ import { Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { YEAR_INTERVAL, AppState, MODE_SELECTED, SELECTED_CORPORA } from '../searchreducer';
+import { YEAR_INTERVAL, AppState, MODE_SELECTED, SELECTED_CORPORA, CHANGELANG, INITIATE } from '../searchreducer';
 import {FormControl } from '@angular/forms';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
@@ -74,6 +74,7 @@ export class DataselectionComponent implements OnInit {
   public corpusesInMode: [];
   public corporaListYear = [];
   public selectedYear = {};
+  public folderData = {};
   public selectedMode = '';
   public corpusesCount = 0;
   public corpusList = new FormControl();
@@ -233,11 +234,15 @@ export class DataselectionComponent implements OnInit {
 
     this.searchRedux = this.store.select('searchRedux');
 
+    this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
+      this.selectedLanguage = data.lang;
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === YEAR_INTERVAL)).subscribe((data) => {
       this.corporaListYear = [];
       let rangeYear = data.yearInterval
       if (data.yearRoot === "modeRoot") {
-      this.callsService.getCorpusId(data.modeSelected, rangeYear).subscribe((result) => {
+      this.callsService.getCorpusId(this.corpusesInMode, data.modeSelected, rangeYear).subscribe((result) => {
         this.corporaListYear = _.map(result["aggregations"]["corpus_id"].buckets.filter(item => item.doc_count != 0), 'key')
         if (this.corporaListYear) {
           this.yearCorpora();
@@ -269,6 +274,7 @@ export class DataselectionComponent implements OnInit {
       this.checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
       this.yearData = [];
       this.callsService.getYearStatistics(this.corpusesInMode, data.modeSelected).subscribe((result) => {
+        this.folderData = result["folderData"];
         if (result["aggregations"]['year']) {
           let yearRange = result["aggregations"]['year'].buckets.filter(item => item.doc_count != 0)
           let newYearRange = []

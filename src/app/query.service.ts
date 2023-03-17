@@ -27,7 +27,7 @@ export class QueryService {
      subscribed to. (I.e. all older pending streams will be unsubscribed) */
   private streamOfStreams: Subject<Observable<SearchResult>> = new Subject<Observable<SearchResult>>();
   private streamOfAggregationStreams: Subject<Observable<AggregationsResult>> = new Subject<Observable<AggregationsResult>>();
-  private streamOfStatsStreams: Subject<Observable<any>> = new Subject<Observable<any>>();
+  // private streamOfStatsStreams: Subject<Observable<any>> = new Subject<Observable<any>>();
 
   // The searchResult$ stream delivers the actual results after a finished search
   private searchResultSubject = new Subject<SearchResult>();
@@ -96,7 +96,7 @@ export class QueryService {
     this.signalStartedSearch();
     this.runQuery(this.currentQuery);
     this.runAggregationQuery(this.currentQuery);
-    this.runStatsQuery(this.currentQuery);
+    // this.runStatsQuery(this.currentQuery);
   }
 
   private runQuery(query: StrixQuery) {
@@ -117,14 +117,14 @@ export class QueryService {
     }
   }
 
-  private runStatsQuery(query: StrixQuery) {
-    if (query.type === QueryType.Normal) {
-      // console.log("adding stats to the stream of streams");
-      this.streamOfStatsStreams.next(this.callsService.getStatistics(query));
-    } else {
-      // ... we'll see what the future brings
-    }
-  }
+  // private runStatsQuery(query: StrixQuery) {
+  //   if (query.type === QueryType.Normal) {
+  //     // console.log("adding stats to the stream of streams");
+  //     this.streamOfStatsStreams.next(this.callsService.getStatistics(query));
+  //   } else {
+  //     // ... we'll see what the future brings
+  //   }
+  // }
 
   onInit() {
 
@@ -172,9 +172,9 @@ export class QueryService {
     this.streamOfAggregationStreams.pipe(switchMap(obj => obj)).subscribe((value: AggregationsResult) => {
       this.aggregationResultSubject.next(value);
     });
-    this.streamOfStatsStreams.pipe(switchMap(obj => obj)).subscribe((value: any) => {
-      this.statResultSubject.next(value);
-    })
+    // this.streamOfStatsStreams.pipe(switchMap(obj => obj)).subscribe((value: any) => {
+    //   this.statResultSubject.next(value);
+    // })
   }
 
 }

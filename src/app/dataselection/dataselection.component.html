@@ -8,7 +8,7 @@
           </button>
       </div>
     </div>
-    <div class="openTreeView" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : '500px'">
+    <div class="openTreeView" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : 'inherit'">
       <div class="row">
         <div class="col-xl-6" style="width: 500px;">
           <div style="height: 60px; width: 498px; background-color: transparent; padding: 12px 10px 0px 19px; margin-left: -15px; border-bottom: 1px solid #ddd;">
@@ -65,7 +65,7 @@
                   </button>
                   <mat-checkbox style="padding-top: 8px;" [checked]="descendantsAllSelected(node)"
                                 [indeterminate]="descendantsPartiallySelected(node)"
-                                (change)="todoItemSelectionToggle(node)">{{node.item + " (" + countNode(node.item) + ")"}}</mat-checkbox>
+                                (change)="todoItemSelectionToggle(node)">{{folderData[node.item] | loc}} {{ "(" + countNode(node.item) + ")"}}</mat-checkbox>
                   <!-- <button class="corpusInfo" mat-icon-button (click)="showDetails(node.item)"><mat-icon>info</mat-icon></button> -->
                 </mat-tree-node>
               </mat-tree>

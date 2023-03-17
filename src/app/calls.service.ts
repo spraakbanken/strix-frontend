@@ -216,50 +216,67 @@ export class CallsService {
     );
   }
 
-  public getStatistics(query: StrixQuery): Observable<any> {
-    // query.filters.push.apply(query.filters, {"year": {"range": {"gte": 1904, "lte": 1920}}})
-    let filters = _.cloneDeep(query.filters);
-    let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
+  // public getStatistics(query: StrixQuery): Observable<any> {
+  //   // query.filters.push.apply(query.filters, {"year": {"range": {"gte": 1904, "lte": 1920}}})
+  //   let filters = _.cloneDeep(query.filters);
+  //   let corpusIDs = <string[]>_.map(_.remove(filters, {field : 'corpus_id'}), 'value');
 
-    let searchString = query.queryString || '';
-    let params: any = {
-      facet_count : 5,
-      exclude_empty_buckets : true,
-    };
+  //   let searchString = query.queryString || '';
+  //   let params: any = {
+  //     facet_count : 5,
+  //     exclude_empty_buckets : true,
+  //   };
 
-    if(corpusIDs && corpusIDs.length > 0) {
-      params.corpora = corpusIDs.join(",");
-    }
+  //   if(corpusIDs && corpusIDs.length > 0) {
+  //     params.corpora = corpusIDs.join(",");
+  //   }
 
-    // if (query.corpora) {
-    //   params.corpora = query.corpora.join(",")
-    // }
+  //   // if (query.corpora) {
+  //   //   params.corpora = query.corpora.join(",")
+  //   // }
 
-    if (searchString.length !== 0) {
-      params.text_query = searchString;
+  //   if (searchString.length !== 0) {
+  //     params.text_query = searchString;
+  //   }
+  //   if (filters && _.size(filters) > 0) {
+  //     params.text_filter = this.formatFilterObject(filters);
+  //   }
+  //   if (query.include_facets.length) {
+  //     params.include_facets = query.include_facets.join(",");
+  //   }
+  //   if (query.keyword_search) {
+  //     params.in_order = (!query.keyword_search).toString();
+  //   }
+  //   if (query.modes) {
+  //     params.modes = query.modes.join(',');
+  //   }
+  //   return this.get<any>('stats', params).pipe(
+  //     catchError(this.handleError)
+  //   );
+  // }
+
+  public getFacetStatistics(corpora: string[], modes: string[], include_list: string[]) {
+    let params: any = {};
+
+    if (corpora) {
+      params.corpora = corpora.join(",");
     }
-    if (filters && _.size(filters) > 0) {
-      params.text_filter = this.formatFilterObject(filters);
+    if (modes) {
+      params.modes = modes.join(",");
     }
-    if (query.include_facets.length) {
-      params.include_facets = query.include_facets.join(",");
+    if (include_list.length) {
+      params.include_facets = include_list.join(",");
     }
-    if (query.keyword_search) {
-      params.in_order = (!query.keyword_search).toString();
-    }
-    if (query.modes) {
-      params.modes = query.modes.join(',');
-    }
-    return this.get<any>('stats', params).pipe(
+    return this.get<any>('facetStats', params).pipe(
       catchError(this.handleError)
     );
   }
 
-  public getModeStatistics(corpara: string[], modes: string[]): Observable<any> {
+  public getModeStatistics(corpora: string[], modes: string[]): Observable<any> {
     let params: any = {};
 
-    if (corpara) {
-      params.corpora = corpara.join(",");
+    if (corpora) {
+      params.corpora = corpora.join(",");
     }
     if (modes) {
       params.modes = modes.join(",");
@@ -269,11 +286,11 @@ export class CallsService {
     );
   }
 
-  public getYearStatistics(corpara: string[], modes: string[]): Observable<any> {
+  public getYearStatistics(corpora: string[], modes: string[]): Observable<any> {
     let params: any = {};
 
-    if (corpara) {
-      params.corpora = corpara.join(",");
+    if (corpora) {
+      params.corpora = corpora.join(",");
     }
     if (modes) {
       params.modes = modes.join(",");
@@ -283,9 +300,12 @@ export class CallsService {
     );
   }
 
-  public getCorpusId(modes: string[], yearInfo: string): Observable<any> {
+  public getCorpusId(corpora: string[], modes: string[], yearInfo: string): Observable<any> {
     let params: any = {};
 
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
     if (modes) {
       params.modes = modes.join(",");
     }

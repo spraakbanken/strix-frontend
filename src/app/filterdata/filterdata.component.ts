@@ -60,6 +60,7 @@ export class FilterdataComponent implements OnInit {
   public include_facets : string[] = [];
   private availableCorpora : { [key: string] : StrixCorpusConfig};
   public dataFromMode = {};
+  public dataFromFacet = {};
  
   // private currentFilters: any[] = []; // TODO: Make some interface
 
@@ -110,6 +111,18 @@ export class FilterdataComponent implements OnInit {
       this.yearInterval = "";
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGE_INCLUDE_FACET)).subscribe((data) => {
+      if (data.include_facets.length > 0) {
+        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets).subscribe((result) => {
+          this.dataFromFacet = {};
+          this.dataFromFacet  = result.aggregations;
+          this.decorateWithParent(this.dataFromFacet);
+          this.updatedData();
+          this.runFilter();
+        });
+      }
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
       for (let item of this.selectedFilters) {
@@ -122,37 +135,7 @@ export class FilterdataComponent implements OnInit {
       this.collectControl = new FormArray([]);
       this.collectX = [];
       this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
-        this.dataFromMode = {};
-        this.dataFromMode  = result.aggregations;
         this.resultFacet = result.list_facet
-        if (this.dataFromMode['year']) {
-          let yearRange = this.dataFromMode['year'].buckets.filter(item => item.doc_count != 0)
-          let newYearRange = []
-          for (let i of _.map(yearRange, 'key')) {
-            newYearRange.push.apply(newYearRange, i.replace(/[^0-9.]/g, '$').replace(/\$+/g, ',').split(','))
-          }
-          let yearRangeX = _.uniq(_.remove(newYearRange, function(n) { return n.length > 0})).sort((a,b) => (a as any) - (b as any));
-          // if (yearRangeX.includes('2050')) {
-          //   this.store.dispatch({ type: YEAR_NA, payload: true})
-          // } else {
-          //   this.store.dispatch({ type: YEAR_NA, payload: false})
-          // }
-          let x1 = Number(yearRangeX[0]);
-          // let y1 = Number(yearRangeX.splice(-2)[0]);
-          let y1 = 0;
-          if (yearRangeX.includes('2050')) {
-            y1 = Number(yearRangeX.splice(-2)[0]);
-          } else {
-            y1 = Number(yearRangeX.splice(-1)[0]);
-          }
-        }
-        let wordCount = this.dataFromMode['word_count'].buckets.filter(item => item.doc_count != 0)
-        wordCount = _.map(wordCount, 'key').sort((a,b) => (a as any) - (b as any))
-        let x = wordCount[0];
-        let y = wordCount.splice(-1)[0];
-        this.decorateWithParent(this.dataFromMode);
-        this.updatedData();
-        this.runFilter();
       });
       setTimeout(() => {
         this.selectSearch('basicFilter');
@@ -196,10 +179,28 @@ export class FilterdataComponent implements OnInit {
 
   public selectFacet(event) {
     if (event.options[0].selected) {
+      if (this.updataFacet(event.options[0].value)) {
         this.chooseFacet(event.options[0].value)
+      }   
     } else {
-        this.removeFacet(event.options[0].value)
+      this.removeFacet(event.options[0].value)
     }
+  }
+
+  private updataFacet(item) {
+    if (this.include_facets.length) {
+      this.include_facets = Object.assign([], this.include_facets);
+    }
+    if (!this.include_facets.length) {
+      this.include_facets = [].concat(['corpus_id']) // this.aggregationKeys
+    }
+    this.include_facets.push(item)
+    if (!_.keys(this.basicFacets).includes(item)) {
+      this.basicFacets[item] = true
+    }
+    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : this.include_facets })
+    // this.store.dispatch({ type: SEARCH, payload : null});
+    return true
   }
 
   private runFilter() {
@@ -227,7 +228,7 @@ export class FilterdataComponent implements OnInit {
       }
     }
 
-    this.aggregations = _.cloneDeep(this.dataFromMode);
+    this.aggregations = _.cloneDeep(this.dataFromFacet);
     for (let item of this.aggregations.corpus_id.buckets) {
       if (this.selectedCorpus.includes(item.key)) {
         item.selected = true;
@@ -354,21 +355,6 @@ export class FilterdataComponent implements OnInit {
     this.aggregationKeys.push.apply(this.aggregationKeys, this.unusedFacets);
     this.bucketsInMode = [];
     this.bucketsInMode = this.aggregations['corpus_id']['buckets'];
-
-    let excludeBucket = ['word_count', 'corpus_id', 'mode_id']
-  
-    this.basicFacets = {};
-    this.advanceFacets = {};
-    this.extendedFacets = {};
-    for (let facet of this.aggregationKeys) {
-    if (!excludeBucket.includes(facet)) {
-        if (this.aggregations[facet].type === 'range') {
-        this.extendedFacets[facet] = false;
-        } else {
-        this.basicFacets[facet] = false;
-        }
-    } 
-    }
   }
 
   public removeAllFilter(aggsName) {
@@ -513,14 +499,6 @@ export class FilterdataComponent implements OnInit {
   }
 
   private chooseFacet(key : string) {
-    if (this.include_facets.length) {
-      this.include_facets = Object.assign([], this.include_facets);
-    }
-    if (!this.include_facets.length) {
-      this.include_facets = [].concat(['corpus_id']) // this.aggregationKeys
-    }
-    this.include_facets.push(key)
-    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : this.include_facets })
     if (_.keys(this.basicFacets).includes(key)) {
       this.basicFacets[key] = true;
       this.addCollectControl(key, 'basic');
@@ -542,12 +520,12 @@ export class FilterdataComponent implements OnInit {
     setTimeout(() => {
       for (let item in this.aggregations) {
         if (item === key && getString === 'basic') {
-          this.filterDataBasic.push({'id':key, 'data': this.dataFromMode[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
+          this.filterDataBasic.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
           this.collectControl.push( new FormControl());
-          this.filterDataBasicX.push({'id':key, 'data': this.dataFromMode[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'})
+          this.filterDataBasicX.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'})
         }
         if (item === key && getString === 'advance') {
-          this.filterDataAdvance.push({'id':key, 'data': this.dataFromMode[item]});
+          this.filterDataAdvance.push({'id':key, 'data': this.dataFromFacet[item]});
           this.collectControlX.push( new FormControl());
         }
       }
@@ -598,18 +576,29 @@ export class FilterdataComponent implements OnInit {
 
   private resetIncludeFacets() {
     this.store.dispatch({ type: CHANGE_INCLUDE_FACET, payload: []});
+    // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   private defaultFacets() {
+    this.selectedOptions = [];
     for (let item of _.keys(this.basicFacets)) {
-      if (["blingbring", "party", "year", "swefn"].includes(item)) {
-          this.chooseFacet(item);
+      if (["blingbring", "year", "swefn"].includes(item)) {
+        if (!this.basicFacets[item]) {
+          if (this.updataFacet(item)) {
+            this.chooseFacet(item);
+            this.selectedOptions.push(item);
+          }  
+        }
+      } else {
+        // this.selectedOptions = this.selectedOptions.filter(itemX => itemX != item)
+        this.removeFacet(item)
       }
   }
   }
 
   private deselectFacets() {
     for (let item of _.keys(this.basicFacets)) {
+      this.selectedOptions = this.selectedOptions.filter(itemX => itemX != item)
       this.removeFacet(item)
       }
   }
@@ -617,18 +606,22 @@ export class FilterdataComponent implements OnInit {
   private selectSearch(event) {
     this.basicFilter = false;
     this.advanceFilter = false;
+    this.selectedOptions = [];
     if (event === "basicFilter") {
       this.basicFilter = true;
       this.selectedTab = "basicFilter";
       if (!_.some(this.basicFacets)) {
-        for (let item of _.keys(this.basicFacets)) {
-            if (["blingbring", "party", "year", "swefn"].includes(item)) {
-              this.selectedOptions.push(item);
-                this.chooseFacet(item);
-            }
+        for (let key of this.aggregationKeys) {
+          if (["blingbring", "year", "swefn"].includes(key)) {
+            this.basicFacets[key] = false;
+            this.selectedOptions.push(key);
+            if (this.updataFacet(key)) {
+              this.chooseFacet(key)
+            } 
+          }
+        }
         }
       }
-    }
     if (event === "advanceFilter") {
       this.advanceFilter = true;
     }

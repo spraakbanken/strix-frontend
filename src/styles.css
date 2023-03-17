@@ -86,8 +86,12 @@ h5 {
 }
 .cm-underlined {
   /*color: #337ab7;*/
-  background-color: #086788;
-  color: white;
+  /* background-color: #086788;
+  color: white; */
+  background-color: yellow;
+  color: black;
+  /* font-weight: bold;
+  font-size: 14px; */
 }
 .cm-variable-2 {
   display: none;
