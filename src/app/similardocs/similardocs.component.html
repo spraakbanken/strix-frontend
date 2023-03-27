@@ -35,10 +35,10 @@
             <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
           </div>
           <div class="col-xl-9" *ngIf="data.text_attributes.year !== '2050'">
-            <a>{{data.text_attributes.year}}</a>
+            <span>{{data.text_attributes.year}}</span>
           </div>
           <div class="col-xl-9" *ngIf="data.text_attributes.year === '2050'">
-            <a>{{'NA'}}</a>
+            <span>{{'NA'}}</span>
           </div>
         </div>
         <div class="row">
@@ -46,7 +46,7 @@
             <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <a>{{data.word_count}} {{ 'token' | loc }}</a>
+            <span>{{data.word_count}} {{ 'token' | loc }}</span>
           </div>
         </div>
         <!-- <div class="row">
@@ -62,7 +62,7 @@
             <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <a>{{data.text_attributes.author}}</a>
+            <span>{{data.text_attributes.author}}</span>
           </div>
         </div>
         <div class="row">
@@ -113,7 +113,7 @@
 </div>
 <div class="mainBlock">
     <div class="leftBlock">
-        <div class="hits_left_column row">
+        <div class="hits_left_column">
             <div class="hits_inner list-group">
                 <div class="paginatorClass">
                     <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
@@ -126,15 +126,16 @@
                       <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
                     </div>
                     <div class="col-xl-9">
-                      <a tabindex><b>{{doc.title}}</b></a> <!--style="color:lightseagreen"-->
+                      <a style="color:lightseagreen" tabindex (click)="openDocument(i)">{{doc.title}}</a>
+                      <!--<a tabindex><b>{{doc.title}}</b></a>--> <!--style="color:lightseagreen"-->
                     </div>
                   </div>
                   <div class="row">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">Text:</div>
                     </div>
-                    <div class="col-xl-9">
-                      <a>{{doc.text}}</a>
+                    <div class="col-xl-10">
+                      <span>{{doc.text}}</span>
                     </div>
                   </div>
                   <div class="row">
@@ -142,10 +143,10 @@
                       <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
                     </div>
                     <div class="col-xl-9" *ngIf="doc.year !== '2050'">
-                      <a>{{doc.year}}</a>
+                      <span>{{doc.year}}</span>
                     </div>
                     <div class="col-xl-9" *ngIf="doc.year === '2050'">
-                      <a>{{'NA'}}</a>
+                      <span>{{'NA'}}</span>
                     </div>
                   </div>
                   <div class="row">
@@ -153,7 +154,7 @@
                       <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
                     </div>
                     <div class="col-xl-9">
-                      <a>{{doc.tokens}} {{ 'token' | loc }}</a>
+                      <span>{{doc.tokens}} {{ 'token' | loc }}</span>
                     </div>
                   </div>
                   <!-- <div class="row">
@@ -169,7 +170,7 @@
                       <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
                     </div>
                     <div class="col-xl-9">
-                      <a>{{doc.authors}}</a>
+                      <span>{{doc.authors}}</span>
                     </div>
                   </div>
                   <div class="row">
@@ -179,7 +180,7 @@
                     <div class="col-xl-9">
                       <div class="hit_appendix">
                         <span class="hit_collection_title">
-                          {{ availableCorpora[doc.corpusID].name | loc }}
+                          {{ availableCorpora[doc.corpus_id].name | loc }}
                         </span>&nbsp;
                       </div>
                     </div>
@@ -198,7 +199,7 @@
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
                     </div>
-                    <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+                    <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                       <span *ngFor="let item of doc.most_common_words.split(', ') | slice:0:10; let i = index;">
                         <i *ngIf="i < 9" style="padding-right: 10px;">{{item}},</i>
                         <i *ngIf="i == 9">{{item}}</i>
@@ -209,7 +210,7 @@
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
                     </div>
-                    <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+                    <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                       <span *ngFor="let item of doc.ner_tags.split(', ') | slice:0:5; let i = index;">
                         <i *ngIf="i < 4" style="padding-right: 10px;">{{item}},</i>
                         <i *ngIf="i == 4">{{item}}</i>
@@ -222,9 +223,9 @@
             </div>
           </div>
     </div>
-    <div class="rightBlock" *ngIf="finishLoading">
+    <div class="rightBlock d-none d-lg-block" *ngIf="finishLoading">
         <div class="tab-pane fade show active" id="tempSelect" role="tabpanel" aria-labelledby="home-tab"
-        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 20px;">
+        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 20px 10px 20px 20px;">
           <mat-accordion style="width: 433px; padding-bottom: 20px;" *ngIf="authors.length > 0">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
@@ -244,7 +245,7 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <mat-accordion style="width: 433px; padding-bottom: 20px;">
+          <mat-accordion style="width: 100%; padding-bottom: 20px;">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -263,7 +264,7 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <mat-accordion style="width: 433px; padding-bottom: 20px;">
+          <mat-accordion style="width: 100%; padding-bottom: 20px;">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title>
@@ -283,7 +284,7 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <mat-accordion style="width: 433px;">
+          <mat-accordion style="width: 100%">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title>

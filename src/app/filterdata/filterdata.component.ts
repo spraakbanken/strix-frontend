@@ -27,6 +27,8 @@ export class FilterdataComponent implements OnInit {
   public resultFacet = {};
   public selectedCorpus = [];
   public selectedFilters = [];
+  public selectedFiltersX = [];
+  public negationStatus = {};
   public yearInterval = "";
   public openDocument = false;
 
@@ -34,12 +36,14 @@ export class FilterdataComponent implements OnInit {
   public advanceFilter = false; 
   public gotMetadata = false;
   public showFilters = false; 
+  public showFiltersX = false;
 
   public bucketsInMode = [];
   private currentMode = 'default';
   private getInc = 0;
 
   public filterList : string[] = [];
+  public newKey = '';
 
   public selectFilter = 'basicFilter';
   public selectedTab = 'basicFilter'; 
@@ -103,6 +107,9 @@ export class FilterdataComponent implements OnInit {
       for (let item of this.selectedFilters) {
         this.removeFilter(item.aggsName, item.key, item.filterID);
       }
+      for (let item of this.selectedFiltersX) {
+        this.removeFilterX(item.aggsName, item.key, item.filterID);
+      }
       this.resetIncludeFacets();
       this.deselectFacets();
       this.basicFacets = {};
@@ -128,6 +135,9 @@ export class FilterdataComponent implements OnInit {
       for (let item of this.selectedFilters) {
         this.removeFilter(item.aggsName, item.key, item.filterID);
       }
+      for (let item of this.selectedFiltersX) {
+        this.removeFilterX(item.aggsName, item.key, item.filterID);
+      }
       this.deselectFacets();
       this.basicFacets = {};
       this.modeSelected = data.modeSelected[0];
@@ -137,6 +147,7 @@ export class FilterdataComponent implements OnInit {
       this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
         this.resultFacet = result.list_facet
       });
+      this.updatedData();
       setTimeout(() => {
         this.selectSearch('basicFilter');
       }, 2000);
@@ -164,17 +175,47 @@ export class FilterdataComponent implements OnInit {
       this.selectFilter = event;
   }
 
-  public onChange(event, aggsName){
-    if (event.checked) {
-      this.addAllFilter(aggsName)
-    }
-    if (!event.checked) {
-      this.removeAllFilter(aggsName)
-    }
- }
+//   public onChange(event, aggsName){
+//     if (event.checked) {
+//       this.addAllFilter(aggsName)
+//     }
+//     if (!event.checked) {
+//       this.removeAllFilter(aggsName)
+//     }
+//  }
 
-  public selectChange(event) {
-    this.runFilter();
+  public selectChange(event, negStatus, aggId, key) {
+    if (event === 'jumptoRunFilter') {
+      this.runFilter();
+    } else if (_.keys(this.negationStatus).includes(key)) {
+      if (negStatus === 'exclude' && this.negationStatus[key]['aggsName'] === aggId && this.negationStatus[key]['status'] === 'include') {
+        for (let item = 0; item < this.filterDataBasic.length; item++) {
+          if (this.filterDataBasic[item]['id'] === aggId) {
+            const alterArray = this.collectControl.controls[item].value.filter((option) => {
+              return option != key;
+            });
+            this.collectControl.controls[item].setValue(alterArray);
+          }
+        } 
+        this.runFilter();
+      } else if (negStatus === 'include' && this.negationStatus[key]['aggsName'] === aggId && this.negationStatus[key]['status'] === 'exclude') {
+        for (let item = 0; item < this.filterDataBasic.length; item++) {
+          if (this.filterDataBasic[item]['id'] === aggId) {
+            const alterArray = this.collectControlX.controls[item].value.filter((option) => {
+              return option != key;
+            });
+            this.collectControlX.controls[item].setValue(alterArray);
+          }
+        }
+        this.runFilter();
+      } else {
+        this.negationStatus = _.omit(this.negationStatus, key)
+        this.runFilter();
+      }
+    }
+    else {
+      this.runFilter();
+    }
   }
 
   public selectFacet(event) {
@@ -205,6 +246,7 @@ export class FilterdataComponent implements OnInit {
 
   private runFilter() {
     this.selectedFilters = [];
+    this.selectedFiltersX = [];
     for (let agg in this.aggregations) {
       if (agg !== 'corpus_id') {
         _.forEach(this.aggregations[agg].buckets, (bucket) => {
@@ -239,18 +281,26 @@ export class FilterdataComponent implements OnInit {
         if (this.collectControl.controls[item].value !== null && this.collectControl.controls[item].value.length > 0 && this.collectControl.controls[item].value.includes(bucket.key)) {
           bucket.selected = true;
           this.selectedFilters.push({'aggsName' : this.filterDataBasic[item]['id'], 'key': bucket.key, 'filterID': 'basic', 'color': 'lightblue'})
+          this.negationStatus[bucket.key] = {'aggsName': this.filterDataBasic[item]['id'], 'status': 'include'}
+          this.collectX[item] = true;
+        }
+        if (this.collectControlX.controls[item].value !== null && this.collectControlX.controls[item].value.length > 0 && this.collectControlX.controls[item].value.includes(bucket.key)) {
+          bucket.selected = true;
+          this.selectedFiltersX.push({'aggsName' : this.filterDataBasic[item]['id'], 'key': bucket.key, 'filterID': 'basic', 'color': 'lightblue'})
+          this.negationStatus[bucket.key] = {'aggsName': this.filterDataBasic[item]['id'], 'status': 'exclude'}
           this.collectX[item] = true;
         }
       }
     }
-    for (let item = 0; item < this.filterDataAdvance.length; item++) {
-      for (let bucket of this.aggregations[this.filterDataAdvance[item]['id']].buckets) {
-        if (this.collectControlX.controls[item].value !== null && this.collectControlX.controls[item].value.length > 0 && this.collectControlX.controls[item].value.includes(bucket.key)) {
-          bucket.selected = true;
-          this.selectedFilters.push({'aggsName' : this.filterDataAdvance[item]['id'], 'key': bucket.key, 'filterID': 'advance', 'color': 'rgb(169, 222, 117)'})
-        }
-      }
-    }
+    // for (let item = 0; item < this.filterDataAdvance.length; item++) {
+    //   for (let bucket of this.aggregations[this.filterDataAdvance[item]['id']].buckets) {
+    //     if (this.collectControlX.controls[item].value !== null && this.collectControlX.controls[item].value.length > 0 && this.collectControlX.controls[item].value.includes(bucket.key)) {
+    //       bucket.selected = true;
+    //       this.selectedFilters.push({'aggsName' : this.filterDataAdvance[item]['id'], 'key': bucket.key, 'filterID': 'advance', 'color': 'rgb(169, 222, 117)'})
+    //       this.negationStatus[bucket.key] = {'aggsName': this.filterDataBasic[item]['id'], 'status': 'exclude'}
+    //     }
+    //   }
+    // }
     this.updateFilters();
   }
 
@@ -357,14 +407,14 @@ export class FilterdataComponent implements OnInit {
     this.bucketsInMode = this.aggregations['corpus_id']['buckets'];
   }
 
-  public removeAllFilter(aggsName) {
-    for (let item = 0; item < this.filterDataBasic.length; item++) {
-      if (this.filterDataBasic[item]['id'] === aggsName) {
-        this.collectControl.controls[item].setValue([]);
-      }
-    }
-    this.selectChange("change");
-  }
+  // public removeAllFilter(aggsName) {
+  //   for (let item = 0; item < this.filterDataBasic.length; item++) {
+  //     if (this.filterDataBasic[item]['id'] === aggsName) {
+  //       this.collectControl.controls[item].setValue([]);
+  //     }
+  //   }
+  //   this.selectChange("change");
+  // }
 
   public sortName(aggsName) {
     for (let item = 0; item < this.filterDataBasic.length; item++) {
@@ -395,19 +445,42 @@ export class FilterdataComponent implements OnInit {
     }
   }
 
-  public addAllFilter(aggsName) {
-    for (let item = 0; item < this.filterDataBasic.length; item++) {
-      if (this.filterDataBasic[item]['id'] === aggsName) {
-        const alterArray = [];
-        for (let i of this.filterDataBasic[item]['data'].buckets) {
-          alterArray.push(i.key)
+  // public addAllFilter(aggsName) {
+  //   for (let item = 0; item < this.filterDataBasic.length; item++) {
+  //     if (this.filterDataBasic[item]['id'] === aggsName) {
+  //       const alterArray = [];
+  //       for (let i of this.filterDataBasic[item]['data'].buckets) {
+  //         alterArray.push(i.key)
+  //       }
+  //       this.collectControl.controls[item].setValue(alterArray);
+  //     }
+  //   }
+  //   this.selectChange("change");
+  // } 
+
+  public switchFilter(aggsName, key, switchID) {
+    if (switchID === 1 && this.negationStatus['aggsName'] === aggsName && this.negationStatus['status'] === 'include') {
+      for (let item = 0; item < this.filterDataBasic.length; item++) {
+        if (this.filterDataBasic[item]['id'] === aggsName) {
+          const alterArray = this.collectControl.controls[item].value.filter((option) => {
+            return option != key;
+          });
+          this.collectControl.controls[item].setValue(alterArray);
         }
-        this.collectControl.controls[item].setValue(alterArray);
       }
     }
-    this.selectChange("change");
-  } 
-
+    if (switchID === 0 && this.negationStatus['aggsName'] === aggsName && this.negationStatus['status'] === 'exclude') {
+      for (let item = 0; item < this.filterDataBasic.length; item++) {
+        if (this.filterDataBasic[item]['id'] === aggsName) {
+          const alterArray = this.collectControlX.controls[item].value.filter((option) => {
+            return option != key;
+          });
+          this.collectControlX.controls[item].setValue(alterArray);
+        }
+      }
+    } 
+    
+  }
   public removeFilter(aggsName, key, filterID) {
     if (filterID === 'basic') {
       for (let item = 0; item < this.filterDataBasic.length; item++) {
@@ -419,9 +492,13 @@ export class FilterdataComponent implements OnInit {
         }
       }
     }
-    if (filterID === 'advance') {
-      for (let item = 0; item < this.filterDataAdvance.length; item++) {
-        if (this.filterDataAdvance[item]['id'] === aggsName) {
+    this.negationStatus = _.omit(this.negationStatus, key)
+    this.selectChange("jumptoRunFilter", "include", aggsName, key);
+  }
+  public removeFilterX(aggsName, key, filterID) {
+    if (filterID === 'basic') {
+      for (let item = 0; item < this.filterDataBasic.length; item++) {
+        if (this.filterDataBasic[item]['id'] === aggsName) {
           const alterArray = this.collectControlX.controls[item].value.filter((option) => {
             return option != key;
           });
@@ -429,8 +506,23 @@ export class FilterdataComponent implements OnInit {
         }
       }
     }
-    this.selectChange("change");
+    this.negationStatus = _.omit(this.negationStatus, key)
+    this.selectChange("jumptoRunFilter", "exclude", aggsName, key);
   }
+
+  // public removeFilterX(aggsName, key, filterID) {
+  //   if (filterID === 'basic') {
+  //     for (let item = 0; item < this.filterDataAdvance.length; item++) {
+  //       if (this.filterDataAdvance[item]['id'] === aggsName) {
+  //         const alterArray = this.collectControlX.controls[item].value.filter((option) => {
+  //           return option != key;
+  //         });
+  //         this.collectControlX.controls[item].setValue(alterArray);
+  //       }
+  //     }
+  //   }
+  //   this.selectChange("change");
+  // }
 
   private updatedData() {
     for (let agg in this.aggregations) {
@@ -464,6 +556,11 @@ export class FilterdataComponent implements OnInit {
     } else {
       this.showFilters = false;
     }
+    if (this.selectedFiltersX.length > 0) {
+      this.showFiltersX = true;
+    } else {
+      this.showFiltersX = false;
+    }
     let selectedBuckets = _(this.aggregations)
                               .values()
                               .map("buckets")
@@ -482,6 +579,19 @@ export class FilterdataComponent implements OnInit {
                                 }
                               })
                               .value()
+    let tempBuckets = [];
+    for (let item of selectedBuckets) {
+      if (item.field !== "corpus_id" && _.keys(this.negationStatus).includes(item.value)) {
+        if (this.negationStatus[item.value]['status'] === 'include') {
+          tempBuckets.push({'field': item.field, 'value': item.value+'-0'})
+        } else if (this.negationStatus[item.value]['status'] === 'exclude') {
+          tempBuckets.push({'field': item.field, 'value': item.value+'-1'})
+        }
+      } else {
+        tempBuckets.push({'field': item.field, 'value': item.value})
+      }
+    }
+    selectedBuckets = tempBuckets;
     if (this.yearInterval) {
       selectedBuckets = selectedBuckets.filter(item => item.field != 'yearR')
       selectedBuckets.push({"field": "yearR", "value": this.yearInterval})
@@ -522,11 +632,12 @@ export class FilterdataComponent implements OnInit {
         if (item === key && getString === 'basic') {
           this.filterDataBasic.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
           this.collectControl.push( new FormControl());
+          this.collectControlX.push( new FormControl());
           this.filterDataBasicX.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'})
         }
         if (item === key && getString === 'advance') {
           this.filterDataAdvance.push({'id':key, 'data': this.dataFromFacet[item]});
-          this.collectControlX.push( new FormControl());
+          // this.collectControlX.push( new FormControl());
         }
       }
     }, 200);
@@ -554,6 +665,7 @@ export class FilterdataComponent implements OnInit {
       for (let i = 0; i < this.filterDataBasic.length; i++) {
         if (this.filterDataBasic[i].id === key) {
           this.collectControl.removeAt(i)
+          this.collectControlX.removeAt(i)
           this.filterDataBasic.splice(i, 1)
           this.filterDataBasicX.splice(i, 1)          
         }

@@ -12,7 +12,7 @@ import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, Sear
    CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR } from '../searchreducer';
 import { SearchResult, AggregationsResult } from '../strixresult.model';
 import { filter } from 'rxjs/operators';
-import { AppComponent } from '../app.component'
+import { AppComponent } from '../app.component';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { ChartOptions, ChartType } from 'chart.js';
 import {PageEvent} from '@angular/material/paginator';

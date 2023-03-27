@@ -80,7 +80,7 @@
 }
 
 .selectCorpus {
-  width: 550px; 
+  /* width: 550px;  */
   text-align: left; 
   border: 1px solid #ddd; 
   height: 45px;
@@ -91,6 +91,7 @@
   margin-right: 0; 
   display: block; 
   padding-top: 7px; 
+  padding-left: 10px;
   float: right;
 }
 

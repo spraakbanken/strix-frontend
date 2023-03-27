@@ -37,7 +37,7 @@
               <div class="col-xl-2">
                 <div class="font-weight-ligh">Text:</div>
               </div>
-              <div class="col-xl-9">
+              <div class="col-xl-10">
                 <div class="hit_document_body">
                   <ng-template [ngIf]="doc.highlight">
                     <span *ngFor="let highlight of doc.highlight; let l = last" [innerHTML]="highlight+'&nbsp;'">
@@ -57,10 +57,10 @@
                 <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
               </div>
               <div class="col-xl-9" *ngIf="doc.text_attributes.year !== '2050'">
-                <a>{{doc.text_attributes.year}}</a>
+                <span>{{doc.text_attributes.year}}</span>
               </div>
               <div class="col-xl-9" *ngIf="doc.text_attributes.year === '2050'">
-                <a>{{'NA'}}</a>
+                <span>{{'NA'}}</span>
               </div>
             </div>
             <div class="row">
@@ -68,7 +68,7 @@
                 <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
               </div>
               <div class="col-xl-9">
-                <a>{{doc.word_count}} {{ 'token' | loc }}</a>
+                <span>{{doc.word_count}} {{ 'token' | loc }}</span>
               </div>
             </div>
             <div class="row">
@@ -108,7 +108,7 @@
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
               </div>
-              <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+              <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                 <span *ngFor="let item of doc.most_common_words.split(', ') | slice:0:10; let i = index;">
                   <i *ngIf="i < 9" style="padding-right: 10px;">{{item}},</i>
                   <i *ngIf="i == 9">{{item}}</i>
@@ -119,7 +119,7 @@
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
               </div>
-              <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+              <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                 <span *ngFor="let item of doc.ner_tags.split(', ') | slice:0:5; let i = index;">
                   <i *ngIf="i < 4" style="padding-right: 10px;">{{item}},</i>
                   <i *ngIf="i == 4">{{item}}</i>

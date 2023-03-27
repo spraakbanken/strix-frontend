@@ -28,6 +28,10 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
 }
 
 .leftBlock {
@@ -35,8 +39,14 @@
     width: 70%;
 }
 
+@media only screen and (max-width: 1026px) {
+    .leftBlock {
+        width: 100%;
+    }
+}
+
 .rightBlock {
-    width: 28%;
+    width: 30%;
 }
 
 .box-container {
@@ -66,7 +76,7 @@
 }
 .hits_inner {
     /*max-height: 400px;*/
-    padding-left: 15px;
+    padding-left: 10px;
     overflow: auto;
 }
 

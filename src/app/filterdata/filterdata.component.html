@@ -12,19 +12,19 @@
             <div style="padding-bottom: 20px;">
                 <mat-accordion>
                     <mat-expansion-panel expanded>
-                        <mat-expansion-panel-header style="height: 50px; padding: 0px; background-color: #d9eaeb;">
+                        <mat-expansion-panel-header style="height: 50px; padding: 0px; background-color: #d9eaeb; border-radius: 0.3em;">
                           <mat-panel-title style="padding-left: 12px; padding-top: 8px; font-size: medium; font-style: italic; color: chocolate">
                             {{ 'add_filter' | loc }}<!--<mat-icon style="padding-right: 30px; font-size: 20px;">add_circle</mat-icon>-->
                           </mat-panel-title>
                         </mat-expansion-panel-header>
-                        <div class="extraInput" style="padding: 4px 4px 4px 4px; display: inline-table; height: 40px; width: 90%;" *ngIf="(basicFacets | keyvalue)?.length">
+                        <div class="extraInput" style="padding: 4px 4px 4px 4px; display: inline-table; height: 40px; width: 100%;" *ngIf="(basicFacets | keyvalue)?.length">
                           <!-- <mat-form-field appearance="outline" style="width: 160px; max-width:200px; padding-top: 0px; border: 0.5px solid #ddd; border-radius: 4px;">
                             <!- <mat-label>Filter</mat-label> ->
                             <input [(ngModel)]="searchText" matInput minlength="2" style="background-color: transparent;"  (keyup)="onSearchText()" placeholder="" #input>
                           </mat-form-field> -->
-                          <button class="closeButtonX" mat-button style="margin-left: 40px; margin-right: 10px;">{{ 'sidebar_text_attributes' | loc }}</button>
-                          <button style="float: right;" class="closeButton" mat-button (click)="defaultFacets()">{{ 'default' | loc }}</button>
-                          <button style="float: right;" class="closeButton" mat-button (click)="deselectFacets()">{{ 'selectNone' | loc }}</button>
+                          <button class="closeButtonX" mat-button style="margin-left: 10px;">{{ 'sidebar_text_attributes' | loc }}</button>
+                          <button style="float: right;" class="closeButton d-none d-lg-block" mat-button (click)="defaultFacets()">{{ 'default' | loc }}</button>
+                          <button style="float: right;" class="closeButton d-none d-lg-block" mat-button (click)="deselectFacets()">{{ 'selectNone' | loc }}</button>
                         </div>
                         <div class="text_annotations_list">
                           <!-- <button class="closeButtonX" mat-button style="margin-left: 10px;">Text attributes</button> -->
@@ -39,21 +39,30 @@
                 </mat-accordion>
             </div>
             <div *ngIf="!openDocument && gotMetadata && selectedFilters.length > 0"> <!--style="padding: 10px 10px 10px 0px; display: inline-flex; flex-wrap: wrap; height: 40px;"-->
-                <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px;">
+                <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px; border-radius: 0.3em;">
                     <span *ngIf="showFilters" style="font-size: medium; font-style: italic; padding-left: 10px; color: chocolate;">{{ 'selected_filters' | loc }}</span>
                 </div>
             <div class="selectFilterArea" style="padding: 10px 10px 10px 0px; display: inline-flex; flex-wrap: wrap; max-height: 22vh; overflow-y: scroll; height: auto; overflow-x: hidden;">
                 <a class="selectedFilter" *ngFor="let item of selectedFilters;  let i = index" [style.background-color]="item.color" [value]="item.key" (click)="removeFilter(item.aggsName, item.key, item.filterID);">
                     <i>{{item.key}}</i></a>
             </div>
+            </div>
+            <div *ngIf="!openDocument && gotMetadata && selectedFiltersX.length > 0"> <!--style="padding: 10px 10px 10px 0px; display: inline-flex; flex-wrap: wrap; height: 40px;"-->
+              <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px; border-radius: 0.3em;">
+                  <span *ngIf="showFiltersX" style="font-size: medium; font-style: italic; padding-left: 10px; color: chocolate;">{{ 'xclude' | loc }}</span>
               </div>
-            <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px;">
+            <div class="selectFilterArea" style="padding: 10px 10px 10px 0px; display: inline-flex; flex-wrap: wrap; max-height: 22vh; overflow-y: scroll; height: auto; overflow-x: hidden;">
+                <a class="selectedFilter" *ngFor="let item of selectedFiltersX;  let i = index" [style.background-color]="item.color" [value]="item.key" (click)="removeFilterX(item.aggsName, item.key, item.filterID);">
+                    <i>{{item.key}}</i></a>
+            </div>
+              </div>
+            <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px; border-radius: 0.3em;">
                 <span style="font-size: medium; font-style: italic; padding-left: 10px; color: chocolate">{{ 'applyFilter' | loc }}</span>
             </div>
             <!-- <a class="basicF" *ngFor="let item of filterDataBasic; let i = index" style="padding: 0px 0px 0px 0px; margin-right: 15px; border: 0px; display: grid;"></a> -->
           <div *ngFor="let item of filterDataBasic; let i = index" style="padding-bottom: 10px; border: 0.5px solid #eeeeee">
             <mat-accordion>
-                <mat-expansion-panel>
+                <mat-expansion-panel style="border-radius: 0.3em;">
                     <mat-expansion-panel-header style="height: 50px; padding: 0px; background-color: #F8F9F9;">
                       <mat-panel-title style="padding-left: 12px;">
                           <!-- {{ item.id.charAt(0).toUpperCase()+item.id.substring(1) }} -->
@@ -67,9 +76,48 @@
                       <button class="closeButton" style="padding: 0px 15px;" mat-button (click)="addAllFilter(filterDataBasic[i]['id'])">{{ 'selectAll' | loc }}</button>
                       <button class="closeButton" mat-button (click)="removeAllFilter(filterDataBasic[i]['id'])">{{ 'selectNone' | loc }}</button>
                     </div> -->
-                    <div class="text_annotations_list">
-                      <div>
-                        <!-- <mat-checkbox (change)="onChange($event, filterDataBasic[i]['id'])" [(ngModel)]="collectX[i]" class="example-margin" style="margin-left: 16px;"></mat-checkbox> -->
+                    <div class="text_annotations_list" style="display: grid;">
+                      <!-- <div style="width: 100%; float:left;">
+                        <button class="closeButtonX" mat-button (click)="sortName(filterDataBasic[i]['id'])" style="margin-left: 40px;">
+                          <span>{{ 'name' | loc }}</span>
+                          <i-bs style="margin-left: 10px;" name="arrow-down-up" width="16" height="16"></i-bs>
+                        </button>
+                        <button class="closeButtonX" mat-button (click)="sortCount(filterDataBasic[i]['id'])">
+                          <span>{{ 'frequency' | loc }}</span>
+                          <i-bs style="margin-left: 10px;" name="arrow-down-up" width="16" height="16"></i-bs>
+                        </button>
+                        <button class="closeButtonX" mat-button>
+                          <i-bs style="margin-left: 10px; float: right" name="arrow-down-up" width="16" height="16"></i-bs>
+                        </button>
+                        <button class="closeButtonX" mat-button>
+                          <i-bs style="margin-left: 10px; float: right" name="arrow-down-up" width="16" height="16"></i-bs>
+                        </button>
+                      </div> -->
+
+                      <div  style="overflow:auto">
+                        <div class="exclude-option">
+                          <mat-selection-list [formControl]="collectControlX.controls[i]" multiple  style="height: auto; max-height: 20.2vh;">
+                            <mat-list-option checkboxPosition="before" *ngFor="let topping of filterDataBasic[i]['data'].buckets" [value]="topping.key" (click)="selectChange($event, 'exclude', filterDataBasic[i]['id'], topping.key)">
+                            </mat-list-option>
+                        </mat-selection-list>
+                        </div>
+                        <div class="include-option">
+                          <mat-selection-list [formControl]="collectControl.controls[i]" multiple  style="height: auto; max-height: 20.2vh;">
+                            <mat-list-option checkboxPosition="before" *ngFor="let topping of filterDataBasic[i]['data'].buckets" [value]="topping.key" (click)="selectChange($event, 'include', filterDataBasic[i]['id'], topping.key)">
+                            </mat-list-option>
+                        </mat-selection-list>
+                        </div>
+                        <div class="data-option">
+                          <mat-selection-list style="height: auto; max-height: 20.2vh;">
+                            <mat-list-option checkboxPosition="before" *ngFor="let topping of filterDataBasic[i]['data'].buckets" [value]="topping.key">
+                                <span style="color: steelblue;">{{topping.key}}</span><span style="color: steelblue; float: right;">({{topping.doc_count}})</span>
+                            </mat-list-option>
+                        </mat-selection-list>
+                        </div>
+                      </div>
+                      
+                      <!--<div>
+                        <!- <mat-checkbox (change)="onChange($event, filterDataBasic[i]['id'])" [(ngModel)]="collectX[i]" class="example-margin" style="margin-left: 16px;"></mat-checkbox> ->
                         <button class="closeButtonX" mat-button (click)="sortName(filterDataBasic[i]['id'])" style="margin-left: 40px;"><span>{{ 'name' | loc }}</span><i-bs style="margin-left: 10px;" name="arrow-down-up"
                           width="16"
                             height="16">
@@ -83,7 +131,7 @@
                           <mat-list-option checkboxPosition="before" *ngFor="let topping of filterDataBasic[i]['data'].buckets" [value]="topping.key">
                               <span style="color: steelblue;">{{topping.key}}</span><span style="color: steelblue; float: right;">({{topping.doc_count}})</span>
                           </mat-list-option>
-                      </mat-selection-list>
+                      </mat-selection-list>-->
                       <!-- <mat-select [formControl]="collectControl.controls[i]" (selectionChange)="selectChange($event)" multiple>
                           <mat-select-trigger>
                             {{collectControl.controls[i].value ? collectControl.controls[i].value : ''}}

@@ -74,6 +74,7 @@ export class DataselectionComponent implements OnInit {
   public corpusesInMode: [];
   public corporaListYear = [];
   public selectedYear = {};
+  public preSelected = [];
   public folderData = {};
   public selectedMode = '';
   public corpusesCount = 0;
@@ -269,6 +270,11 @@ export class DataselectionComponent implements OnInit {
       this.selectedDocs = 0;
       this.selectedMode = data.modeSelected[0];
       this.corpusesInMode = data.corporaInMode[0];
+      if (data.modeStatus === "initial") {
+        this.preSelected = data.preSelect;
+      } else {
+        this.preSelected = [];
+      }
       this.selectedCount = this.corpusesInMode.length;
       this.corpusesCount = this.corpusesInMode.length;
       this.checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
@@ -426,7 +432,28 @@ export class DataselectionComponent implements OnInit {
 
   public defaultSelection(inputMode) {
     if (inputMode === "modeRoot") {
-      if (this.selectedMode === 'default') {
+      if (this.preSelected.length > 0) {
+        this.clearInputText();
+        for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+          if (this.preSelected.includes(this.treeControl.dataNodes[i].item)) {
+            if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+              if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
+                this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+                this.checklistSelection.select(this.treeControl.dataNodes[i]);
+                this.treeControl.expand(this.treeControl.dataNodes[i])
+              }
+            }
+          } else {
+            if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item]) {
+              this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+              this.checklistSelection.deselect(this.treeControl.dataNodes[i])
+            this.treeControl.expand(this.treeControl.dataNodes[i])
+            } 
+          }
+        }
+        this.updateFiltersX("default");
+      }
+      else if (this.selectedMode === 'default') {
         this.clearInputText();
         for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
           if (this.treeControl.dataNodes[i].item === 'vivill') {
@@ -591,7 +618,7 @@ export class DataselectionComponent implements OnInit {
   public showYearDistribution() {
     if (!this.updateGraph) {
       this.updateGraph = true;
-      this.yearButton = 'orange';
+      this.yearButton = '#ff4081';
     } else {
       this.updateGraph = false;
       this.yearButton = 'lightblue';

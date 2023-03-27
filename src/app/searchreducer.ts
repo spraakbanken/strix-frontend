@@ -60,6 +60,8 @@ export interface SearchRedux {
   sentenceID?: number;
   modeSelected?: string[];
   corporaInMode?: string[];
+  preSelect?: string[];
+  modeStatus?: string;
   selectedCorpora?: string[];
   docSize?: string;
   yearInterval?: string;
@@ -111,6 +113,8 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
     case MODE_SELECTED:
       nextState.modeSelected = action.payload.mode;
       nextState.corporaInMode = action.payload.corpuses;
+      nextState.preSelect = action.payload.preSelect;
+      nextState.modeStatus = action.payload.modeStatus;
       nextState.filters = {};
       nextState.docSize = '';
       nextState.yearInterval = '';

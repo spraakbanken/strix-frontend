@@ -110,7 +110,7 @@ reader {
   font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
   background-color: #d9eaeb!important;
   min-width: 99vw;
-  height: 41px;
+  /* height: 41px; */
 }
 
 .nav-link {
@@ -177,6 +177,7 @@ reader {
   left: auto;
   font-size: small;
   font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  position: absolute;
 }
 
 .container, .container-fluid, .container-lg, .container-md, .container-sm, .container-xl {
@@ -218,12 +219,13 @@ reader {
 
 .topRight {
   margin-left: auto;
-  margin-right: 0;
+  margin-right: 4px;
   display: inline-block;
 }
 
 .strixLogo {
   padding: 8px 0px 0px 30px;
+  height: inherit;
 }
 
 .statColumn {

@@ -137,7 +137,7 @@ export class RoutingService {
     }
   }
 
-  private getCurrentState(): SearchRedux {
+  public getCurrentState(): SearchRedux {
     const urlSearch: string = window.location.search;
     console.log("urlSearch", urlSearch)
     let startParams = {};

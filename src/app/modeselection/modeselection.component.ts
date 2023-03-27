@@ -20,10 +20,12 @@ export class ModeselectionComponent implements OnInit {
   public modeSelection = {};
   public listMode = {};
 
-  private modeItem : { mode : string[], corpuses : string[] };
+  private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
   public addFacet = [];
 
   public addCorpuses = [];
+
+  public preSelectCorpora = [];
 
   private metadataSubscription: Subscription;
 
@@ -85,8 +87,8 @@ export class ModeselectionComponent implements OnInit {
   }
   }
 
-  public chooseMode(modeKey: string) {
-    this.modeItem = { mode : [], corpuses : [] };
+  public chooseMode(modeKey: string, status: string) {
+    this.modeItem = { mode : [], corpuses : [], preSelect : this.preSelectCorpora, modeStatus: status };
     for (let item in this.modeSelection) {
       if (item === modeKey) {
         this.modeSelection[item] = true
@@ -110,7 +112,15 @@ export class ModeselectionComponent implements OnInit {
     this.metadataService.loadedMetadata$, 
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE))).subscribe(([info, data]: [any, any]) => {
       this.collectMode();
-      this.chooseMode('default');
+      let tempURL = this.routingService.getCurrentState();
+      if (_.keys(tempURL.filters).length > 0) {
+        this.preSelectCorpora = _.map(_.takeRightWhile(_.values(tempURL.filters), ['field', 'corpus_id']), 'value')
+      }
+      if (tempURL.modeSelected[0] === "default") {
+        this.chooseMode('default', 'initial');
+      } else {
+        this.chooseMode(tempURL.modeSelected[0], 'initial')
+      }  
     });
   }
 }

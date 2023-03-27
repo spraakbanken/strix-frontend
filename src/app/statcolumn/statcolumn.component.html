@@ -13,7 +13,7 @@
       <a class="nav-link" id="advanceFilter-tab" data-toggle="tab" href="#advanceFilter" role="tab" aria-controls="advanceFilter" aria-selected="false" (click)="selectSearch('advanceFilter')">Advance Filters</a>
     </li> -->
   </ul>   
-  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 5px; padding-right: 0px; height: 110px;">
+  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 0px; padding-right: 0px; height: 110px;">
     <div class="filters_area" *ngIf="!openDocument && gotMetadata" style="padding: 0px; border: 1px solid #ddd;">
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="simpleSearch" role="tabpanel" aria-labelledby="simpleSearch-tab" *ngIf="simpleSearch"

@@ -3,8 +3,10 @@
       <div class="col-xl-12" style="padding: 0px;">
         <button class="selectCorpus" mat-button (click)="selectSearch()">
           <!-- {{ 'corpus_idS' | loc }} -->
-          {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
-          <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
+          <span style="display: inline-flex;">
+            {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
+            <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
+          </span>
           </button>
       </div>
     </div>
@@ -54,7 +56,7 @@
                                 [checked]="checklistSelection.isSelected(node)"
                                 [disabled]="disableList[node.item]"
                                 (change)="todoLeafItemSelectionToggle(node)">{{ availableCorpora[node.item].name | loc }}</mat-checkbox>
-                                <button class="corpusInfo" mat-icon-button (click)="showDetails(node.item)"><mat-icon>info</mat-icon></button>
+                                <button class="corpusInfo d-none d-lg-block" mat-icon-button (click)="showDetails(node.item)"><mat-icon>info</mat-icon></button>
                 </mat-tree-node>    
                 <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
                   <button mat-icon-button matTreeNodeToggle

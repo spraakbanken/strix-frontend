@@ -102,7 +102,8 @@ export class LocService {
       'applyFilter' : 'Använda filter',
       'frequency' : 'Frekvens',
       'name' : 'Namn',
-      'numDoc': 'Antal dokument'
+      'numDoc': 'Antal dokument',
+      'xclude': 'Excluded filters'
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -184,7 +185,8 @@ export class LocService {
       'applyFilter' : 'Apply filters',
       'frequency' : 'Frequency',
       'name' : 'Name',
-      'numDoc': '# Documents'
+      'numDoc': '# Documents',
+      'xclude': 'Excluded filters'
     }
   };
 

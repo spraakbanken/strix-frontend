@@ -11,6 +11,9 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from 'app/loc.service';
+import { OPENDOCUMENT } from '../searchreducer';
+import { Store } from '@ngrx/store';
+import { AppComponent } from '../app.component';
 
 @Component({
   selector: 'similardocs',
@@ -61,6 +64,17 @@ export class SimilarDocsComponent implements OnInit{
     plugins: {
       legend: {
         position: 'bottom'
+      },
+      tooltip: {
+        displayColors: false,
+        callbacks: {
+          title: function(tooltipItems) {
+            return ''
+          },
+          label: function(tooltipItems) {
+            return tooltipItems['label'] + " : " + tooltipItems['formattedValue']
+          },
+        }
       }
     },
     scales: {
@@ -115,7 +129,9 @@ export class SimilarDocsComponent implements OnInit{
   public availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   public gotMetadata = false;
 
-  constructor(private callsService: CallsService, private metadataService: MetadataService, private locService: LocService) {
+  constructor(private callsService: CallsService, 
+    private metadataService: MetadataService, private locService: LocService,
+    private store: Store, private appComponent: AppComponent) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         
@@ -145,10 +161,10 @@ export class SimilarDocsComponent implements OnInit{
             }
             this.tokens.push(this.similarDocs[i]['word_count']);
             tempData.push({
-                'title': this.similarDocs[i]['title'], 'text': this.similarDocs[i]['preview'], 'corpusID': this.similarDocs[i]['corpus_id'],
+                'title': this.similarDocs[i]['title'], 'text': this.similarDocs[i]['preview'], 'corpus_id': this.similarDocs[i]['corpus_id'],
                 'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
                 'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
-                'ner_tags': this.similarDocs[i]['ner_tags']
+                'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id']
             });
         }
         this.similarDocs = tempData;
@@ -249,6 +265,12 @@ export class SimilarDocsComponent implements OnInit{
     this.upperLimit = changeContext.highValue;
     this.touchToken = true;
     this.filterData();
+  }
+
+  private openDocument(docIndex: number) {
+    let doc = this.similarDocs[docIndex];
+    this.store.dispatch({type : OPENDOCUMENT, payload : doc});
+    this.appComponent.selectedTab.setValue(this.appComponent.listTabs[0]);
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
