@@ -86,6 +86,7 @@ export class AnnotationsSelectorComponent implements OnInit {
   private updateAnnotationsLists(corpusID: string) {
     this.wordAnnotations = this.metadataService.getWordAnnotationsFor(corpusID);
     this.structuralAnnotations = this.metadataService.getStructuralAnnotationsFor(corpusID);
+    this.structuralAnnotations = this.structuralAnnotations.filter(item => !["page", "sentence"].includes(item.name))
     // console.log("this.structuralAnnotations", this.structuralAnnotations);
   }
 

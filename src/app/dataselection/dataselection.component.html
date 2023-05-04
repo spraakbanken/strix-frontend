@@ -102,7 +102,7 @@
                 <span>{{ 'numDoc' | loc }}:</span>
               </div>
               <div class="col-xl-7">
-                <a tabindex>{{this.showCorpusDetail.docInCorpora}}</a>
+                <a tabindex>{{this.showCorpusDetail.docInCorpora.toLocaleString('number_format' | loc)}}</a>
               </div>
             </div>
             <div class="row">
@@ -110,7 +110,7 @@
                 <span>{{ 'corpusSize' | loc }}:</span>
               </div>
               <div class="col-xl-7">
-                <a tabindex>{{this.showCorpusDetail.tokenInCorpora}} {{ 'token' | loc }} </a>
+                <a tabindex>{{this.showCorpusDetail.tokenInCorpora.toLocaleString('number_format' | loc)}} {{ 'token' | loc }} </a>
               </div>
             </div>
             <div class="row">

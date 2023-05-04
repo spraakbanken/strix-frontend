@@ -9,8 +9,8 @@ import { CallsService } from './calls.service';
 import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
-        AppState, SearchRedux, CHANGEPAGE, RELOAD,
-        OPENCOMPAREDOC, CLOSECOMPAREDOC, MODE_SELECTED 
+        AppState, SearchRedux,
+        OPENCOMPAREDOC, CLOSECOMPAREDOC, 
       } from './searchreducer';
 
 @Component({
@@ -20,7 +20,7 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE,
 })
 export class AppComponent {
 
-  public listTabs = ['Hits'];
+  public listTabs = ['Hits', 'Statistic'];
   public selectedTab = new FormControl(0);
   public similarParam: any;
   public relatedDocType: string;
@@ -33,6 +33,7 @@ export class AppComponent {
   public selectEng = true;
   public openCompare = false;
   public loginStatus = "login";
+  public getDocRunning = false;
 
   public languages: string[];
   public selectedLanguage: string;
@@ -56,6 +57,7 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("|openDocument");
       this.openDocument = true;
+      this.getDocRunning = true;
       this.searchBox = false;
       
     });
@@ -63,6 +65,7 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       console.log("|closeDocument");
       this.openDocument = false;
+      this.getDocRunning = false;
       this.searchBox = true;
       this.openCompare = false;
     });
@@ -113,6 +116,7 @@ export class AppComponent {
 
   public removeTab(index: number) {
     this.listTabs.splice(index, 1);
+    this.selectedTab.setValue(0);
   }
 
   public gotoLogin() {

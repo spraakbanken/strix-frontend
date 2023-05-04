@@ -69,6 +69,16 @@
   font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
 }
 
+.right_columnX {
+  height: 80%;
+  padding-top: 1%;
+  padding-left: 1%;
+  /*background-color: brown;*/
+  min-height: auto;
+  font-size: small;
+  border: 0.5px solid #eeeeee;
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+}
 .right_column::before  {
   padding-left: -10px;
   display: block;
@@ -224,7 +234,7 @@ reader {
 }
 
 .strixLogo {
-  padding: 8px 0px 0px 30px;
+  padding: 12px 0px 0px 40px;
   height: inherit;
 }
 
@@ -249,4 +259,30 @@ reader {
 
 ::ng-deep .mat-tab-body-content {
   overflow: hidden !important;
+}
+
+/* ::ng-deep .mainContent .right_columnX .mat-tab-header {
+  background: none;
+}
+
+::ng-deep .mainContent .right_columnX .mat-tab-label-active {
+  background-color: #04AA6D;
+} */
+
+.tools_area {
+  padding-left: 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #f7f7f7;
+  border-bottom: 1px solid #999;
+  display: flex;
+  text-align: center;
+  margin-left: 15px;
+  margin-right: 15px;
+}
+.tools_list {
+  float: left;
+}
+.actual_tools {
+  float: left;
 }

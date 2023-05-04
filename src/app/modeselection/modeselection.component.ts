@@ -19,6 +19,7 @@ export class ModeselectionComponent implements OnInit {
   public modeCollection = {};
   public modeSelection = {};
   public listMode = {};
+  public visibleMode = '';
 
   private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
   public addFacet = [];
@@ -84,16 +85,21 @@ export class ModeselectionComponent implements OnInit {
           }
         }    
       }
-  }
+    }
   }
 
   public chooseMode(modeKey: string, status: string) {
     this.modeItem = { mode : [], corpuses : [], preSelect : this.preSelectCorpora, modeStatus: status };
     for (let item in this.modeSelection) {
       if (item === modeKey) {
-        this.modeSelection[item] = true
+        this.modeSelection[item] = true;
         this.modeItem.mode.push(item.toLowerCase());
         this.modeItem.corpuses.push(this.modeCollection[item]);
+        if (item === 'default') {
+          this.visibleMode = '';
+        } else {
+          this.visibleMode = item;
+        }
       } else {
         this.modeSelection[item] = false
       }

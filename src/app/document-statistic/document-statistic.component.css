@@ -1,0 +1,67 @@
+.box-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid #e3e6f0;
+    border-radius: 0.35rem;
+    padding: 0px 10px 4px 10px;
+    min-height: 70vh;
+    height: 600px;
+    
+  }
+
+  .scrollData {
+    overflow: scroll;
+  }
+
+  .my-drawer-content {
+    display: flex;
+    align-items: left;
+    justify-content: left;
+}
+
+::ng-deep .mat-list-item {
+    min-height: 50px !important;
+}
+
+::ng-deep .mat-list-item-content {
+    min-height: inherit;
+}
+
+.mat-list-single-selected-option {
+    background: cadetblue;
+}
+
+::ng-deep .mat-list-option {
+    font-family: Roboto,Helvetica Neue,sans-serif !important;
+}
+
+::ng-deep .box-container .mat-list-option {
+    border-radius: 10px !important;
+    margin-bottom: 8px !important;
+}
+
+::ng-deep .box-container .mat-list-base {
+    padding-top: 10px !important;
+}
+
+table {
+    width: 100%;
+  }
+  
+  .mat-mdc-form-field {
+    font-size: small;
+    width: 100%;
+  }
+
+  .mat-cell {
+    font-size: small;
+  }
+  
+  td, th {
+    width: 25%;
+  }

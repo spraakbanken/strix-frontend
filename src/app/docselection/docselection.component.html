@@ -52,6 +52,14 @@
                 </div>
               </div>
             </div>
+            <div class="row" *ngIf="doc.corpus_id === 'jubileumsarkivet-pilot'">
+              <div class="col-xl-2">
+                <div class="font-weight-ligh">{{ 'newspaper' | loc }}:</div>
+              </div>
+              <div class="col-xl-9">
+                <span>{{doc.text_attributes.newspaper}}</span>
+              </div>
+            </div>
             <div class="row">
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
@@ -68,7 +76,7 @@
                 <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
               </div>
               <div class="col-xl-9">
-                <span>{{doc.word_count}} {{ 'token' | loc }}</span>
+                <span>{{doc.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
               </div>
             </div>
             <div class="row">

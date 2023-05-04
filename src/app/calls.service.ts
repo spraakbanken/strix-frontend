@@ -255,6 +255,27 @@ export class CallsService {
   //   );
   // }
 
+  public getDataforFacet(corpora: string[], modes: string[], include_facet: string, include_attr: string[]) {
+    let params: any = {};
+    let get_filter = [];
+    for (let item of include_attr) {
+      get_filter.push({'field': include_facet, 'value': item})
+    }
+    if (get_filter && _.size(get_filter) > 0) {
+      params.text_filter = this.formatFilterObject(get_filter);
+    }
+
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
+    if (modes) {
+      params.modes = modes.join(",");
+    }
+    return this.get<any>('facetData', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   public getFacetStatistics(corpora: string[], modes: string[], include_list: string[]) {
     let params: any = {};
 

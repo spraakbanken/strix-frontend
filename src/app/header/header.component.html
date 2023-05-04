@@ -23,6 +23,14 @@
             </div>
           </div>
         </div>
+        <div class="row" *ngIf="corpusID === 'jubileumsarkivet-pilot'">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'newspaper' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <a>{{newspaper}}</a>
+          </div>
+        </div>
         <div class="row">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
@@ -64,10 +72,5 @@
         </div>
       </div>
     </div>
-  </div>
-</div>
-<div class="tools_area">
-  <div class="actual_tools">
-    <annotations-selector></annotations-selector>
   </div>
 </div>

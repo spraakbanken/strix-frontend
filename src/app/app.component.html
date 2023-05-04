@@ -24,7 +24,7 @@
   </nav>
   <div class="topnav row">
     <div class="strixLogo col-3" title="Strix SB" (click)="reloadStrix()">
-      <img width="150" src="assets/owl8.png"/>
+      <img width="90" src="assets/strix_logo.png"/>
     </div>
     <div class="col-md-5" style="padding: 34px 0px 10px 50px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
@@ -39,12 +39,13 @@
     <statcolumn class="statColumn"></statcolumn>
   </div>
   <mat-tab-group [selectedIndex]="selectedTab.value"
-               (selectedIndexChange)="selectedTab.setValue($event)">
+               (selectedIndexChange)="selectedTab.setValue($event)" [hidden]="openDocument">
     <mat-tab *ngFor="let tab of listTabs; let index = index" [label]="tab + index">
       <ng-template mat-tab-label>
         <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
-        <div class="col" *ngIf="tab !== 'Hits'">{{tab}}</div>
-        <button *ngIf="tab !== 'Hits'" style="color:black" mat-icon-button (click)="removeTab(index)">
+        <div class="col" *ngIf="tab === 'Statistic'">{{'statSelection' | loc}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">{{tab}}</div>
+        <button *ngIf="tab !== 'Hits' && tab !== 'Statistic'" style="color:black" mat-icon-button (click)="removeTab(index)">
           <mat-icon>close</mat-icon>
         </button>
       </ng-template>
@@ -54,17 +55,43 @@
             <div class="row" style="margin-left: 0px; margin-right: 0px;">
               <docselection class="col-lg-12" [style.display]="(!openDocument)?'block':'none'" style="padding: 0px;"></docselection>
             </div>
-            <header *ngIf="openDocument" style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
-            <indocsearch *ngIf="openDocument"></indocsearch>
-            <reader [hidden]="!openDocument" ></reader>
           </div>
-          <!-- <div class="left_column d-none d-lg-block" [style.width]="(!openDocument)?'0%':'0%'"> 
-          </div> -->
         </div>
       </div>
-      <div class="mainContent" *ngIf="tab !== 'Hits'">
+      <div class="mainContent" *ngIf="tab === 'Statistic'">
+        <div class="fixDoc">
+          <div class="right_column" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
+              <docstatistic></docstatistic>
+          </div>
+        </div>
+      </div>
+      <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">
         <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" style="padding: 4px 15px 0px 15px;"></similardocs>       
       </div>
     </mat-tab>
   </mat-tab-group>
+  <div class="mainContent" [hidden]="!openDocument">
+    <div class="fixDoc">
+      <div class="right_columnX" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
+        <div [hidden]="!getDocRunning">
+          <mat-tab-group>
+            <mat-tab label="{{'doc_view' | loc}}">
+              <header style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
+              <div class="tools_area">
+                <div class="actual_tools">
+                  <annotations-selector></annotations-selector>
+                </div>
+              </div>
+              <indocsearch></indocsearch>
+              <reader></reader>
+            </mat-tab>
+            <mat-tab label="{{'doc_stat' | loc}}">
+              <header style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
+              <document-statistic></document-statistic>
+            </mat-tab>
+          </mat-tab-group>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

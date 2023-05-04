@@ -28,7 +28,7 @@ export class LocService {
       'related_documents' : 'Relaterade dokument',
       'search' : 'Sök',
       'search_document' : 'Sök i dokumentet',
-      'hits' : 'Sökträffar',
+      'hits' : 'Dokument',
       'sidebar_text_attributes' : 'Textattribut',
       'sidebar_structural_attributes' : 'Strukturella attribut',
       'sidebar_word_attributes' : 'Ordattribut',
@@ -43,6 +43,7 @@ export class LocService {
       'structural_attributes' : 'strukturella attribut',
       'document' : 'dokument',
       'sentence' : "mening",
+      'sentences': 'mening',
       'ne' : 'namntaggning',
       'paragraph' : 'stycke',
       'list_choose' : 'Välj fler från lista',
@@ -103,7 +104,11 @@ export class LocService {
       'frequency' : 'Frekvens',
       'name' : 'Namn',
       'numDoc': 'Antal dokument',
-      'xclude': 'Excluded filters'
+      'xclude': 'Excluded filters',
+      'number_format': 'sv-SV',
+      'doc_stat': 'Statistikvy',
+      'item': 'Item',
+      'doc_view': 'Dokumentvy',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -111,7 +116,7 @@ export class LocService {
       'related_documents' : 'Related documents',
       'search' : 'Search',
       'search_document' : 'Search the current document',
-      'hits' : 'Hits',
+      'hits' : 'Documents',
       'sidebar_text_attributes' : 'Text attributes',
       'sidebar_structural_attributes' : 'Structural attributes',
       'sidebar_word_attributes' : 'Word attributes',
@@ -186,7 +191,12 @@ export class LocService {
       'frequency' : 'Frequency',
       'name' : 'Name',
       'numDoc': '# Documents',
-      'xclude': 'Excluded filters'
+      'xclude': 'Excluded filters',
+      'number_format': 'en-US',
+      'sentences': 'Sentences',
+      'doc_stat': 'Statistics view',
+      'item': 'Item',
+      'doc_view': 'Document view',
     }
   };
 

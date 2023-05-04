@@ -26,6 +26,7 @@ export const YEAR_RANGE = "YEAR_RANGE";
 export const YEAR_INTERVAL = "YEAR_INTERVAL";
 export const UNDEFINED_YEAR = "UNDEFINED_YEAR";
 export const YEAR_NA = "YEAR_NA";
+export const FACET_LIST = "FACET_LIST";
 
 // payload was removed from Action in lib, brought it back.
 declare module '@ngrx/store' {
@@ -70,6 +71,7 @@ export interface SearchRedux {
   yearRange?: number[];
   undefinedYear?: boolean;
   yearNA?: boolean;
+  facet_list?;
 }
 
 
@@ -191,6 +193,9 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       break;
     case YEAR_NA:
       nextState.yearNA = action.payload;
+      break;
+    case FACET_LIST:
+      nextState.facet_list = action.payload;
       break;
   }
 

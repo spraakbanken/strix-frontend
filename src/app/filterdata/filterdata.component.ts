@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
-SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, YEAR_INTERVAL,
+SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, YEAR_INTERVAL, FACET_LIST
 } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 import {FormControl, FormArray} from '@angular/forms';
@@ -149,6 +149,7 @@ export class FilterdataComponent implements OnInit {
       });
       this.updatedData();
       setTimeout(() => {
+        this.store.dispatch( { type :  FACET_LIST, payload : this.resultFacet })
         this.selectSearch('basicFilter');
       }, 2000);
     });

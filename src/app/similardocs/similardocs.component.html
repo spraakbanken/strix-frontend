@@ -46,7 +46,7 @@
             <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <span>{{data.word_count}} {{ 'token' | loc }}</span>
+            <span>{{data.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
           </div>
         </div>
         <!-- <div class="row">
@@ -154,7 +154,7 @@
                       <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
                     </div>
                     <div class="col-xl-9">
-                      <span>{{doc.tokens}} {{ 'token' | loc }}</span>
+                      <span>{{doc.tokens.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
                     </div>
                   </div>
                   <!-- <div class="row">

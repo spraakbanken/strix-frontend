@@ -1,0 +1,27 @@
+<div class="box-container">
+    <div class="row" style="min-height: inherit;">
+        <div class="col-xl-12" style="display: inline-flex;">
+            <div class="col-xl-2 scrollData" style="padding-left: 4px; border-right: 1px solid #ddd;">
+                <mat-selection-list #wordAnno [multiple]="false">
+                    <mat-list-option *ngFor="let item of currentFacets | keyvalue" [value]="item.key" (click)="getFacetData(item.key)">
+                        {{ item.key | loc }}
+                    </mat-list-option>
+                </mat-selection-list>
+            </div>
+            <div class="col-xl-10" style="display: block; padding-top: 12px; padding-right: 4px;">
+                <div style="height: 50px; border: 1px solid #ddd; width: 100%; border-radius: 10px; background: cadetblue; padding: 15px;">
+                    <span>{{ currentSelection | loc }}</span>
+                </div>
+                <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="margin-top: 10px;">
+                    <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns">
+                      <th mat-header-cell *matHeaderCellDef title="{{column | loc}}"> {{(column | loc).split(' ').splice(0,1).join(' ')}}... </th>
+                      <td mat-cell *matCellDef="let element"> {{element[column]}} </td>
+                    </ng-container>
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+                <mat-paginator (page)="handlePageEvent($event)" [pageSizeOptions]="[10]" aria-label="Select page of users"></mat-paginator>             
+            </div>
+        </div>
+    </div>
+</div>

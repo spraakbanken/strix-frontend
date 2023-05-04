@@ -77,6 +77,25 @@
                       <button class="closeButton" mat-button (click)="removeAllFilter(filterDataBasic[i]['id'])">{{ 'selectNone' | loc }}</button>
                     </div> -->
                     <div class="text_annotations_list" style="display: grid;">
+                      <div style="overflow: auto;">
+                        <div class="exclude-option" style="padding: 10px 10px 10px 15px;">
+                          <i-bs title="Exclude" style="color: red;" name="x-square-fill" width="20" height="20"></i-bs>
+                        </div>
+                        <div class="include-option" style="padding: 10px 10px 10px 15px;">
+                          <i-bs title="Include" style="color: green;" name="check-square-fill" width="20" height="20"></i-bs>
+                        </div>
+                        <div class="data-option" style="padding-right: 10px;">
+                          <button class="closeButtonX" mat-button (click)="sortName(filterDataBasic[i]['id'])" style="margin-left: 30px;">
+                            <span>{{ 'name' | loc }}</span>
+                            <i-bs style="margin-left: 4px;" name="arrow-down-up" width="16" height="16"></i-bs>
+                          </button>
+                          <button class="closeButtonX" mat-button (click)="sortCount(filterDataBasic[i]['id'])" style="float: right">
+                            <span>{{ 'frequency' | loc }}</span>
+                            <i-bs style="margin-left: 4px;" name="arrow-down-up" width="16" height="16"></i-bs>
+                          </button>
+                        </div>
+                      </div>
+                      
                       <!-- <div style="width: 100%; float:left;">
                         <button class="closeButtonX" mat-button (click)="sortName(filterDataBasic[i]['id'])" style="margin-left: 40px;">
                           <span>{{ 'name' | loc }}</span>
