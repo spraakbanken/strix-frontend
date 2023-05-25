@@ -10,7 +10,7 @@
     border-radius: 0.35rem;
     padding: 0px 10px 4px 10px;
     min-height: 70vh;
-    height: 600px;
+    height: auto;
     
   }
 
@@ -31,6 +31,32 @@
     font-size: small;
   }
   
-  td, th {
-    width: auto;
+  /* td, th {
+    width: 300px;
+  } */
+
+  td.mat-column-star {
+    width: 20px;
+    padding-right: 8px;
+  }
+  
+  th.mat-column-position, td.mat-column-position {
+    padding-left: 8px;
+  }
+  
+  .mat-mdc-table-sticky-border-elem-right {
+    border-left: 1px solid #e0e0e0;
+  }
+  
+  .mat-mdc-table-sticky-border-elem-left {
+    border-right: 1px solid #e0e0e0;
+  }
+
+  .mat-elevation-z8 {
+    box-shadow: none;
+  }
+
+  ::ng-deep .mat-list-text {
+    overflow: visible !important;
+    font-size: 12px !important;
   }

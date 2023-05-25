@@ -109,7 +109,6 @@ export class ModeselectionComponent implements OnInit {
 
   private updateFilters() {
     this.store.dispatch({ type: MODE_SELECTED, payload : this.modeItem});
-    // this.store.dispatch({ type: SELECTED_CORPORA, payload : this.modeItem.corpuses})
     // this.store.dispatch({ type: SEARCH, payload : null});
   }
 

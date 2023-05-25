@@ -107,13 +107,14 @@ h5 {
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
   /*font-family: Nunito, arial !important;*/
-  height: 100% !important;
-  /* height: 600px !important; */
+  /* height: 100% !important; */
+  height: 700px !important;
   /* width: 800px; */
 }
 
 .CodeMirror {
-  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  font-family: Roboto,Helvetica Neue,sans-serif;
+  /* font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif; */
   /* font-size: small; */ 
   }
 

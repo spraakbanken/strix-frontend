@@ -108,7 +108,7 @@
 
 .dropDownTree {
   background-color: white; 
-  width: 498px; 
+  width: 560px; 
   /* max-height: 800px;  */
   overflow: scroll; 
   /* position: absolute;  */
@@ -153,7 +153,7 @@
 }
 
 .closeButton {
-  padding: 0px 12px 0px 12px;
+  padding: 0px 22px 0px 22px;
   font-size: small;
   font-weight: 400;
   background-color: lightblue;
@@ -219,7 +219,7 @@
   }
 
   ::ng-deep .yearFilter .ngx-slider {
-    width: 81%;
+    width: 79%;
     height: 10px;
-    margin: 0px 0px 0px 68px;
+    margin: 0px 0px 0px 89px;
   }

@@ -91,22 +91,12 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="row" style="padding-top: 10px;">
-              <div class="col-xl-2">
-                <div class="font-weight-ligh">Most common words:</div>
-              </div>
-              <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
-                <span class="mostCommonWords" *ngFor="let item of doc.most_common_words.split(' ') | slice:0:10; let i = index;">
-                  <i>{{item}}</i>
-                </span>
-              </div>
-            </div> -->
+            
             <div class="row">
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'related_documents' | loc }}:</div>
               </div>
               <div class="col-xl-9" style="display: flex;">
-                <!-- <img src="assets/similarDocument.png" width="20" height="20" (click)="addTab(i)"/> -->
                 <button class="closeButton" mat-button (click)="addTab(i, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length > 3">{{ (availableCorpora[doc.corpus_id].name | loc).split(' ').splice(0,3).join(' ') }}...<mat-icon style="font-size: 20px;">tab</mat-icon></button>
                 <button class="closeButton" mat-button (click)="addTab(i, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length <= 3">{{ (availableCorpora[doc.corpus_id].name | loc) }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
                 <button class="closeButton" mat-button (click)="addTab(i, 'currentMode')">{{ availableCorpora[doc.corpus_id].mode | loc }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
@@ -118,8 +108,9 @@
               </div>
               <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                 <span *ngFor="let item of doc.most_common_words.split(', ') | slice:0:10; let i = index;">
-                  <i *ngIf="i < 9" style="padding-right: 10px;">{{item}},</i>
+                  <i *ngIf="i < doc.most_common_words.split(', ').length-1 && i < 9" style="padding-right: 10px;">{{item}},</i>
                   <i *ngIf="i == 9">{{item}}</i>
+                  <i *ngIf="i == doc.most_common_words.split(', ').length-1 && i < 10">{{item}}</i>
                 </span>
               </div>
             </div>
@@ -129,8 +120,9 @@
               </div>
               <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
                 <span *ngFor="let item of doc.ner_tags.split(', ') | slice:0:5; let i = index;">
-                  <i *ngIf="i < 4" style="padding-right: 10px;">{{item}},</i>
+                  <i *ngIf="i < doc.ner_tags.split(', ').length-1 && i < 4" style="padding-right: 10px;">{{item}},</i>
                   <i *ngIf="i == 4">{{item}}</i>
+                  <i *ngIf="i == doc.ner_tags.split(', ').length-1 && i < 5">{{item}}</i>
                 </span>
               </div>
             </div>
@@ -147,11 +139,6 @@
   </div>
 </div>
 <div class="filterSide">
-  <!-- <div class="searchBox">
-    <div class="viewRight">
-      <span><b>{{ 'text_attributes' | loc }}</b></span>
-    </div>
-  </div> -->
   <filterdata></filterdata>
 </div>
 </div>

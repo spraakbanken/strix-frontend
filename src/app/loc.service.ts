@@ -109,6 +109,8 @@ export class LocService {
       'doc_stat': 'Statistikvy',
       'item': 'Item',
       'doc_view': 'Dokumentvy',
+      'recent_updates': 'Senaste uppdateringar',
+      'upcoming_updates': 'Kommande uppdateringar',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -197,6 +199,8 @@ export class LocService {
       'doc_stat': 'Statistics view',
       'item': 'Item',
       'doc_view': 'Document view',
+      'recent_updates': 'Recent updates',
+      'upcoming_updates': ' Upcoming updates',
     }
   };
 

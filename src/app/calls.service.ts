@@ -293,6 +293,14 @@ export class CallsService {
     );
   }
 
+  public getInfoStrix() {
+    let params: any = {};
+
+    return this.get<any>('infoStrix', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   public getModeStatistics(corpora: string[], modes: string[]): Observable<any> {
     let params: any = {};
 

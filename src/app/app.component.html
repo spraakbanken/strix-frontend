@@ -4,7 +4,26 @@
       <modeselection></modeselection>
     </div>
     <div class="topRight">
-      <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: baseline;">
+      <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: end;">
+        <!-- <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" id="navbarDropdownInfo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;">
+            <mat-icon style="height: 20px; width: 20px;">notifications</mat-icon>
+          </a>
+          <div class="dropdown-menu" aria-labelledby="navbarDropdownInfo" style="width: 400px;">
+            <h6 style="padding: 10px;">Strix information center</h6>
+            <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
+              <div class="col-xl-12" style="display: inline-grid;">
+                <span *ngFor="let item of getStrixInfo | keyvalue">
+                  <span>{{item.key | loc}}</span>
+                  <ul>
+                    <li *ngFor="let x of item.value | keyvalue">{{x.value | loc}}
+                    </li>
+                  </ul>
+                </span>
+              </div>
+            </div>
+          </div>
+        </li> -->
         <li class="nav-item"><a (click)="loginStatus === 'login' ? gotoLogin() : gotoLogout()">{{ loginStatus | loc}}</a></li>
         <!-- <li class="nav-item"><a style="padding-left: 10px;" (click)="gotoLogout()">{{'logout' | loc}}</a></li> -->
         <li class="nav-item"><a [style.color]="this.selectSwe ? 'blue' : 'black'" (click)="changeLanguageTo('swe')">{{getLangchange('swe')}}</a></li>
@@ -23,10 +42,10 @@
     </div>
   </nav>
   <div class="topnav row">
-    <div class="strixLogo col-3" title="Strix SB" (click)="reloadStrix()">
-      <img width="90" src="assets/strix_logo.png"/>
+    <div class="strixLogo col-2 col-md-2" title="Strix SB" (click)="reloadStrix()">
+      <img width="100" src="assets/strixv2.png"/>
     </div>
-    <div class="col-md-5" style="padding: 34px 0px 10px 50px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
+    <div class="col-md-6" style="padding: 34px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
     </div>
     <div class="d-none d-lg-block col-lg-4" style="height: inherit; margin-left: auto; margin-right: 0; padding: 20px 0px 0px 0px;"> <!--padding-right: 8px;-->

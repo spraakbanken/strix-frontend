@@ -118,11 +118,6 @@ export class DocumentStatisticComponent implements OnInit {
     });
   }
 
-//   ngAfterViewInit() {
-//     this.dataSource.paginator = this.paginator;
-//     this.dataSource.sort = this.sort;
-//   }
-
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.dataSource.filter = filterValue.trim().toLowerCase();
@@ -137,7 +132,6 @@ export class DocumentStatisticComponent implements OnInit {
     this.wordAnnotations = this.metadataService.getWordAnnotationsFor(corpusID);
     this.structuralAnnotations = this.metadataService.getStructuralAnnotationsFor(corpusID);
     this.structuralAnnotations = this.structuralAnnotations.filter(item => !["page", "sentence"].includes(item.name))
-    // console.log("this.structuralAnnotations", this.structuralAnnotations);
   }
 
   private selectAnnotation(annotation: string, structure: string = null) {
@@ -154,7 +148,6 @@ export class DocumentStatisticComponent implements OnInit {
         let values = answer.aggregations[augAnnotation].buckets;
         this.annotationValues = values;
         newData = this.annotationValues;
-        // console.log("newData", newData, this.annotationValues);
       },
       error => this.errorMessage = <any>error
     );
@@ -172,7 +165,6 @@ export class DocumentStatisticComponent implements OnInit {
     .subscribe(
       answer => {
         let values = answer.aggregations[augAnnotation].buckets;
-        // this.annotationValues = values;
         newData = values;
         this.dataSource = new MatTableDataSource(newData);
         this.elementList = _.map(newData, 'key')

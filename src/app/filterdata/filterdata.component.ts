@@ -24,7 +24,8 @@ export class FilterdataComponent implements OnInit {
   public modeSelected = ''; 
   public searchText = '';
   public searchTextX = '';
-  public resultFacet = {};
+  public resultFacet = [];
+  public facetList = {};
   public selectedCorpus = [];
   public selectedFilters = [];
   public selectedFiltersX = [];
@@ -145,12 +146,24 @@ export class FilterdataComponent implements OnInit {
       this.collectControl = new FormArray([]);
       this.collectX = [];
       this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
-        this.resultFacet = result.list_facet
+        let resultFacets = result.list_facet;
+        this.facetList = result.list_facet;
+        let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+        'topic_author_signature', 'blingbring']
+        let tempNew = []
+        for (let i of tempOrder) {
+          if (_.keys(resultFacets).includes(i)) {
+            tempNew.push({'key':i, 'value':resultFacets[i]})
+          }
+        }
+        this.resultFacet = tempNew;
       });
       this.updatedData();
       setTimeout(() => {
-        this.store.dispatch( { type :  FACET_LIST, payload : this.resultFacet })
-        this.selectSearch('basicFilter');
+        this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
+        // this.selectSearch('basicFilter');
+        this.basicFacets["year"] = false;
+        this.defaultFacets();
       }, 2000);
     });
 
@@ -162,28 +175,9 @@ export class FilterdataComponent implements OnInit {
     );
   }
 
-  public onSearchText() {
-    let resultFacetX = {};
-    for (let key in this.basicFacets) {
-      if (key.includes(this.searchText)) {
-        resultFacetX[key] = this.basicFacets[key]
-      }
-    }
-    this.resultFacet = resultFacetX;
-  }
-
   public changeFilter(event) {
       this.selectFilter = event;
   }
-
-//   public onChange(event, aggsName){
-//     if (event.checked) {
-//       this.addAllFilter(aggsName)
-//     }
-//     if (!event.checked) {
-//       this.removeAllFilter(aggsName)
-//     }
-//  }
 
   public selectChange(event, negStatus, aggId, key) {
     if (event === 'jumptoRunFilter') {
@@ -293,15 +287,6 @@ export class FilterdataComponent implements OnInit {
         }
       }
     }
-    // for (let item = 0; item < this.filterDataAdvance.length; item++) {
-    //   for (let bucket of this.aggregations[this.filterDataAdvance[item]['id']].buckets) {
-    //     if (this.collectControlX.controls[item].value !== null && this.collectControlX.controls[item].value.length > 0 && this.collectControlX.controls[item].value.includes(bucket.key)) {
-    //       bucket.selected = true;
-    //       this.selectedFilters.push({'aggsName' : this.filterDataAdvance[item]['id'], 'key': bucket.key, 'filterID': 'advance', 'color': 'rgb(169, 222, 117)'})
-    //       this.negationStatus[bucket.key] = {'aggsName': this.filterDataBasic[item]['id'], 'status': 'exclude'}
-    //     }
-    //   }
-    // }
     this.updateFilters();
   }
 
@@ -408,15 +393,6 @@ export class FilterdataComponent implements OnInit {
     this.bucketsInMode = this.aggregations['corpus_id']['buckets'];
   }
 
-  // public removeAllFilter(aggsName) {
-  //   for (let item = 0; item < this.filterDataBasic.length; item++) {
-  //     if (this.filterDataBasic[item]['id'] === aggsName) {
-  //       this.collectControl.controls[item].setValue([]);
-  //     }
-  //   }
-  //   this.selectChange("change");
-  // }
-
   public sortName(aggsName) {
     for (let item = 0; item < this.filterDataBasic.length; item++) {
       if (this.filterDataBasic[item]['id'] === aggsName) {
@@ -445,19 +421,6 @@ export class FilterdataComponent implements OnInit {
       }
     }
   }
-
-  // public addAllFilter(aggsName) {
-  //   for (let item = 0; item < this.filterDataBasic.length; item++) {
-  //     if (this.filterDataBasic[item]['id'] === aggsName) {
-  //       const alterArray = [];
-  //       for (let i of this.filterDataBasic[item]['data'].buckets) {
-  //         alterArray.push(i.key)
-  //       }
-  //       this.collectControl.controls[item].setValue(alterArray);
-  //     }
-  //   }
-  //   this.selectChange("change");
-  // } 
 
   public switchFilter(aggsName, key, switchID) {
     if (switchID === 1 && this.negationStatus['aggsName'] === aggsName && this.negationStatus['status'] === 'include') {
@@ -510,20 +473,6 @@ export class FilterdataComponent implements OnInit {
     this.negationStatus = _.omit(this.negationStatus, key)
     this.selectChange("jumptoRunFilter", "exclude", aggsName, key);
   }
-
-  // public removeFilterX(aggsName, key, filterID) {
-  //   if (filterID === 'basic') {
-  //     for (let item = 0; item < this.filterDataAdvance.length; item++) {
-  //       if (this.filterDataAdvance[item]['id'] === aggsName) {
-  //         const alterArray = this.collectControlX.controls[item].value.filter((option) => {
-  //           return option != key;
-  //         });
-  //         this.collectControlX.controls[item].setValue(alterArray);
-  //       }
-  //     }
-  //   }
-  //   this.selectChange("change");
-  // }
 
   private updatedData() {
     for (let agg in this.aggregations) {
@@ -695,7 +644,7 @@ export class FilterdataComponent implements OnInit {
   private defaultFacets() {
     this.selectedOptions = [];
     for (let item of _.keys(this.basicFacets)) {
-      if (["blingbring", "year", "swefn"].includes(item)) {
+      if (["year"].includes(item)) {
         if (!this.basicFacets[item]) {
           if (this.updataFacet(item)) {
             this.chooseFacet(item);
@@ -725,7 +674,7 @@ export class FilterdataComponent implements OnInit {
       this.selectedTab = "basicFilter";
       if (!_.some(this.basicFacets)) {
         for (let key of this.aggregationKeys) {
-          if (["blingbring", "year", "swefn"].includes(key)) {
+          if (['year'].includes(key)) {
             this.basicFacets[key] = false;
             this.selectedOptions.push(key);
             if (this.updataFacet(key)) {

@@ -2,18 +2,17 @@
     <div class="row">
       <div class="col-xl-12" style="padding: 0px;">
         <button class="selectCorpus" mat-button (click)="selectSearch()">
-          <!-- {{ 'corpus_idS' | loc }} -->
-          <span style="display: inline-flex;">
+          <span style="display: inline-flex; width: 560px;">
             {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
             <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
           </span>
           </button>
       </div>
     </div>
-    <div class="openTreeView" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : 'inherit'">
+    <div class="openTreeView" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : '594px'">
       <div class="row">
         <div class="col-xl-6" style="width: 500px;">
-          <div style="height: 60px; width: 498px; background-color: transparent; padding: 12px 10px 0px 19px; margin-left: -15px; border-bottom: 1px solid #ddd;">
+          <div style="height: 60px; width: 550px; background-color: transparent; padding: 12px 10px 0px 18px; margin-left: -15px; border-bottom: 1px solid #ddd;">
             <button class="closeButton" mat-button (click)="checkAll()">{{ 'selectAll' | loc }}</button>
             <button class="closeButton" mat-button (click)="deselectAll()">{{ 'selectNone' | loc }}</button>
             <button class="closeButton" mat-button (click)="defaultSelection('dataRoot')">{{ 'default' | loc }}</button>
@@ -22,7 +21,7 @@
                 height="20">
   </i-bs></button>
           </div>
-          <div style="height: 165px; width: 498px; background-color: transparent; margin-left: -15px; border-bottom: 1px solid #ddd;" *ngIf="updateGraph">
+          <div style="height: 165px; width: 560px; background-color: transparent; margin-left: -15px; border-bottom: 1px solid #ddd;" *ngIf="updateGraph">
             <div style="display: block; padding-bottom: 0px; width: 90%; margin-left: 22px; height: 120px; margin-top:10px;">
               <canvas baseChart 
                 [datasets]="yearData[0].values"
@@ -44,7 +43,6 @@
               </div>
               
               <mat-form-field appearance="outline" style="width: 320px; padding-top: 20px;">
-                <!-- <mat-label>Filter</mat-label> -->
                 <input [(ngModel)]="inputText" matInput minlength="2" (keyup)="applyFilter($event.target['value'])" placeholder="" #input>
               </mat-form-field>
             </div>
@@ -68,7 +66,6 @@
                   <mat-checkbox style="padding-top: 8px;" [checked]="descendantsAllSelected(node)"
                                 [indeterminate]="descendantsPartiallySelected(node)"
                                 (change)="todoItemSelectionToggle(node)">{{folderData[node.item] | loc}} {{ "(" + countNode(node.item) + ")"}}</mat-checkbox>
-                  <!-- <button class="corpusInfo" mat-icon-button (click)="showDetails(node.item)"><mat-icon>info</mat-icon></button> -->
                 </mat-tree-node>
               </mat-tree>
             </div>
@@ -121,7 +118,6 @@
                 <ul style="padding-left: 10px; margin-bottom: 0px;" *ngFor="let item of this.showCorpusDetail.wordAttributes">
                   <li>{{ item.translation_name | loc }}</li>
                 </ul>
-                <!-- <a tabindex>{{this.showCorpusDetail.tokenInCorpora}}</a> -->
               </div>
             </div>
             <div class="row">
@@ -132,7 +128,6 @@
                 <ul style="padding-left: 10px; margin-bottom: 0px;" *ngFor="let item of this.showCorpusDetail.textAttributes">
                   <li>{{ item.translation_name | loc }}</li>
                 </ul>
-                <!-- <a tabindex>{{this.showCorpusDetail.tokenInCorpora}}</a> -->
               </div>
             </div>
             <div class="row">
@@ -143,45 +138,10 @@
                 <ul style="padding-left: 10px; margin-bottom: 0px;" *ngFor="let item of this.showCorpusDetail.structAttributes">
                   <li>{{ item.translation_name | loc }}</li>
                 </ul>
-                <!-- <a tabindex>{{this.showCorpusDetail.tokenInCorpora}}</a> -->
               </div>
             </div>
           </div>
         </div>
       </div>
-     
-      <!-- </div> -->
-      <!-- <div class="row">
-        <div class="col-xl-12" style="height: 200px;" *ngIf="simpleSearch">
-        Hello
-        </div>
-        <div class="col-xl-6 dropDownTree" *ngIf="simpleSearch">
-          <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
-            <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
-              <button mat-icon-button disabled></button>
-              <mat-checkbox class="checklist-leaf-node"
-                            [checked]="checklistSelection.isSelected(node)"
-                            [disabled]="disableList[node.item]"
-                            (change)="todoLeafItemSelectionToggle(node)">{{node.item}}</mat-checkbox>
-                            <button class="corpusInfo" mat-icon-button (click)="showDetails()"><mat-icon>info</mat-icon></button>
-            </mat-tree-node>    
-            <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-              <button mat-icon-button matTreeNodeToggle
-                      [attr.aria-label]="'Toggle ' + node.item">
-                <mat-icon class="mat-icon-rtl-mirror">
-                  {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
-                </mat-icon>
-              </button>
-              <mat-checkbox style="padding-top: 8px;" [checked]="descendantsAllSelected(node)"
-                            [indeterminate]="descendantsPartiallySelected(node)"
-                            (change)="todoItemSelectionToggle(node)">{{node.item + " (" + countNode(node.item) + ")"}}</mat-checkbox>
-              <button class="corpusInfo" mat-icon-button (click)="showDetails()"><mat-icon>info</mat-icon></button>
-            </mat-tree-node>
-          </mat-tree>
-        </div>
-        <div class="col-xl-6" style="width: 500px;" *ngIf="showInformation">
-          Hello
-        </div>
-      </div> -->
     </div> 
 </div>

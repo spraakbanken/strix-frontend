@@ -29,21 +29,10 @@ export class TodoItemFlatNode {
   expandable: boolean;
 }
 
-/**
- * Checklist database, it can build a tree structured Json object.
- * Each node in Json object represents a to-do item or a category.
- * If a node is a category, it has children items and new items can be added under the category.
- */
-// @Injectable()
-// export class ChecklistDatabase {
-  
-// }
-
 @Component({
   selector: 'dataselection',
   templateUrl: 'dataselection.component.html',
   styleUrls: ['dataselection.component.css'],
-  // providers: [ChecklistDatabase]
 })
 export class DataselectionComponent implements OnInit {
 
@@ -331,8 +320,6 @@ export class DataselectionComponent implements OnInit {
           this.disableList[item] = this.availableCorpora[item].protectedX;
         }
       }
-      // this.treeData[selectedMode] = this.corpusesInMode;
-      // this.initialize(this.treeData);
       this.currentLang = data.lang;
       this.corpusDescription = {};
       for (let item in this.availableCorpora) {
@@ -344,12 +331,9 @@ export class DataselectionComponent implements OnInit {
             } else {
               this.treeData[this.availableCorpora[item].folderName] = [this.availableCorpora[item].corpusID];
             }
-            
-            // this.initialize(this.treeData);
           }
           else if (this.availableCorpora[item].folderName.length === 0) {
             this.treeData[this.availableCorpora[item].corpusID] = null;
-            // this.initialize(this.treeData);
           }
         }
         this.initialize(this.treeData);

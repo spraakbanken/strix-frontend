@@ -34,6 +34,7 @@ export class AppComponent {
   public openCompare = false;
   public loginStatus = "login";
   public getDocRunning = false;
+  public getStrixInfo = {};
 
   public languages: string[];
   public selectedLanguage: string;
@@ -52,6 +53,9 @@ export class AppComponent {
 
     this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
       this.selectedLanguage = data.lang;
+      // this.callsService.getInfoStrix().subscribe((infoStrix) => {
+      //   this.getStrixInfo = infoStrix;
+      // }); 
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
@@ -79,14 +83,6 @@ export class AppComponent {
       console.log("|closeDocumentCompare");
       this.openCompare = false;
     });
-
-    // this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
-    //   console.log("this.callsService", data.modeSelected, data.corporaInMode);
-    //   this.callsService.getModeStatistics(data.corporaInMode, data.modeSelected).subscribe((result) => {
-    //     this.dataInMode = result.aggregations;
-    //     console.log("--------", result);
-    //   });
-    // });
 
     this.languages = this.locService.getAvailableLanguages();
     // Get 3-letter correspondents of user's preferred languages.
