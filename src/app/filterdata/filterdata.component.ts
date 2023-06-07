@@ -120,7 +120,7 @@ export class FilterdataComponent implements OnInit {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGE_INCLUDE_FACET)).subscribe((data) => {
-      if (data.include_facets.length > 0) {
+      if (data.include_facets.length > 0 && this.selectedCorpus.length > 0) {
         this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets).subscribe((result) => {
           this.dataFromFacet = {};
           this.dataFromFacet  = result.aggregations;
@@ -145,26 +145,28 @@ export class FilterdataComponent implements OnInit {
       this.filterDataBasic = [];
       this.collectControl = new FormArray([]);
       this.collectX = [];
-      this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
-        let resultFacets = result.list_facet;
-        this.facetList = result.list_facet;
-        let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-        'topic_author_signature', 'blingbring']
-        let tempNew = []
-        for (let i of tempOrder) {
-          if (_.keys(resultFacets).includes(i)) {
-            tempNew.push({'key':i, 'value':resultFacets[i]})
+      if (this.selectedCorpus.length > 0) {
+        this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
+          let resultFacets = result.list_facet;
+          this.facetList = result.list_facet;
+          let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+          'topic_author_signature', 'blingbring', 'categories']
+          let tempNew = []
+          for (let i of tempOrder) {
+            if (_.keys(resultFacets).includes(i)) {
+              tempNew.push({'key':i, 'value':resultFacets[i]})
+            }
           }
-        }
-        this.resultFacet = tempNew;
-      });
-      this.updatedData();
-      setTimeout(() => {
-        this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
-        // this.selectSearch('basicFilter');
-        this.basicFacets["year"] = false;
-        this.defaultFacets();
-      }, 2000);
+          this.resultFacet = tempNew;
+        });
+        this.updatedData();
+        setTimeout(() => {
+          this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
+          // this.selectSearch('basicFilter');
+          this.basicFacets["year"] = false;
+          this.defaultFacets();
+        }, 2000);
+      }
     });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(

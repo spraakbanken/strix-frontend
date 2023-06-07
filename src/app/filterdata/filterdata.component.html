@@ -1,4 +1,4 @@
-<div class="left_column" *ngIf="!openDocument && gotMetadata">
+<div class="left_column" *ngIf="!openDocument && gotMetadata && selectedCorpus.length > 0">
     
     <div class="attributeArea" style="flex: 0 0 30%; max-width: 100%; width: 100%; margin: 0px;">
         <mat-accordion class="right_accordion" *ngIf="basicFilter">
@@ -12,8 +12,8 @@
                         </mat-expansion-panel-header>
                         <div class="extraInput" style="padding: 4px 4px 4px 4px; display: inline-table; height: 40px; width: 100%;" *ngIf="(basicFacets | keyvalue)?.length">
                           <button class="closeButtonX" mat-button style="margin-left: 10px;">{{ 'sidebar_text_attributes' | loc }}</button>
-                          <button style="float: right;" class="closeButton d-none d-lg-block" mat-button (click)="defaultFacets()">{{ 'default' | loc }}</button>
-                          <button style="float: right;" class="closeButton d-none d-lg-block" mat-button (click)="deselectFacets()">{{ 'selectNone' | loc }}</button>
+                          <button style="float: right;" class="closeButton d-none d-xl-block" mat-button (click)="defaultFacets()">{{ 'default' | loc }}</button>
+                          <button style="float: right;" class="closeButton d-none d-xl-block" mat-button (click)="deselectFacets()">{{ 'selectNone' | loc }}</button>
                         </div>
                         <div class="text_annotations_list">
                             <mat-selection-list [(ngModel)]="selectedOptions" (selectionChange)="selectFacet($event)" multiple  style="overflow-y: scroll; height: auto; max-height: 20.2vh; overflow-x: hidden;">

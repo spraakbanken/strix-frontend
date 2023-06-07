@@ -10,7 +10,7 @@
     border-radius: 0.35rem;
     padding: 0px 10px 4px 10px;
     min-height: 70vh;
-    height: 600px;
+    height: 800px;
     
   }
 
@@ -47,6 +47,15 @@
 
 ::ng-deep .box-container .mat-list-base {
     padding-top: 10px !important;
+}
+
+::ng-deep .box-container .mat-paginator-page-size {
+  justify-content: inherit;
+  margin-right: 16px;
+}
+
+::ng-deep .box-container .mat-list-text {
+  padding-right: 0px !important;
 }
 
 table {

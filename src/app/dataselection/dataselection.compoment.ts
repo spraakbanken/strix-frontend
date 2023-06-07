@@ -732,7 +732,7 @@ export class DataselectionComponent implements OnInit {
     if (XselectedCorpus.length > 0) {
       this.selectedCorpus = XselectedCorpus;
     } else {
-      this.selectedCorpus = this.corpusesInMode;
+      this.selectedCorpus = []; // this.corpusesInMode;
     }
     this.selectedCount = 0;
     if (inputString === 'deselectAll') {

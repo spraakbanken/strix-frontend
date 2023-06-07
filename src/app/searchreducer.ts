@@ -72,6 +72,7 @@ export interface SearchRedux {
   undefinedYear?: boolean;
   yearNA?: boolean;
   facet_list?;
+  emptySelection?: string;
 }
 
 
@@ -89,6 +90,7 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
     case INITIATE:
       console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload);
+      nextState.emptySelection = "";
       nextState.history = false;
       break;
     case CHANGEQUERY:

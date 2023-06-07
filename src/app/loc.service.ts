@@ -85,6 +85,7 @@ export class LocService {
       'add_filter' : 'Lägg till filter',
       'selected_filters' : 'Valda filter',
       'selected_corpora' : 'korpusar valda',
+      'selected_related' : 'Utvalda korpusar',
       'of' : 'av',
       'statSelection': "Statistik",
       'more' : 'Fler',
@@ -111,6 +112,8 @@ export class LocService {
       'doc_view': 'Dokumentvy',
       'recent_updates': 'Senaste uppdateringar',
       'upcoming_updates': 'Kommande uppdateringar',
+      'no_doc_found': 'Inga dokument hittades',
+      'select_corpus': 'Ingen korpus är vald',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -174,6 +177,7 @@ export class LocService {
       'add_filter' : 'Add filters',
       'selected_filters': 'Selected filters',
       'selected_corpora' : 'corpora selected',
+      'selected_related' : 'Selected corpora',
       'of' : 'of',
       'statSelection': "Statistics",
       'more' : 'More',
@@ -201,6 +205,8 @@ export class LocService {
       'doc_view': 'Document view',
       'recent_updates': 'Recent updates',
       'upcoming_updates': ' Upcoming updates',
+      'no_doc_found': 'No documents found',
+      'select_corpus': 'No corpus is selected',
     }
   };
 

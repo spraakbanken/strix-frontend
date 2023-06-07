@@ -448,11 +448,14 @@ export class CallsService {
   }
 
   /* Related documents */
-  public getSimilarDocuments(modeID: string, documentID: string, corpusID: string, relDoc: string): Observable<StrixDocument> {
+  public getSimilarDocuments(modeID: string, documentID: string, corpusID: string, corpora: string[], relDoc: string): Observable<StrixDocument> {
     let params: any = {
       exclude : 'token_lookup,dump,lines',
     };
     params.relatedDocSelection = relDoc;
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
     // params.text_filter = this.formatFilterObject([{field: "mode_id", value: modeID}]);
     return this.get<StrixDocument>(`similar/${modeID}/${corpusID}/${documentID}`, params).pipe(
       catchError(this.handleError)

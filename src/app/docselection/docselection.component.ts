@@ -9,7 +9,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, SearchRedux,
-   CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR } from '../searchreducer';
+   CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR, SELECTED_CORPORA } from '../searchreducer';
 import { SearchResult, AggregationsResult } from '../strixresult.model';
 import { filter } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
@@ -35,6 +35,8 @@ export class DocselectionComponent implements OnInit {
   private itemsPerPage: number = 10;
   public selectStatOption = 'Most common words';
   public statisticsView = 'graph';
+  public zeroSelectDoc = '';
+  public currentState = 0;
   pageEvent: PageEvent;
 
   private documentsWithHits: StrixDocument[] = [];//StrixDocHit[] = [];
@@ -48,6 +50,7 @@ export class DocselectionComponent implements OnInit {
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   private checkedCorpora: any = {};
   private newModeData: any = {};
+  public selectedCorpora: string[];
 
   public show = true;
   public showData = true;
@@ -135,6 +138,22 @@ export class DocselectionComponent implements OnInit {
           this.availableCorpora = {}; // TODO: Show some error message
         }
     });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
+      this.currentState = 0;
+    })
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+      this.selectedCorpora = data.selectedCorpora;
+      if (data.selectedCorpora.length > 0) {
+        this.zeroSelectDoc = "not empty";
+        this.currentState = this.currentState + 1;
+        this.hasSearched = false;
+      } else {
+        this.zeroSelectDoc = "empty";
+        this.currentState = this.currentState + 1;
+      }
+    })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG)).subscribe((data) => {
       // this.paginator._intl.itemsPerPageLabel = this.locService.getTranslationFor('docPs')
@@ -289,7 +308,8 @@ export class DocselectionComponent implements OnInit {
     this.appComponent.listTabs.push(doc.title.split(' ').slice(0,2).join(' ')+'...'); // ('DocSim-' + docIndex);
     this.appComponent.selectedTab.setValue(this.appComponent.listTabs.length - 1);
     this.appComponent.similarParam = doc;
-    this.appComponent.relatedDocType = docType
+    this.appComponent.relatedDocType = docType;
+    this.appComponent.currentSelection = this.selectedCorpora;
   }
 
   public setNewOptions(newCeil: number, newFloor: number, optionName: string): void {
@@ -334,7 +354,8 @@ export class DocselectionComponent implements OnInit {
       this.queryService.aggregationResult$,
       this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)),
     ).subscribe(([result, data] : [AggregationsResult, any]) => {
-      this.setPaginatorPage(data.page) 
+      this.setPaginatorPage(data.page);
+      this.zeroSelectDoc = data.emptySelection;
     });
   }
 }

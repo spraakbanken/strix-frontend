@@ -1,8 +1,14 @@
 <div class="box-container">
-    <div class="row" style="min-height: inherit;">
-        <div class="col-md-2 scrollData" style="padding-left: 4px; border-right: 1px solid #ddd;">
+    <div *ngIf="showMessage" style="padding: 20px; font-size: 14px;">
+        <span><b style="color:red">Note: </b><i>{{ showMessage }}</i></span>
+        <!-- <ul style="padding: 20px 20px 20px 50px;">
+            <li *ngFor="let item of excludeList"><i>{{ item | loc }}</i></li>
+        </ul> -->
+    </div>
+    <div class="row" style="min-height: inherit;" *ngIf="!showMessage">
+        <div class="col-md-2 scrollData" style="padding-left: 20px; border-right: 1px solid #ddd;">
             <mat-selection-list #wordAnno [multiple]="false">
-                <mat-list-option *ngFor="let item of currentFacets | keyvalue" [value]="item.key" (click)="getFacetData(item.key)">
+                <mat-list-option *ngFor="let item of currentFacets" [value]="item.key" (click)="getFacetData(item.key)">
                     {{ item.key | loc }}
                 </mat-list-option>
             </mat-selection-list>
@@ -25,8 +31,7 @@
                     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
                 </table>
             </section>
-            
-            <mat-paginator (page)="handlePageEvent($event)" [pageSizeOptions]="[10]" aria-label="Select page of users"></mat-paginator>             
+            <mat-paginator (page)="handlePageEvent($event)" [pageSizeOptions]="[10]" aria-label="Select page of users"></mat-paginator>     
         </div>
     </div>
 </div>

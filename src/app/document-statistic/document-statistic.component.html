@@ -1,18 +1,18 @@
 <div class="box-container">
     <div class="row" style="min-height: inherit;">
-        <div class="col-xl-12" style="display: inline-flex;">
-            <div class="col-xl-2 scrollData" style="padding-left: 4px; border-right: 1px solid #ddd;">
+        <div class="col-md-12" style="display: inline-flex;">
+            <div class="col-md-2 scrollData" style="padding-left: 4px; border-right: 1px solid #ddd;">
                 <mat-selection-list #wordAnno [multiple]="false">
                     <mat-list-option *ngFor="let item of wordAnnotations" [value]="item.name" (click)="getName(item.name)">
                         {{ item.name | loc }}
                     </mat-list-option>
                 </mat-selection-list>
             </div>
-            <div class="col-xl-10" style="display: block; padding-top: 12px; padding-right: 4px;">
+            <div class="col-md-10" style="display: block; padding-top: 12px; padding-right: 4px;">
                 <div style="height: 50px; border: 1px solid #ddd; width: 100%; border-radius: 10px; background: cadetblue; padding: 15px;">
                     <span>{{ getTheName | loc }}</span>
                 </div>
-                <div style="width: 50%; padding-top: 35px; float: left;">
+                <div class="d-none d-md-block" style="width: 50%; padding-top: 35px; float: left;">
                     <canvas baseChart 
                         [datasets]="countList"
                         [labels]="elementList"
@@ -25,7 +25,7 @@
                         <span>{{ getTheName | loc }}</span>
                     </div>
                 </div>
-                <div style="width: 50%; float: right; display: block; padding-left: 10px; padding-right: 40px;" [style.padding-top]="(getDataLength > 5)?'10px':'10px'">
+                <div style="width: 50%; float: left; display: block; padding-left: 10px; padding-right: 40px; min-width: max-content;" [style.padding-top]="(getDataLength > 5)?'10px':'10px'">
                     <mat-form-field style="width: 100%">
                         <mat-label>Filter</mat-label>
                         <input matInput (keyup)="applyFilter($event)" placeholder="" #input>

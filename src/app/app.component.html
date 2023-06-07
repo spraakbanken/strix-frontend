@@ -45,10 +45,10 @@
     <div class="strixLogo col-2 col-md-2" title="Strix SB" (click)="reloadStrix()">
       <img width="100" src="assets/strixv2.png"/>
     </div>
-    <div class="col-md-6" style="padding: 34px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
+    <div class="d-none d-md-block col-md-6" style="padding: 34px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
     </div>
-    <div class="d-none d-lg-block col-lg-4" style="height: inherit; margin-left: auto; margin-right: 0; padding: 20px 0px 0px 0px;"> <!--padding-right: 8px;-->
+    <div class="d-none d-xl-block col-xl-4" style="height: inherit; margin-left: auto; margin-right: 0; padding: 20px 0px 0px 0px;"> <!--padding-right: 8px;-->
       <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 35px 0px 0px 10px; float: right;"><img width="20" src="assets/guLogo.png" alt=""></a>
       <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 9px 0px 10px; float: right;"><img width="40" src="assets/sweClarin.png" alt=""></a>
       <a title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 0px 0px 0px; float: right;"><img width="240" src="assets/sbText.svg" alt=""></a>
@@ -62,7 +62,7 @@
     <mat-tab *ngFor="let tab of listTabs; let index = index" [label]="tab + index">
       <ng-template mat-tab-label>
         <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
-        <div class="col" *ngIf="tab === 'Statistic'">{{'statSelection' | loc}}</div>
+        <div class="col" *ngIf="tab === 'Statistic' && selectedCorpus.length > 0">{{'statSelection' | loc}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">{{tab}}</div>
         <button *ngIf="tab !== 'Hits' && tab !== 'Statistic'" style="color:black" mat-icon-button (click)="removeTab(index)">
           <mat-icon>close</mat-icon>
@@ -85,7 +85,7 @@
         </div>
       </div>
       <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">
-        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" style="padding: 4px 15px 0px 15px;"></similardocs>       
+        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" [currentSelection]="currentSelection" style="padding: 4px 15px 0px 15px;"></similardocs>       
       </div>
     </mat-tab>
   </mat-tab-group>

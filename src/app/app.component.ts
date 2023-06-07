@@ -10,7 +10,7 @@ import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
         AppState, SearchRedux,
-        OPENCOMPAREDOC, CLOSECOMPAREDOC, 
+        OPENCOMPAREDOC, CLOSECOMPAREDOC, SELECTED_CORPORA, 
       } from './searchreducer';
 
 @Component({
@@ -24,6 +24,7 @@ export class AppComponent {
   public selectedTab = new FormControl(0);
   public similarParam: any;
   public relatedDocType: string;
+  public currentSelection: string[];
   
   private searchRedux: Observable<SearchRedux>;
   public openDocument = false;
@@ -35,6 +36,7 @@ export class AppComponent {
   public loginStatus = "login";
   public getDocRunning = false;
   public getStrixInfo = {};
+  public selectedCorpus = [];
 
   public languages: string[];
   public selectedLanguage: string;
@@ -57,6 +59,10 @@ export class AppComponent {
       //   this.getStrixInfo = infoStrix;
       // }); 
     });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+      this.selectedCorpus = data.selectedCorpora;
+    })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       console.log("|openDocument");

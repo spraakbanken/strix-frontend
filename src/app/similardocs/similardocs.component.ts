@@ -11,9 +11,10 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from 'app/loc.service';
-import { OPENDOCUMENT } from '../searchreducer';
+import { OPENDOCUMENT, AppState } from '../searchreducer';
 import { Store } from '@ngrx/store';
 import { AppComponent } from '../app.component';
+import { SearchRedux } from '../searchreducer';
 
 @Component({
   selector: 'similardocs',
@@ -26,7 +27,9 @@ export class SimilarDocsComponent implements OnInit{
   @Input() data: any;
   @Input() relatedDocSelection: string;
   public similarDocs: StrixDocument[] = [];
+  @Input() currentSelection: string[];
 
+  private searchRedux: Observable<SearchRedux>;
   public filteredData: Observable<any>;
   public filteredDataNew: any;
 
@@ -131,7 +134,7 @@ export class SimilarDocsComponent implements OnInit{
 
   constructor(private callsService: CallsService, 
     private metadataService: MetadataService, private locService: LocService,
-    private store: Store, private appComponent: AppComponent) {
+    private store: Store<AppState>, private appComponent: AppComponent) {
     this.metadataSubscription = metadataService.loadedMetadata$.subscribe(
       wasSuccess => {
         
@@ -142,11 +145,13 @@ export class SimilarDocsComponent implements OnInit{
           this.availableCorpora = {}; // TODO: Show some error message
         }
     });
+
+    this.searchRedux = this.store.select('searchRedux');
   }
   
 
-  public getSimilarDocuments(docIndex: any, relatedDoc: string) {
-    this.callsService.getSimilarDocuments(docIndex.mode_id, docIndex.doc_id, docIndex.corpus_id, relatedDoc).subscribe(
+  public getSimilarDocuments(docIndex: any, relatedDoc: string, currentS: string[]) {
+    this.callsService.getSimilarDocuments(docIndex.mode_id, docIndex.doc_id, docIndex.corpus_id, currentS, relatedDoc).subscribe(
         answer => {
           this.similarDocs = answer["data"];
           let tempData = [];
@@ -276,7 +281,7 @@ export class SimilarDocsComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.availableCorpora = this.metadataService.getAvailableCorpora();
-    this.getSimilarDocuments(this.data, this.relatedDocSelection);
+    this.getSimilarDocuments(this.data, this.relatedDocSelection, this.currentSelection);
   }
 }
 

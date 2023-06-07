@@ -36,6 +36,8 @@ export class DocstatisticComponent implements OnInit {
     public modeSelected = '';
     public currentSelection = "lemgram";
     public labelList: string[];
+    public showMessage = '';
+    public excludeList: string[];
 
     constructor(private store: Store<AppState>, private callsService: CallsService, public _MatPaginatorIntl: MatPaginatorIntl,) {
 
@@ -45,14 +47,25 @@ export class DocstatisticComponent implements OnInit {
         this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
             this.selectedCorpus = data.selectedCorpora;
             this.modeSelected = data.modeSelected[0];
-            this.getFacetData('year');
+            if (this.selectedCorpus.length > 0) {
+                this.getFacetData('year');
+            }
         })
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
         this.currentFacets = data.facet_list;
         this.currentFacets = _.pick(
             this.currentFacets, 
             ['year', 'party_name', 'blingbring', 'swefn', 'topic_topic_name', 'type', 'author', 
-            'topic_author_signature', 'newspaper'])
+            'topic_author_signature', 'newspaper', 'categories'])
+        let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+            'topic_author_signature', 'blingbring', 'categories']
+        let tempNew = []
+        for (let i of tempOrder) {
+          if (_.keys(this.currentFacets).includes(i)) {
+            tempNew.push({'key': i})
+          }
+        }
+        this.currentFacets = tempNew;
         this.selectedCorpus = data.selectedCorpora;
         this.modeSelected = data.modeSelected[0];
         });
@@ -75,7 +88,14 @@ export class DocstatisticComponent implements OnInit {
         for (let i of this.labelList) {
             listAttr.push(i['key'])
         }
-        this.callsService.getDataforFacet(this.selectedCorpus, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber,endNumber)).subscribe((result) => {
+        if (_.intersection(this.selectedCorpus, ['rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv']).length > 0) {
+            this.showMessage = 'Currently the data selection exceed 65k documents limit which is the reason statistics is disabled.\n This functionality will be fixed in the next updates.'
+            this.excludeList = _.intersection(this.selectedCorpus, ['rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv'])
+        } else {
+            this.showMessage = '';
+        }
+        let selectedCorpusIn = _.without(this.selectedCorpus, 'rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv')
+        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber,endNumber)).subscribe((result) => {
             let tempData = result.aggregations;
             let tempNew = [];
             let tempDict = {};
@@ -113,10 +133,12 @@ export class DocstatisticComponent implements OnInit {
         this.displayedColumns.push('item')
         let xList = ['corpus_id'];
         xList.push(item)
-        this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList).subscribe((result) => {
-            this.labelList = result.aggregations[item].buckets;
-            this.getTable(0, 10)
-          });
+        if (this.selectedCorpus.length > 0) {
+            this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList).subscribe((result) => {
+                this.labelList = result.aggregations[item].buckets;
+                this.getTable(0, 10)
+            });
+        }   
     }
   ngOnInit() {
   }
