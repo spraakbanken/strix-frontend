@@ -130,7 +130,7 @@ h5 {
 }
 
 .CodeMirror-sizer {
-  width: 941px;
+  width: 941px; /* width: 755px; for bg, 666px for mac 13, parallel, previous width: 941px*/
 }
 
 em {

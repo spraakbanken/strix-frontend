@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import * as _ from 'lodash';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -11,6 +11,9 @@ import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
 import { ChartOptions, ChartType } from 'chart.js';
+import { Store } from '@ngrx/store';
+import { CLOSEDOCUMENT, AppState, SearchRedux } from 'app/searchreducer';
+import { filter } from 'rxjs/operators';
 
 
 export interface WordData {
@@ -35,10 +38,11 @@ export class DocumentStatisticComponent implements OnInit {
   private mainDocument: StrixDocument;
 
   /* Metadata */
-  private gotMetadata = false;
-  private metadataSubscription: Subscription;
-  private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
+  // private gotMetadata = false;
+  // private metadataSubscription: Subscription;
+  // private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   public wordAnnotations = [];
+  public selectedOptions : String[];
   public elementList = [];
   public countList = [];
   public selectedAnnotation: string;
@@ -49,6 +53,10 @@ export class DocumentStatisticComponent implements OnInit {
   private currentDocumentID: string;
   public getTheName = "lemgram";
   public getDataLength : Number;
+  public docSize : number;
+  public chartData = [];
+  public chartLength = 0;
+  private searchRedux: Observable<SearchRedux>;
 
   private errorMessage;
 
@@ -101,9 +109,17 @@ export class DocumentStatisticComponent implements OnInit {
               private metadataService: MetadataService,
               private callsService: CallsService,
               public _MatPaginatorIntl: MatPaginatorIntl,
-              private locService: LocService) {
-                this.dataSource = new MatTableDataSource([]);
-               }
+              private locService: LocService, 
+              private store: Store<AppState>) {
+    this.dataSource = new MatTableDataSource([]);
+
+    this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+      this.chartLength = 0;
+    });
+
+    }
 
   ngOnInit() {
     this.subscription = this.documentsService.loadedDocument$.subscribe(
@@ -113,7 +129,10 @@ export class DocumentStatisticComponent implements OnInit {
 
         this.currentCorpusID = this.mainDocument.corpusID;
         this.currentDocumentID = this.mainDocument.doc_id;
+        this.docSize = this.mainDocument.word_count;
+        this.wordAnnotations = [];
         this.updateAnnotationsLists(this.currentCorpusID);
+        this.selectedOptions = [];
         this.getName("lemgram");
     });
   }
@@ -157,6 +176,7 @@ export class DocumentStatisticComponent implements OnInit {
   }
 
   public getName(name: string) {
+    this.selectedOptions = [name]
     this.getTheName = name;
     let augAnnotation = name;
     let newData = [];
@@ -174,6 +194,17 @@ export class DocumentStatisticComponent implements OnInit {
         this.dataSource.sort = this.sort;
       },
       error => this.errorMessage = <any>error
+    );
+  }
+
+  public getData(item: string) {
+    this.callsService.getFullTokenDataFromDocument(this.currentDocumentID, this.currentCorpusID, 0, this.docSize, this.getTheName, item)
+    .subscribe(
+      answer => {
+        this.chartData = [];
+        this.chartData = answer['data']
+        this.chartLength = this.chartData['children'][0]['children'].length
+      }
     );
   }
 }

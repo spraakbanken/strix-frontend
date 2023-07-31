@@ -7,10 +7,8 @@ export const CHANGEFILTERS = "CHANGEFILTERS";
 export const CHANGE_INCLUDE_FACET = "CHANGE_INCLUDE_FACET";
 export const CHANGEPAGE = "CHANGEPAGE";
 export const OPENDOCUMENT = "OPENDOCUMENT";
-export const OPENCOMPAREDOC = "OPENCOMPAREDOC";
 export const OPENDOCUMENT_NOHISTORY = "OPENDOCUMENT_NOHISTORY";
 export const CLOSEDOCUMENT = "CLOSEDOCUMENT";
-export const CLOSECOMPAREDOC = "CLOSECOMPAREDOC";
 export const CLOSEDOCUMENT_NOHISTORY = "CLOSEDOCUMENT_NOHISTORY";
 export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
@@ -45,8 +43,6 @@ export interface AppState {
 export interface SearchRedux {
   documentCorpus?: string;
   documentID?: string;
-  documentCorpusC?: string;
-  documentIDC?: string;
   filters?;
   include_facets?: string[];
   keyword_search?;
@@ -131,10 +127,6 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       nextState.documentID = action.payload.doc_id;
       nextState.documentCorpus = action.payload.corpus_id;
       break;
-    case OPENCOMPAREDOC:
-      nextState.documentIDC = action.payload.doc_id;
-      nextState.documentCorpusC = action.payload.corpus_id;
-      break;
     case OPENDOCUMENT_NOHISTORY:
       nextState.documentID = action.payload.doc_id;
       nextState.documentCorpus = action.payload.corpus_id;
@@ -146,12 +138,6 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       nextState.documentCorpus = null;
       nextState.localQuery = null;
       nextState.sentenceID = null;
-      break;
-    case CLOSECOMPAREDOC:
-      nextState.documentIDC = null;
-      nextState.documentCorpusC = null;
-      // nextState.localQuery = null;
-      // nextState.sentenceID = null;
       break;
     case CLOSEDOCUMENT_NOHISTORY:
       nextState.documentID = null;

@@ -4,7 +4,7 @@ import { Store } from '@ngrx/store';
 
 import { QueryService } from '../query.service';
 import { DocumentsService } from '../documents.service';
-import { OPENDOCUMENT, OPENCOMPAREDOC, CLOSECOMPAREDOC, RELOAD, SEARCH, AppState } from '../searchreducer';
+import { OPENDOCUMENT, RELOAD, SEARCH, AppState } from '../searchreducer';
 import { StrixDocument } from '../strixdocument.model';
 import { filter } from 'rxjs/operators';
 
@@ -50,17 +50,6 @@ export class MinidocselectionComponent implements OnInit, OnDestroy {
   public openDocument(docIndex: number) {
     let doc = this.documentsWithHits[docIndex];
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
-  }
-
-  public openCompareBox() {
-    this.isCompare = true;
-    this.store.dispatch({type : OPENCOMPAREDOC, payload : ''});
-  }
-
-  public closeDocumentCompare() {
-    this.store.dispatch({type: CLOSECOMPAREDOC, payload : ""});
-    // this.documentsService.closeMainDocumentCompare();
-    this.isCompare = false;
   }
 
   ngOnInit() {

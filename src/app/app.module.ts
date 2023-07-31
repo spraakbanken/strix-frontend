@@ -102,6 +102,7 @@ import { NgChartsModule } from 'ng2-charts';
 import { FilterdataComponent } from './filterdata/filterdata.component';
 import { DocumentStatisticComponent } from './document-statistic/document-statistic.component';
 import { DocstatisticComponent } from './docstatistic/docstatistic.component';
+import { CircleViewComponent } from './circleview/circleview.component';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -137,6 +138,7 @@ import { DocstatisticComponent } from './docstatistic/docstatistic.component';
     FilterdataComponent,
     DocumentStatisticComponent,
     DocstatisticComponent,
+    CircleViewComponent,
     // SearchFilterComponent
   ],
   imports: [

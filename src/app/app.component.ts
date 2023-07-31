@@ -9,9 +9,7 @@ import { CallsService } from './calls.service';
 import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
-        AppState, SearchRedux,
-        OPENCOMPAREDOC, CLOSECOMPAREDOC, SELECTED_CORPORA, 
-      } from './searchreducer';
+        AppState, SearchRedux, SELECTED_CORPORA } from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -22,6 +20,8 @@ export class AppComponent {
 
   public listTabs = ['Hits', 'Statistic'];
   public selectedTab = new FormControl(0);
+  public listDocTabs = ['docView', 'statView'];
+  public selectedDocTab = new FormControl(0);
   public similarParam: any;
   public relatedDocType: string;
   public currentSelection: string[];
@@ -78,16 +78,7 @@ export class AppComponent {
       this.getDocRunning = false;
       this.searchBox = true;
       this.openCompare = false;
-    });
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENCOMPAREDOC)).subscribe((data) => {
-      console.log("|openDocumentCompare");
-      this.openCompare = true;
-    });
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSECOMPAREDOC)).subscribe((data) => {
-      console.log("|closeDocumentCompare");
-      this.openCompare = false;
+      this.selectedDocTab.setValue(0);
     });
 
     this.languages = this.locService.getAvailableLanguages();

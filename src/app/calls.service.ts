@@ -403,6 +403,19 @@ export class CallsService {
     );
   }
 
+  public getFullTokenDataFromDocument(documentID: string, corpusID: string, start: number, end:number, word_attr: string, attr_element: string) {
+    let params = {
+      include : "token_lookup",
+      token_lookup_from : `${start}`,
+      token_lookup_to : `${end}`,
+      word_attr : `${word_attr}`,
+      attr_element : `${attr_element}`,
+    };
+    return this.get(`documentFull/${corpusID}/${documentID}`, params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   private extractDocumentData(body: any): StrixDocument { // TODO: Update this
     // console.log('body', body);
     let strixDocument = new StrixDocument();

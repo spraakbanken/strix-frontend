@@ -5,7 +5,8 @@
     </div>
     <div class="topRight">
       <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: end;">
-        <!-- <li class="nav-item dropdown">
+        <!-- * Info func *  
+          <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownInfo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;">
             <mat-icon style="height: 20px; width: 20px;">notifications</mat-icon>
           </a>
@@ -93,9 +94,15 @@
     <div class="fixDoc">
       <div class="right_columnX" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
         <div [hidden]="!getDocRunning">
-          <mat-tab-group>
-            <mat-tab label="{{'doc_view' | loc}}">
-              <header style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
+          <header style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
+          <mat-tab-group [selectedIndex]="selectedDocTab.value"
+          (selectedIndexChange)="selectedDocTab.setValue($event)">
+            <mat-tab *ngFor="let tab of listDocTabs; let index = index" [label]="tab + index">
+            <ng-template mat-tab-label>
+              <div class="col" *ngIf="tab === 'docView'">{{'doc_view' | loc}}</div>
+              <div class="col" *ngIf="tab === 'statView'">{{'doc_stat' | loc}}</div>
+            </ng-template>
+            <div *ngIf="tab === 'docView'">
               <div class="tools_area">
                 <div class="actual_tools">
                   <annotations-selector></annotations-selector>
@@ -103,10 +110,14 @@
               </div>
               <indocsearch></indocsearch>
               <reader></reader>
-            </mat-tab>
-            <mat-tab label="{{'doc_stat' | loc}}">
-              <header style="flex: 0 1 auto; padding: 4px 15px 4px 15px;"></header>
+              <!-- <div style="display: flex;">
+                <reader style="width: 100%;"></reader>
+                <reader style="width: 100%;"></reader>
+              </div> -->
+            </div>
+            <div *ngIf="tab === 'statView'">
               <document-statistic></document-statistic>
+            </div>
             </mat-tab>
           </mat-tab-group>
         </div>

@@ -9,7 +9,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
 SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET,
-INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState, OPENCOMPAREDOC, CLOSECOMPAREDOC
+INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState
 } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 // import { MultiCompleteComponent } from "./multicomplete/multicomplete.component";
@@ -82,13 +82,13 @@ export class RightcolumnComponent implements OnInit {
       this.openDocument = false;
     });
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === OPENCOMPAREDOC)).subscribe((data) => {
-      this.openCompare = true;
-    });
+    // this.searchRedux.pipe(filter((d) => d.latestAction === OPENCOMPAREDOC)).subscribe((data) => {
+    //   this.openCompare = true;
+    // });
 
-    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSECOMPAREDOC)).subscribe((data) => {
-      this.openCompare = false;
-    });
+    // this.searchRedux.pipe(filter((d) => d.latestAction === CLOSECOMPAREDOC)).subscribe((data) => {
+    //   this.openCompare = false;
+    // });
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
       (result : AggregationsResult) => {
