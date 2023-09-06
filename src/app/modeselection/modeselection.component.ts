@@ -20,6 +20,7 @@ export class ModeselectionComponent implements OnInit {
   public modeSelection = {};
   public listMode = {};
   public visibleMode = '';
+  public minkMode = false;
 
   private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
   public addFacet = [];
@@ -63,6 +64,9 @@ export class ModeselectionComponent implements OnInit {
     this.modeSelection = {};
     if (window["jwt"]) {
       for (let key in this.availableCorpora) {
+        if (this.availableCorpora[key]['modeID'] === 'mink') {
+          this.minkMode = true;
+        }
         if (this.availableCorpora[key]['modeID'] in this.modeCollection) {
           this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
         } else {
@@ -73,6 +77,7 @@ export class ModeselectionComponent implements OnInit {
         }
       }
     } else {
+      this.minkMode = false;
       for (let key in this.availableCorpora) {
         if (!this.availableCorpora[key]['protectedX']) {
           if (this.availableCorpora[key]['modeID'] in this.modeCollection) {
@@ -95,7 +100,7 @@ export class ModeselectionComponent implements OnInit {
         this.modeSelection[item] = true;
         this.modeItem.mode.push(item.toLowerCase());
         this.modeItem.corpuses.push(this.modeCollection[item]);
-        if (item === 'default') {
+        if (item === 'default' || item === 'mink') {
           this.visibleMode = '';
         } else {
           this.visibleMode = item;

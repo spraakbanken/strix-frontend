@@ -3,7 +3,7 @@
         <li [style.color]="this.modeSelection['default'] ? 'blue' : 'black'" (click)="chooseMode('default', 'continue');">
             {{ 'Modern' | loc }}
         </li>
-        <li [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('mink', 'continue');">
+        <li *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'blue' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
             {{ 'Mink' | loc }}
         </li>
         <li [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
@@ -18,7 +18,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding: 0px;">
                 <ng-container *ngFor="let item of modeCollection | keyvalue">
-                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode">
+                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode && item.key != 'mink'">
                         {{ listMode[item.key] | loc }}
                     </a>
                 </ng-container>
