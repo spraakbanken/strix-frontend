@@ -21,7 +21,7 @@
                 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="border: 1px solid #ddd">
                     <ng-container [matColumnDef]="displayedColumns[0]" sticky>
                         <th mat-header-cell *matHeaderCellDef title="{{displayedColumns[0] | loc}}"> {{displayedColumns[0] | loc}}</th>
-                        <td mat-cell *matCellDef="let element"> {{element[displayedColumns[0]]}} </td>
+                        <td mat-cell *matCellDef="let element"> {{element[displayedColumns[0]].split('_').join(' ')}} </td>
                         </ng-container>
                     <ng-container [matColumnDef]="column" *ngFor="let column of displayedColumns.slice(1)">
                         <th mat-header-cell *matHeaderCellDef title="{{column | loc}}"> {{(column | loc).split(' ').splice(0,1).join(' ')}}... </th>

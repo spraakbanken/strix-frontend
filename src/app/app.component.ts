@@ -42,7 +42,7 @@ export class AppComponent {
   public selectedLanguage: string;
 
   constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService, private callsService: CallsService) {
-    console.log(_.add(1, 3)); // Just to test lodash
+    // console.log(_.add(1, 3)); // Just to test lodash
 
     if (window["jwt"]) {
       this.loggedIn = true;
@@ -65,7 +65,7 @@ export class AppComponent {
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("|openDocument");
+      // console.log("|openDocument");
       this.openDocument = true;
       this.getDocRunning = true;
       this.searchBox = false;
@@ -73,7 +73,7 @@ export class AppComponent {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
-      console.log("|closeDocument");
+      // console.log("|closeDocument");
       this.openDocument = false;
       this.getDocRunning = false;
       this.searchBox = true;

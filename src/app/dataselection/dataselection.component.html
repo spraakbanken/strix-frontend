@@ -1,7 +1,7 @@
 <div class="dataselection">
     <div class="row">
       <div class="col-xl-12" style="padding: 0px;">
-        <button class="selectCorpus" mat-button (click)="selectSearch()">
+        <button [disabled]="!activeDoc" class="selectCorpus" mat-button (click)="selectSearch()">
           <span style="display: inline-flex; width: 560px;">
             {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
             <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>

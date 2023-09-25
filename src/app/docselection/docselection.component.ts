@@ -160,7 +160,7 @@ export class DocselectionComponent implements OnInit {
       this._MatPaginatorIntl.itemsPerPageLabel = this.locService.getTranslationFor('docPs');
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("OPENDOCUMENT");
+      // console.log("OPENDOCUMENT");
       this.documentsWithHits = [];
       this.totalNumberOfDocuments = 0;
       this.hasSearched = false;

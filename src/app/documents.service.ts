@@ -51,9 +51,9 @@ export class DocumentsService {
               private store: Store<AppState>) {
 
     this.searchRedux = this.store.select('searchRedux');
-    console.log("in documents constructor");
+    // console.log("in documents constructor");
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("open document with", data, this.queryService);
+      // console.log("open document with", data, this.queryService);
       this.loadDocumentWithQuery(
         data.documentID,
         data.documentCorpus,
@@ -76,9 +76,9 @@ export class DocumentsService {
     when a reader is closed to decrease the count, and if the count
     is 0, delete the document from the browser's memory. */
   public letGoOfDocumentReference(documentID: string) {
-    console.log("letting go of document reference for", documentID);
+    // console.log("letting go of document reference for", documentID);
     this.referencesToDocuments[documentID]--;
-    console.log("new reference count", this.referencesToDocuments[documentID]);
+    // console.log("new reference count", this.referencesToDocuments[documentID]);
     if (this.referencesToDocuments[documentID] === 0) {
       this.unloadDocument(documentID);
     }
@@ -98,7 +98,7 @@ export class DocumentsService {
 
   /* This should be called when the reference count for a document is 0. */
   private unloadDocument(documentID: string): void {
-    console.log("unloading the document", documentID);
+    // console.log("unloading the document", documentID);
     for (let i = 0; i < this.documents.length; i++) {
       if (this.documents[i].doc_id === documentID) {
         this.documents.splice(i);
@@ -113,7 +113,7 @@ export class DocumentsService {
   public loadDocument(documentID: string, corpusID: string, highlights: any, newReader = false): void {
     // IS THIS FUNCTION EVEN USED ANYWHERE ANYMORE?
     if (! newReader) {
-      console.log("loading the document in the main reader.")
+      // console.log("loading the document in the main reader.")
       // Decrease the count (and possibly delete) the old main document
       if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
       this.mainReaderDocumentID = documentID;
@@ -125,14 +125,14 @@ export class DocumentsService {
         .subscribe(
           answer => {
 
-            console.log("answer", answer);
+            // console.log("answer", answer);
 
             // We should only add the document if it isn't already in the documents array
             let added = false;
             let index = -1;
             for (let i = 0; i < this.documents.length; i++) {
               let doc = this.documents[i];
-              console.log("doc_id", answer.doc_id, doc.doc_id);
+              // console.log("doc_id", answer.doc_id, doc.doc_id);
               if (doc && doc.doc_id && doc.doc_id === answer.doc_id) {
                 added = true;
                 index = i;
@@ -159,7 +159,7 @@ export class DocumentsService {
   }
 
   public loadDocumentWithQuery(documentID: string, corpusID: string, query: string, inOrder: boolean = true, sentenceID = null): void {
-    console.log("loading the document in the main reader.", inOrder)
+    // console.log("loading the document in the main reader.", inOrder)
     this.signalStartedDocumentLoading();
     // Decrease the count (and possibly delete) the old main document
     if (this.mainReaderDocumentID) this.letGoOfDocumentReference(this.mainReaderDocumentID);
@@ -170,14 +170,14 @@ export class DocumentsService {
     let service$ : Observable<any> = sentenceID ? this.callsService.getDocumentBySentenceID(corpusID, sentenceID) : this.callsService.getDocumentWithQuery(documentID, corpusID, query, inOrder)
     service$.subscribe(
           answer => {
-            console.log("answer", answer);
+            // console.log("answer", answer);
 
             // We should only add the document if it isn't already in the documents array
             let added = false;
             let index = -1;
             for (let i = 0; i < this.documents.length; i++) {
               let doc = this.documents[i];
-              console.log("doc_id", answer.doc_id, doc.doc_id);
+              // console.log("doc_id", answer.doc_id, doc.doc_id);
               if (doc && doc.doc_id && doc.doc_id === answer.doc_id) {
                 added = true;
                 index = i;
@@ -227,7 +227,7 @@ export class DocumentsService {
     if (! window['CodeMirrorStrixControl']) window['CodeMirrorStrixControl'] = [];
     window['CodeMirrorStrixControl'][index] = {};
 
-    console.log("this.documents", this.documents);
+    // console.log("this.documents", this.documents);
 
     return index;
   }
@@ -286,13 +286,13 @@ export class DocumentsService {
 
     let firstToken = doc.getFirstTokenFromLine(fromLine);
     let lastToken = doc.getLastTokenFromLine(toLine);
-    console.log("lastToken", lastToken);
+    // console.log("lastToken", lastToken);
     if (lastToken === -1) {
-      console.log("getting the LAST token in the document.")
+      // console.log("getting the LAST token in the document.")
       lastToken = doc.getLastTokenFromDocument();
     }
 
-    console.log("from token ", firstToken, " to ", lastToken);
+    // console.log("from token ", firstToken, " to ", lastToken);
 
     // Only make calls if we don't have the data already!
     let missing = false;
@@ -311,7 +311,7 @@ export class DocumentsService {
         answer => {
           //console.log( "size of new", _.size(answer.data.token_lookup), answer.data.token_lookup);
           _.assign(doc.token_lookup, doc.token_lookup, answer.data.token_lookup);
-          console.log( "size:", _.size(doc.token_lookup) );
+          // console.log( "size:", _.size(doc.token_lookup) );
 
           this.tokenInfoDone.next(true);
         },
@@ -322,7 +322,7 @@ export class DocumentsService {
       );
 
     } else {
-      console.log("we're set already!")
+      // console.log("we're set already!")
       this.tokenInfoDone.next(false);
     }
 

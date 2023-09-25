@@ -376,8 +376,8 @@
 
 .include-option{width:50px; float:right;}
 .exclude-option{width:50px; float:right;}
-.data-option{width:calc(100% - 100px); float:left;}
-::ng-deep .data-option .mat-pseudo-checkbox{display:none !important;}
+.data-option{width:calc(100% - 50px); float:left;}
+/* ::ng-deep .data-option .mat-pseudo-checkbox{display:none !important;} */
 .data-option .mat-list-item, .include-option .mat-list-item, .exclude-option .mat-list-item{height:109px;}
 ::ng-deep .include-option .mat-pseudo-checkbox-checked{background-color: green !important;}
 ::ng-deep .exclude-option .mat-pseudo-checkbox-checked{background-color: red !important;}

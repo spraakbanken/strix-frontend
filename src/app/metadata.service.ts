@@ -17,7 +17,7 @@ export class MetadataService {
   constructor(private callsService: CallsService) {
     this.callsService.getCorpusInfo().subscribe(
       (answer: {[key: string]: StrixCorpusConfig}) => {
-        console.log("corpus configs", answer);
+        // console.log("corpus configs", answer);
         this.availableCorpora = answer;
         this.successfulLoad.next(true);
       },

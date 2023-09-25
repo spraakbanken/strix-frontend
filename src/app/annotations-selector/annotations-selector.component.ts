@@ -45,7 +45,7 @@ export class AnnotationsSelectorComponent implements OnInit {
   ngOnInit() {
     this.subscription = this.documentsService.loadedDocument$.subscribe(
       message => {
-        console.log("A document has been fetched.", message);
+        // console.log("A document has been fetched.", message);
         this.mainDocument = this.documentsService.getDocument(message.documentIndex);
 
         this.currentCorpusID = this.mainDocument.corpusID;

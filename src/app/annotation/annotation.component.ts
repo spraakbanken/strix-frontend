@@ -91,16 +91,16 @@ export class AnnotationComponent implements OnInit {
   }
 
   private updateTime(time) {
-    console.log("updateTime")
+    // console.log("updateTime")
     let current = this.findToken(time);
-    console.log("current", current);
+    // console.log("current", current);
     if (current) {
       this.currentText = current;
     }
   }
 
   private loadedMetadata(movieplayer) {
-    console.log("loaded video metadata.", this.data.start)
+    // console.log("loaded video metadata.", this.data.start)
     if (this.data.start) movieplayer.currentTime = this.data.start / 1000;
   }
 

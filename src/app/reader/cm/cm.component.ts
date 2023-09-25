@@ -27,7 +27,7 @@ export class CmComponent implements OnInit {
   ngOnInit() {}
 
   onInstanciated(cmInstance: any) {
-    console.log("got the cm instance", cmInstance);
+    // console.log("got the cm instance", cmInstance);
     this.codeMirrorInstance = cmInstance;
     
     this.codeMirrorInstance.on('beforeSelectionChange', (instance, obj) => {
@@ -48,13 +48,13 @@ export class CmComponent implements OnInit {
     });
 
     this.codeMirrorInstance.on('update', () => {
-      console.log("cm update", this.codeMirrorInstance);
+      // console.log("cm update", this.codeMirrorInstance);
     });
 
     this.codeMirrorInstance.on('cursorActivity', (instance) => {
       const padding = 12;
       var selections = instance.listSelections();
-      console.log("cursorActivity: " + selections.length + " selections.");
+      // console.log("cursorActivity: " + selections.length + " selections.");
       // [{'anchor' : {line : …, ch : …}, 'head' : {line : …, ch : …}}]
       if (selections.length === 1) {
         var firstLine = selections[0].anchor.line;

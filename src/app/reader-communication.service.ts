@@ -19,7 +19,7 @@ export class ReaderCommunicationService {
                                                                      annotationValue: annotationValue}});
   }
   public changeAnnotationHighlight(annotation: string, annotationStructuralType : string, annotationValue: string) {
-    console.log("CHANGEANNOTATIONHIGHLIGHT", annotation, annotationValue);
+    // console.log("CHANGEANNOTATIONHIGHLIGHT", annotation, annotationValue);
     this._subject.next({message: "changeAnnotationHighlight", payload: {annotation: annotation,
                                                                         annotationStructuralType : annotationStructuralType,
                                                                         annotationValue: annotationValue}});

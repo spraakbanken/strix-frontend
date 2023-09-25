@@ -3,7 +3,7 @@ import { Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { YEAR_INTERVAL, AppState, MODE_SELECTED, SELECTED_CORPORA, CHANGELANG, INITIATE } from '../searchreducer';
+import { YEAR_INTERVAL, AppState, MODE_SELECTED, SELECTED_CORPORA, CHANGELANG, INITIATE, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
 import {FormControl } from '@angular/forms';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
@@ -69,6 +69,7 @@ export class DataselectionComponent implements OnInit {
   public corpusesCount = 0;
   public corpusList = new FormControl();
   public gotMetadata = false;
+  public activeDoc = true;
 
   private metadataSubscription: Subscription;
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
@@ -223,6 +224,17 @@ export class DataselectionComponent implements OnInit {
     });
 
     this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
+      // console.log("|openDocument");
+      this.activeDoc = false;      
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+      // console.log("|closeDocument");
+      this.activeDoc = true;
+    });
+
 
     this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
       this.selectedLanguage = data.lang;

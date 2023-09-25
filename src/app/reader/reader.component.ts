@@ -69,7 +69,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
     // When done we need to do:
     this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
-      console.log("got new token data – causing refresh of the CM syntax coloring: ", actuallyDidSomething)
+      // console.log("got new token data – causing refresh of the CM syntax coloring: ", actuallyDidSomething)
       if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
     });
 
@@ -78,7 +78,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       wasSuccess => {
         if (wasSuccess) {
           this.availableCorpora = metadataService.getAvailableCorpora();
-          console.log("the metadata", this.availableCorpora);
+          // console.log("the metadata", this.availableCorpora);
           this.gotMetadata = true;
         } else {
           this.availableCorpora = {}; // TODO: Show some error message
@@ -105,7 +105,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     // When a document starts loading and when it is fully loaded:
     this.docLoadStatusSubscription = documentsService.docLoadingStatus$.subscribe(
       answer => {
-        console.log("load status:", answer);
+        // console.log("load status:", answer);
         switch (answer) {
           case StrixEvent.DOCLOADSTART:
             this.isLoading = true;
@@ -120,12 +120,12 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
     this.subscription = documentsService.loadedDocument$.subscribe(
       message => {
-        console.log("A document has been fetched.", message);
+        // console.log("A document has been fetched.", message);
 
         let openedDocument = documentsService.getDocument(message.documentIndex);
         this.mainDocument = openedDocument;
 
-        console.log("the document", this.mainDocument);
+        // console.log("the document", this.mainDocument);
 
         let wholeText = openedDocument.dump.join("\n");
 
@@ -135,7 +135,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             this.mirrors.last.codeMirrorInstance.setValue(wholeText);
 
             // Show the highlights
-            console.log("highlight data", openedDocument);
+            // console.log("highlight data", openedDocument);
             this.clearBookmarks();
             for (let h of openedDocument.highlight || []) {
               this.addHighlight(message.documentIndex, h.wid);
@@ -150,7 +150,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
           this.mirrors.first.codeMirrorInstance.setValue(wholeText);
 
           // Show the highlights // TODO: Get rid of code doubling (use setTimeout for both cases probably anyway)
-          console.log("highlight data", openedDocument);
+          // console.log("highlight data", openedDocument);
           for (let h of openedDocument.highlight) {
             this.addHighlight(message.documentIndex, h.wid);
           }
@@ -162,7 +162,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
   ngAfterViewInit() {
     this.readerCommunicationService.event$.subscribe((data) => {
-      console.log("message from the reader communication service", data);
+      // console.log("message from the reader communication service", data);
       const message = data["message"];
       const payload = data["payload"];
       if (message === "goToNextAnnotation" ||
@@ -171,7 +171,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         const annotation = payload["annotation"];
         const annotationValue = payload["annotationValue"];
         const annotationStructuralType = payload["annotationStructuralType"];
-        console.log("payload structure", annotationStructuralType);
+        // console.log("payload structure", annotationStructuralType);
         //const datatype = payload["datatype"];
         const datatype = _.isArray(this.currentAnnotations[annotation]) ? "set" : "default";
         this.changeAnnotationHighlight(annotation, annotationStructuralType, annotationValue, datatype);
@@ -201,23 +201,23 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
 
   private onFocus(index: number) {
-    console.log("focused mirror no", index);
+    // console.log("focused mirror no", index);
     this.selectedMirrorIndex = index;
   }
 
   private onSelectionChange(selection: StrixSelection) {
     this.showBox = true;
-    console.log("line " + selection.startRow + "(char " + selection.startChar + ") to " + selection.endRow + " (char " + selection.endChar + ")" );
+    // console.log("line " + selection.startRow + "(char " + selection.startChar + ") to " + selection.endRow + " (char " + selection.endChar + ")" );
     this.selection = selection;
     let activeDocument : StrixDocument = this.documentsService.getDocument(this.cmViews[this.selectedMirrorIndex]);
-    console.log("activeDocument", activeDocument);
+    // console.log("activeDocument", activeDocument);
     if (activeDocument) {
       this.selectionStartTokenID = activeDocument.getTokenID(selection.startRow, selection.startChar);
       this.selectionEndTokenID = activeDocument.getTokenID(selection.endRow, selection.endChar);
 
-      console.log("selection from tokens", this.selectionStartTokenID, this.selectionEndTokenID);
+      // console.log("selection from tokens", this.selectionStartTokenID, this.selectionEndTokenID);
       if (this.selectionStartTokenID === -1 || this.selectionEndTokenID === -1) { // TODO: THIS WILL HAVE TO BE THOUGHT OVER!
-        console.log("got -1");
+        // console.log("got -1");
         return;
       }
 
@@ -230,7 +230,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         this.currentAnnotations = currentToken.attrs;
 
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
-        console.log("currentAnnotations", this.currentAnnotations);
+        // console.log("currentAnnotations", this.currentAnnotations);
       }
 
     }
@@ -242,7 +242,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     let doc = this.documentsService.getDocument(selectedDocumentIndex);
     let result = doc.getTokenBounds(tokenID);
-    console.log("result", result);
+    // console.log("result", result);
 
     let mirrorsArray = this.mirrors.toArray();
     mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head - 1, {"scroll" : true}) // Really don't know why we need -1 (!)
@@ -260,7 +260,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
 
   private onKeydown(event: any): void {
-    console.log("event", event);
+    // console.log("event", event);
     if (event.event.which === 37) {
       // Left
       // TODO: Fix this ugly code. Don't use the global object here.
@@ -281,9 +281,9 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
 
   private changeAnnotationHighlight(type: string, structuralType : string, value: string, datatype: string = "default"): void {
-    console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
+    // console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
-    console.log("highlighting", type, value);
+    // console.log("highlighting", type, value);
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationType = type;
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationStructuralType = structuralType;
     window['CodeMirrorStrixControl'][selectedDocumentIndex].currentAnnotationDatatype = datatype;
@@ -295,7 +295,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         mirrorsArray[index].codeMirrorInstance.setOption("mode", "strix"); // Refresh highlighting
         mirrorsArray[index].codeMirrorInstance.focus(); // So the user can use the arrow keys right away
 
-        console.log("refreshing highlight on view " + index, this.cmViews);
+        // console.log("refreshing highlight on view " + index, this.cmViews);
       }
     }
   }
@@ -312,7 +312,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     this.gotoAnnotation(annotationKey, annotationStructuralType, annotationValue, false);
   }
   private gotoAnnotation(annotationKey: string, annotationStructuralType: string, annotationValue: string, backwards: boolean) {
-    console.log("goto annotation", annotationKey, annotationStructuralType, annotationValue);
+    // console.log("goto annotation", annotationKey, annotationStructuralType, annotationValue);
     let cmIndex = this.selectedMirrorIndex; // In case the user switches codemirror, we still use the correct one!
     let selectedDocumentIndex = this.cmViews[this.selectedMirrorIndex];
     if (annotationStructuralType && annotationStructuralType !== "token") {
@@ -321,7 +321,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     const searchQuery = new SearchQuery(annotationKey, annotationValue, this.selectionStartTokenID, !backwards);
     this.documentsService.searchForAnnotation(selectedDocumentIndex, searchQuery).subscribe(
       answer => {
-        console.log("call success. the wid is", answer);
+        // console.log("call success. the wid is", answer);
         this.selectToken(cmIndex, answer);
       }, () => {});
   }
@@ -386,7 +386,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       //let fromCursor = tokenBounds.head;
       //toCursor.char += 1;// not sure why +1
 
-      console.log("addHighlight", fromCursor, toCursor);
+      // console.log("addHighlight", fromCursor, toCursor);
 
       cmInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
       this.bookmarks.push({
@@ -416,13 +416,13 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   } */
 
   private _onResize(event) {
-    console.log("$event", event);
+    // console.log("$event", event);
     const elem = document.getElementsByClassName("readerArea")[0];
   }
 
   private ensureArray(value) {
     let isit = Array.isArray(value) ? value : [value];
-    console.log("IS IT", isit);
+    // console.log("IS IT", isit);
     return isit;
   }
 

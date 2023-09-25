@@ -25,7 +25,7 @@ export class StrixDocument {
       let line = this.dump[row].slice(12); // TODO: Get rid of magic number
       // Consume each token until the current char-index has been reached
       //console.log("passed first guard", line);
-      console.log("widCounter", widCounter, char);
+      // console.log("widCounter", widCounter, char);
       let charsConsumed = 0;
       while (charsConsumed <= char) {
         // Consume all whitespace:
@@ -34,7 +34,7 @@ export class StrixDocument {
         }
         // Consume the next token
         let token = this.token_lookup[widCounter];
-        console.log("consuming token", token, this.token_lookup, widCounter);
+        // console.log("consuming token", token, this.token_lookup, widCounter);
         if (! token) { // Think this over...
           return -1;
         }
@@ -98,7 +98,7 @@ export class StrixDocument {
     let firstToken = -1;
     let offset = 0;
 
-    console.log("fline|", line, this.lines, this.lines.length);
+    // console.log("fline|", line, this.lines, this.lines.length);
     
     if (line < this.lines.length) {
       while (firstToken === -1) {
@@ -138,7 +138,7 @@ export class StrixDocument {
     let lastToken = -1;
     let offset = 0;
 
-    console.log("line|", line, this.lines, this.lines.length);
+    // console.log("line|", line, this.lines, this.lines.length);
     
     if (line < this.lines.length) {
       while (lastToken === -1) {

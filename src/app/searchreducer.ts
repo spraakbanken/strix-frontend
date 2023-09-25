@@ -78,13 +78,13 @@ export interface SearchRedux {
  */
 
 export function searchReducer(state: SearchRedux = {}, action: Action): SearchRedux {
-  console.log("reducing with action", action.type, action.payload);
+  // console.log("reducing with action", action.type, action.payload);
   let nextState: SearchRedux = _.assign({}, state);
   nextState.latestAction = action.type;
   nextState.history = true; // Default value
   switch (action.type) {
     case INITIATE:
-      console.log("INITIATE.");
+      // console.log("INITIATE.");
       nextState = _.assign({}, nextState, action.payload);
       nextState.emptySelection = "";
       nextState.history = false;

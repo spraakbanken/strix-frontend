@@ -150,7 +150,7 @@ export class FilterdataComponent implements OnInit {
           let resultFacets = result.list_facet;
           this.facetList = result.list_facet;
           let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-          'topic_author_signature', 'blingbring', 'categories']
+          'topic_author_signature', 'blingbring', 'categories', 'month']
           let tempNew = []
           for (let i of tempOrder) {
             if (_.keys(resultFacets).includes(i)) {

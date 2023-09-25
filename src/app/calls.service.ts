@@ -46,12 +46,13 @@ export class CallsService {
    */
   private get<T>(endpoint: string, params?: {[param: string]: string}) {
     // console.log('GET Request', endpoint, params);
+    // const x = data ->  console.log('GET Response', endpoint, params, data)
     const options = {
       params : new HttpParams({fromObject : params}),
       headers : window['jwt'] ? new HttpHeaders({'Authorization' : `Bearer ${window['jwt']}`}) : null,
     };
     return this.http.get<T>(this.STRIXBACKEND_URL + '/' + endpoint, options)
-      .pipe(tap(data => console.log('GET Response', endpoint, params, data)));
+      .pipe(tap(data => {const x = data}));
   }
 
   public getCorpusInfo(): Observable<{[key: string]: StrixCorpusConfig}> {

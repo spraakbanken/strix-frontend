@@ -14,9 +14,9 @@ export class KarpService {
 
   public lemgramsFromWordform(wordform: string) : Observable<string[]> {
     if (wordform === "") return from([]);
-    console.log("Getting Karp lemgrams from the wordform", wordform);
+    // console.log("Getting Karp lemgrams from the wordform", wordform);
     let url = `${this.KARPBACKEND_URL}/autocomplete?q=${wordform}&resource=saldom`;
-    console.log('url', url);
+    // console.log('url', url);
     return this.http.get(url).pipe(
       map(this.extractDocumentData),
       catchError(this.handleError)
@@ -33,7 +33,7 @@ export class KarpService {
       }
     }
 
-    console.log("found lemgrams", lemgrams);
+    // console.log("found lemgrams", lemgrams);
     return lemgrams;
   }
 

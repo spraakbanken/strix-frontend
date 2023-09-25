@@ -13,13 +13,13 @@ export class HistogramComponent implements OnInit {
   @ViewChild('graph') graphElem: ElementRef;
 
   @Input() set indata(indata: any) {
-    console.log("setting indata to histogram.");
+    // console.log("setting indata to histogram.");
     this.setup(indata);
   };
 
   @Input() set selection(selection: any) {
     if (selection) {     
-      console.log("before", this.graph.window.xMin, this.graph.window.xMax);
+      // console.log("before", this.graph.window.xMin, this.graph.window.xMax);
       this.graph.window.xMin = undefined;//selection.from+"";
       this.graph.window.xMax = undefined;//selection.to+"";
       this.graph.update();
@@ -42,7 +42,7 @@ export class HistogramComponent implements OnInit {
   private setup(histogramData) {
 
     if (histogramData === undefined || histogramData.length === 0) {
-      console.log("No histogram data available. Hiding the histogram.");
+      // console.log("No histogram data available. Hiding the histogram.");
       return;
     };
 

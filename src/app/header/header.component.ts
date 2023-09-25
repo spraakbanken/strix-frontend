@@ -6,7 +6,7 @@ import { MetadataService } from '../metadata.service';
 import { LangPhrase } from '../loc.model';
 import { filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { AppState, SEARCHINDOCUMENT, SearchRedux, OPENDOCUMENT, CLOSEDOCUMENT } from '../searchreducer';
+import { AppState, SEARCHINDOCUMENT, SearchRedux, OPENDOCUMENT, CLOSEDOCUMENT, MODE_SELECTED } from '../searchreducer';
 
 /**
  * The header component should let the user search in the open document and as well
@@ -40,7 +40,7 @@ export class HeaderComponent implements OnInit {
 
     this.subscription = documentsService.loadedDocument$.subscribe(message => {
       let openedDocument = documentsService.getDocument(message.documentIndex);
-      console.log("openedDocument", openedDocument)
+      // console.log("openedDocument", openedDocument)
       this.documentTitle = openedDocument.title;
       this.corpusName = metadataService.getName(openedDocument.corpusID);
       this.corpusID = openedDocument.corpusID;
@@ -53,13 +53,21 @@ export class HeaderComponent implements OnInit {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      console.log("|openDocument");
+      // console.log("|openDocument");
       this.openDocument = true;      
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
-      console.log("|closeDocument");
+      // console.log("|closeDocument");
       this.openDocument = false;
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      // console.log("|closeDocument");
+      if (this.openDocument) {
+        this.openDocument = false;
+        this.closeDocument();
+      }
     });
 
   }

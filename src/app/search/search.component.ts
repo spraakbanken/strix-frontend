@@ -105,7 +105,7 @@ export class SearchComponent implements OnInit {
 
     this.searchStatusSubscription = queryService.searchStatus$.subscribe(
       (answer: StrixEvent) => {
-        console.log("search status:", answer);
+        // console.log("search status:", answer);
         switch (answer) { // TODO: Create an enum for this. Or a union type?
           case StrixEvent.SEARCHSTART:
             this.isSearching = true;
@@ -127,7 +127,7 @@ export class SearchComponent implements OnInit {
       .pipe(debounceTime(1000), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue)))
       .subscribe(value => {
         this.karpResult = value;
-        console.log(value);
+        // console.log(value);
       })
 
     this.myControl.valueChanges.pipe(
@@ -183,7 +183,7 @@ export class SearchComponent implements OnInit {
   }
 
   public searchTypeChange(val) {
-    console.log("searchTypeChange", val)
+    // console.log("searchTypeChange", val)
     this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
@@ -212,10 +212,10 @@ export class SearchComponent implements OnInit {
   }
 
   private getHistogramData(corpora: string[]) {
-    console.log("getting histogram data.");
+    // console.log("getting histogram data.");
     this.callsService.getDateHistogramData(corpora[0]).subscribe((histogramData) => {
       this.histogramData = histogramData;
-      console.log("got histogram data", histogramData);
+      // console.log("got histogram data", histogramData);
     });
   }
 

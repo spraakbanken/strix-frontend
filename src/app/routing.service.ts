@@ -139,7 +139,7 @@ export class RoutingService {
 
   public getCurrentState(): SearchRedux {
     const urlSearch: string = window.location.search;
-    console.log("urlSearch", urlSearch)
+    // console.log("urlSearch", urlSearch)
     let startParams = {};
     if (urlSearch && urlSearch.length > 1) {
       const urlPart = urlSearch.split("?")[1];
@@ -155,7 +155,7 @@ export class RoutingService {
 
   private initializeStartingParameters(): void {
     const startState = this.getCurrentState();
-    console.log("init startState", startState)
+    // console.log("init startState", startState)
 
     this.store.dispatch({ type : INITIATE, payload : startState});
 

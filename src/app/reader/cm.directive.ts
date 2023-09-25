@@ -41,7 +41,7 @@ export class CmDirective {
       When we communicate with the angular data we currently need to go through
       window['CodeMirrorStrix']. Maybe there is a cleaner solution to that.
     */
-    console.log("Defining CodeMirror mode.");
+    // console.log("Defining CodeMirror mode.");
     CmDirective.definedCodeMirrorMode = true;
     CodeMirror.defineMode('strix', function(config, parserConfig) {
       const speakers: string[] = [];

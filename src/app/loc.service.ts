@@ -244,7 +244,7 @@ export class LocService {
   //   return this.selectedCorpora;
   // }
   public setCurrentLanguage(isoCode: string) {
-    console.log("changing language to " + isoCode);
+    // console.log("changing language to " + isoCode);
     this.currentLanguage = isoCode;
   }
   public getTranslationFor(source: string, defaultVal? : string): string {

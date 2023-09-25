@@ -1,16 +1,16 @@
 <div>
     <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: baseline;">
-        <li [style.color]="this.modeSelection['default'] ? 'blue' : 'black'" (click)="chooseMode('default', 'continue');">
-            {{ 'Modern' | loc }}
+        <li class="nav-item" [style.color]="this.modeSelection['default'] ? 'blue' : 'black'" (click)="chooseMode('default', 'continue');">
+            <a>{{ 'Modern' | loc }}</a>
         </li>
-        <li *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'blue' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
-            {{ 'Mink' | loc }}
+        <li class="nav-item" *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'blue' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
+            <a>{{ 'Mink' | loc }}</a>
         </li>
-        <li [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
-            {{ 'Parallel' | loc }}
+        <li class="nav-item" [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
+            <a>{{ 'Parallel' | loc }}</a>
         </li>
-        <li [style.color]="this.modeSelection[visibleMode] ? 'blue' : 'black'" *ngIf="visibleMode !== ''" (click)="chooseMode(visibleMode, 'continue');">
-            {{ listMode[visibleMode] | loc }}
+        <li class="nav-item" [style.color]="this.modeSelection[visibleMode] ? 'blue' : 'black'" *ngIf="visibleMode !== ''" (click)="chooseMode(visibleMode, 'continue');">
+            <a>{{ listMode[visibleMode] | loc }}</a>
         </li>
         <li class="nav-item dropright">
             <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" style="padding: 0px; color: black; display: flex;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
