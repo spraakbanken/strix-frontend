@@ -32,6 +32,7 @@ export class SimilarDocsComponent implements OnInit{
   private searchRedux: Observable<SearchRedux>;
   public filteredData: Observable<any>;
   public filteredDataNew: any;
+  public loadSimilar = false;
 
   public authors : string[] = [];
   public authorC = new FormControl();
@@ -151,6 +152,7 @@ export class SimilarDocsComponent implements OnInit{
   
 
   public getSimilarDocuments(docIndex: any, relatedDoc: string, currentS: string[]) {
+    this.loadSimilar = true;
     this.callsService.getSimilarDocuments(docIndex.mode_id, docIndex.doc_id, docIndex.corpus_id, currentS, relatedDoc).subscribe(
         answer => {
           this.similarDocs = answer["data"];
@@ -169,7 +171,7 @@ export class SimilarDocsComponent implements OnInit{
                 'title': this.similarDocs[i]['title'], 'text': this.similarDocs[i]['preview'], 'corpus_id': this.similarDocs[i]['corpus_id'],
                 'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
                 'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
-                'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id']
+                'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url']
             });
         }
         this.similarDocs = tempData;
@@ -178,15 +180,16 @@ export class SimilarDocsComponent implements OnInit{
         this.filteredDataNew = new MatTableDataSource<StrixDocument>(this.similarDocs);
         this.filteredDataNew.paginator = this.paginator;
         this.filteredData = this.filteredDataNew.connect();
+        this.loadSimilar = false;
         let authorsData = _.groupBy(this.authors.map(i=>i));
         this.authorLabels = _.keys(authorsData);
         this.authorData = [{data: _.values(authorsData).map(x => x.length), label: this.locService.getTranslationFor('authorS')}];
         let corpusesData = _.groupBy(this.corpuses.map(i=>i));
         this.corpusLabels = _.keys(corpusesData);
-        this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label: this.locService.getTranslationFor('corpus')}];
+        this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label: this.locService.getTranslationFor('corpus'), backgroundColor: ["#CCB97E"]}];
         let dataYear = _.groupBy(this.years.map(i=>Number(i)));
         this.yearLabels = _.keys(dataYear);
-        this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS')}];
+        this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS'), backgroundColor: ["#C4AB86"]}];
         this.years = this.years.map(i=>Number(i)).filter((x, i, a) => a.indexOf(x) == i).sort();
         this.minYear = this.years[0];
         this.maxYear = this.years.splice(-1)[0];
@@ -196,7 +199,7 @@ export class SimilarDocsComponent implements OnInit{
           this.documentLabels.push(i);
           this.documentData.push(this.tokens[i])
         }
-        this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens')}];
+        this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens'), backgroundColor: ["#BA9238"]}];
         this.lowerLimit = this.tokens[0]
         this.upperLimit = this.tokens.splice(-1)[0];
         this.minToken = this.lowerLimit;
@@ -243,16 +246,16 @@ export class SimilarDocsComponent implements OnInit{
       this.documentLabels.push(i);
       this.documentData.push(this.tokens[i])
     }
-    this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens')}];
+    this.documentData = [{data: this.documentData, label: this.locService.getTranslationFor('tokens'), backgroundColor: ["#BA9238"]}];
     let authorsData = _.groupBy(_.map(tempData, 'authors'));
     this.authorLabels = _.keys(authorsData);
     this.authorData = [{data: _.values(authorsData).map(x => x.length), label: this.locService.getTranslationFor('authorS')}];
     let corpusesData = _.groupBy(_.map(tempData, 'corpusID'));
     this.corpusLabels = _.keys(corpusesData);
-    this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label:this.locService.getTranslationFor('corpus')}];
+    this.corpusData = [{data: _.values(corpusesData).map(x => x.length), label:this.locService.getTranslationFor('corpus'), backgroundColor: ["#CCB97E"]}];
     let dataYear = _.groupBy(_.concat(_.map(tempData, 'year').map(x=>x.split(', '))).map(i=>Number(i)));
     this.yearLabels = _.keys(dataYear);
-    this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS')}];
+    this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS'), backgroundColor: ["#C4AB86"]}];
     this.filteredDataNew = new MatTableDataSource<StrixDocument>(tempData);
     this.filteredDataNew.paginator = this.paginator;
     this.filteredData = this.filteredDataNew.connect();

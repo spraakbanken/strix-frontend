@@ -136,6 +136,8 @@
   font-size: 14px;
 }
 
+::ng-deep .dataselection .mat-checkbox-checked .mat-checkbox-background{background-color: chocolate !important;}
+
 .corporaSelectionView {
   max-height: inherit; 
   padding: 10px; 

@@ -95,6 +95,14 @@
     font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif; 
 }
 
+::ng-deep .ngx-slider .ngx-slider-pointer {
+    background-color: #eca16c !important;
+}
+
+::ng-deep .ngx-slider .ngx-slider-selection {
+    background: #f79c5b !important;
+}
+
 .paginatorClass {
     padding-top: 20px;
     padding-bottom: 20px;

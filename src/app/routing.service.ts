@@ -165,24 +165,24 @@ export class RoutingService {
     // There probably is a better solution for this. Maybe we can use BehaviorSubjects?
 
     // We need to make this "wait" for the query to be sent (NB: not *received*!)
-    timer(0).subscribe(() => {
-      if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
-        // console.log("autoopening document", startState.documentID, startState.documentCorpus);
-        this.store.dispatch({
-          type : OPENDOCUMENT_NOHISTORY,
-          payload : {
-            doc_id : startState["documentID"],
-            sentence_id : startState["sentenceID"],
-            corpus_id : startState["documentCorpus"]
-          }
-        });
-      } else {
-        //this.documentsService.closeMainDocument();
-        this.store.dispatch({
-          type : CLOSEDOCUMENT_NOHISTORY,
-        });
-      }
-    });
+    // timer(0).subscribe(() => {
+    //   if ((startState.documentID || startState.sentenceID) && startState.documentCorpus) {
+    //     console.log("autoopening document", startState.documentID, startState.documentCorpus);
+    //     this.store.dispatch({
+    //       type : OPENDOCUMENT_NOHISTORY,
+    //       payload : {
+    //         doc_id : startState["documentID"],
+    //         sentence_id : startState["sentenceID"],
+    //         corpus_id : startState["documentCorpus"]
+    //       }
+    //     });
+    //   } else {
+    //     //this.documentsService.closeMainDocument();
+    //     this.store.dispatch({
+    //       type : CLOSEDOCUMENT_NOHISTORY,
+    //     });
+    //   }
+    // });
 
   }
 

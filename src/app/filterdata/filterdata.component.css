@@ -381,3 +381,17 @@
 .data-option .mat-list-item, .include-option .mat-list-item, .exclude-option .mat-list-item{height:109px;}
 ::ng-deep .include-option .mat-pseudo-checkbox-checked{background-color: green !important;}
 ::ng-deep .exclude-option .mat-pseudo-checkbox-checked{background-color: red !important;}
+
+::ng-deep .attributeArea .mat-pseudo-checkbox-checked{background-color: chocolate !important;}
+
+::ng-deep .mat-progress-bar-fill::after {
+  background-color: chocolate;
+}
+
+::ng-deep .mat-progress-bar-buffer {
+  background: cadetblue;
+}
+
+::ng-deep .mat-progress-bar {
+  height: 10px !important;
+}

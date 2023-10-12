@@ -64,6 +64,7 @@ export class DocumentStatisticComponent implements OnInit {
 
   public barChartOptions: ChartOptions = {
     responsive: true,
+    backgroundColor: "#CCB97E", // dried moss
     plugins: {
       legend: {
         display: false,

@@ -265,6 +265,7 @@ export class DataselectionComponent implements OnInit {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      this.deselectAll();
       this.totalTokens = 0;
       this.selectedTokens = 0;
       this.totalDocs = 0;

@@ -170,4 +170,17 @@ export class AnnotationsSelectorComponent implements OnInit {
     return null;
   }
 
+  private getTranslations() {
+    let annotation = this.getAnnotation();
+    if (annotation.translation_value) {
+      return annotation.translation_value;
+    } else {
+      if (annotation.type_info && annotation.type_info.translation_value) {
+        return annotation.type_info.translation_value;
+      } else {
+        return {};
+      }
+    }
+  }
+
 }

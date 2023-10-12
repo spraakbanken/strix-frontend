@@ -60,3 +60,11 @@
     overflow: visible !important;
     font-size: 12px !important;
   }
+
+  .mat-list-single-selected-option {
+    background: cadetblue;
+}
+
+.mat-header-cell {
+  background: cadetblue !important;
+}

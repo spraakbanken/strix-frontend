@@ -46,6 +46,9 @@
             <div style="height: 50px; background-color: #d9eaeb; padding-top: 12px; border-radius: 0.3em;">
                 <span style="font-size: medium; font-style: italic; padding-left: 10px; color: chocolate">{{ 'applyFilter' | loc }}</span>
             </div>
+            <div style="height: 10px;"  *ngIf="loadFilter">
+              <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+            </div>
           <div *ngFor="let item of filterDataBasic; let i = index" style="padding-bottom: 10px; border: 0.5px solid #eeeeee">
             <mat-accordion>
                 <mat-expansion-panel style="border-radius: 0.3em;">
@@ -89,7 +92,7 @@
                         <div class="data-option">
                           <mat-selection-list [formControl]="collectControl.controls[i]" multiple style="height: auto; max-height: 20.2vh;">
                             <mat-list-option checkboxPosition="before" *ngFor="let topping of filterDataBasic[i]['data'].buckets" [value]="topping.key" (click)="selectChange($event, 'include', filterDataBasic[i]['id'], topping.key)">
-                                <span style="color: steelblue;">{{topping.key}}</span><span style="color: steelblue; float: right;">({{topping.doc_count}})</span>
+                                <span style="color: steelblue;">{{topping.key.replace('2050','N/A')}}</span><span style="color: steelblue; float: right;">({{topping.doc_count}})</span>
                             </mat-list-option>
                         </mat-selection-list>
                         </div>

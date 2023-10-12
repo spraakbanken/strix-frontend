@@ -4,7 +4,7 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
-import { FACET_LIST, AppState, SELECTED_CORPORA} from '../searchreducer';
+import { FACET_LIST, AppState, SELECTED_CORPORA, SEARCH} from '../searchreducer';
 
 import { CallsService } from 'app/calls.service';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
@@ -34,10 +34,13 @@ export class DocstatisticComponent implements OnInit {
     public currentFacets: string[];
     public selectedCorpus: string[];
     public modeSelected = '';
-    public currentSelection = "lemgram";
+    public currentSelection = "";
     public labelList: string[];
     public showMessage = '';
     public excludeList: string[];
+    public selectedOptions : String[];
+    public searchString = "";
+    public loadFilterStatistic = false;
 
     constructor(private store: Store<AppState>, private callsService: CallsService, public _MatPaginatorIntl: MatPaginatorIntl,) {
 
@@ -51,14 +54,19 @@ export class DocstatisticComponent implements OnInit {
                 this.getFacetData('year');
             }
         })
+
+        this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH)).subscribe((data) => {
+            this.searchString = data.query;
+        });
+
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
         this.currentFacets = data.facet_list;
         this.currentFacets = _.pick(
             this.currentFacets, 
             ['year', 'party_name', 'blingbring', 'swefn', 'topic_topic_name', 'type', 'author', 
-            'topic_author_signature', 'newspaper', 'categories'])
+            'topic_author_signature', 'newspaper', 'categories', 'month'])
         let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-            'topic_author_signature', 'blingbring', 'categories']
+            'topic_author_signature', 'blingbring', 'categories', 'month']
         let tempNew = []
         for (let i of tempOrder) {
           if (_.keys(this.currentFacets).includes(i)) {
@@ -84,6 +92,7 @@ export class DocstatisticComponent implements OnInit {
     }
 
     public getTable(startNumber, endNumber) {
+        this.loadFilterStatistic = true;
         const listAttr = [];
         for (let i of this.labelList) {
             listAttr.push(i['key'])
@@ -95,7 +104,7 @@ export class DocstatisticComponent implements OnInit {
             this.showMessage = '';
         }
         let selectedCorpusIn = _.without(this.selectedCorpus, 'rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv')
-        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber,endNumber)).subscribe((result) => {
+        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber), this.searchString).subscribe((result) => {
             let tempData = result.aggregations;
             let tempNew = [];
             let tempDict = {};
@@ -121,10 +130,14 @@ export class DocstatisticComponent implements OnInit {
             }
             this.dataSource = new MatTableDataSource(tempNew);
             this.dataSource.paginator = this.paginator;
+            this.dataSource.sort = this.sort;
+            this.loadFilterStatistic = false;
         })
     }
 
     public getFacetData(item: string) {
+        this.selectedOptions = []
+        this.selectedOptions = [item]
         this.dataSource = new MatTableDataSource([]);
         this.dataSource.paginator = this.paginator;
         this.currentSelection = item;

@@ -143,6 +143,10 @@
   padding: 10px !important;
 }
 
+::ng-deep .no_hits_area .alert-danger {
+  background-color: wheat;
+}
+
 /* ::ng-deep .filterSide .mat-expansion-panel-content .mat-expansion-panel-body .tableView{
   padding: 0px !important;
 } */

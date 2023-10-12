@@ -1,29 +1,42 @@
 <ng-template [ngIf]="type === 'lemgram'">
-  <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{translations[posPart] | loc}}</span>)
+  <div>
+    <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>&nbsp;(<span>{{translations[posPart] | loc}}</span>)
+  </div>
+  <div>
   <a
+    style="padding-right: 8px;"
     *ngIf="!noKarp"
     [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Clemgram%7Cequals%7C'+data"
     target="_blank"
     (click)="clickedKarp($event)">
     <img
       class="karp_logo"
-      src="assets/karplogo.png"
-    />
+      src="assets/karp.svg"
+    /><span style="padding-right: 4px; color: chocolate;">:</span>
+    <span style="color: chocolate;">{{basePart}}</span><sup style="color: chocolate;" *ngIf="index !== 1">{{indexPart}}</sup><span style="color: chocolate;">&nbsp;({{translations[posPart] | loc}})</span>
   </a>
+</div>
+  
 </ng-template>
 
 <ng-template [ngIf]="type === 'sense'">
+  <div>
     <span>{{basePart}}</span><sup *ngIf="index !== 1">{{indexPart}}</sup>
-    <a
+  </div>
+  <div>
+  <a
+      style="padding-right: 8px;"
       *ngIf="!noKarp"
       [href]="'https://spraakbanken.gu.se/karp/#?mode=DEFAULT&search=extended%7C%7Cand%7Csense%7Cequals%7C'+data"
       target="_blank"
       (click)="clickedKarp($event)">
       <img
         class="karp_logo"
-        src="assets/karplogo.png"
-      />
+        src="assets/karp.svg"
+      /><span style="padding-right: 4px; color: chocolate">:</span>
+      <span style="color: chocolate;">{{basePart}}</span><sup style="color: chocolate;" *ngIf="index !== 1">{{indexPart}}</sup>
     </a>
+  </div>
 </ng-template>
 
 <ng-template [ngIf]="type === 'audio'">
@@ -38,7 +51,11 @@
   </button>
 </ng-template>
 
-<ng-template [ngIf]="type !== 'lemgram' && type !== 'sense' && type !== 'audio' && type !== 'video'">
+<ng-template [ngIf]="type === 'url'">
+  <span [tooltip]="confidence" placement="left" container="body"><a [href]="stringPart" target="_blank" style="color: chocolate;">{{stringPart}}</a></span>
+</ng-template>
+
+<ng-template [ngIf]="type !== 'lemgram' && type !== 'sense' && type !== 'audio' && type !== 'video' && type !== 'url'">
   <span *ngIf="translations && translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{translations[stringPart] | loc}}</span>
   <span *ngIf="!translations || !translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{stringPart}}</span>
 </ng-template>

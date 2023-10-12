@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { AppState, MODE_SELECTED, INITIATE } from '../searchreducer';
+import { AppState, MODE_SELECTED, INITIATE, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY } from '../searchreducer';
 import { RoutingService } from 'app/routing.service';
 import { filter } from 'rxjs/operators';
 
@@ -21,6 +21,8 @@ export class ModeselectionComponent implements OnInit {
   public listMode = {};
   public visibleMode = '';
   public minkMode = false;
+  public documentParam = {};
+  public filterData = {};
 
   private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
   public addFacet = [];
@@ -109,12 +111,31 @@ export class ModeselectionComponent implements OnInit {
         this.modeSelection[item] = false
       }
     }
-    this.updateFilters();
+    this.updateFilters(status);
   }
 
-  private updateFilters() {
+  private updateFilters(status) {
     this.store.dispatch({ type: MODE_SELECTED, payload : this.modeItem});
-    // this.store.dispatch({ type: SEARCH, payload : null});
+    if (status === 'continue') {
+      this.documentParam = {}
+    }
+    if (_.keys(this.documentParam).length > 0) {
+    setTimeout(() => {
+      if (this.documentParam['documentID'] && this.documentParam['documentCorpus']) {
+        this.store.dispatch({
+          type : OPENDOCUMENT_NOHISTORY,
+          payload : {
+            doc_id : this.documentParam["documentID"],
+            corpus_id : this.documentParam["documentCorpus"]
+          }
+        });
+      } else {
+        this.store.dispatch({
+          type : CLOSEDOCUMENT_NOHISTORY,
+        });
+      }
+    }, 3000);
+    }
   }
 
   ngOnInit() {
@@ -123,7 +144,12 @@ export class ModeselectionComponent implements OnInit {
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE))).subscribe(([info, data]: [any, any]) => {
       this.collectMode();
       let tempURL = this.routingService.getCurrentState();
+      if (tempURL.documentCorpus !== null && tempURL.documentID !== null) {
+        this.documentParam['documentCorpus'] = tempURL.documentCorpus;
+        this.documentParam['documentID'] = tempURL.documentID;
+      }
       if (_.keys(tempURL.filters).length > 0) {
+        this.filterData = tempURL.filters;
         this.preSelectCorpora = _.map(_.takeRightWhile(_.values(tempURL.filters), ['field', 'corpus_id']), 'value')
       }
       if (tempURL.modeSelected[0] === "default") {

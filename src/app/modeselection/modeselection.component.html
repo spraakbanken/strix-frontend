@@ -1,15 +1,15 @@
 <div>
     <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: baseline;">
-        <li class="nav-item" [style.color]="this.modeSelection['default'] ? 'blue' : 'black'" (click)="chooseMode('default', 'continue');">
+        <li class="nav-item" [style.color]="this.modeSelection['default'] ? 'chocolate' : 'black'" (click)="chooseMode('default', 'continue');">
             <a>{{ 'Modern' | loc }}</a>
         </li>
-        <li class="nav-item" *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'blue' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
+        <li class="nav-item" *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'chocolate' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
             <a>{{ 'Mink' | loc }}</a>
         </li>
         <li class="nav-item" [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
             <a>{{ 'Parallel' | loc }}</a>
         </li>
-        <li class="nav-item" [style.color]="this.modeSelection[visibleMode] ? 'blue' : 'black'" *ngIf="visibleMode !== ''" (click)="chooseMode(visibleMode, 'continue');">
+        <li class="nav-item" [style.color]="this.modeSelection[visibleMode] ? 'chocolate' : 'black'" *ngIf="visibleMode !== ''" (click)="chooseMode(visibleMode, 'continue');">
             <a>{{ listMode[visibleMode] | loc }}</a>
         </li>
         <li class="nav-item dropright">
@@ -18,7 +18,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding: 0px;">
                 <ng-container *ngFor="let item of modeCollection | keyvalue">
-                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'blue' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode && item.key != 'mink'">
+                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'chocolate' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode && item.key != 'mink'">
                         {{ listMode[item.key] | loc }}
                     </a>
                 </ng-container>

@@ -6,7 +6,8 @@ import { MetadataService } from '../metadata.service';
 import { LangPhrase } from '../loc.model';
 import { filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
-import { AppState, SEARCHINDOCUMENT, SearchRedux, OPENDOCUMENT, CLOSEDOCUMENT, MODE_SELECTED } from '../searchreducer';
+import { AppState, SEARCHINDOCUMENT, SearchRedux, OPENDOCUMENT, CLOSEDOCUMENT, MODE_SELECTED, OPENDOCUMENT_NOHISTORY } from '../searchreducer';
+import * as _ from 'lodash';
 
 /**
  * The header component should let the user search in the open document and as well
@@ -30,6 +31,8 @@ export class HeaderComponent implements OnInit {
   public mostCommonWords: string[];
   public openDocument = false;
   public corpusID: string;
+  public documentTempData = {};
+  public sourceUrl: string;
 
   public asyncSelected: string = "";
   private searchRedux: Observable<SearchRedux>;
@@ -39,8 +42,9 @@ export class HeaderComponent implements OnInit {
     this.searchRedux = this.store.select('searchRedux');
 
     this.subscription = documentsService.loadedDocument$.subscribe(message => {
+      this.documentTempData = {};
       let openedDocument = documentsService.getDocument(message.documentIndex);
-      // console.log("openedDocument", openedDocument)
+      this.documentTempData = openedDocument;
       this.documentTitle = openedDocument.title;
       this.corpusName = metadataService.getName(openedDocument.corpusID);
       this.corpusID = openedDocument.corpusID;
@@ -49,11 +53,27 @@ export class HeaderComponent implements OnInit {
       if (openedDocument.corpusID === "jubileumsarkivet-pilot") {
         this.newspaper = openedDocument.textAttributes.newspaper;
       }
+      if (openedDocument.corpusID === "detektiva") {
+        this.sourceUrl = openedDocument.textAttributes.url;
+      }
       this.mostCommonWords = openedDocument.mostCommonWords.split(', ').slice(0,10);
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
-      // console.log("|openDocument");
+      if (_.keys(this.documentTempData).length > 0 && data.history === false) {
+        this.documentTitle = this.documentTempData['title'];
+        this.corpusName = metadataService.getName(this.documentTempData['corpusID'])
+        this.corpusID = this.documentTempData['corpusID'];
+        this.wordCount = this.documentTempData['word_count'];
+        this.yearInfo = this.documentTempData['textAttributes']['year'];
+        if (this.documentTempData['corpusID'] === "jubileumsarkivet-pilot") {
+          this.newspaper = this.documentTempData['textAttributes']['newspaper'];
+        }
+        if (this.documentTempData['corpusID'] === "riksarkivet") {
+          this.sourceUrl = this.documentTempData['textAttributes']['url'];
+        }
+        this.mostCommonWords = this.documentTempData['mostCommonWords'].split(', ').slice(0,10);
+      }
       this.openDocument = true;      
     });
 
@@ -63,8 +83,7 @@ export class HeaderComponent implements OnInit {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
-      // console.log("|closeDocument");
-      if (this.openDocument) {
+      if (this.openDocument && data.modeStatus === "continue") {
         this.openDocument = false;
         this.closeDocument();
       }

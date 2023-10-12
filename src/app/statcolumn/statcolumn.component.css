@@ -155,7 +155,7 @@
   }
 
   .left_column a.active {
-    background-color: rgb(105, 211, 246);
+    background-color: lightblue;
   }
 
   .left_column ul {

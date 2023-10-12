@@ -4,7 +4,7 @@
       <modeselection></modeselection>
     </div>
     <div class="topRight">
-      <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: end;">
+      <ul class="navbar-nav" style="display: flex; gap: 10px; align-items: inherit;">
         <!-- * Info func *  
           <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" id="navbarDropdownInfo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;">
@@ -27,16 +27,18 @@
         </li> -->
         <li class="nav-item"><a (click)="loginStatus === 'login' ? gotoLogin() : gotoLogout()">{{ loginStatus | loc}}</a></li>
         <!-- <li class="nav-item"><a style="padding-left: 10px;" (click)="gotoLogout()">{{'logout' | loc}}</a></li> -->
-        <li class="nav-item"><a [style.color]="this.selectSwe ? 'blue' : 'black'" (click)="changeLanguageTo('swe')">{{getLangchange('swe')}}</a></li>
-        <li class="nav-item"><a [style.color]="this.selectEng ? 'blue' : 'black'" (click)="changeLanguageTo('eng')">{{getLangchange('eng')}}</a></li>
+        <li class="nav-item"><a [style.color]="this.selectSwe ? 'chocolate' : 'black'" (click)="changeLanguageTo('swe')">{{getLangchange('swe')}}</a></li>
+        <li class="nav-item"><a [style.color]="this.selectEng ? 'chocolate' : 'black'" (click)="changeLanguageTo('eng')">{{getLangchange('eng')}}</a></li>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex;">
-            {{'topMenu' | loc}} <mat-icon style="height: 10px; width: 10px;">view_headline</mat-icon>
-          </a>
+          <a class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="display: flex; padding-left: 0px;">
+            {{'sbxtool' | loc}} 
+          </a> <!--<mat-icon style="height: 10px; width: 10px;">view_headline</mat-icon>-->
           <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
             <a class="dropdown-item" href="#">{{ 'aboutS' | loc }}</a>
-            <a class="dropdown-item" title="Korp" href="https://spraakbanken.gu.se/korp/" target="_blank">Korp</a>
-            <a class="dropdown-item" title="Sparv" href="https://spraakbanken.gu.se/sparv/" target="_blank">Sparv</a>
+            <a class="dropdown-item" title="Korp" href="https://spraakbanken.gu.se/karp/" target="_blank">Karp <img width="28" src="assets/karp.svg"/></a>
+            <a class="dropdown-item" title="Sparv" href="https://spraakbanken.gu.se/korp/" target="_blank">Korp <img width="28" src="assets/korp.svg"/></a>
+            <a class="dropdown-item" title="Korp" href="https://spraakbanken.gu.se/mink/" target="_blank">Mink <img width="28" src="assets/mink.svg"/></a>
+            <a class="dropdown-item" title="Sparv" href="https://spraakbanken.gu.se/sparv/" target="_blank">Sparv <img width="24px;" margin-bottom="4px;" src="assets/sparv.svg"/></a>
           </div>
         </li>
       </ul>
@@ -44,15 +46,17 @@
   </nav>
   <div class="topnav row">
     <div class="strixLogo col-2 col-md-2" title="Strix SB" (click)="reloadStrix()">
-      <a style="padding: 0px;"><img width="100" src="assets/strixv2.png"/></a>
+      <a *ngIf="selectedLanguage === 'swe'" style="padding: 0px;"><img width="200" src="assets/strix_slogan.svg"/></a>
+      <a *ngIf="selectedLanguage === 'eng'" style="padding: 0px;"><img width="200" src="assets/strix_slogan_en.svg"/></a>
     </div>
-    <div class="d-none d-md-block col-md-6" style="padding: 34px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
+    <div class="d-none d-md-block col-6 col-md-6" style="padding: 30px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
     </div>
-    <div class="d-none d-xl-block col-xl-4" style="height: inherit; margin-left: auto; margin-right: 0; padding: 20px 0px 0px 0px;"> <!--padding-right: 8px;-->
-      <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 35px 0px 0px 10px; float: right;"><img width="20" src="assets/guLogo.png" alt=""></a>
-      <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 9px 0px 10px; float: right;"><img width="40" src="assets/sweClarin.png" alt=""></a>
-      <a title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 0px 0px 0px; float: right;"><img width="240" src="assets/sbText.svg" alt=""></a>
+    <div class="d-none d-xl-block col-xl-4" style="height: inherit; margin-left: auto; margin-right: -15px; padding: 0px 0px 0px 0px;"> <!--padding-right: 8px;-->
+      <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 0px 0px 0px 10px; float: right;"><img width="90" src="assets/gu_logo_hack.png" alt=""></a>
+      <!-- <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 9px 0px 10px; float: right;"><img width="40" src="assets/sweClarin.png" alt=""></a> -->
+      <a *ngIf="selectedLanguage === 'swe'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 16px 0px 0px; float: right;"><img width="320" src="assets/sprakbanken_text_slogan.svg" alt=""></a>
+      <a *ngIf="selectedLanguage === 'eng'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 16px 0px 0px; float: right;"><img width="320" src="assets/sprakbanken_text_slogan_en.svg" alt=""></a>
     </div>
   </div>
   <div class="statDiv" [hidden]="openDocument || listTabs[selectedTab.value] !== 'Hits'">

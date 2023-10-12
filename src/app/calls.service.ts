@@ -256,7 +256,7 @@ export class CallsService {
   //   );
   // }
 
-  public getDataforFacet(corpora: string[], modes: string[], include_facet: string, include_attr: string[]) {
+  public getDataforFacet(corpora: string[], modes: string[], include_facet: string, include_attr: string[], searchString: string) {
     let params: any = {};
     let get_filter = [];
     for (let item of include_attr) {
@@ -264,6 +264,10 @@ export class CallsService {
     }
     if (get_filter && _.size(get_filter) > 0) {
       params.text_filter = this.formatFilterObject(get_filter);
+    }
+
+    if (searchString !== null && searchString.length !== 0) {
+      params.text_query = searchString;
     }
 
     if (corpora) {

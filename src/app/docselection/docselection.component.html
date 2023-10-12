@@ -10,6 +10,9 @@
       {{ 'no_doc_found' | loc }}
     </alert>
   </div>
+  <div style="height: 10px; padding-top: 50px;"  *ngIf="docHits">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
   <div class="hits_area" *ngIf="documentsWithHits.length > 0 && showData">
     <div class="hits_header row flex-column">
       <div class="docView">
@@ -128,6 +131,17 @@
                   <i *ngIf="i < doc.ner_tags.split(', ').length-1 && i < 4" style="padding-right: 10px;">{{item}},</i>
                   <i *ngIf="i == 4">{{item}}</i>
                   <i *ngIf="i == doc.ner_tags.split(', ').length-1 && i < 5">{{item}}</i>
+                </span>
+              </div>
+            </div>
+            <div class="row" *ngIf="doc.mode_id === 'detektiva'">
+              <div class="col-xl-2">
+                <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+              </div>
+              <div class="col-xl-9">
+                <span>
+                  <a [href]="doc.text_attributes.url" target="_blank" style="color: chocolate;">
+                    {{doc.text_attributes.url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
                 </span>
               </div>
             </div>

@@ -114,6 +114,8 @@ export class LocService {
       'upcoming_updates': 'Kommande uppdateringar',
       'no_doc_found': 'Inga dokument hittades',
       'select_corpus': 'Ingen korpus är vald',
+      'source_link': 'Källa',
+      'sbxtool': 'SBX verktyg',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -207,6 +209,8 @@ export class LocService {
       'upcoming_updates': ' Upcoming updates',
       'no_doc_found': 'No documents found',
       'select_corpus': 'No corpus is selected',
+      'source_link' : 'Source',
+      'sbxtool': 'SBX tools',
     }
   };
 

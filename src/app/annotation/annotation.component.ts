@@ -43,7 +43,13 @@ export class AnnotationComponent implements OnInit {
   ngOnInit() {
     switch(this.type) {
       case 'lemgram':
-        let lemgram_parts = this.data.split("..");
+        let lemgram_parts = [];
+        if (this.data.includes("...")) {
+          lemgram_parts = this.data.split("...")
+        } else if (this.data.includes('..')) {
+          lemgram_parts = this.data.split("..");
+        } else {
+        }
         this.basePart = lemgram_parts[0];
         let lastParts = lemgram_parts[1].split(".");
         this.posPart = lastParts[0];
@@ -58,6 +64,8 @@ export class AnnotationComponent implements OnInit {
         break;
       case 'video':
         break;
+      case 'url':
+        this.stringPart = this.data
       default:
         if (typeof this.data === 'string') {
           let regexp = /.*:\d+.?\d*/;
@@ -68,7 +76,7 @@ export class AnnotationComponent implements OnInit {
         }
 
         if (!this.stringPart) {
-          this.stringPart = this.data;
+          this.stringPart = this.data.split('_').join(' ');
         }
         break;
     }

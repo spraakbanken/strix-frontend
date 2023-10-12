@@ -32,6 +32,7 @@ export class FilterdataComponent implements OnInit {
   public negationStatus = {};
   public yearInterval = "";
   public openDocument = false;
+  public loadFilter = false;
 
   public basicFilter = false;
   public advanceFilter = false; 
@@ -48,7 +49,7 @@ export class FilterdataComponent implements OnInit {
 
   public selectFilter = 'basicFilter';
   public selectedTab = 'basicFilter'; 
-  public selectedOptions: string[] = ['year', 'blingbring', 'swefn'];
+  public selectedOptions: string[] = [];
 
   private metadataSubscription: Subscription; 
   private aggregatedResultSubscription: Subscription;
@@ -124,8 +125,9 @@ export class FilterdataComponent implements OnInit {
         this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets).subscribe((result) => {
           this.dataFromFacet = {};
           this.dataFromFacet  = result.aggregations;
+          // console.log("Step 1", this.dataFromFacet)
           this.decorateWithParent(this.dataFromFacet);
-          this.updatedData();
+          // this.updatedData();
           this.runFilter();
         });
       }
@@ -158,14 +160,19 @@ export class FilterdataComponent implements OnInit {
             }
           }
           this.resultFacet = tempNew;
-        });
-        this.updatedData();
-        setTimeout(() => {
+          // console.log(this.facetList)
           this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
-          // this.selectSearch('basicFilter');
+          // console.log("here")
           this.basicFacets["year"] = false;
           this.defaultFacets();
-        }, 2000);
+        });
+        this.updatedData();
+        // setTimeout(() => {
+        //   this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
+        //   // this.selectSearch('basicFilter');
+        //   this.basicFacets["year"] = false;
+        //   this.defaultFacets();
+        // }, 4000);
       }
     });
 
@@ -216,8 +223,10 @@ export class FilterdataComponent implements OnInit {
   }
 
   public selectFacet(event) {
+    // console.log(event.options)
     if (event.options[0].selected) {
       if (this.updataFacet(event.options[0].value)) {
+        this.loadFilter = true;
         this.chooseFacet(event.options[0].value)
       }   
     } else {
@@ -232,7 +241,9 @@ export class FilterdataComponent implements OnInit {
     if (!this.include_facets.length) {
       this.include_facets = [].concat(['corpus_id']) // this.aggregationKeys
     }
+    // console.log(this.include_facets)
     this.include_facets.push(item)
+    // console.log(this.include_facets)
     if (!_.keys(this.basicFacets).includes(item)) {
       this.basicFacets[item] = true
     }
@@ -563,7 +574,9 @@ export class FilterdataComponent implements OnInit {
   private chooseFacet(key : string) {
     if (_.keys(this.basicFacets).includes(key)) {
       this.basicFacets[key] = true;
-      this.addCollectControl(key, 'basic');
+      setTimeout(() => {
+        this.addCollectControl(key, 'basic');
+      }, 2000);
     }
     else if (_.keys(this.advanceFacets).includes(key)) {
       this.advanceFacets[key] = true;
@@ -579,9 +592,11 @@ export class FilterdataComponent implements OnInit {
   }
 
   private addCollectControl(key : string, getString : string) {
+    // console.log("Step 2", this.dataFromFacet)
     setTimeout(() => {
       for (let item in this.aggregations) {
         if (item === key && getString === 'basic') {
+          // console.log("Step 3", this.dataFromFacet)
           this.filterDataBasic.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
           this.collectControl.push( new FormControl());
           this.collectControlX.push( new FormControl());
@@ -591,6 +606,7 @@ export class FilterdataComponent implements OnInit {
           this.filterDataAdvance.push({'id':key, 'data': this.dataFromFacet[item]});
           // this.collectControlX.push( new FormControl());
         }
+        this.loadFilter = false;
       }
     }, 200);
   }
@@ -649,6 +665,7 @@ export class FilterdataComponent implements OnInit {
       if (["year"].includes(item)) {
         if (!this.basicFacets[item]) {
           if (this.updataFacet(item)) {
+            this.loadFilter = true;
             this.chooseFacet(item);
             this.selectedOptions.push(item);
           }  
@@ -667,6 +684,7 @@ export class FilterdataComponent implements OnInit {
       }
   }
 
+  // Not in use
   private selectSearch(event) {
     this.basicFilter = false;
     this.advanceFilter = false;

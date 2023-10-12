@@ -58,6 +58,7 @@ export class DocselectionComponent implements OnInit {
   public yearCheck = false;
   public undefYears = true;
   public yearNA = '';
+  public docHits = false;
 
   private searchResultSubscription: Subscription;
   private metadataSubscription: Subscription;
@@ -145,6 +146,8 @@ export class DocselectionComponent implements OnInit {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpora = data.selectedCorpora;
+      this.documentsWithHits = [];
+      this.docHits = true;
       if (data.selectedCorpora.length > 0) {
         this.zeroSelectDoc = "not empty";
         this.currentState = this.currentState + 1;
@@ -166,6 +169,7 @@ export class DocselectionComponent implements OnInit {
       this.hasSearched = false;
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
+      this.docHits = true;
       this.currentPaginatorPage = data.page
     });
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEFILTERS)).subscribe((data) => {
@@ -225,6 +229,7 @@ export class DocselectionComponent implements OnInit {
       (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
+        this.docHits = false;
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
       },
