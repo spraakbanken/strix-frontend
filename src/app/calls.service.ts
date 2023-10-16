@@ -439,7 +439,8 @@ export class CallsService {
     strixDocument.token_lookup = data.token_lookup;
     strixDocument.corpusID = data.corpus_id;
     strixDocument.highlight = data.highlight;
-    strixDocument.mostCommonWords = data.most_common_words
+    strixDocument.mostCommonWords = data.most_common_words;
+    strixDocument.mostCommonNames = data.ner_tags;
     return strixDocument;
   }
 

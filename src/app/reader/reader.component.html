@@ -69,15 +69,19 @@
                         </span>
                         <ul class="annotations_list">
                           <li
+                            *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name] | ensurearray">
+                            {{item}}
+                          </li>
+                          <!-- <li
                             *ngFor="let item of currentAnnotations[annotationGroup.name].attrs[annotation.name] | ensurearray"
                             (click)="readerCommunicationService.changeAnnotationHighlight(annotation.name, annotationGroup.name, item, 'set')"
                             class="highlightable_annotation">
-                            <!--{{item}}-->
+                            <!-{{item}}->
                             <annotation
                               [data]="item"
                               [translations]="annotation.translation_value"
                               [type]="annotation.type"></annotation>
-                          </li>
+                          </li> -->
                         </ul>
                       </span>
                     </span>

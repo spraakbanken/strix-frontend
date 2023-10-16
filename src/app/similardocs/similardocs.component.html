@@ -90,6 +90,17 @@
             </span>
           </div>
         </div>
+        <div class="row" *ngIf="data.corpus_id === 'detektiva'">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <span>
+              <a [href]="data.text_attributes.url" target="_blank" style="color: chocolate;">
+                {{data.text_attributes.url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+            </span>
+          </div>
+        </div>
       </div>
 </div>
 <div class="mainBlock">

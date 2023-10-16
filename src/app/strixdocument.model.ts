@@ -10,6 +10,7 @@ export class StrixDocument {
   word_count: number;
   preview: string;
   mostCommonWords: string;
+  mostCommonNames: string;
 
   // Internal index for the frontend to keep track of.
   // It never changes after it's loaded, but it may

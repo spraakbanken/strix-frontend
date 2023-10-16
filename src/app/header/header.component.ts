@@ -29,6 +29,7 @@ export class HeaderComponent implements OnInit {
   public yearInfo: string;
   public newspaper: string;
   public mostCommonWords: string[];
+  public mostCommonNames: string[];
   public openDocument = false;
   public corpusID: string;
   public documentTempData = {};
@@ -57,6 +58,7 @@ export class HeaderComponent implements OnInit {
         this.sourceUrl = openedDocument.textAttributes.url;
       }
       this.mostCommonWords = openedDocument.mostCommonWords.split(', ').slice(0,10);
+      this.mostCommonNames = openedDocument.mostCommonNames.split(', ').slice(0,5);
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
@@ -73,6 +75,7 @@ export class HeaderComponent implements OnInit {
           this.sourceUrl = this.documentTempData['textAttributes']['url'];
         }
         this.mostCommonWords = this.documentTempData['mostCommonWords'].split(', ').slice(0,10);
+        this.mostCommonNames = this.documentTempData['mostCommonNames'].split(', ').slice(0,5);
       }
       this.openDocument = true;      
     });
@@ -103,6 +106,11 @@ export class HeaderComponent implements OnInit {
   public simpleSearch(item) {
     let xItem = item.split(' ').splice(0,1)[0]
     this.store.dispatch({ type: SEARCHINDOCUMENT, payload : xItem});
+  }
+
+  public simpleSearchName(item) {
+    let xItem = item.split(' (').splice(0,1)[0]
+    this.store.dispatch({ type: SEARCHINDOCUMENT, payload : _.toLower(xItem)});
   }
 
 }

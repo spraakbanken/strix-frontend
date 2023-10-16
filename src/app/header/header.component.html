@@ -13,7 +13,7 @@
         </div>
         <div class="row">
           <div class="col-xl-2">
-            <div class="font-weight-ligh">{{ 'corpus' | loc }} ID:</div>
+            <div class="font-weight-ligh">{{ 'corpusName' | loc }} ID:</div>
           </div>
           <div class="col-xl-9">
             <div class="hit_appendix">
@@ -62,6 +62,21 @@
               <i (click)="simpleSearch(item)">{{item}}</i>
             </span> -->
           </div>
+      </div>
+      <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonNames.length > 1">
+        <div class="col-xl-2">
+          <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
+        </div>
+        <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
+          <span class="mostCommonWords" *ngFor="let item of mostCommonNames; let i = index;">
+            <i *ngIf="i < 4" style="padding-right: 10px;" (click)="simpleSearchName(item)">{{item}}</i>
+            <i *ngIf="i == 4" (click)="simpleSearchName(item)">{{item}}</i>
+          </span>
+          <!-- <span class="mostCommonWords" *ngFor="let item of mostCommonWords; let i = index;">
+            <!- <button class="closeButton" mat-button (click)="simpleSearch(item)">{{ item }}</button> ->
+            <i (click)="simpleSearch(item)">{{item}}</i>
+          </span> -->
+        </div>
       </div>
       <div class="row" *ngIf="corpusID === 'detektiva'">
         <div class="col-xl-2">
