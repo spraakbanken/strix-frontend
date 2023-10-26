@@ -36,9 +36,14 @@
                         <table mat-table [dataSource]="dataSource" matSort>
                       
                           <!-- ID Column -->
-                          <ng-container matColumnDef="key">
+                          <ng-container matColumnDef="key" *ngIf="!translationExist">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header> Element </th>
                             <td mat-cell *matCellDef="let row" (click)="getData(row.key)"> {{row.key}} </td> <!-- style="color: orange"-->
+                          </ng-container>
+
+                          <ng-container matColumnDef="key" *ngIf="translationExist">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header> Element </th>
+                            <td mat-cell *matCellDef="let row" (click)="getData(row.key)"> {{translationData[row.key] | loc }} ({{ row.key }}) </td> <!-- style="color: orange"-->
                           </ng-container>
                       
                           <!-- Progress Column -->

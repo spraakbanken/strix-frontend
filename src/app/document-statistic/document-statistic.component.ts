@@ -45,6 +45,9 @@ export class DocumentStatisticComponent implements OnInit {
   public selectedOptions : String[];
   public elementList = [];
   public countList = [];
+  public wordAnnoObj = {};
+  public translationExist : boolean;
+  public translationData = {};
   public selectedAnnotation: string;
   public selectedAnnotationValue: string;
   public selectedAnnotationStructuralType = 'token';
@@ -150,6 +153,10 @@ export class DocumentStatisticComponent implements OnInit {
   private updateAnnotationsLists(corpusID: string) {
     this.wordAnnotations = [];
     this.wordAnnotations = this.metadataService.getWordAnnotationsFor(corpusID);
+    this.wordAnnoObj = {};
+    for (let i of this.wordAnnotations) {
+      this.wordAnnoObj[i['name']] = i;
+    }
     this.structuralAnnotations = this.metadataService.getStructuralAnnotationsFor(corpusID);
     this.structuralAnnotations = this.structuralAnnotations.filter(item => !["page", "sentence"].includes(item.name))
   }
@@ -182,6 +189,13 @@ export class DocumentStatisticComponent implements OnInit {
     let augAnnotation = name;
     let newData = [];
     this.annotationValues = [];
+    this.translationExist = false;
+    this.translationData = {};
+    if (this.wordAnnoObj[name].translation_value) {
+      this.translationExist = true
+      this.translationData = this.wordAnnoObj[name].translation_value
+    }
+  
     this.callsService.getValuesForAnnotation(this.currentCorpusID, this.currentDocumentID, augAnnotation)
     .subscribe(
       answer => {

@@ -19,7 +19,9 @@ import { DocselectionComponent } from './docselection/docselection.component';
 import { DocumentsService } from './documents.service';
 import { CallsService } from './calls.service';
 import { CmDirective } from './reader/cm.directive';
+import { CmpDirective } from './reader/cmp.directive';
 import { CmComponent } from './reader/cm/cm.component';
+import { CmpComponent } from './reader/cmp/cmp.component';
 import { ReaderComponent } from './reader/reader.component';
 import { KarpService } from './karp.service';
 import { LemgramPipe } from './lemgram.pipe';
@@ -110,7 +112,9 @@ import { CircleViewComponent } from './circleview/circleview.component';
     AppComponent,
     DocselectionComponent,
     CmDirective,
+    CmpDirective,
     CmComponent,
+    CmpComponent,
     ReaderComponent,
     LemgramPipeStub,
     LemgramPipe,

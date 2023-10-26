@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
-SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, YEAR_INTERVAL, FACET_LIST
+SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, YEAR_INTERVAL, FACET_LIST, CHANGEQUERY
 } from '../searchreducer';
 import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
 import {FormControl, FormArray} from '@angular/forms';
@@ -122,7 +122,7 @@ export class FilterdataComponent implements OnInit {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGE_INCLUDE_FACET)).subscribe((data) => {
       if (data.include_facets.length > 0 && this.selectedCorpus.length > 0) {
-        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets).subscribe((result) => {
+        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets, data.query, data.keyword_search).subscribe((result) => {
           this.dataFromFacet = {};
           this.dataFromFacet  = result.aggregations;
           // console.log("Step 1", this.dataFromFacet)
@@ -132,6 +132,26 @@ export class FilterdataComponent implements OnInit {
         });
       }
     });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
+      let holdFacets = data.include_facets;
+      this.deselectFacets();
+      this.basicFacets = {};
+      this.filterDataBasic = [];
+      for (let item of holdFacets) {
+        if (item !== 'corpus_id') {
+          this.basicFacets[item] = false;
+        }
+      }
+      setTimeout(() => {
+        this.defaultFacets(holdFacets);
+      }, 1000);
+      
+      console.log(this.basicFacets)
+      // this.changeQueryFilter(data.include_facets);
+      console.log("----", data, holdFacets)
+      this.updatedData();
+    })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
@@ -164,7 +184,7 @@ export class FilterdataComponent implements OnInit {
           this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
           // console.log("here")
           this.basicFacets["year"] = false;
-          this.defaultFacets();
+          this.defaultFacets(_.keys(this.basicFacets));
         });
         this.updatedData();
         // setTimeout(() => {
@@ -659,10 +679,31 @@ export class FilterdataComponent implements OnInit {
     // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
-  private defaultFacets() {
+  // private changeQueryFilter(previousFacet) {
+  //   this.selectedOptions = [];
+  //   console.log(this.basicFacets)
+  //   for (let item of _.keys(this.basicFacets)) {
+  //     this.removeFacet(item);
+  //     setTimeout(() => {
+  //     if (previousFacet.includes(item)) {
+        
+  //         if (!this.basicFacets[item]) {
+  //           if (this.updataFacet(item)) {
+  //             this.loadFilter = true;
+  //             this.chooseFacet(item);
+  //             this.selectedOptions.push(item)
+  //           }
+  //         }
+  //       }
+  //       }, 1000);
+        
+  //   }
+  // }
+
+  private defaultFacets(currentFacet) {
     this.selectedOptions = [];
     for (let item of _.keys(this.basicFacets)) {
-      if (["year"].includes(item)) {
+      if (currentFacet.includes(item)) {
         if (!this.basicFacets[item]) {
           if (this.updataFacet(item)) {
             this.loadFilter = true;

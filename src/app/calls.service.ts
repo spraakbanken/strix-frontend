@@ -256,7 +256,7 @@ export class CallsService {
   //   );
   // }
 
-  public getDataforFacet(corpora: string[], modes: string[], include_facet: string, include_attr: string[], searchString: string) {
+  public getDataforFacet(corpora: string[], modes: string[], include_facet: string, include_attr: string[], searchString: string, keyword_search: boolean) {
     let params: any = {};
     let get_filter = [];
     for (let item of include_attr) {
@@ -268,6 +268,9 @@ export class CallsService {
 
     if (searchString !== null && searchString.length !== 0) {
       params.text_query = searchString;
+    }
+    if(keyword_search) {
+      params.in_order = (!keyword_search).toString();
     }
 
     if (corpora) {
@@ -281,7 +284,7 @@ export class CallsService {
     );
   }
 
-  public getFacetStatistics(corpora: string[], modes: string[], include_list: string[]) {
+  public getFacetStatistics(corpora: string[], modes: string[], include_list: string[], query_search: string, keyword_search: boolean) {
     let params: any = {};
 
     if (corpora) {
@@ -289,6 +292,12 @@ export class CallsService {
     }
     if (modes) {
       params.modes = modes.join(",");
+    }
+    if (query_search) {
+      params.text_query = query_search;
+    }
+    if(keyword_search) {
+      params.in_order = (!keyword_search).toString();
     }
     if (include_list.length) {
       params.include_facets = include_list.join(",");

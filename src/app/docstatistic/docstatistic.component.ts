@@ -4,7 +4,7 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
-import { FACET_LIST, AppState, SELECTED_CORPORA, SEARCH} from '../searchreducer';
+import { FACET_LIST, AppState, SELECTED_CORPORA, CHANGEQUERY} from '../searchreducer';
 
 import { CallsService } from 'app/calls.service';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
@@ -41,6 +41,7 @@ export class DocstatisticComponent implements OnInit {
     public selectedOptions : String[];
     public searchString = "";
     public loadFilterStatistic = false;
+    public keywordSearch: boolean;
 
     constructor(private store: Store<AppState>, private callsService: CallsService, public _MatPaginatorIntl: MatPaginatorIntl,) {
 
@@ -55,8 +56,10 @@ export class DocstatisticComponent implements OnInit {
             }
         })
 
-        this.searchRedux.pipe(filter((d) => d.latestAction === SEARCH)).subscribe((data) => {
+        this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
             this.searchString = data.query;
+            this.keywordSearch = data.keyword_search;
+            this.getFacetData('year')
         });
 
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
@@ -104,7 +107,7 @@ export class DocstatisticComponent implements OnInit {
             this.showMessage = '';
         }
         let selectedCorpusIn = _.without(this.selectedCorpus, 'rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv')
-        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber), this.searchString).subscribe((result) => {
+        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber), this.searchString, this.keywordSearch).subscribe((result) => {
             let tempData = result.aggregations;
             let tempNew = [];
             let tempDict = {};
@@ -147,7 +150,7 @@ export class DocstatisticComponent implements OnInit {
         let xList = ['corpus_id'];
         xList.push(item)
         if (this.selectedCorpus.length > 0) {
-            this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList).subscribe((result) => {
+            this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList, this.searchString, this.keywordSearch).subscribe((result) => {
                 this.labelList = result.aggregations[item].buckets;
                 this.getTable(0, 10)
             });
