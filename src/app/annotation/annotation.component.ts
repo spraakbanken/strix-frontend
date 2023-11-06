@@ -66,6 +66,12 @@ export class AnnotationComponent implements OnInit {
         break;
       case 'url':
         this.stringPart = this.data
+      case 'year':
+        if (this.data === '2050') {
+          this.stringPart = 'NA';
+        } else {
+          this.stringPart = this.data;
+        }
       default:
         if (typeof this.data === 'string') {
           let regexp = /.*:\d+.?\d*/;

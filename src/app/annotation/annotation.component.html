@@ -57,7 +57,7 @@
 
 <ng-template [ngIf]="type !== 'lemgram' && type !== 'sense' && type !== 'audio' && type !== 'video' && type !== 'url'">
   <span *ngIf="translations && translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{translations[stringPart] | loc}}</span>
-  <span *ngIf="!translations || !translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{stringPart}}</span>
+  <span *ngIf="!translations || !translations[stringPart]" [tooltip]="confidence" placement="left" container="body">{{stringPart.split('_').join(' ')}}</span>
 </ng-template>
 
 <ng-template #modaltemplate>

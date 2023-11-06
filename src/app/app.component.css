@@ -286,3 +286,7 @@ reader {
 .actual_tools {
   float: left;
 }
+
+::ng-deep .mat-ink-bar {
+  background-color: chocolate !important;
+}

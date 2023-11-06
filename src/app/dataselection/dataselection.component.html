@@ -1,7 +1,7 @@
 <div class="dataselection">
     <div class="row">
       <div class="col-xl-12" style="padding: 0px;">
-        <button [disabled]="!activeDoc" class="selectCorpus" mat-button (click)="selectSearch()">
+        <button [disabled]="!activeDoc" class="selectCorpus" mat-button (click)="selectSearch($event)">
           <span style="display: inline-flex; width: 560px;">
             {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
             <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
@@ -9,7 +9,7 @@
           </button>
       </div>
     </div>
-    <div class="openTreeView" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : '594px'">
+    <div class="openTreeView" (click)="$event.stopPropagation()" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : '594px'">
       <div class="row">
         <div class="col-xl-6" style="width: 500px;">
           <div style="height: 60px; width: 550px; background-color: transparent; padding: 12px 8px 0px 18px; margin-left: -15px; border-bottom: 1px solid #ddd;">

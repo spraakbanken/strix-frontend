@@ -284,7 +284,7 @@ export class CallsService {
     );
   }
 
-  public getFacetStatistics(corpora: string[], modes: string[], include_list: string[], query_search: string, keyword_search: boolean) {
+  public getFacetStatistics(corpora: string[], modes: string[], include_list: string[], query_search: string, keyword_search: boolean, filters) {
     let params: any = {};
 
     if (corpora) {
@@ -295,6 +295,9 @@ export class CallsService {
     }
     if (query_search) {
       params.text_query = query_search;
+    }
+    if (filters && _.size(filters) > 0) {
+      params.text_filter = this.formatFilterObject(filters);
     }
     if(keyword_search) {
       params.in_order = (!keyword_search).toString();

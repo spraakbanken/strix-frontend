@@ -214,7 +214,7 @@
     </div>
     <div class="rightBlock d-none d-lg-block" *ngIf="finishLoading">
         <div class="tab-pane fade show active" id="tempSelect" role="tabpanel" aria-labelledby="home-tab"
-        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 20px 10px 20px 20px;">
+        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 8px 10px 20px 20px;">
           <mat-accordion style="width: 433px; padding-bottom: 20px;" *ngIf="authors.length > 0">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
@@ -271,6 +271,7 @@
                   [chartType]="barChartType">
                 </canvas>
               </div>
+              <span>Note: <i style="color: chocolate;">NA -> 2050</i></span>
             </mat-expansion-panel>
           </mat-accordion>
           <mat-accordion style="width: 100%">

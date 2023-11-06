@@ -46,36 +46,62 @@ export class HeaderComponent implements OnInit {
       this.documentTempData = {};
       let openedDocument = documentsService.getDocument(message.documentIndex);
       this.documentTempData = openedDocument;
+      this.documentTitle = '';
       this.documentTitle = openedDocument.title;
+      this.corpusName = null;
       this.corpusName = metadataService.getName(openedDocument.corpusID);
+      this.corpusID = '';
       this.corpusID = openedDocument.corpusID;
+      this.wordCount = 0;
       this.wordCount = openedDocument.word_count;
+      this.yearInfo = '';
       this.yearInfo = openedDocument.textAttributes.year;
+      this.newspaper = '';
       if (openedDocument.corpusID === "jubileumsarkivet-pilot") {
         this.newspaper = openedDocument.textAttributes.newspaper;
       }
+      this.sourceUrl = '';
       if (openedDocument.corpusID === "detektiva") {
         this.sourceUrl = openedDocument.textAttributes.url;
       }
-      this.mostCommonWords = openedDocument.mostCommonWords.split(', ').slice(0,10);
-      this.mostCommonNames = openedDocument.mostCommonNames.split(', ').slice(0,5);
+      this.mostCommonWords = [];
+      this.mostCommonNames = [];
+      if (openedDocument.mostCommonWords) {
+        this.mostCommonWords = openedDocument.mostCommonWords.split(', ').slice(0,10);
+      }
+      if (openedDocument.mostCommonNames) {
+        this.mostCommonNames = openedDocument.mostCommonNames.split(', ').slice(0,5);
+      }
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
       if (_.keys(this.documentTempData).length > 0 && data.history === false) {
+        this.documentTitle = '';
         this.documentTitle = this.documentTempData['title'];
-        this.corpusName = metadataService.getName(this.documentTempData['corpusID'])
+        this.corpusName = null;
+        this.corpusName = metadataService.getName(this.documentTempData['corpusID']);
+        this.corpusID = '';
         this.corpusID = this.documentTempData['corpusID'];
+        this.wordCount = 0;
         this.wordCount = this.documentTempData['word_count'];
+        this.yearInfo = '';
         this.yearInfo = this.documentTempData['textAttributes']['year'];
+        this.newspaper = '';
         if (this.documentTempData['corpusID'] === "jubileumsarkivet-pilot") {
           this.newspaper = this.documentTempData['textAttributes']['newspaper'];
         }
-        if (this.documentTempData['corpusID'] === "riksarkivet") {
+        this.sourceUrl = '';
+        if (this.documentTempData['corpusID'] === "detektiva") {
           this.sourceUrl = this.documentTempData['textAttributes']['url'];
         }
-        this.mostCommonWords = this.documentTempData['mostCommonWords'].split(', ').slice(0,10);
-        this.mostCommonNames = this.documentTempData['mostCommonNames'].split(', ').slice(0,5);
+        this.mostCommonWords = [];
+        this.mostCommonNames = [];
+        if (this.documentTempData['mostCommonWords']) {
+          this.mostCommonWords = this.documentTempData['mostCommonWords'].split(', ').slice(0,10);
+        }
+        if (this.documentTempData['mostCommonNames']) {
+          this.mostCommonNames = this.documentTempData['mostCommonNames'].split(', ').slice(0,5);
+        } 
       }
       this.openDocument = true;      
     });

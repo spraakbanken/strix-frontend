@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, HostListener } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
@@ -601,15 +601,21 @@ export class DataselectionComponent implements OnInit {
     this.showInformation = false;
   }
 
-  public selectSearch() {
+  public selectSearch($event) {
     if (this.simpleSearch === true) {
       this.simpleSearch = false;
       this.openClose = 'unfold_more';
     }
     else {
+      $event.stopPropagation();
       this.simpleSearch = true;
       this.openClose = 'unfold_less';
     }
+  }
+
+  @HostListener('document:click', ['$event']) onDocumentClick(event) {
+    this.simpleSearch = false;
+    this.openClose = 'unfold_more';
   }
 
   public showYearDistribution() {

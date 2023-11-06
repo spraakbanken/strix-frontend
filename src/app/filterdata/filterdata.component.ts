@@ -8,9 +8,10 @@ import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import {
-SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, YEAR_INTERVAL, FACET_LIST, CHANGEQUERY
+SEARCH, CHANGEFILTERS, CHANGE_INCLUDE_FACET, MODE_SELECTED, OPENDOCUMENT, CLOSEDOCUMENT, AppState, SELECTED_CORPORA, 
+YEAR_INTERVAL, FACET_LIST, CHANGEQUERY
 } from '../searchreducer';
-import { Bucket, Aggregations, Agg, AggregationsResult } from "../strixresult.model";
+import { Bucket, Aggregations, Agg, AggregationsResult, SearchResult } from "../strixresult.model";
 import {FormControl, FormArray} from '@angular/forms';
 import { CallsService } from 'app/calls.service';
 
@@ -39,6 +40,8 @@ export class FilterdataComponent implements OnInit {
   public gotMetadata = false;
   public showFilters = false; 
   public showFiltersX = false;
+  public holdFacets : string[] = [];
+  public searchQuery : string = '';
 
   public bucketsInMode = [];
   private currentMode = 'default';
@@ -53,6 +56,11 @@ export class FilterdataComponent implements OnInit {
 
   private metadataSubscription: Subscription; 
   private aggregatedResultSubscription: Subscription;
+  private searchResultSubscription: Subscription;
+
+  private observeFilter = new Observable((subscriber) => {
+    subscriber.next();
+  })
 
   private aggregations : Aggregations = {}; 
   private aggregationKeys: string[] = []; 
@@ -122,36 +130,28 @@ export class FilterdataComponent implements OnInit {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGE_INCLUDE_FACET)).subscribe((data) => {
       if (data.include_facets.length > 0 && this.selectedCorpus.length > 0) {
-        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets, data.query, data.keyword_search).subscribe((result) => {
+        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets, data.query, data.keyword_search, data.filters).subscribe((result) => {
           this.dataFromFacet = {};
           this.dataFromFacet  = result.aggregations;
           // console.log("Step 1", this.dataFromFacet)
           this.decorateWithParent(this.dataFromFacet);
-          // this.updatedData();
           this.runFilter();
         });
       }
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
-      let holdFacets = data.include_facets;
-      this.deselectFacets();
-      this.basicFacets = {};
-      this.filterDataBasic = [];
-      for (let item of holdFacets) {
-        if (item !== 'corpus_id') {
-          this.basicFacets[item] = false;
-        }
+      this.searchQuery = data.query;
+      this.holdFacets = data.include_facets.filter(item => item != 'corpus_id');
+      if (data.include_facets.length > 0 && this.selectedCorpus.length > 0) {
+        this.callsService.getFacetStatistics(this.selectedCorpus, data.modeSelected, data.include_facets, data.query, data.keyword_search, data.filters).subscribe((result) => {
+          this.dataFromFacet = {};
+          this.dataFromFacet  = result.aggregations;
+          this.decorateWithParent(this.dataFromFacet);
+          this.runFilter();
+        });
       }
-      setTimeout(() => {
-        this.defaultFacets(holdFacets);
-      }, 1000);
-      
-      console.log(this.basicFacets)
-      // this.changeQueryFilter(data.include_facets);
-      console.log("----", data, holdFacets)
-      this.updatedData();
-    })
+    });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
@@ -165,6 +165,7 @@ export class FilterdataComponent implements OnInit {
       this.basicFacets = {};
       this.modeSelected = data.modeSelected[0];
       this.filterDataBasic = [];
+      this.holdFacets = [];
       this.collectControl = new FormArray([]);
       this.collectX = [];
       if (this.selectedCorpus.length > 0) {
@@ -180,11 +181,8 @@ export class FilterdataComponent implements OnInit {
             }
           }
           this.resultFacet = tempNew;
-          // console.log(this.facetList)
           this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
-          // console.log("here")
-          this.basicFacets["year"] = false;
-          this.defaultFacets(_.keys(this.basicFacets));
+          this.defaultFacetsNew();
         });
         this.updatedData();
         // setTimeout(() => {
@@ -195,6 +193,20 @@ export class FilterdataComponent implements OnInit {
         // }, 4000);
       }
     });
+
+    this.searchResultSubscription = queryService.searchResult$.subscribe(
+      (answer: SearchResult) => {
+        if (this.filterDataBasic.length > 0) {
+          this.loadFilter = true;
+        }
+        setTimeout(() => {
+          this.observeFilter.subscribe(() => {
+            this.defaultFacets();
+         })
+        }, 4000);
+      },
+      error => null//this.errorMessage = <any>error
+    );
 
     this.aggregatedResultSubscription = queryService.aggregationResult$.pipe(skip(1)).subscribe(
       (result : AggregationsResult) => {
@@ -240,6 +252,7 @@ export class FilterdataComponent implements OnInit {
     else {
       this.runFilter();
     }
+    this.store.dispatch( { type :  CHANGEQUERY, payload : this.searchQuery })
   }
 
   public selectFacet(event) {
@@ -261,9 +274,7 @@ export class FilterdataComponent implements OnInit {
     if (!this.include_facets.length) {
       this.include_facets = [].concat(['corpus_id']) // this.aggregationKeys
     }
-    // console.log(this.include_facets)
     this.include_facets.push(item)
-    // console.log(this.include_facets)
     if (!_.keys(this.basicFacets).includes(item)) {
       this.basicFacets[item] = true
     }
@@ -430,10 +441,10 @@ export class FilterdataComponent implements OnInit {
     for (let item = 0; item < this.filterDataBasic.length; item++) {
       if (this.filterDataBasic[item]['id'] === aggsName) {
         if (this.filterDataBasic[item]['sortChar'] === 'desc') {
-          this.filterDataBasic[item]['data'].buckets = _.orderBy(this.filterDataBasic[item]['data'].buckets, 'key', [this.filterDataBasic[item]['sortChar']]);
+          this.filterDataBasic[item]['data'] = _.orderBy(this.filterDataBasic[item]['data'], 'key', [this.filterDataBasic[item]['sortChar']]);
           this.filterDataBasic[item]['sortChar'] = 'asc'
         } else if (this.filterDataBasic[item]['sortChar'] === 'asc'){
-          this.filterDataBasic[item]['data'].buckets = _.orderBy(this.filterDataBasic[item]['data'].buckets, 'key', [this.filterDataBasic[item]['sortChar']]);
+          this.filterDataBasic[item]['data'] = _.orderBy(this.filterDataBasic[item]['data'], 'key', [this.filterDataBasic[item]['sortChar']]);
           this.filterDataBasic[item]['sortChar'] = 'desc'
         }
         
@@ -445,10 +456,10 @@ export class FilterdataComponent implements OnInit {
     for (let item = 0; item < this.filterDataBasic.length; item++) {
       if (this.filterDataBasic[item]['id'] === aggsName) {
         if (this.filterDataBasic[item]['sortNumber'] === 'desc') {
-          this.filterDataBasic[item]['data'].buckets = _.orderBy(this.filterDataBasic[item]['data'].buckets, 'doc_count', [this.filterDataBasic[item]['sortNumber']]);
+          this.filterDataBasic[item]['data'] = _.orderBy(this.filterDataBasic[item]['data'], 'doc_count', [this.filterDataBasic[item]['sortNumber']]);
           this.filterDataBasic[item]['sortNumber'] = 'asc'
         } else if (this.filterDataBasic[item]['sortNumber'] === 'asc'){
-          this.filterDataBasic[item]['data'].buckets = _.orderBy(this.filterDataBasic[item]['data'].buckets, 'doc_count', [this.filterDataBasic[item]['sortNumber']]);
+          this.filterDataBasic[item]['data'] = _.orderBy(this.filterDataBasic[item]['data'], 'doc_count', [this.filterDataBasic[item]['sortNumber']]);
           this.filterDataBasic[item]['sortNumber'] = 'desc'
         }
       }
@@ -617,10 +628,10 @@ export class FilterdataComponent implements OnInit {
       for (let item in this.aggregations) {
         if (item === key && getString === 'basic') {
           // console.log("Step 3", this.dataFromFacet)
-          this.filterDataBasic.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
+          this.filterDataBasic.push({'id':key, 'data': this.dataFromFacet[item]['buckets'], 'sortChar' : 'desc', 'sortNumber' : 'desc'});
           this.collectControl.push( new FormControl());
           this.collectControlX.push( new FormControl());
-          this.filterDataBasicX.push({'id':key, 'data': this.dataFromFacet[item], 'sortChar' : 'desc', 'sortNumber' : 'desc'})
+          this.filterDataBasicX.push({'id':key, 'data': this.dataFromFacet[item]['buckets'], 'sortChar' : 'desc', 'sortNumber' : 'desc'})
         }
         if (item === key && getString === 'advance') {
           this.filterDataAdvance.push({'id':key, 'data': this.dataFromFacet[item]});
@@ -634,6 +645,7 @@ export class FilterdataComponent implements OnInit {
   private removeFacet(key : string) {
     if (_.keys(this.basicFacets).includes(key)) {
       this.basicFacets[key] = false;
+      this.basicFacets = _.omit(this.basicFacets, [key])
       this.deleteCollectControl(key, 'basic');
     }
     else if (_.keys(this.advanceFacets).includes(key)) {
@@ -679,43 +691,18 @@ export class FilterdataComponent implements OnInit {
     // this.store.dispatch({ type: SEARCH, payload : null});
   }
 
-  // private changeQueryFilter(previousFacet) {
-  //   this.selectedOptions = [];
-  //   console.log(this.basicFacets)
-  //   for (let item of _.keys(this.basicFacets)) {
-  //     this.removeFacet(item);
-  //     setTimeout(() => {
-  //     if (previousFacet.includes(item)) {
-        
-  //         if (!this.basicFacets[item]) {
-  //           if (this.updataFacet(item)) {
-  //             this.loadFilter = true;
-  //             this.chooseFacet(item);
-  //             this.selectedOptions.push(item)
-  //           }
-  //         }
-  //       }
-  //       }, 1000);
-        
-  //   }
-  // }
-
-  private defaultFacets(currentFacet) {
-    this.selectedOptions = [];
-    for (let item of _.keys(this.basicFacets)) {
-      if (currentFacet.includes(item)) {
-        if (!this.basicFacets[item]) {
-          if (this.updataFacet(item)) {
-            this.loadFilter = true;
-            this.chooseFacet(item);
-            this.selectedOptions.push(item);
-          }  
-        }
-      } else {
-        // this.selectedOptions = this.selectedOptions.filter(itemX => itemX != item)
-        this.removeFacet(item)
-      }
+  public defaultFacetsNew() {
+    this.store.dispatch( { type :  CHANGE_INCLUDE_FACET, payload : ['corpus_id'] })
   }
+
+  private defaultFacets() {
+    for (let i in this.filterDataBasic) {
+      if (this.holdFacets.includes(this.filterDataBasic[i].id)) {
+        this.filterDataBasic[i].data = this.dataFromFacet[this.filterDataBasic[i].id].buckets.filter(item => item.doc_count !== 0)
+      }
+    }
+    // this.holdFacets = [];
+    this.loadFilter = false;
   }
 
   private deselectFacets() {

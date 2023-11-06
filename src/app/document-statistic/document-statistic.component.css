@@ -33,7 +33,7 @@
 }
 
 .mat-list-single-selected-option {
-    background: cadetblue;
+    background: #a3c8ca;
 }
 
 ::ng-deep .mat-list-option {

@@ -150,7 +150,7 @@ export class DocstatisticComponent implements OnInit {
         let xList = ['corpus_id'];
         xList.push(item)
         if (this.selectedCorpus.length > 0) {
-            this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList, this.searchString, this.keywordSearch).subscribe((result) => {
+            this.callsService.getFacetStatistics(this.selectedCorpus, [this.modeSelected], xList, this.searchString, this.keywordSearch, []).subscribe((result) => {
                 this.labelList = result.aggregations[item].buckets;
                 this.getTable(0, 10)
             });

@@ -227,7 +227,7 @@ export class SimilarDocsComponent implements OnInit{
 
   public filterData() {
     let tempData = this.similarDocs;
-    const checkRange = (element) => _.inRange(element, this.minYear, this.maxYear);
+    const checkRange = (element) => _.inRange(element, this.minYear, this.maxYear+1);
     this.filteredDataNew = []; this.tokens = []; this.documentData = []; this.documentLabels = [];
     if (this.authorC.value !== null && this.authorC.value.length > 0) {        
         tempData = tempData.filter((x) => {return this.authorC.value.includes(x['authors']);})

@@ -43,8 +43,11 @@
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
           </div>
-          <div class="col-xl-9">
+          <div class="col-xl-9" *ngIf="yearInfo !== '2050'">
             <a>{{yearInfo}}</a>
+          </div>
+          <div class="col-xl-9" *ngIf="yearInfo === '2050'">
+            <a>{{'NA'}}</a>
           </div>
         </div>
         

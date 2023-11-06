@@ -104,8 +104,8 @@
 }
 
 .paginatorClass {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 8px;
+    padding-bottom: 8px;
     min-width: 100%;
 }
 
@@ -121,11 +121,15 @@
 }
 
 .mat-expansion-panel {
-    background-color: cadetblue;
+    background-color: #a3c8ca;
 }
 
 .mat-expansion-panel-header {
     height: 56px;
+}
+
+.mat-expansion-panel-header-title {
+    color: chocolate;
 }
 
 ::ng-deep .rightBlock .mat-form-field-appearance-outline .mat-form-field-flex {
