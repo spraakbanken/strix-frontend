@@ -66,7 +66,7 @@ export class AnnotationComponent implements OnInit {
         break;
       case 'url':
         this.stringPart = this.data
-      case 'year':
+      case 'year2050':
         if (this.data === '2050') {
           this.stringPart = 'NA';
         } else {

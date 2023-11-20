@@ -1,0 +1,149 @@
+<div class="mainBlock">
+    <div class="leftBlock">
+        <div class="hits_left_column">
+            <div class="hits_inner list-group">
+                <div class="paginatorClass">
+                    <mat-paginator 
+                        [length]="totalNumberOfDocuments" 
+                        [pageSize]="itemsPerPage" 
+                        [pageSizeOptions]="[5, 10, 15, 20]"
+                        [pageIndex]="currentPaginatorPage"
+                        (page)="paginatorPageChanged($event)"
+                        showFirstLastButtons>
+                    </mat-paginator>
+                </div>
+                <div style="height: 10px;"  *ngIf="loadSimilar">
+                  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+              </div>
+              <div class="dataCollect">
+              <div class="hit_area list-group-item" *ngFor="let doc of filteredData | async; let i = index">
+                <div class="box-container">
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <a style="color:lightseagreen" tabindex (click)="openDocument(i)">{{doc.title}}</a>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">Text:</div>
+                    </div>
+                    <div class="col-xl-10">
+                      <span>{{doc.text}}</span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" *ngIf="doc.year !== '2050'">
+                      <span>{{doc.year}}</span>
+                    </div>
+                    <div class="col-xl-9" *ngIf="doc.year === '2050'">
+                      <span>{{'NA'}}</span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>{{doc.tokens.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.authors">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>{{doc.authors}}</span>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'corpusName' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <div class="hit_appendix">
+                        <span class="hit_collection_title">
+                          {{ availableCorpora[doc.corpus_id].name | loc }}
+                        </span>&nbsp;
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.most_common_words">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
+                      <span *ngFor="let item of doc.most_common_words.split(', ') | slice:0:10; let i = index;">
+                        <i *ngIf="i < doc.most_common_words.split(', ').length-1 && i < 9" style="padding-right: 10px;">{{item}},</i>
+                        <i *ngIf="i == 9">{{item}}</i>
+                        <i *ngIf="i == doc.most_common_words.split(', ').length-1 && i < 10">{{item}}</i>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.ner_tags">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-10" style="display: inline-flex; flex-wrap: wrap">
+                      <span *ngFor="let item of doc.ner_tags.split(', ') | slice:0:5; let i = index;">
+                        <i *ngIf="i < doc.ner_tags.split(', ').length-1 && i < 4" style="padding-right: 10px;">{{item}},</i>
+                        <i *ngIf="i == 4">{{item}}</i>
+                        <i *ngIf="i == doc.ner_tags.split(', ').length-1 && i < 5">{{item}}</i>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.corpus_id === 'detektiva'">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>
+                        <a [href]="doc.source_url" target="_blank" style="color: chocolate;">
+                          {{doc.source_url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              </div>
+            </div>
+          </div>
+    </div>
+    <div class="rightBlock d-none d-lg-block" *ngIf="finishLoading">
+        <div class="tab-pane fade show active" id="tempSelect" role="tabpanel" aria-labelledby="home-tab"
+        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 8px 10px 20px 20px;">
+          <mat-accordion style="width: 433px; padding-bottom: 20px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'current_attribute' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div style="display: block; padding-bottom: 20px;">
+                <span style="float: left;">{{data[currentTab]['filterStat'][0]['field'] | loc}}</span><i style="float: right;">{{data[currentTab]['filterStat'][0]['value'].slice(0, -2)}}</i>
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+          <mat-accordion style="width: 100%; padding-bottom: 20px;">
+            <mat-expansion-panel hideToggle expanded>
+              <mat-expansion-panel-header>
+                <mat-panel-title>
+                  {{ 'corpus' | loc }}
+                </mat-panel-title>
+              </mat-expansion-panel-header>
+              <div style="display: block; padding-bottom: 20px;">
+                <p *ngFor="let item of data[currentTab].sideBar | keyvalue" style="padding: 10px 10px 10px 0px">
+                  <span style="float: left;">{{item.key | loc}}</span><i style="float: right;">{{item.value}}</i>
+                </p>
+                
+              </div>
+            </mat-expansion-panel>
+          </mat-accordion>
+        </div>
+    </div>
+</div>

@@ -298,3 +298,7 @@
 ::ng-deep .cdk-overlay-pane {
   transform: translateX(-9px) translateY(22px) !important;
 }
+
+.nav li:hover{
+  background-color: chocolate;
+}

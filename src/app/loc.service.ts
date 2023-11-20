@@ -116,6 +116,7 @@ export class LocService {
       'select_corpus': 'Ingen korpus är vald',
       'source_link': 'Källa',
       'sbxtool': 'SBX verktyg',
+      'current_attribute': 'Nuvarande attribut',
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -211,6 +212,7 @@ export class LocService {
       'select_corpus': 'No corpus is selected',
       'source_link' : 'Source',
       'sbxtool': 'SBX tools',
+      'current_attribute': 'Current attribute',
     }
   };
 

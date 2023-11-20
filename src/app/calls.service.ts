@@ -176,6 +176,33 @@ export class CallsService {
     );
   }
 
+  /* Stats document list */
+  public getStatDocuments(corpora: string[], query: string, filters, keyword_search: boolean, fromPage: number, toPage: number) : Observable<SearchResult> {
+    let searchString = query;
+    if (searchString === null) {
+      searchString = ""
+    }
+    let params: any = {
+      exclude : 'lines,dump,token_lookup',
+      from : fromPage.toString(),
+      to : toPage.toString(),
+      simple_highlight : String(true),
+      text_query : searchString,
+    };
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
+    let filterss = _.cloneDeep(filters);
+    params.text_filter = this.formatFilterObject(filterss);
+    if(keyword_search) {
+      params.in_order = (!keyword_search).toString();
+    }
+    return this.get<SearchResult>('statDoc', params).pipe(
+      map((res: any) => ({...res, count : res.hits})),
+      catchError(this.handleError)
+    );
+  }
+
   /* Get aggregations for faceted search */
   public getAggregations(query: StrixQuery): Observable<AggregationsResult> {
     // console.log("getAggregations", query);

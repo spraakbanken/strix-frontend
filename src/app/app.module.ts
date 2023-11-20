@@ -20,6 +20,7 @@ import { DocumentsService } from './documents.service';
 import { CallsService } from './calls.service';
 import { CmDirective } from './reader/cm.directive';
 import { CmpDirective } from './reader/cmp.directive';
+import { StatDocsComponent } from './statdocs/statdocs.component';
 import { CmComponent } from './reader/cm/cm.component';
 import { CmpComponent } from './reader/cmp/cmp.component';
 import { ReaderComponent } from './reader/reader.component';
@@ -113,6 +114,7 @@ import { CircleViewComponent } from './circleview/circleview.component';
     DocselectionComponent,
     CmDirective,
     CmpDirective,
+    StatDocsComponent,
     CmComponent,
     CmpComponent,
     ReaderComponent,

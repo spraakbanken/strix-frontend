@@ -4,14 +4,14 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
-import { FACET_LIST, AppState, SELECTED_CORPORA, CHANGEQUERY} from '../searchreducer';
+import { FACET_LIST, AppState, SELECTED_CORPORA, CHANGEQUERY, MODE_SELECTED} from '../searchreducer';
 
 import { CallsService } from 'app/calls.service';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { PageEvent } from '@angular/material/paginator';
-
+import { AppComponent } from 'app/app.component';
 export interface wordData {
     item: string;
 }
@@ -38,12 +38,17 @@ export class DocstatisticComponent implements OnInit {
     public labelList: string[];
     public showMessage = '';
     public excludeList: string[];
-    public selectedOptions : String[];
+    public selectedOptions : string[];
     public searchString = "";
     public loadFilterStatistic = false;
     public keywordSearch: boolean;
+    public indexRef = 0;
 
-    constructor(private store: Store<AppState>, private callsService: CallsService, public _MatPaginatorIntl: MatPaginatorIntl,) {
+    constructor(
+        private store: Store<AppState>, 
+        private callsService: CallsService,
+        public _MatPaginatorIntl: MatPaginatorIntl,
+        private appComponent: AppComponent) {
 
         this.dataSource = new MatTableDataSource([])
         this.searchRedux = this.store.select('searchRedux');
@@ -54,6 +59,10 @@ export class DocstatisticComponent implements OnInit {
             if (this.selectedCorpus.length > 0) {
                 this.getFacetData('year');
             }
+        })
+
+        this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+            this.indexRef = 0;
         })
 
         this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
@@ -98,7 +107,7 @@ export class DocstatisticComponent implements OnInit {
         this.loadFilterStatistic = true;
         const listAttr = [];
         for (let i of this.labelList) {
-            listAttr.push(i['key'])
+            listAttr.push(i['key'].toString())
         }
         if (_.intersection(this.selectedCorpus, ['rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv']).length > 0) {
             this.showMessage = 'Currently the data selection exceed 65k documents limit which is the reason statistics is disabled.\n This functionality will be fixed in the next updates.'
@@ -107,7 +116,8 @@ export class DocstatisticComponent implements OnInit {
             this.showMessage = '';
         }
         let selectedCorpusIn = _.without(this.selectedCorpus, 'rd-ip', 'rd-kammakt', 'rd-skfr', 'wikipedia-sv')
-        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber), this.searchString, this.keywordSearch).subscribe((result) => {
+
+        this.callsService.getDataforFacet(selectedCorpusIn, [this.modeSelected], this.currentSelection, listAttr.slice(startNumber, endNumber), this.searchString, this.keywordSearch).subscribe((result) => {
             let tempData = result.aggregations;
             let tempNew = [];
             let tempDict = {};
@@ -138,6 +148,34 @@ export class DocstatisticComponent implements OnInit {
         })
     }
 
+    public showMainRow(event, event1) {
+        let newObj = {};
+        Object.keys(event1).forEach((key) => {
+            if (event1[key] !== 0) {
+                newObj[key] = event1[key];
+            }
+        })
+        let doc = {'filterStat': [{'field': this.selectedOptions[0], 'value': event+'-0'}], 'current_corpora': this.selectedCorpus, 'query': this.searchString, 'keyword': this.keywordSearch, 'fromPage': 0, 'toPage': 5, 'sideBar': _.omit(newObj, ['item'])};
+        this.appComponent.listTabs.push('--'+this.selectedOptions[0]+this.indexRef.toString()); // ('DocSim-' + docIndex);
+        let tempOption = this.selectedOptions[0] + this.indexRef.toString();
+        this.indexRef = this.indexRef + 1;
+        this.appComponent.selectedTab.setValue(this.appComponent.listTabs.length - 1);
+        this.appComponent.statParam[tempOption] = doc;
+    }
+
+    public showSubRow(event1, event2, event3) {
+        if (event3 !== 0){
+            let x = {};
+            x[event2] = event3;
+            let doc = {'filterStat': [{'field': this.selectedOptions[0], 'value': event1+'-0'}], 'current_corpora': [event2], 'query': this.searchString, 'keyword': this.keywordSearch, 'fromPage': 0, 'toPage': 5, 'sideBar': x};
+            this.appComponent.listTabs.push('--'+this.selectedOptions[0]+this.indexRef.toString()); // ('DocSim-' + docIndex);
+            let tempOption = this.selectedOptions[0] + this.indexRef.toString();
+            this.indexRef = this.indexRef + 1;
+            this.appComponent.selectedTab.setValue(this.appComponent.listTabs.length - 1);
+            this.appComponent.statParam[tempOption] = doc;
+        }
+    }
+
     public getFacetData(item: string) {
         this.selectedOptions = []
         this.selectedOptions = [item]
@@ -157,5 +195,10 @@ export class DocstatisticComponent implements OnInit {
         }   
     }
   ngOnInit() {
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
+        this.searchString = data.query;
+        this.keywordSearch = data.keyword_search;
+        // this.getFacetData('year')
+    });
   }
 }

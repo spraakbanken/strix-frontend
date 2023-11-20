@@ -9,7 +9,7 @@ import { CallsService } from './calls.service';
 import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
-        AppState, SearchRedux, SELECTED_CORPORA } from './searchreducer';
+        AppState, SearchRedux, SELECTED_CORPORA, MODE_SELECTED } from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -23,6 +23,7 @@ export class AppComponent {
   public listDocTabs = ['docView', 'statView'];
   public selectedDocTab = new FormControl(0);
   public similarParam: any;
+  public statParam: {};
   public relatedDocType: string;
   public currentSelection: string[];
   
@@ -62,6 +63,13 @@ export class AppComponent {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
+    })
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      this.statParam = {};
+      this.statParam['hello'] = 'world';
+      this.listTabs = ['Hits', 'Statistic'];
+      this.selectedTab.setValue(0);
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {

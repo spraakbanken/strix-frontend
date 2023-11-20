@@ -261,6 +261,10 @@ reader {
   overflow: hidden !important;
 }
 
+::ng-deep .mat-tab-label-container {
+  overflow: scroll !important;
+}
+
 /* ::ng-deep .mainContent .right_columnX .mat-tab-header {
   background: none;
 }

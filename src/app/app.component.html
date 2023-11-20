@@ -68,7 +68,8 @@
       <ng-template mat-tab-label>
         <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
         <div class="col" *ngIf="tab === 'Statistic' && selectedCorpus.length > 0">{{'statSelection' | loc}}</div>
-        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">{{tab}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) !== '--'">{{tab}}</div>
         <button *ngIf="tab !== 'Hits' && tab !== 'Statistic'" style="color:black" mat-icon-button (click)="removeTab(index)">
           <mat-icon>close</mat-icon>
         </button>
@@ -89,7 +90,10 @@
           </div>
         </div>
       </div>
-      <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Statistic'">
+      <div class="mainContent" *ngIf="tab.slice(0,2) === '--'">
+        <statdocs [data]="statParam" [currentTab]="tab.slice(2)" style="padding: 4px 15px 0px 15px;"></statdocs>       
+      </div>
+      <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) !== '--'">
         <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" [currentSelection]="currentSelection" style="padding: 4px 15px 0px 15px;"></similardocs>       
       </div>
     </mat-tab>
