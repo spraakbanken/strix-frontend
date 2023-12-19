@@ -56,9 +56,9 @@ export class DocstatisticComponent implements OnInit {
         this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
             this.selectedCorpus = data.selectedCorpora;
             this.modeSelected = data.modeSelected[0];
-            if (this.selectedCorpus.length > 0) {
-                this.getFacetData('year');
-            }
+            // if (this.selectedCorpus.length > 0) {
+            //     this.getFacetData('year');
+            // }
         })
 
         this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
@@ -68,7 +68,7 @@ export class DocstatisticComponent implements OnInit {
         this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
             this.searchString = data.query;
             this.keywordSearch = data.keyword_search;
-            this.getFacetData('year')
+            // this.getFacetData('year')
         });
 
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {

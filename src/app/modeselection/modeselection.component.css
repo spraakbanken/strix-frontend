@@ -15,42 +15,42 @@ h4::first-letter {
 }
 
 .nav-link {
-    padding: 0px;
-    top: 100px;
-    right: 10%
-  }
-  
-  .navbar-light .navbar-nav .nav-link {
-    color: black;
-  }
-  
-  .dropdown-toggle::after {
-    content: none;
-  }
+  padding: 0px;
+  top: 100px;
+  right: 10%
+}
 
-  .dropdown-menu {
-    top: 30px;
-    right: auto;
-    left: auto;
-    font-size: small;
-    font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
-    position: absolute;
-  }
+.navbar-light .navbar-nav .nav-link {
+  color: black;
+}
 
-  .navbar {
-    position: relative;
-    float: left;
-    width: 100%;
-    top: 0;
-    left: 0;
-    right: 0;
-    color: black;
-    text-align: center;
-    padding: 10px 0px 10px 10px;
-    text-decoration: none;
-    font-size: small;
-    font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
-    background-color: #d9eaeb!important;
-    min-width: 99vw;
-    height: 41px;
+.dropdown-toggle::after {
+  content: none;
+}
+
+.dropdown-menu {
+  top: 30px;
+  right: auto;
+  left: auto;
+  font-size: small;
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  position: absolute;
+}
+
+.navbar {
+  position: relative;
+  float: left;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  color: black;
+  text-align: center;
+  padding: 10px 0px 10px 10px;
+  text-decoration: none;
+  font-size: small;
+  font-family: "Source Sans Pro",Helvetica,Arial,Verdana,sans-serif;
+  background-color: #d9eaeb!important;
+  min-width: 99vw;
+  height: 41px;
   }

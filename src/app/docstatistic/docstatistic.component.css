@@ -1,68 +1,67 @@
 .box-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid #e3e6f0;
-    border-radius: 0.35rem;
-    padding: 0px 10px 4px 10px;
-    min-height: 70vh;
-    height: auto;
-    
-  }
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+  padding: 0px 10px 4px 10px;
+  min-height: 70vh;
+  height: auto;
+}
 
-  .scrollData {
-    overflow: scroll;
-  }
+.scrollData {
+  overflow: scroll;
+}
 
-  table {
-    width: 100%;
-  }
-  
-  .mat-mdc-form-field {
-    font-size: small;
-    width: 100%;
-  }
+table {
+  width: 100%;
+}
 
-  .mat-cell {
-    font-size: small;
-  }
+.mat-mdc-form-field {
+  font-size: small;
+  width: 100%;
+}
+
+.mat-cell {
+  font-size: small;
+}
   
   /* td, th {
     width: 300px;
   } */
 
-  td.mat-column-star {
-    width: 20px;
-    padding-right: 8px;
-  }
-  
-  th.mat-column-position, td.mat-column-position {
-    padding-left: 8px;
-  }
-  
-  .mat-mdc-table-sticky-border-elem-right {
-    border-left: 1px solid #e0e0e0;
-  }
-  
-  .mat-mdc-table-sticky-border-elem-left {
-    border-right: 1px solid #e0e0e0;
-  }
+td.mat-column-star {
+  width: 20px;
+  padding-right: 8px;
+}
 
-  .mat-elevation-z8 {
-    box-shadow: none;
-  }
+th.mat-column-position, td.mat-column-position {
+  padding-left: 8px;
+}
 
-  ::ng-deep .mat-list-text {
-    overflow: visible !important;
-    font-size: 12px !important;
-  }
+.mat-mdc-table-sticky-border-elem-right {
+  border-left: 1px solid #e0e0e0;
+}
 
-  .mat-list-single-selected-option {
-    background: #a3c8ca;
+.mat-mdc-table-sticky-border-elem-left {
+  border-right: 1px solid #e0e0e0;
+}
+
+.mat-elevation-z8 {
+  box-shadow: none;
+}
+
+::ng-deep .mat-list-text {
+  overflow: visible !important;
+  font-size: 12px !important;
+}
+
+.mat-list-single-selected-option {
+  background: #a3c8ca;
 }
 
 .mat-header-cell {

@@ -142,12 +142,12 @@ export class QueryService {
       } else {
         this.currentQuery.corpora = data.corpora;
       } */
-      // if (data.selectedCorpora) {
-      //   this.currentQuery.corpora = data.selectedCorpora;
-      // } else {
-      //   this.currentQuery.corpora = data.corporaInMode;
-      // }
-      this.currentQuery.corpora = data.corporaInMode;
+      if (data.selectedCorpora) {
+        this.currentQuery.corpora = data.selectedCorpora;
+      } else {
+        this.currentQuery.corpora = data.corporaInMode;
+      }
+      // this.currentQuery.corpora = data.corporaInMode;
       this.currentQuery.filters = data.filters;
       this.currentQuery.include_facets = data.include_facets || [];
       if(data.keyword_search) {

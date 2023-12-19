@@ -1,4 +1,4 @@
-.doc_header {
+/* .doc_header {
   min-height : 2em;
   padding-left: 8px;
   background-color: #f7f7f7;
@@ -23,7 +23,7 @@
 }
 .actual_tools {
   float: left;
-}
+} */
 
 .mostCommonWords {
   max-width: fit-content;

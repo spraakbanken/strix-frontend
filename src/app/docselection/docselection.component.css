@@ -28,15 +28,16 @@
   /*max-height: 400px;*/
   overflow: auto;
 }
-.hit_area {
-  /*padding: 2px;
+/* .hit_area {
+  padding: 2px;
   margin-bottom: 2px;
-  border: 1px solid #ddd;*/
-}
-.hit_document_title {
+  border: 1px solid #ddd;
+} */
+
+/* .hit_document_title {
   font-size: 1.1em;
   line-height: 1.5;
-}
+} */
 .hit_collection_title {
   font-variant: small-caps;
   color: #777;
@@ -46,7 +47,7 @@
 }
 .hit_appendix {
 }
-.hit_open_in_new {
+/* .hit_open_in_new {
   color: #337ab7;
   cursor: pointer;
 }
@@ -66,7 +67,7 @@
 
 .corpora_area {
   width: 500px;
-}
+} */
 
 .dots {
   color: lightgray;
@@ -105,17 +106,17 @@
     display: none;
   }
 
-  .box-container {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-    word-wrap: break-word;
-    background-color: #fff;
-    background-clip: border-box;
-    border: 1px solid #e3e6f0;
-    border-radius: 0.35rem;
-    padding: 10px;
+.box-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid #e3e6f0;
+  border-radius: 0.35rem;
+  padding: 10px;
 }
 
 .filterSide {
@@ -167,7 +168,7 @@
   height: 51px;
 }
 
-.example-viewport[_ngcontent-c2] {
+/* .example-viewport[_ngcontent-c2] {
   position: relative;
   overflow: auto;
   height: 250px;
@@ -225,9 +226,9 @@ position: -ms-sticky;
 position: -o-sticky;
 position: relative;
 top: 0;
-}
+} */
 
-.mostCommonWords {
+/* .mostCommonWords {
   max-width: fit-content;
   padding: 0px 4px 0px 4px;
   height: 20px;
@@ -238,7 +239,7 @@ top: 0;
   justify-content: center;
   text-align: center;
   margin-right: 10px;
-}
+} */
 
 .docView {
   display: inline-flex; 
@@ -246,21 +247,21 @@ top: 0;
   padding-left: 0px;
 }
 
-.searchBox {
+/* .searchBox {
   display: inline-block; 
   height: 51px; 
   background-color: #eeeeee; 
   width:100%; 
   border-radius: 2px;
-}
+} */
 
-.viewRight {
+/* .viewRight {
   display: inline-block; 
   padding: 20px 10px 10px 20px; 
   font-size: small;
-}
+} */
 
-.tableGraph {
+/* .tableGraph {
   display: flex; 
   align-items: baseline; 
   justify-content: space-between; 
@@ -277,7 +278,7 @@ top: 0;
   display: block; 
   padding-bottom: 20px; 
   padding-top: 10px;
-}
+} */
 
 .closeButton {
   padding: 0px 10px 0px 10px;

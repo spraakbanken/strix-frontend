@@ -27,7 +27,7 @@
   margin-left: 0px;
 }
 
-.modified-mc-content {
+/* .modified-mc-content {
     height: 48px
   }
   
@@ -42,7 +42,7 @@
   
   .modified-mc-content mat-chip {
     height: auto
-  }
+  } */
 
   .example-tree-invisible {
     display: none;
@@ -75,9 +75,9 @@
     width: 40px;
 }
 
-::ng-deep .menuClass {
+/* ::ng-deep .menuClass {
     background-color: blue;
-}
+} */
 
 .selectCorpus {
   /* width: 550px;  */

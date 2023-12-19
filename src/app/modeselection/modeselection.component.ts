@@ -143,7 +143,7 @@ export class ModeselectionComponent implements OnInit {
     this.metadataService.loadedMetadata$, 
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE))).subscribe(([info, data]: [any, any]) => {
       this.collectMode();
-      let tempURL = this.routingService.getCurrentState();
+      let tempURL = data // this.routingService.getCurrentState();
       if (tempURL.documentCorpus !== null && tempURL.documentID !== null) {
         this.documentParam['documentCorpus'] = tempURL.documentCorpus;
         this.documentParam['documentID'] = tempURL.documentID;
