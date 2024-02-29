@@ -15,7 +15,7 @@
 }
 
 .scrollData {
-  overflow: scroll;
+  overflow: auto;
 }
 
 /* .my-drawer-content {

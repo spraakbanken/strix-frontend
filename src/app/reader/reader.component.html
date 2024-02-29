@@ -1,7 +1,7 @@
 <div class="readerLoading" *ngIf="isLoading">
   <i class="fa fa-spinner fa-pulse"></i>&nbsp;{{'loading' | loc}}...
 </div>
-<div class="col" style="margin-left: 0px; margin-right: 0px; padding: 0px; display: inline-flex; justify-content: space-between; min-height: 878px;">
+<div class="col" style="margin-left: 0px; margin-right: 0px; padding: 0px; display: inline-flex; justify-content: space-between;">
   <div class="readerArea" style="padding: 0px; flex: 0 0 70%; max-width: 70%;">
     <cm *ngIf="cmViews.length !== 0 && gotMetadata"
       [style.width.px]="width"

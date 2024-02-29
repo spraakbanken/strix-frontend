@@ -2,7 +2,10 @@
     <div class="row">
       <div class="col-xl-12" style="padding: 0px;">
         <button [disabled]="!activeDoc" class="selectCorpus" mat-button (click)="selectSearch($event)">
-          <span style="display: inline-flex; width: 560px;">
+          <span *ngIf="corpusesCount === 0" style="display: inline-flex; width: 560px;">
+            {{ 'load_corpora' | loc }}
+          </span>
+          <span *ngIf="corpusesCount > 0" style="display: inline-flex; width: 560px;">
             {{ selectedCount + " " + ('of' | loc) + " " + corpusesCount + " " + ('selected_corpora' | loc) + "  (" + formatNumber(selectedDocs) + " " + ('of' | loc) + " " + formatNumber(totalDocs) + " " + ('documents' | loc) +", " + formatNumber(selectedTokens) + " " + ('of' | loc) + " " + formatNumber(totalTokens) + " " + ('token' | loc) +")" }}
             <mat-icon class="openCloseIcon">{{openClose}}</mat-icon>
           </span>
@@ -11,8 +14,8 @@
     </div>
     <div class="openTreeView" (click)="$event.stopPropagation()" *ngIf="simpleSearch" [style.width]="(showInformation) ? '1000px' : '594px'">
       <div class="row">
-        <div class="col-xl-6" style="width: 500px;">
-          <div style="height: 60px; width: 550px; background-color: transparent; padding: 12px 8px 0px 18px; margin-left: -15px; border-bottom: 1px solid #ddd;">
+        <div class="col-xl-7" style="width: 500px;">
+          <div style="height: 60px; width: 594px; background-color: transparent; padding: 12px 8px 0px 18px; margin-left: -15px; border-bottom: 1px solid #ddd;">
             <button class="closeButton" mat-button (click)="checkAll()">{{ 'selectAll' | loc }}</button>
             <button class="closeButton" mat-button (click)="deselectAll()">{{ 'selectNone' | loc }}</button>
             <button class="closeButton" mat-button (click)="defaultSelection('dataRoot')">{{ 'default' | loc }}</button>
@@ -46,7 +49,7 @@
                 <input [(ngModel)]="inputText" matInput minlength="2" (keyup)="applyFilter($event.target['value'])" placeholder="" #input>
               </mat-form-field>
             </div>
-            <div style="padding: 0px 30px 0px 30px;">
+            <div style="padding: 0px 0px 0px 30px;">
               <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="example-tree">
                 <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
                   <button mat-icon-button disabled></button>
@@ -72,9 +75,9 @@
             <div style="height: 10px;"></div>
           </div>
         </div>
-        <div class="col-xl-6" style="width: 500px; padding: 0px 20px; margin-left: -1px;" *ngIf="showInformation">
+        <div class="col-xl-5" style="width: 500px; padding: 0px 20px; margin-left: -1px;" *ngIf="showInformation">
           <div style="height: 60px; width: 500px; background-color: transparent; padding: 12px 0px 0px 19px; margin-left: -21px; border-bottom: 1px solid #ddd;">
-            <button class="closeButton" mat-button (click)="closeDetails()" style="margin-left: 377px;">Close</button>
+            <button class="closeButton" mat-button (click)="closeDetails()" style="margin-left: 270px;">Close</button>
           </div>
           <div style="display: grid; padding: 20px;">
             <span style="padding-left: 15px;"><b>{{ this.showCorpusDetail.name | loc }}</b></span>

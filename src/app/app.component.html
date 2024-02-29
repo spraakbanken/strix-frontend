@@ -49,14 +49,14 @@
       <a *ngIf="selectedLanguage === 'swe'" style="padding: 0px;"><img width="200" src="assets/strix_slogan.svg"/></a>
       <a *ngIf="selectedLanguage === 'eng'" style="padding: 0px;"><img width="200" src="assets/strix_slogan_en.svg"/></a>
     </div>
-    <div class="d-none d-md-block col-6 col-md-6" style="padding: 30px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
+    <div class="d-none d-md-block col-6 col-md-5" style="padding: 30px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
     </div>
-    <div class="d-none d-xl-block col-xl-4" style="height: inherit; margin-left: auto; margin-right: -15px; padding: 0px 0px 0px 0px;"> <!--padding-right: 8px;-->
+    <div class="d-none d-xl-block col-xl-5" style="height: inherit; margin-left: auto; margin-right: -15px; padding: 0px 0px 0px 0px;"> <!--padding-right: 8px;-->
       <a title="Göteborgs Universitet" href="https://gu.se/" target="_blank" style="padding: 0px 0px 0px 10px; float: right;"><img width="90" src="assets/gu_logo_hack.png" alt=""></a>
       <!-- <a title="Swe-Clarin" href="https://sweclarin.se" target="_blank" style="padding: 30px 9px 0px 10px; float: right;"><img width="40" src="assets/sweClarin.png" alt=""></a> -->
-      <a *ngIf="selectedLanguage === 'swe'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 16px 0px 0px; float: right;"><img width="320" src="assets/sprakbanken_text_slogan.svg" alt=""></a>
-      <a *ngIf="selectedLanguage === 'eng'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 20px 16px 0px 0px; float: right;"><img width="320" src="assets/sprakbanken_text_slogan_en.svg" alt=""></a>
+      <a *ngIf="selectedLanguage === 'swe'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 24px 10px 0px 0px; float: right;"><img width="300" src="assets/sprakbanken_text_slogan.svg" alt=""></a>
+      <a *ngIf="selectedLanguage === 'eng'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 24px 10px 0px 0px; float: right;"><img width="300" src="assets/sprakbanken_text_slogan_en.svg" alt=""></a>
     </div>
   </div>
   <div class="statDiv" [hidden]="openDocument || listTabs[selectedTab.value] !== 'Hits'">
@@ -75,6 +75,12 @@
         </button>
       </ng-template>
       <div class="mainContent" *ngIf="tab === 'Hits'">
+        <div style="height: 10px; padding-top: 50px;"  *ngIf="triggerLoading">
+          <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+          <span style="display: inline-flex; width: 560px; padding-left: 20px; font-size: small;">
+            {{ 'wait_load' | loc }}
+          </span>
+        </div>
         <div class="fixDoc">
           <div class="right_column" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
             <div class="row" style="margin-left: 0px; margin-right: 0px;">

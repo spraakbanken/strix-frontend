@@ -41,6 +41,7 @@ export class AppComponent {
 
   public languages: string[];
   public selectedLanguage: string;
+  public triggerLoading = false;
 
   constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService, private callsService: CallsService) {
     // console.log(_.add(1, 3)); // Just to test lodash
@@ -61,8 +62,15 @@ export class AppComponent {
       // }); 
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
+      this.triggerLoading = true;
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
+      if (this.selectedCorpus.length > 0) {
+        this.triggerLoading = false;
+      }
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {

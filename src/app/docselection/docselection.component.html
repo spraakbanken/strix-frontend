@@ -10,8 +10,11 @@
       {{ 'no_doc_found' | loc }}
     </alert>
   </div>
-  <div style="height: 10px; padding-top: 50px;"  *ngIf="docHits">
+  <div style="height: 10px; padding-top: 50px;"  *ngIf="docHits && zeroSelectDoc === 'not empty'">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <span style="display: inline-flex; width: 560px; padding-left: 20px;">
+      {{ 'load_documents' | loc }}
+    </span>
   </div>
   <div class="hits_area" *ngIf="documentsWithHits.length > 0 && showData">
     <div class="hits_header row flex-column">

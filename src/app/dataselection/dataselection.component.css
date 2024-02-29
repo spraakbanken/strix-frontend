@@ -103,14 +103,15 @@
   border: 1px solid #ddd;
   max-height: 600px;
   background-color: white;
-  overflow-x: scroll;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .dropDownTree {
   background-color: white; 
   width: 560px; 
   /* max-height: 800px;  */
-  overflow: scroll; 
+  /* overflow: scroll;  */
   /* position: absolute;  */
   /* z-index: 1001;  */
   /* border: 1px solid #ddd; */

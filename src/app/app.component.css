@@ -209,7 +209,7 @@ reader {
 
 ::ng-deep .mat-tab-header {
   background-color: #d9eaeb;
-  height: 41px;
+  /* height: 41px; */
 }
 
 ::ng-deep .cdk-overlay-pane {
@@ -261,9 +261,9 @@ reader {
   overflow: hidden !important;
 }
 
-::ng-deep .mat-tab-label-container {
+/* ::ng-deep .mat-tab-label-container {
   overflow: scroll !important;
-}
+} */
 
 /* ::ng-deep .mainContent .right_columnX .mat-tab-header {
   background: none;

@@ -132,8 +132,8 @@ ul {
   position: absolute;
   top: 0px;
   right: 0px;
-  overflow-x: auto;
-  overflow-y: auto;
+  overflow: auto;
+  max-height: 59vh;
   margin-bottom: 0px;
 }
 
@@ -203,6 +203,11 @@ ul {
 
 ::ng-deep .attributeArea .right_accordion .mat-expansion-panel {
   margin: 0;
+}
+
+::ng-deep .attributeArea .right_accordion .mat-expansion-panel-content {
+  max-height: 50vh;
+  overflow: auto;
 }
 
 ::ng-deep .attributeArea .right_accordion {

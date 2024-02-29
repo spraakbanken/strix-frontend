@@ -117,6 +117,9 @@ export class LocService {
       'source_link': 'Källa',
       'sbxtool': 'SBX verktyg',
       'current_attribute': 'Nuvarande attribut',
+      'load_corpora': 'Hämtar data (det kan ta ett par sekunder)....',
+      'load_documents': 'Hämtar dokument (det kan ta ett par sekunder)....',
+      'wait_load': 'Väntar på att data ska laddas....'
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -213,6 +216,9 @@ export class LocService {
       'source_link' : 'Source',
       'sbxtool': 'SBX tools',
       'current_attribute': 'Current attribute',
+      'load_corpora': 'Loading data (this may take a couple of seconds)....',
+      'load_documents': 'Loading documents (this may take a couple of seconds)....',
+      'wait_load': 'Waiting for the data to load....'
     }
   };
 

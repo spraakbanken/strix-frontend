@@ -154,7 +154,9 @@ export class QueryService {
         this.currentQuery.keyword_search = data.keyword_search
       }
       this.currentQuery.modes = data.modeSelected;
-      this.runCurrentQuery(); // Perform the actual search
+      if (this.currentQuery.corpora) {
+        this.runCurrentQuery(); // Perform the actual search
+      }
     });
 
     /* Redo the last query when the user closes the open document */
