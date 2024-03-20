@@ -229,7 +229,9 @@ export class DocselectionComponent implements OnInit {
       (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
-        this.docHits = false;
+        setTimeout(() => {
+          this.docHits = false;
+        }, 2000);
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
       },
