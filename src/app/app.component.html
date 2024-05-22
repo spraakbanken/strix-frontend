@@ -59,18 +59,21 @@
       <a *ngIf="selectedLanguage === 'eng'" title="Språkbanken" href="https://spraakbanken.gu.se/" target="_blank" style="padding: 24px 10px 0px 0px; float: right;"><img width="300" src="assets/sprakbanken_text_slogan_en.svg" alt=""></a>
     </div>
   </div>
-  <div class="statDiv" [hidden]="openDocument || listTabs[selectedTab.value] !== 'Hits'">
+  <div class="statDiv" [hidden]="openDocument">
     <statcolumn class="statColumn"></statcolumn>
   </div>
   <mat-tab-group [selectedIndex]="selectedTab.value"
-               (selectedIndexChange)="selectedTab.setValue($event)" [hidden]="openDocument">
+               (selectedIndexChange)="selectedTab.setValue($event)" [hidden]="openDocument" 
+               [ngStyle]="{'display': !activeVectorSearch ? 'block' : 'none'}">
     <mat-tab *ngFor="let tab of listTabs; let index = index" [label]="tab + index">
       <ng-template mat-tab-label>
         <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
-        <div class="col" *ngIf="tab === 'Statistic' && selectedCorpus.length > 0">{{'statSelection' | loc}}</div>
-        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
-        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) !== '--'">{{tab}}</div>
-        <button *ngIf="tab !== 'Hits' && tab !== 'Statistic'" style="color:black" mat-icon-button (click)="removeTab(index)">
+        <div class="col" *ngIf="tab === 'Statistics'">{{'statSelection' | loc}}</div>
+        <div class="col" *ngIf="tab === 'Overview' && selectedCorpus.length > 0" (click)="showOverview()">{{'overview' | loc}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '++' && tab.slice(0,2) !== '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1)}}</div>
+        <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) !== '++' && tab.slice(0,2) !== '--'">{{tab}}</div>
+        <button *ngIf="tab !== 'Hits' && tab !== 'Overview'  && tab !== 'Semantic' && tab !== 'Statistics'" style="color:black" mat-icon-button (click)="removeTab(index)">
           <mat-icon>close</mat-icon>
         </button>
       </ng-template>
@@ -89,18 +92,73 @@
           </div>
         </div>
       </div>
-      <div class="mainContent" *ngIf="tab === 'Statistic'">
+      <div class="mainContent" *ngIf="tab === 'Statistics'">
         <div class="fixDoc">
-          <div class="right_column" style="padding: 0%; min-height: 1100px;" [style.width]="(!openDocument)?'100%':'100%'">
+          <div class="right_column" style="padding: 0%; min-height: 800px;" [style.width]="(!openDocument)?'100%':'100%'">
               <docstatistic></docstatistic>
+          </div>
+        </div>
+      </div>
+      <div class="mainContent" *ngIf="tab === 'Overview'">
+        <div class="fixDoc">
+          <div class="right_columnY" style="padding: 0%; min-height: 800px;" [style.width]="(!openDocument)?'100%':'100%'">
+            <mat-tab-group [selectedIndex]="selectedViewTab.value"
+          (selectedIndexChange)="selectedViewTab.setValue($event)" (click)="moveTab()">
+            <mat-tab *ngFor="let tabView of listViewTabs; let _index = index" [label]="tabView + _index">
+              <ng-template mat-tab-label>
+                <div class="col" *ngIf="tabView === 'Maps'">{{'viewmap' | loc}}</div>
+                <div class="col" *ngIf="tabView === 'Topics'">{{'text_attributes' | loc}}</div>
+                <div class="col" *ngIf="tabView !== 'Maps' && tabView !== 'Topics' && tabView.slice(0,2) === '--'">{{'hits' | loc}} - {{tabView.slice(2).slice(0,-1) | loc}}</div>
+                <div class="col" *ngIf="tabView !== 'Maps' && tabView !== 'Topics' && tabView.slice(0,2) === '++' && tabView.slice(0,2) !== '--'">{{'hits' | loc}} - {{tabView.slice(2).slice(0,-1)}}</div>
+                <button *ngIf="tabView !== 'Maps' && tabView !== 'Topics'" style="color:black" mat-icon-button (click)="removeViewTab(_index)">
+                  <mat-icon>close</mat-icon>
+                </button>
+              </ng-template>
+              <div class="mainContent" *ngIf="tabView === 'Maps'">
+                <div class="fixDoc">
+                  <div class="right_column" style="padding: 0%; min-height: 800px;" [style.width]="(!openDocument)?'100%':'100%'">
+                      <viewmap [viewMap]="viewMap"></viewmap>
+                  </div>
+                </div>
+              </div>
+              <div class="mainContent" *ngIf="tabView === 'Topics'">
+                <div class="fixDoc">
+                  <div class="right_column" style="padding: 0%; min-height: 800px;" [style.width]="(!openDocument)?'100%':'100%'">
+                      <topicview [viewTopic]="viewTopic"></topicview>
+                  </div>
+                </div>
+              </div>
+              <div class="mainContent" *ngIf="tabView !== 'Maps' && tabView !== 'Topics' && tabView.slice(0,2) === '--'">
+                <statdocs [data]="statParam" [currentTab]="tabView.slice(2)" style="padding: 4px 15px 0px 15px;"></statdocs>       
+              </div>
+              <div class="mainContent" *ngIf="tabView !== 'Maps' && tabView !== 'Topics' && tabView.slice(0,2) !== '--' && tabView.slice(0,2) === '++' ">
+                <statdocs [data]="statParam" [currentTab]="tabView.slice(2)" style="padding: 4px 15px 0px 15px;"></statdocs>       
+              </div>
+            </mat-tab>
+            </mat-tab-group>
           </div>
         </div>
       </div>
       <div class="mainContent" *ngIf="tab.slice(0,2) === '--'">
         <statdocs [data]="statParam" [currentTab]="tab.slice(2)" style="padding: 4px 15px 0px 15px;"></statdocs>       
       </div>
-      <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Statistic' && tab.slice(0,2) !== '--'">
+      <div class="mainContent" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) !== '--' && tab.slice(0,2) !== '++'">
         <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" [currentSelection]="currentSelection" style="padding: 4px 15px 0px 15px;"></similardocs>       
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+  <mat-tab-group [selectedIndex]="selectedTabV.value"
+               (selectedIndexChange)="selectedTabV.setValue($event)" [hidden]="openDocument" 
+               [ngStyle]="{'display': activeVectorSearch ? 'block' : 'none'}">
+    <mat-tab *ngFor="let tabV of listTabsV; let index = index" [label]="tabV + index">
+      <ng-template mat-tab-label>
+        <div class="col" *ngIf="tabV === 'Semantic' && selectedCorpus.length > 0">{{'hits' | loc}}</div>
+        <!-- <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
+        <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) === '++' && tabV.slice(0,2) !== '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1)}}</div>
+        <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) !== '++' && tabV.slice(0,2) !== '--'">{{tab}}</div> -->
+      </ng-template>
+      <div class="mainContent" *ngIf="tabV === 'Semantic'">
+        <vectorsearch style="padding: 4px 15px 0px 15px;"></vectorsearch>       
       </div>
     </mat-tab>
   </mat-tab-group>
@@ -123,7 +181,16 @@
                 </div>
               </div>
               <indocsearch></indocsearch>
-              <reader></reader>
+              <!---->
+              <div [hidden]="currentMode === 'parallel'">
+                <reader [showReader]="showSource"></reader>
+              </div>
+              <div [hidden]="currentMode !== 'parallel'" style="display: flex;">
+                <reader [showReader]="showSource" style="width: 50%;"></reader>
+                <reader [showReader]="showTarget" style="width: 50%;"></reader>
+              </div>
+              <!---->
+              <!-- <reader></reader> -->
               <!-- <div style="display: flex;">
                 <reader style="width: 100%;"></reader>
                 <reader style="width: 100%;"></reader>

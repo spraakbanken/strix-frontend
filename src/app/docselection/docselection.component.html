@@ -5,7 +5,7 @@
       {{ 'select_corpus' | loc }}
     </alert>
   </div>
-   <div class="no_hits_area" *ngIf="hasSearched && documentsWithHits.length === 0 && zeroSelectDoc === 'not empty' && currentState > 1">
+   <div class="no_hits_area" *ngIf="hasSearched && documentsWithHits.length === 0 && zeroSelectDoc === 'not empty' && currentState > 2">
     <alert type="danger" dismissible="true">
       {{ 'no_doc_found' | loc }}
     </alert>
@@ -94,12 +94,20 @@
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'corpusName' | loc }}:</div>
               </div>
-              <div class="col-xl-9">
+              <div class="col-xl-9" style="display: flex;">
                 <div class="hit_appendix">
                   <span class="hit_collection_title">
                     {{ availableCorpora[doc.corpus_id].name | loc }}
                   </span>&nbsp;
                 </div>
+                <button mat-button [matMenuTriggerFor]="menuPDF" style="margin-top: -10px; padding: 0px; min-width: 26px;">
+                  <i-bs name="info-circle" width="20" height="20"></i-bs>
+                </button>
+                <mat-menu #menuPDF="matMenu">
+                  <pdf-viewer 
+                    src="assets/all-n-grams-(1,2)-images-climate-tf-idf.pdf" [render-text]="true" [original-size]="false" style="width: 800px; height: 700px;">
+                  </pdf-viewer>
+                </mat-menu>
               </div>
             </div>
             
@@ -137,7 +145,7 @@
                 </span>
               </div>
             </div>
-            <div class="row" *ngIf="doc.mode_id === 'detektiva'">
+            <div class="row" *ngIf="doc.mode_id === 'detektivaavdelningen'">
               <div class="col-xl-2">
                 <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
               </div>

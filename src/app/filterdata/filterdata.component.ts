@@ -338,6 +338,7 @@ export class FilterdataComponent implements OnInit {
     if(aggregationKey == "corpus_id") {return "multicomplete"}
     if(aggregationKey == "mode_id") {return "multicomplete"}
     if(aggregationKey == "word_count") {return "multicomplete"}
+    if(aggregationKey == "geo_location") {return "multicomplete"}
     let conf = this.guessConfFromAttributeName(aggregationKey)
     let ret = {
       "double" : "range"

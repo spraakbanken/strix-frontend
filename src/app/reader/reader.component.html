@@ -1,8 +1,17 @@
 <div class="readerLoading" *ngIf="isLoading">
   <i class="fa fa-spinner fa-pulse"></i>&nbsp;{{'loading' | loc}}...
 </div>
-<div class="col" style="margin-left: 0px; margin-right: 0px; padding: 0px; display: inline-flex; justify-content: space-between;">
-  <div class="readerArea" style="padding: 0px; flex: 0 0 70%; max-width: 70%;">
+<div class="col" style="margin-left: 0px; margin-right: 0px; padding: 0px; display: inline-flex; justify-content: space-between; min-height: 878px;">
+  <!-- <div class="readerArea" style="padding: 0px; flex: 0 0 70%; max-width: 70%;">
+    <cm *ngIf="cmViews.length !== 0 && gotMetadata"
+      [style.width.px]="width"
+      (onSelectionChange)="onSelectionChange($event)"
+      (onFocus)="onFocus($event)"
+      (onScroll)="onViewportChange($event)"
+      (onKeydown)="onKeydown($event)"
+      [index]="0"></cm>
+  </div> -->
+  <div class="readerArea" *ngIf="currentMode !== 'parallel'" style="padding: 0px; flex: 0 0 70%; max-width: 70%;">
     <cm *ngIf="cmViews.length !== 0 && gotMetadata"
       [style.width.px]="width"
       (onSelectionChange)="onSelectionChange($event)"
@@ -11,7 +20,24 @@
       (onKeydown)="onKeydown($event)"
       [index]="0"></cm>
   </div>
-  <div class="attributeArea" style="flex: 0 0 30%; max-width: 30%; width: 30%;">
+  <div class="readerArea" *ngIf="currentMode === 'parallel'" style="padding: 0px; max-width: 100%;">
+    <cm *ngIf="cmViews.length !== 0 && gotMetadata && showReader === 'source'"
+      [style.width.px]="width"
+      (onSelectionChange)="onSelectionChange($event)"
+      (onFocus)="onFocus($event)"
+      (onScroll)="onViewportChange($event)"
+      (onKeydown)="onKeydown($event)"
+      [index]="0"></cm>
+    <cmp *ngIf="cmViewsP.length !== 0 && gotMetadata && showReader === 'target'"
+      [style.width.px]="width"
+      (onSelectionChangeP)="onSelectionChangeP($event)"
+      (onFocusP)="onFocusP($event)"
+      (onScrollP)="onViewportChangeP($event)"
+      (onKeydownP)="onKeydownP($event)"
+      [index]="1"></cmp>
+  </div>
+
+  <div class="attributeArea" *ngIf="currentMode !== 'parallel'" style="flex: 0 0 30%; max-width: 30%; width: 30%;">
     <mat-accordion closeOthers="false" class="right_accordion" *ngIf="cmViews.length !== 0 && gotMetadata">
       <div style="padding-bottom: 20px;">
         <mat-expansion-panel hideToggle expanded>

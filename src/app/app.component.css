@@ -212,6 +212,10 @@ reader {
   /* height: 41px; */
 }
 
+::ng-deep .right_columnY .mat-tab-header {
+  background-color: mintcream;
+}
+
 ::ng-deep .cdk-overlay-pane {
   width: 300px;
   padding: 42px 0px 0px 32px;

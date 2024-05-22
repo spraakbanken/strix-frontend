@@ -6,6 +6,11 @@
         <li class="nav-item" *ngIf="minkMode" [style.color]="this.modeSelection['mink'] ? 'chocolate' : 'black'" (click)="chooseMode('mink', 'continue');"> <!--style="cursor: default; pointer-events: none;" -->
             <a>{{ 'Mink' | loc }}</a>
         </li>
+        <!---->
+        <!-- <li *ngIf="parallelMode" [style.color]="this.modeSelection['parallel'] ? 'blue' : 'black'" (click)="chooseMode('parallel', 'continue');"> <!-[style.color]="'gray'" style="cursor: default; pointer-events: none;" ->
+            {{ 'Parallel' | loc }}
+        </li> -->
+        <!---->
         <li class="nav-item" [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
             <a>{{ 'Parallel' | loc }}</a>
         </li>
@@ -18,7 +23,7 @@
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink" style="padding: 0px;">
                 <ng-container *ngFor="let item of modeCollection | keyvalue">
-                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'chocolate' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode && item.key != 'mink'">
+                    <a class="dropdown-item"  [style.color]="this.modeSelection[item.key] ? 'chocolate' : '#212529'" (click)="chooseMode(item.key, 'continue');" *ngIf="item.key !== 'default' && item.key !== visibleMode && item.key != 'mink' && item.key != 'parallel'">
                         {{ listMode[item.key] | loc }}
                     </a>
                 </ng-container>

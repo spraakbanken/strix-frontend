@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, ViewChildren, QueryList, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, ViewChildren, QueryList, OnDestroy, Input } from '@angular/core';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
@@ -11,9 +11,10 @@ import { DocumentsService } from '../documents.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { CmComponent } from './cm/cm.component';
-import { AppState, CLOSEDOCUMENT } from '../searchreducer';
+import { AppState, CLOSEDOCUMENT, MODE_SELECTED, HIGHLIGHT_PARALLEL, HIGHLIGHT_SOURCE } from '../searchreducer';
 import { ReaderCommunicationService } from '../reader-communication.service';
 import { SearchQuery } from '../strixsearchquery.model';
+import { CmpComponent } from './cmp/cmp.component';
 
 
 @Component({
@@ -24,6 +25,22 @@ import { SearchQuery } from '../strixsearchquery.model';
 export class ReaderComponent implements AfterViewInit, OnDestroy {
   @ViewChildren(CmComponent) mirrors: QueryList<CmComponent>;
   subscription : Subscription;
+
+
+  @ViewChildren(CmpComponent) mirrorsP: QueryList<CmpComponent>;
+  subscriptionParallel : Subscription;
+  @Input() showReader: any;
+  public cmViewsP = [];
+  public activateGo = false;
+  private bookmarksP: any = [];
+  private selectedMirrorIndexP = 0;
+  public currentMode = '';
+  public highlightS2P : '';
+  public highlightS2S : '';
+  public highlightP2S : '';
+  public highlightP2P : '';
+  private viewPortEventP = new Subject<any>();
+  private viewPortChangeP$: Observable<any> = this.viewPortEventP.asObservable();
 
   private docLoadStatusSubscription: Subscription;
   public isLoading = false;
@@ -68,9 +85,17 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
               private readerCommunicationService: ReaderCommunicationService) {
 
     // When done we need to do:
+    // this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
+    //   // console.log("got new token data – causing refresh of the CM syntax coloring: ", actuallyDidSomething)
+    //   if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
+    // });
+
     this.documentsService.tokenInfoDone$.subscribe((actuallyDidSomething) => {
       // console.log("got new token data – causing refresh of the CM syntax coloring: ", actuallyDidSomething)
-      if (actuallyDidSomething) this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
+      if (actuallyDidSomething) {
+        this.mirrors.first.codeMirrorInstance.setOption("mode", "strix");
+        this.mirrorsP.first.codeMirrorInstance.setOption("mode", "strix");
+      } 
     });
 
     // Make sure the metadata is loaded
@@ -95,11 +120,46 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       }
     });
 
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+      this.showBox = false;
+      this.singleWordSelection = false;
+      if (this.cmViews.length !== 0) {
+        this.removeView(0);
+      }
+      if (this.cmViewsP.length !== 0) {
+        this.removeViewP(0);
+      }
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      this.currentMode = data.modeSelected[0];
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === HIGHLIGHT_PARALLEL)).subscribe((data) => {
+      this.highlightP2P = '';
+      this.highlightP2S = '';
+      this.highlightS2P = data.highlightParallel[0];
+      this.highlightS2S = data.highlightParallel[1];
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === HIGHLIGHT_SOURCE)).subscribe((data) => {
+      this.highlightS2P = '';
+      this.highlightS2S = '';
+      this.highlightP2S = data.highlightSource[0];
+      this.highlightP2P = data.highlightSource[1];
+    });
+
     // When the user changes the viewport, we wait until there is
     // a period of "radio silence" before we act on only THE LAST change.
     // This is to spare calls to the backend.
     this.viewPortChange$.pipe(debounceTime(100)).subscribe( (event) =>
       this.handleViewportChange(event)
+    );
+
+
+    this.viewPortChangeP$.pipe(debounceTime(100)).subscribe( (event) =>
+      this.handleViewportChangeP(event)
     );
 
     // When a document starts loading and when it is fully loaded:
@@ -137,6 +197,13 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
             // Show the highlights
             // console.log("highlight data", openedDocument);
             this.clearBookmarks();
+            if (this.highlightP2S) {
+              this.highlightSourceP(message.documentIndex, this.highlightP2S);
+            }
+            if (this.highlightS2S) {
+              this.highlightSource(message.documentIndex, this.highlightS2S);
+            }
+
             for (let h of openedDocument.highlight || []) {
               this.addHighlight(message.documentIndex, h.wid);
             }
@@ -148,7 +215,13 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
           this.clearBookmarks();
           this.cmViews[0] = openedDocument.index;
           this.mirrors.first.codeMirrorInstance.setValue(wholeText);
+          if (this.highlightS2S) {
+            this.highlightSource(message.documentIndex, this.highlightS2S);
+          }
 
+          if (this.highlightP2S) {
+            this.highlightSourceP(message.documentIndex, this.highlightP2S);
+          }
           // Show the highlights // TODO: Get rid of code doubling (use setTimeout for both cases probably anyway)
           // console.log("highlight data", openedDocument);
           for (let h of openedDocument.highlight) {
@@ -158,6 +231,68 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
         this.updateTitles();
     });
+
+    this.subscriptionParallel = documentsService.loadedDocumentParallel$.subscribe(
+      message => {
+        // console.log("A document has been fetched.", message);
+
+        let openedDocument = documentsService.getDocumentP(message.documentIndex);
+        this.mainDocument = openedDocument;
+
+        // // console.log("the document", this.mainDocument);
+
+        let wholeText = openedDocument.dump.join("\n");
+
+        if (message.openInNew || this.cmViewsP.length === 0) {
+          this.addViewP(message.documentIndex);
+          window.setTimeout(() => { // Triggers change detection so we'll get a new mirror in the DOM.
+            this.mirrorsP.last.codeMirrorInstance.setValue(wholeText);
+
+            // Show the highlights
+            // console.log("highlight data", openedDocument);
+            this.clearBookmarksP();
+            if (this.highlightS2P) {
+              // console.log("1111", this.highlightS2P)
+              this.highlightParallel(message.documentIndex, this.highlightS2P);
+            }
+            if (this.highlightP2P) {
+              this.highlightParallelS(message.documentIndex, this.highlightP2P);
+            }
+            for (let h of openedDocument.highlight || []) {
+              this.addHighlightP(message.documentIndex, h.wid);
+            }
+            // this.selectTokenP(0, 0);
+            this.openness = {'HITS' : false, 'TEXTATTRIBUTES' : true, 'STRUCTURALATTRIBUTES' : true, 'TOKENATTRIBUTES' : true};
+
+          }, 0);
+        } else { // THE CODE BELOW CANNOT HAPPEN RIGHT NOW
+          // console.log("hererererer")
+          this.clearBookmarksP();
+          this.cmViewsP[0] = openedDocument.index;
+          this.mirrorsP.first.codeMirrorInstance.setValue(wholeText);
+
+          if (this.highlightP2P) {
+            this.highlightParallelS(message.documentIndex, this.highlightP2P);
+          }
+          if (this.highlightS2P) {
+            this.highlightParallel(message.documentIndex, this.highlightS2P);
+          }
+          
+          // this.addView(message.documentIndex);
+          // this.cmViews[1] = openedDocument.index;
+          // this.mirrorsP.last.codeMirrorInstance.setValue(wholeText);
+
+          // Show the highlights // TODO: Get rid of code doubling (use setTimeout for both cases probably anyway)
+          // // console.log("highlight dataX", openedDocument, this.highlightP);
+          for (let h of openedDocument.highlight) {
+            this.addHighlightP(message.documentIndex, h.wid);
+          }
+        }
+        // console.log("%%%%", this.mirrorsP.toArray())
+
+        // this.updateTitles();
+    });
+
 
   }
   ngAfterViewInit() {
@@ -175,6 +310,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         //const datatype = payload["datatype"];
         const datatype = _.isArray(this.currentAnnotations[annotation]) ? "set" : "default";
         this.changeAnnotationHighlight(annotation, annotationStructuralType, annotationValue, datatype);
+        // this.changeAnnotationHighlightP(annotation, annotationStructuralType, annotationValue, datatype);
         if (message === "goToNextAnnotation") {
           this.gotoAnnotation(annotation, annotationStructuralType, annotationValue, false); // TODO: Fix for structurals
         } else if (message === "goToPreviousAnnotation") {
@@ -187,6 +323,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   ngOnDestroy() {
     // This actually doesn't happen since we hide the reader rather than delete it from the DOM.
     this.subscription.unsubscribe();
+    this.subscriptionParallel.unsubscribe();
   }
 
   private updateTitles() {
@@ -203,6 +340,12 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   private onFocus(index: number) {
     // console.log("focused mirror no", index);
     this.selectedMirrorIndex = index;
+  }
+
+
+  private onFocusP(index: number) {
+    // console.log("focused mirror no", index);
+    this.selectedMirrorIndexP = index;
   }
 
   private onSelectionChange(selection: StrixSelection) {
@@ -231,6 +374,59 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
 
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
         // console.log("currentAnnotations", this.currentAnnotations);
+        if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('source_ref')) {
+          // ['sentence']['attrs']).includes('source_sentence_id')
+          // console.log("In here", this.currentAnnotations['source_ref'])
+          this.highlightP2S = '';
+          this.highlightP2P = '';
+          this.highlightS2P = this.currentAnnotations['target_ref']; // ['attrs']['target_sentence_id'];
+          this.highlightS2S = this.currentAnnotations['source_ref']; // ['attrs']['source_sentence_id'];
+          // this.highlightParallel(1, this.highlightS2P)
+          this.store.dispatch( { type :  HIGHLIGHT_PARALLEL, payload : [this.highlightS2P, this.highlightS2S] });
+          // this.store.dispatch( { type :  HIGHLIGHT_SOURCE, payload: this.highlightS})
+          // if (_.keys(this.currentAnnotations).includes('tID') && this.currentAnnotations['tID'] !== 't1' && this.activateGo === false)
+        }
+      }
+
+    }
+
+  }
+
+  private onSelectionChangeP(selection: StrixSelection) {
+    this.showBox = true;
+    // console.log("line " + selection.startRow + "(char " + selection.startChar + ") to " + selection.endRow + " (char " + selection.endChar + ")" );
+    this.selection = selection;
+    let activeDocument : StrixDocument = this.documentsService.getDocumentP(this.cmViewsP[0]);
+    // // console.log("activeDocument", activeDocument);
+    if (activeDocument) {
+      this.selectionStartTokenID = activeDocument.getTokenID(selection.startRow, selection.startChar);
+      this.selectionEndTokenID = activeDocument.getTokenID(selection.endRow, selection.endChar);
+
+      // console.log("selection from tokens", this.selectionStartTokenID, this.selectionEndTokenID);
+      if (this.selectionStartTokenID === -1 || this.selectionEndTokenID === -1) { // TODO: THIS WILL HAVE TO BE THOUGHT OVER!
+        // // console.log("got -1");
+        return;
+      }
+
+      this.singleWordSelection = (this.selectionStartTokenID === this.selectionEndTokenID);
+      if (this.singleWordSelection) {
+        this.openness["TOKENATTRIBUTES"] = true;
+        this.openness["TEXTATTRIBUTES"] = true;
+        this.openness["STRUCTURALATTRIBUTES"] = true;
+        let currentToken = activeDocument.token_lookup[this.selectionEndTokenID];
+        this.currentAnnotations = currentToken.attrs;
+
+        this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
+        if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('target_ref')) {
+          // ['sentence']['attrs']).includes('target_sentence_id')
+          this.highlightS2P = '';
+          this.highlightS2S = '';
+          this.highlightP2S = this.currentAnnotations['target_ref']; // ['attrs']['target_sentence_id'];
+          this.highlightP2P = this.currentAnnotations['source_ref']; // ['attrs']['source_sentence_id']
+          this.store.dispatch( { type :  HIGHLIGHT_SOURCE, payload: [this.highlightP2S, this.highlightP2P]})
+        }
+        // // console.log("currentAnnotations", this.currentAnnotations);
+        
       }
 
     }
@@ -248,6 +444,18 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head - 1, {"scroll" : true}) // Really don't know why we need -1 (!)
   }
 
+  private selectTokenP(cmIndex: number, tokenID: number) {
+
+    let selectedDocumentIndex = this.cmViewsP[this.selectedMirrorIndexP];
+    let doc = this.documentsService.getDocumentP(selectedDocumentIndex);
+    let result = doc.getTokenBounds(tokenID);
+    // // console.log("result", result);
+
+    let mirrorsArray = this.mirrorsP.toArray();
+    mirrorsArray[cmIndex].codeMirrorInstance.setSelection(result.anchor, result.head - 1, {"scroll" : true}) // Really don't know why we need -1 (!)
+  }
+
+
   private onScrollInDocument(event) {}
 
   private onViewportChange(event) {
@@ -258,6 +466,14 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     // First check if we have token information for the current viewport already
     this.documentsService.extendTokenInfoIfNecessary(event.index || 0, event.from, event.to); // Returns observable
   }
+
+  private onViewportChangeP(event) {
+    this.viewPortEventP.next(event);
+  }
+  private handleViewportChangeP(event) {
+    // First check if we have token information for the current viewport already
+    this.documentsService.extendTokenInfoIfNecessary(event.index || 0, event.from, event.to); // Returns observable
+  } 
 
   private onKeydown(event: any): void {
     // console.log("event", event);
@@ -271,14 +487,38 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  private onKeydownP(event: any): void {
+    // // console.log("event", event);
+    if (event.event.which === 37) {
+      // Left
+      // TODO: Fix this ugly code. Don't use the global object here.
+      this.gotoLeft(window['CodeMirrorStrixControlP'][event.index].currentAnnotationType, window['CodeMirrorStrixControlP'][event.index].currentAnnotationStructuralType, window['CodeMirrorStrixControlP'][event.index].currentAnnotationValue );
+    } else if (event.event.which === 39) {
+      // Right
+      this.gotoRight(window['CodeMirrorStrixControlP'][event.index].currentAnnotationType, window['CodeMirrorStrixControlP'][event.index].currentAnnotationStructuralType, window['CodeMirrorStrixControlP'][event.index].currentAnnotationValue );
+    }
+  }
+
+
   private addView(documentIndex): void {
     this.cmViews.push(documentIndex); // -1 = no loaded document yet
+  }
+
+
+  private addViewP(documentIndex): void {
+    this.cmViewsP.push(documentIndex); // -1 = no loaded document yet
   }
 
   private removeView(index: number) {
     this.cmViews.splice(index);
     window['CodeMirrorStrixControl'].splice(index);
   }
+
+  private removeViewP(index: number) {
+    this.cmViewsP.splice(index);
+    window['CodeMirrorStrixControlP'].splice(index);
+  }
+
 
   private changeAnnotationHighlight(type: string, structuralType : string, value: string, datatype: string = "default"): void {
     // console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
@@ -294,6 +534,29 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
       if (this.cmViews[index] === selectedDocumentIndex) {
         mirrorsArray[index].codeMirrorInstance.setOption("mode", "strix"); // Refresh highlighting
         mirrorsArray[index].codeMirrorInstance.focus(); // So the user can use the arrow keys right away
+
+        // console.log("refreshing highlight on view " + index, this.cmViews);
+      }
+    }
+  }
+
+  private changeAnnotationHighlightP(type: string, structuralType : string, value: string, datatype: string = "default"): void {
+    // console.log("changing annotation highlight for the document:", this.cmViews[this.selectedMirrorIndex]);
+    let selectedDocumentIndex = this.cmViewsP[this.selectedMirrorIndexP];
+    // let mirrorsArray = this.mirrorsP.toArray();
+    // let cmInstanceP = mirrorsArray[index].codeMirrorInstance;
+    console.log("highlighting", type, value, selectedDocumentIndex);
+    window['CodeMirrorStrixControlP'][selectedDocumentIndex].currentAnnotationType = type;
+    window['CodeMirrorStrixControlP'][selectedDocumentIndex].currentAnnotationStructuralType = structuralType;
+    window['CodeMirrorStrixControlP'][selectedDocumentIndex].currentAnnotationDatatype = datatype;
+    window['CodeMirrorStrixControlP'][selectedDocumentIndex].currentAnnotationValue = value;
+
+    let mirrorsArrayP = this.mirrorsP.toArray();
+    for (let index = 0; index < this.cmViewsP.length; index++) {
+      if (this.cmViewsP[index] === selectedDocumentIndex) {
+        console.log("---in here")
+        mirrorsArrayP[index].codeMirrorInstance.setOption("mode", "strix"); // Refresh highlighting
+        mirrorsArrayP[index].codeMirrorInstance.focus(); // So the user can use the arrow keys right away
 
         // console.log("refreshing highlight on view " + index, this.cmViews);
       }
@@ -329,6 +592,11 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   private clearBookmarks() {
     this.bookmarks = [];
   }
+
+  private clearBookmarksP() {
+    this.bookmarksP = [];
+  }
+
 
   private addBookmark(index: number) {
     let mirrorsArray = this.mirrors.toArray();
@@ -399,17 +667,201 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+
+  private addHighlightP(index: number, tokenID: number) {
+    let doc = this.documentsService.getDocumentP(index);
+    if (doc.token_lookup[tokenID]) {
+      let mirrorsArray = this.mirrorsP.toArray();
+      let cmInstanceP = mirrorsArray[index].codeMirrorInstance;
+
+      let fragments: string[] = [];
+      for (let t = tokenID; t < tokenID + 4; t++) {
+        if (doc.token_lookup[t]) {
+          fragments.push(doc.token_lookup[t].word);
+        }
+      }
+      let text = fragments.join(" ");
+
+      let tokenBounds = doc.getTokenBounds(tokenID);
+      let fromCursor = tokenBounds.anchor;
+      let toCursor = tokenBounds.head;
+      //let toCursor = tokenBounds.anchor;
+      //let fromCursor = tokenBounds.head;
+      //toCursor.char += 1;// not sure why +1
+
+      // console.log("addHighlight", fromCursor, toCursor);
+
+      cmInstanceP.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+      this.bookmarksP.push({
+        "from" : fromCursor,
+        "to" : toCursor,
+        "type" : "highlight",
+        "style" : "bgcolor",
+        "text" : text
+      });
+    }
+  }
+
+  private highlightParallel(index: number, targetID: string) {
+    let doc = this.documentsService.getDocumentP(index);
+    // console.log("----", doc, index)
+    // let _1 = [];
+    // for (const key in doc.token_lookup) {
+    //   if (doc.token_lookup[key]['attrs']['correction_label'] === 'OCR') {
+    //     _1.push(doc.token_lookup[key]['attrs']['target_ref'])
+    //   }
+    // }
+    // targetID = _1.join(',')
+    for (const key in doc.token_lookup) {
+      if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
+        let mirrorsArrayP = this.mirrorsP.toArray();
+        let cmpInstanceP = mirrorsArrayP[index].codeMirrorInstance;
+
+        let fragments: string[] = [];
+        fragments.push(doc.token_lookup[key].word);
+        
+        let text = fragments.join(" ");
+
+        let tokenBounds = doc.getTokenBounds(_.toNumber(key));
+        let fromCursor = tokenBounds.anchor;
+        let toCursor = tokenBounds.head;
+        //let toCursor = tokenBounds.anchor;
+        //let fromCursor = tokenBounds.head;
+        //toCursor.char += 1;// not sure why +1
+
+        // console.log("addHighlight", fromCursor, toCursor);
+
+        cmpInstanceP.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarksP.push({
+          "from" : fromCursor,
+          "to" : toCursor,
+          "type" : "highlight",
+          "style" : "bgcolor",
+          "text" : text
+        });
+      }
+    }
+  }
+
+  private highlightParallelS(index: number, targetID: string) {
+    let doc = this.documentsService.getDocumentP(index);
+    for (const key in doc.token_lookup) {
+      if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
+        let mirrorsArrayP = this.mirrorsP.toArray();
+        let cmpInstanceP = mirrorsArrayP[index].codeMirrorInstance;
+
+        let fragments: string[] = [];
+        fragments.push(doc.token_lookup[key].word);
+        
+        let text = fragments.join(" ");
+
+        let tokenBounds = doc.getTokenBounds(_.toNumber(key));
+        let fromCursor = tokenBounds.anchor;
+        let toCursor = tokenBounds.head;
+        //let toCursor = tokenBounds.anchor;
+        //let fromCursor = tokenBounds.head;
+        //toCursor.char += 1;// not sure why +1
+
+        // console.log("addHighlight", fromCursor, toCursor);
+
+        cmpInstanceP.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarksP.push({
+          "from" : fromCursor,
+          "to" : toCursor,
+          "type" : "highlight",
+          "style" : "bgcolor",
+          "text" : text
+        });
+      }
+    }
+  }
+
+  private highlightSource(index: number, targetID: string) {
+    let doc = this.documentsService.getDocument(index);
+    // console.log("----", doc, index)
+    // let _1 = [];
+    // for (const key in doc.token_lookup) {
+    //   if (doc.token_lookup[key]['attrs']['correction_label'] === 'OCR') {
+    //     _1.push(doc.token_lookup[key]['attrs']['source_ref'])
+    //   }
+    // }
+    // targetID = _1.join(',')
+    for (const key in doc.token_lookup) {
+      if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
+        let mirrorsArray = this.mirrors.toArray();
+        let cmpInstance = mirrorsArray[index].codeMirrorInstance;
+
+        let fragments: string[] = [];
+        fragments.push(doc.token_lookup[key].word);
+        
+        let text = fragments.join(" ");
+
+        let tokenBounds = doc.getTokenBounds(_.toNumber(key));
+        let fromCursor = tokenBounds.anchor;
+        let toCursor = tokenBounds.head;
+        //let toCursor = tokenBounds.anchor;
+        //let fromCursor = tokenBounds.head;
+        //toCursor.char += 1;// not sure why +1
+
+        // console.log("addHighlight", fromCursor, toCursor);
+
+        cmpInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarks.push({
+          "from" : fromCursor,
+          "to" : toCursor,
+          "type" : "highlight",
+          "style" : "bgcolor",
+          "text" : text
+        });
+      }
+    }
+  }
+
+  private highlightSourceP(index: number, targetID: string) {
+    let doc = this.documentsService.getDocument(index);
+    for (const key in doc.token_lookup) {
+      if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
+        let mirrorsArray = this.mirrors.toArray();
+        let cmpInstance = mirrorsArray[index].codeMirrorInstance;
+
+        let fragments: string[] = [];
+        fragments.push(doc.token_lookup[key].word);
+        
+        let text = fragments.join(" ");
+
+        let tokenBounds = doc.getTokenBounds(_.toNumber(key));
+        let fromCursor = tokenBounds.anchor;
+        let toCursor = tokenBounds.head;
+        //let toCursor = tokenBounds.anchor;
+        //let fromCursor = tokenBounds.head;
+        //toCursor.char += 1;// not sure why +1
+
+        // console.log("addHighlight", fromCursor, toCursor);
+
+        cmpInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarks.push({
+          "from" : fromCursor,
+          "to" : toCursor,
+          "type" : "highlight",
+          "style" : "bgcolor",
+          "text" : text
+        });
+      }
+    }
+  }
+
+
   private resizeReader() {
-    console.log("should now resize the reader area.");
+    // console.log("should now resize the reader area.");
   }
 
   private closeDocument() {
-    console.log("should close the document now.");
+    // console.log("should close the document now.");
   }
 
   /* @HostListener('window:resize', ['$event.target'])
   onResize() {
-    console.log("ON THE RISE");
+    // console.log("ON THE RISE");
     if (this.mirrors.first) {
       //this.mirrors.first.codeMirrorInstance.setSize(null, "100%");
     }

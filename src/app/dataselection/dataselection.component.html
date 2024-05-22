@@ -146,5 +146,13 @@
           </div>
         </div>
       </div>
+      <div class="row" *ngIf="showInformation">
+        <div class="col-xl-12" style="width: 1000px;">
+          <pdf-viewer 
+            src="assets/all-n-grams-(1,2)-images-climate-tf-idf.pdf" [render-text]="true" [original-size]="false" style="width: 900px; height: 800px;">
+          </pdf-viewer>
+        </div>
+        
+      </div>
     </div> 
 </div>

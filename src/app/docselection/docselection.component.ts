@@ -9,7 +9,7 @@ import { MetadataService } from '../metadata.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { OPENDOCUMENT, CHANGEPAGE, RELOAD, INITIATE, CHANGEQUERY, AppState, SearchRedux,
-   CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR, SELECTED_CORPORA } from '../searchreducer';
+   CHANGEFILTERS, DOC_SIZE, WORD_COUNT, YEAR_RANGE, YEAR_INTERVAL, CHANGELANG, UNDEFINED_YEAR, SELECTED_CORPORA, REFERENCE_ID } from '../searchreducer';
 import { SearchResult, AggregationsResult } from '../strixresult.model';
 import { filter } from 'rxjs/operators';
 import { AppComponent } from '../app.component';
@@ -18,6 +18,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import {PageEvent} from '@angular/material/paginator';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
 import { LocService } from 'app/loc.service';
+import { CallsService } from 'app/calls.service';
 
 @Component({
   selector: 'docselection',
@@ -51,6 +52,7 @@ export class DocselectionComponent implements OnInit {
   private checkedCorpora: any = {};
   private newModeData: any = {};
   public selectedCorpora: string[];
+  public searchString = "";
 
   public show = true;
   public showData = true;
@@ -59,6 +61,7 @@ export class DocselectionComponent implements OnInit {
   public undefYears = true;
   public yearNA = '';
   public docHits = false;
+  public keywordSearch: boolean;
 
   private searchResultSubscription: Subscription;
   private metadataSubscription: Subscription;
@@ -126,6 +129,7 @@ export class DocselectionComponent implements OnInit {
               private appComponent: AppComponent,
               private locService: LocService,
               public _MatPaginatorIntl: MatPaginatorIntl,
+              private callsService: CallsService,
               // private similarComponent: SimilarDocsComponent,
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
@@ -189,47 +193,49 @@ export class DocselectionComponent implements OnInit {
       this.setNewOptions(this.maxYear,this.minYear, 'yearRange');
     });
 
-    this.statResultSubscription = queryService.statResult$.subscribe(
-      (result : any) => {
-        this.statData = [];
-        this.yearData = [];
-        this.docData = [];
-        let docDataTemp = [];
-        let docDataLabelTemp = [];
-        let dataStats = result.sort((a,b) => _.keys(b[1]).length - _.keys(a[1]).length);
-        let docDataX = dataStats.filter(item => item[0] == 'word_count')
-        docDataX = _.keys(docDataX[0][1])
-        for (let i = 0; i < docDataX.length; i++) {
-          docDataLabelTemp.push(i);
-          docDataTemp.push(Number(docDataX[i]))
-        }
-        this.docData.push({'key': 'word_count', 'labels': docDataLabelTemp, 'values': [{'data': docDataTemp, 'label': 'Document size'}]})
-        dataStats = dataStats.filter(item => item[0] != 'word_count' && ['year', 'author', 'corpus_id'].includes(item[0]))
-        dataStats.forEach((item) => this.statData.push({'key': item[0], 'labels': _.keys(item[1]), 'values': [{'data': _.values(item[1]),
-         'label': item[0].charAt(0).toUpperCase()+item[0].substring(1)}],
-         'ttValues': _.keys(item[1]).map(function (x, i) {return [x, _.values(item[1])[i]]}).sort((a,b) => b[1] - a[1])
-        }))
-        if (this.statData.filter(item => item.key == 'year')) {
-          this.yearData = this.statData.filter(item => item.key == 'year')
-        }
-        if (this.yearData.length > 0) {
-          if (this.yearData[0]['labels'].includes('2050')) {
-            this.yearNA = 'Yes';
-          } else {
-            this.yearNA = 'No';
-          }
-        }
-        this.statData = this.statData.filter(item => item.key != 'year');        
-      },
-      error => null//this.errorMessage = <any>error
-    );
+    // this.statResultSubscription = queryService.statResult$.subscribe(
+    //   (result : any) => {
+    //     this.statData = [];
+    //     this.yearData = [];
+    //     this.docData = [];
+    //     let docDataTemp = [];
+    //     let docDataLabelTemp = [];
+    //     let dataStats = result.sort((a,b) => _.keys(b[1]).length - _.keys(a[1]).length);
+    //     let docDataX = dataStats.filter(item => item[0] == 'word_count')
+    //     docDataX = _.keys(docDataX[0][1])
+    //     for (let i = 0; i < docDataX.length; i++) {
+    //       docDataLabelTemp.push(i);
+    //       docDataTemp.push(Number(docDataX[i]))
+    //     }
+    //     this.docData.push({'key': 'word_count', 'labels': docDataLabelTemp, 'values': [{'data': docDataTemp, 'label': 'Document size'}]})
+    //     dataStats = dataStats.filter(item => item[0] != 'word_count' && ['year', 'author', 'corpus_id'].includes(item[0]))
+    //     dataStats.forEach((item) => this.statData.push({'key': item[0], 'labels': _.keys(item[1]), 'values': [{'data': _.values(item[1]),
+    //      'label': item[0].charAt(0).toUpperCase()+item[0].substring(1)}],
+    //      'ttValues': _.keys(item[1]).map(function (x, i) {return [x, _.values(item[1])[i]]}).sort((a,b) => b[1] - a[1])
+    //     }))
+    //     if (this.statData.filter(item => item.key == 'year')) {
+    //       this.yearData = this.statData.filter(item => item.key == 'year')
+    //     }
+    //     if (this.yearData.length > 0) {
+    //       if (this.yearData[0]['labels'].includes('2050')) {
+    //         this.yearNA = 'Yes';
+    //       } else {
+    //         this.yearNA = 'No';
+    //       }
+    //     }
+    //     this.statData = this.statData.filter(item => item.key != 'year');        
+    //   },
+    //   error => null//this.errorMessage = <any>error
+    // );
 
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(
       (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
-        this.docHits = false;
+        setTimeout(() => {
+          this.docHits = false;
+        }, 2000);
         this.totalNumberOfDocuments = answer.count;
         this.hasSearched = true;
       },
@@ -261,7 +267,18 @@ export class DocselectionComponent implements OnInit {
 
   private openDocument(docIndex: number) {
     let doc = this.documentsWithHits[docIndex];
-    this.store.dispatch({type : OPENDOCUMENT, payload : doc});
+    if (doc['mode_id'] === 'parallel') {
+      let docX = {'filterStat': [{'field': 'ref_id', 'value': doc['text_attributes']['ref_id']+'-0'}], 'current_corpora': [doc['text_attributes']['corpus_ref']], 'query': this.searchString, 'keyword': this.keywordSearch, 'fromPage': 0, 'toPage': 5};
+      this.callsService.getStatDocuments(docX.current_corpora, docX.query, docX.filterStat, docX.keyword, docX.fromPage, docX.toPage).subscribe((result) => {
+        this.store.dispatch({type : REFERENCE_ID, payload : {'id': result.data[0]['doc_id'], 'corpus_ref': result.data[0]['corpus_id']}});
+        this.store.dispatch({type : OPENDOCUMENT, payload : doc});
+      })
+    } else {
+      this.store.dispatch({type : REFERENCE_ID, payload : ''});
+      this.store.dispatch({type : OPENDOCUMENT, payload : doc});
+    }
+    // console.log(this.documentsWithHits[docIndex])
+    // this.store.dispatch({type : OPENDOCUMENT, payload : doc});
   }
   private openDocumentInNew(docIndex: number) { // <- Not currently in use
     let doc = this.documentsWithHits[docIndex];

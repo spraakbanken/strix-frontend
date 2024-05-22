@@ -4,7 +4,8 @@
 // The list of which env maps to which file can be found in `.angular-cli.json`.
 
 export const environment = {
-  production: false,
-  api: "https://ws.spraakbanken.gu.se/ws/strixlabb",
+  production: true,
+  // api: "https://ws.spraakbanken.gu.se/ws/strixlabb/v2",
+  api: "https://spraakbanken1.it.gu.se/strixlabb",
   auth: "https://sp.spraakbanken.gu.se/auth"
 };

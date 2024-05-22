@@ -8,10 +8,12 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
+import { AppComponent } from 'app/app.component';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'search',
@@ -28,6 +30,7 @@ export class SearchComponent implements OnInit {
   public searchType = QueryType.Normal;
 
   private asyncSelected: string = '';
+  private asyncSelectedV: string = '';
   private dataSource: Observable<any>;
   private errorMessage: string;
 
@@ -39,6 +42,8 @@ export class SearchComponent implements OnInit {
 
   public selectSearch = 'Search tokens';
   public selectedOption = 'Search phrase';
+
+  public vectorSearch = false;
 
   private histogramData: any;
   private histogramSelection: any;
@@ -82,10 +87,12 @@ export class SearchComponent implements OnInit {
   private isMiddlePart : boolean = false;
   private isFinalPart : boolean = false;
   private isCaseSensitive : boolean = false;
+  public selectedCorpora: string[];
 
   constructor(private callsService: CallsService,
               private karpService: KarpService,
               private queryService: QueryService,
+              private appComponent: AppComponent,
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
 
@@ -93,9 +100,19 @@ export class SearchComponent implements OnInit {
       this.isPhraseSearch = !data.keyword_search;
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+      this.selectedCorpora = data.corporaInMode;
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH_BOX)).subscribe((data) => {
+      this.asyncSelectedV = data.vectorQuery;
+      this.vectorSearch = data.vectorSearchbox
+    })
+
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
       // this.isPhraseSearch = !data.keyword_search;
       this.asyncSelected = '';
+      this.asyncSelectedV = '';
       this.isPhraseSearch = true;
       this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
       this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
@@ -187,6 +204,14 @@ export class SearchComponent implements OnInit {
     this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
+  public searchVectorMode(val) {
+    // console.log("searchVectorMode", val, this.vectorSearch)
+    this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: !val})
+    // if (!val) {
+    //   this.clearSimpleSearch();
+    // }
+  }
+
   private clearSimpleSearch() {
     this.asyncSelected = '';
     this.simpleSearch();
@@ -220,21 +245,27 @@ export class SearchComponent implements OnInit {
   }
 
   public simpleSearch() {
-    if (this.asyncSelected.includes('""') || this.asyncSelected.includes('" "')) {
-      this.isPhraseSearch = true;
-      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
-    } else if (this.asyncSelected[0] === '"' && this.asyncSelected.charAt(this.asyncSelected.length -1) === '"') {
-      this.isPhraseSearch = true;
-      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
-    } else if (this.asyncSelected === '') {
-      this.isPhraseSearch = true;
-      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+    if (this.vectorSearch) {
+      this.appComponent.selectedTabV.setValue(0);
+      this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
     } else {
-      this.isPhraseSearch = false;
-      this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      if (this.asyncSelected.includes('""') || this.asyncSelected.includes('" "')) {
+        this.isPhraseSearch = true;
+        this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      } else if (this.asyncSelected[0] === '"' && this.asyncSelected.charAt(this.asyncSelected.length -1) === '"') {
+        this.isPhraseSearch = true;
+        this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      } else if (this.asyncSelected === '') {
+        this.isPhraseSearch = true;
+        this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      } else {
+        this.isPhraseSearch = false;
+        this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
+      }
+      // this.store.dispatch({type : VECTOR_SEARCH, payload: this.vectorSearch})
+      this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
+      this.store.dispatch({ type: SEARCH, payload : null});
     }
-    this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
-    this.store.dispatch({ type: SEARCH, payload : null});
   }
 
   /* This should read from the current query (in the query-service)

@@ -106,6 +106,10 @@ import { FilterdataComponent } from './filterdata/filterdata.component';
 import { DocumentStatisticComponent } from './document-statistic/document-statistic.component';
 import { DocstatisticComponent } from './docstatistic/docstatistic.component';
 import { CircleViewComponent } from './circleview/circleview.component';
+import { ViewMapComponent } from './viewmap/viewmap.component';
+import { TopicViewComponent } from './topicview/topicview.component';
+import { VectorSearchComponent } from './vectorsearch/vectorsearch.component';
+import { PdfViewerModule } from 'ng2-pdf-viewer';
 // import { SearchFilterComponent } from './search-filter/search-filter.component';
 
 @NgModule({
@@ -145,6 +149,9 @@ import { CircleViewComponent } from './circleview/circleview.component';
     DocumentStatisticComponent,
     DocstatisticComponent,
     CircleViewComponent,
+    ViewMapComponent,
+    TopicViewComponent,
+    VectorSearchComponent,
     // SearchFilterComponent
   ],
   imports: [
@@ -206,7 +213,8 @@ import { CircleViewComponent } from './circleview/circleview.component';
     NouisliderModule,
     NgxBootstrapIconsModule.pick(allIcons),
     PopoverModule.forRoot(),
-    NgChartsModule
+    NgChartsModule,
+    PdfViewerModule
   ],
   providers: [
               CallsService,

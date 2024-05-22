@@ -24,6 +24,10 @@ export class ModeselectionComponent implements OnInit {
   public documentParam = {};
   public filterData = {};
 
+  //
+  public parallelMode = true;
+  //
+
   private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
   public addFacet = [];
 
@@ -102,7 +106,7 @@ export class ModeselectionComponent implements OnInit {
         this.modeSelection[item] = true;
         this.modeItem.mode.push(item.toLowerCase());
         this.modeItem.corpuses.push(this.modeCollection[item]);
-        if (item === 'default' || item === 'mink') {
+        if (item === 'default' || item === 'mink' || item === 'parallel') {
           this.visibleMode = '';
         } else {
           this.visibleMode = item;

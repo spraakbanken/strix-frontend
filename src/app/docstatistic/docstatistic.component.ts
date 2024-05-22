@@ -200,5 +200,8 @@ export class DocstatisticComponent implements OnInit {
         this.keywordSearch = data.keyword_search;
         // this.getFacetData('year')
     });
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+        this.getFacetData('year')
+    });
   }
 }

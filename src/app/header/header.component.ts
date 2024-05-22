@@ -61,7 +61,7 @@ export class HeaderComponent implements OnInit {
         this.newspaper = openedDocument.textAttributes.newspaper;
       }
       this.sourceUrl = '';
-      if (openedDocument.corpusID === "detektiva") {
+      if (openedDocument.corpusID === "detektivaavdelningen") {
         this.sourceUrl = openedDocument.textAttributes.url;
       }
       this.mostCommonWords = [];
@@ -91,7 +91,7 @@ export class HeaderComponent implements OnInit {
           this.newspaper = this.documentTempData['textAttributes']['newspaper'];
         }
         this.sourceUrl = '';
-        if (this.documentTempData['corpusID'] === "detektiva") {
+        if (this.documentTempData['corpusID'] === "detektivaavdelningen") {
           this.sourceUrl = this.documentTempData['textAttributes']['url'];
         }
         this.mostCommonWords = [];

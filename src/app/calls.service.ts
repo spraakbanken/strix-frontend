@@ -337,6 +337,32 @@ export class CallsService {
     );
   }
 
+  public getGeoStatistics(corpora: string[], modes: string[], include_list: string[], query_search: string, keyword_search: boolean, filters) {
+    let params: any = {};
+
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
+    if (modes) {
+      params.modes = modes.join(",");
+    }
+    if (query_search) {
+      params.text_query = query_search;
+    }
+    if (filters && _.size(filters) > 0) {
+      params.text_filter = this.formatFilterObject(filters);
+    }
+    if(keyword_search) {
+      params.in_order = (!keyword_search).toString();
+    }
+    if (include_list.length) {
+      params.include_facets = include_list.join(",");
+    }
+    return this.get<any>('geoStats', params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   public getInfoStrix() {
     let params: any = {};
 
@@ -520,6 +546,19 @@ export class CallsService {
     );
   }
 
+  /* Related documents */
+  public getVectorSearch(modeID: string, corpora: string[], query: string) {
+    let params: any = {};
+    params.query = query;
+    if (corpora) {
+      params.corpora = corpora.join(",");
+    }
+    // params.text_filter = this.formatFilterObject([{field: "mode_id", value: modeID}]);
+    return this.get(`search_vector/${modeID}`, params).pipe(
+      catchError(this.handleError)
+    );
+  }
+
   /* get data for Date Histogram */
   public getDateHistogramData(corpusID: string): Observable<StrixDocument> {
     let params = {date_field : "datefrom"};
@@ -536,5 +575,28 @@ export class CallsService {
       catchError(this.handleError)
     );
   }
+
+  //
+  // public getTargetDocument(refID: string, documentID: string, corpora: string, modeID: string) {
+  //   let params: any = {};
+
+  //   if (corpora) {
+  //     params.corpora = corpora;
+  //   }
+  //   if (modeID) {
+  //     params.modes = modeID;
+  //   }
+  //   if (refID) {
+  //     params.ref_id = refID;
+  //   }
+  //   if (documentID) {
+  //     params.doc_id = documentID;
+  //   }
+    
+  //   return this.get('documentTarget', params).pipe(
+  //     catchError(this.handleError)
+  //   );
+  // }
+  //
 
 }

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
-import { AppState, SEARCHINDOCUMENT, SearchRedux } from '../searchreducer';
+import { AppState, SEARCHINDOCUMENT, SearchRedux, HIGHLIGHT_PARALLEL } from '../searchreducer';
 import { Subscription, Observable, zip } from 'rxjs';
 import { filter, skip } from 'rxjs/operators';
 
@@ -16,6 +16,12 @@ export class IndocsearchComponent implements OnInit {
 
   constructor(private store: Store<AppState>) { 
     this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === HIGHLIGHT_PARALLEL)).subscribe((data) => {
+      this.asyncSelected = "";
+      this.simpleSearch();
+    });
+
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SEARCHINDOCUMENT)).subscribe((data) => {
       // console.log("----", this.locService.getTranslationFor('docPs'));

@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState } from '../searchreducer';
+import { INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState, VECTOR_SEARCH_BOX } from '../searchreducer';
 import { Aggregations, AggregationsResult } from "../strixresult.model";
 import { LocService } from '../loc.service';
 import { CallsService } from 'app/calls.service';
@@ -25,6 +25,7 @@ export class StatcolumnComponent implements OnInit {
   public selecT = false;
   public simpleSearch = false;
   public advanceSearch = false;
+  public vectorSearch = false;
   public gotMetadata = false;
   
   public selectType = 'searchView';
@@ -40,6 +41,7 @@ export class StatcolumnComponent implements OnInit {
   
   private searchRedux: Observable<any>;
   private availableCorpora : { [key: string] : StrixCorpusConfig};
+  public vectorSearchActive : boolean;
   
   constructor(private metadataService: MetadataService,
               private queryService: QueryService,
@@ -71,13 +73,22 @@ export class StatcolumnComponent implements OnInit {
     this.selecT = false;
     this.simpleSearch = false;
     this.advanceSearch = false;
+    this.vectorSearch = false;
     if (event === "simpleSearch") {
       this.simpleSearch = true;
+      this.vectorSearchActive = false;
       this.selectedTab = "simpleSearch";
+      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: false});
     }
     if (event === "advanceSearch") {
       this.advanceSearch = true;
       this.selectedTab = "advanceSearch";
+    }
+    if (event === "vectorSearch") {
+      this.vectorSearch = true;
+      this.vectorSearchActive = true;
+      this.selectedTab = "vectorSearch";
+      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: true});
     }
     
   }
@@ -92,5 +103,6 @@ export class StatcolumnComponent implements OnInit {
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
     })
     this.simpleSearch = true;
+    this.vectorSearchActive = false;
   }
 }

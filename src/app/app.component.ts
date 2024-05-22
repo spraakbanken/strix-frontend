@@ -9,7 +9,8 @@ import { CallsService } from './calls.service';
 import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
-        AppState, SearchRedux, SELECTED_CORPORA, MODE_SELECTED } from './searchreducer';
+        AppState, SearchRedux, SELECTED_CORPORA, MODE_SELECTED, 
+        VECTOR_SEARCH_BOX} from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -18,14 +19,26 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE,
 })
 export class AppComponent {
 
-  public listTabs = ['Hits', 'Statistic'];
+  public listTabs = ['Hits', 'Statistics', 'Overview'];
+  public listTabsV = ['Semantic'];
   public selectedTab = new FormControl(0);
+  public selectedTabV = new FormControl(0);
   public listDocTabs = ['docView', 'statView'];
   public selectedDocTab = new FormControl(0);
+  public listViewTabs = ['Topics', 'Maps'];
+  public selectedViewTab = new FormControl(0);
   public similarParam: any;
   public statParam: {};
   public relatedDocType: string;
   public currentSelection: string[];
+  public currentCount = 1;
+  public vectorString = "";
+
+  //
+  public showSource = 'source';
+  public showTarget = 'target';
+  public currentMode = '';
+  //
   
   private searchRedux: Observable<SearchRedux>;
   public openDocument = false;
@@ -38,10 +51,13 @@ export class AppComponent {
   public getDocRunning = false;
   public getStrixInfo = {};
   public selectedCorpus = [];
+  public viewMap: string;
+  public viewTopic: string;
 
   public languages: string[];
   public selectedLanguage: string;
   public triggerLoading = false;
+  public activeVectorSearch = false;
 
   constructor(private routingService: RoutingService, private store: Store<AppState>, private locService: LocService, private callsService: CallsService) {
     // console.log(_.add(1, 3)); // Just to test lodash
@@ -66,6 +82,16 @@ export class AppComponent {
       this.triggerLoading = true;
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH_BOX)).subscribe((data) => {
+      if (data.vectorQuery !== undefined) {
+        this.vectorString = data.vectorQuery;
+      } else {
+        this.vectorString = '';
+      }
+      // console.log(data.vectorSearch)
+      this.activeVectorSearch = data.vectorSearchbox;
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpus = data.selectedCorpora;
       if (this.selectedCorpus.length > 0) {
@@ -74,10 +100,16 @@ export class AppComponent {
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      this.currentMode = data.modeSelected[0];
       this.statParam = {};
       this.statParam['hello'] = 'world';
-      this.listTabs = ['Hits', 'Statistic'];
+      this.listTabs = ['Hits', 'Statistics', 'Overview'];
+      this.listTabsV = ['Semantic']
       this.selectedTab.setValue(0);
+      this.selectedTabV.setValue(0);
+      this.viewMap = '';
+      this.viewTopic = '';
+      this.selectedViewTab.setValue(0);
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === OPENDOCUMENT)).subscribe((data) => {
@@ -128,6 +160,21 @@ export class AppComponent {
     this.selectedTab.setValue(0);
   }
 
+  public addTabV() {
+    this.listTabsV.push('Tab');
+    this.selectedTabV.setValue(this.listTabsV.length - 1);
+  }
+
+  public removeTabV(index: number) {
+    this.listTabsV.splice(index, 1);
+    this.selectedTabV.setValue(0);
+  }
+
+  public removeViewTab(index: number) {
+    this.listViewTabs.splice(index, 1);
+    this.selectedViewTab.setValue(0);
+  }
+
   public gotoLogin() {
     window.location.href = `https://sp.spraakbanken.gu.se/auth/login?redirect=${window.location}`
   }
@@ -142,5 +189,21 @@ export class AppComponent {
 
   public getLangchange(iKey: string) {
     return this.locService.getDataLanguage(iKey)
+  }
+
+  public showOverview() {
+    this.viewTopic = this.listViewTabs[0];
+    this.currentCount = this.currentCount + 1
+  }
+
+  public moveTab() {
+    if (this.listViewTabs[this.selectedViewTab.value] === 'Maps') {
+      this.viewMap = this.listViewTabs[this.selectedViewTab.value];
+      this.currentCount = this.currentCount + 1
+    }
+    if (this.listViewTabs[this.selectedViewTab.value] === 'Topics') {
+      this.viewTopic = this.listViewTabs[this.selectedViewTab.value];
+      this.currentCount = this.currentCount + 1
+    }
   }
 }

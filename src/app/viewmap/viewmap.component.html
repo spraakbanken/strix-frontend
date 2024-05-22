@@ -1,0 +1,25 @@
+<div class="box-container">
+    <div class="row" style="min-height: inherit;">
+        <!-- <div class="col-md-2 scrollData" style="padding-left: 20px; border-right: 1px solid #ddd;">
+            <mat-form-field appearance="outline" style="width: 320px; padding-top: 20px;">
+                <input [(ngModel)]="inputText" matInput minlength="2" (keyup)="showMap($event.target['value'])" placeholder="" #input>
+            </mat-form-field>
+        </div> -->
+        <div class="col-md-12" style="display: block; padding-top: 10px; padding-right: 4px;">
+            <div id="map" class="map"></div>
+            <div style="display: none;">
+                <div id="popup">
+                    <div id="customdiv" style="display: none;">
+                        <div id="locationtext"> 
+                        </div>
+                        <div id="locationdoc">
+                        </div>
+                        <div><i>Corpora:</i></div>
+                        <div class="hello" id="locationcorpora"></div>
+                        <span class='btn btn-info btn-sm mt-3 float-right pop-close'>Show hits</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

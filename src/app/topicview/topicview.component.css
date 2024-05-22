@@ -1,0 +1,65 @@
+.mat-list-single-selected-option {
+    background: #a3c8ca;
+  }
+
+  .mat-selection-list {
+    padding: 10px 10px 10px 24px !important;
+    display: inline-flex !important;
+  }
+
+  .mat-list-option {
+    border-radius: 10px !important;
+    margin-right: 20px !important;
+    min-width: 150px !important;
+  }
+
+  ::ng-deep .mat-list-item {
+    min-height: 50px !important;
+}
+
+::ng-deep .mat-list-item-content {
+    min-height: inherit;
+}
+
+.mat-list-single-selected-option {
+    background: #a3c8ca;
+}
+
+::ng-deep .mat-list-option {
+    font-family: Roboto,Helvetica Neue,sans-serif !important;
+}
+
+::ng-deep .box-container .mat-list-option {
+    border-radius: 10px !important;
+    margin-bottom: 8px !important;
+}
+
+::ng-deep .box-container .mat-list-base {
+    padding-top: 10px !important;
+}
+
+::ng-deep .box-container .mat-paginator-page-size {
+  justify-content: inherit;
+  margin-right: 16px;
+}
+
+::ng-deep .box-container .mat-list-text {
+  padding-right: 0px !important;
+}
+
+table {
+    width: 100%;
+  }
+  
+.mat-mdc-form-field {
+  font-size: small;
+  width: 100%;
+}
+
+.mat-cell {
+  font-size: small;
+}
+
+td, th {
+  width: 50%;
+}

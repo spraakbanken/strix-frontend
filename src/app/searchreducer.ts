@@ -25,6 +25,14 @@ export const YEAR_INTERVAL = "YEAR_INTERVAL";
 export const UNDEFINED_YEAR = "UNDEFINED_YEAR";
 export const YEAR_NA = "YEAR_NA";
 export const FACET_LIST = "FACET_LIST";
+export const VECTOR_SEARCH = "VECTOR_SEARCH";
+export const VECTOR_SEARCH_BOX = "VECTOR_SEARCH_BOX";
+
+//
+export const HIGHLIGHT_PARALLEL = "HIGHLIGHT_PARALLEL";
+export const HIGHLIGHT_SOURCE = "HIGHLIGHT_SOURCE";
+export const REFERENCE_ID = "REFERENCE_ID";
+//
 
 // payload was removed from Action in lib, brought it back.
 declare module '@ngrx/store' {
@@ -69,6 +77,16 @@ export interface SearchRedux {
   yearNA?: boolean;
   facet_list?;
   emptySelection?: string;
+  vectorSearch?;
+  vectorQuery?: string;
+  vectorSearchbox?;
+
+  //
+  highlightParallel ?: string[];
+  highlightSource ?: string[];
+  reference_id ?: string;
+  reference_corpus ?: string;
+  //
 }
 
 
@@ -138,12 +156,16 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       nextState.documentCorpus = null;
       nextState.localQuery = null;
       nextState.sentenceID = null;
+      nextState.reference_id = null;
+      nextState.reference_corpus = null;
       break;
     case CLOSEDOCUMENT_NOHISTORY:
       nextState.documentID = null;
       nextState.documentCorpus = null;
       nextState.localQuery = null;
       nextState.sentenceID = null;
+      nextState.reference_id = null;
+      nextState.reference_corpus = null;
       nextState.history = false;
       nextState.latestAction = CLOSEDOCUMENT;
       break;
@@ -185,6 +207,25 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
     case FACET_LIST:
       nextState.facet_list = action.payload;
       break;
+    case VECTOR_SEARCH:
+      nextState.vectorSearch = action.payload.vc;
+      nextState.vectorQuery = action.payload._query;
+      break;
+    case VECTOR_SEARCH_BOX:
+      nextState.vectorSearchbox = action.payload;
+      break;
+    //
+    case HIGHLIGHT_PARALLEL:
+      nextState.highlightParallel = action.payload;
+      break;
+    case HIGHLIGHT_SOURCE:
+      nextState.highlightSource = action.payload;
+      break;
+    case REFERENCE_ID:
+      nextState.reference_id = action.payload.id;
+      nextState.reference_corpus = action.payload.corpus_ref;
+      break;
+    //
   }
 
   return nextState;
