@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, HostListener } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, HostListener, TemplateRef } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
@@ -16,6 +16,7 @@ import { CallsService } from 'app/calls.service';
 import { Options, ChangeContext } from '@angular-slider/ngx-slider';
 import { ChartOptions, ChartType, Chart } from 'chart.js';
 import { BaseChartDirective } from 'ng2-charts';
+import { MatDialog } from '@angular/material/dialog';
 
  export class TodoItemNode {
   children: TodoItemNode[];
@@ -35,6 +36,8 @@ export class TodoItemFlatNode {
   styleUrls: ['dataselection.component.css'],
 })
 export class DataselectionComponent implements OnInit {
+
+  @ViewChild('wordRain') wordRain: TemplateRef<any>;
 
   @ViewChild(BaseChartDirective) chart?: BaseChartDirective | undefined;
 
@@ -75,6 +78,8 @@ export class DataselectionComponent implements OnInit {
   private availableCorpora: { [key: string] : StrixCorpusConfig} = {};
   public corpusDescription = {};
   public currentLang = '';
+  public currentInfoItem = '';
+  public rainPicture = '';
   public showInformation = false;
   public simpleSearch = false;
   public openClose = 'unfold_more';
@@ -200,7 +205,7 @@ export class DataselectionComponent implements OnInit {
     this.dataChange.next(this.data);
   }
 
-  constructor(private store: Store<AppState>, private metadataService: MetadataService, private callsService: CallsService,)
+  constructor(private store: Store<AppState>, private metadataService: MetadataService, private callsService: CallsService, private dialog: MatDialog)
   {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel,
       this.isExpandable, this.getChildren);
@@ -427,6 +432,16 @@ export class DataselectionComponent implements OnInit {
     this.updateFiltersX('yearCorpora');
   }
 
+  public expandWordRain(item) {
+    
+    this.showCorpusDetail = this.availableCorpora[item]
+    this.rainPicture = "assets/"+this.showCorpusDetail['corpusID']+".pdf";
+    let dialogRef = this.dialog.open(this.wordRain, {
+      height: '700px',
+      width: '1000px',
+    });
+  }
+
   public defaultSelection(inputMode) {
     if (inputMode === "modeRoot") {
       if (this.preSelected.length > 0) {
@@ -589,16 +604,14 @@ export class DataselectionComponent implements OnInit {
   }
 
   private showDetails(item) {
-    this.showInformation = true;
-    this.showCorpusDetail = this.availableCorpora[item]
-  }
-
-  private closeDetails() {
-    this.showInformation = false;
-  }
-
-  private closeSide() {
-    this.showInformation = false;
+    if (this.currentInfoItem === item) {
+      this.currentInfoItem = '';
+      this.showInformation = false;
+    } else {
+      this.currentInfoItem = item;
+      this.showInformation = true;
+      this.showCorpusDetail = this.availableCorpora[item]
+    }
   }
 
   public selectSearch($event) {

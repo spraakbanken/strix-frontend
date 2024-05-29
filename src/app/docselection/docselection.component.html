@@ -100,14 +100,6 @@
                     {{ availableCorpora[doc.corpus_id].name | loc }}
                   </span>&nbsp;
                 </div>
-                <button mat-button [matMenuTriggerFor]="menuPDF" style="margin-top: -10px; padding: 0px; min-width: 26px;">
-                  <i-bs name="info-circle" width="20" height="20"></i-bs>
-                </button>
-                <mat-menu #menuPDF="matMenu">
-                  <pdf-viewer 
-                    src="assets/all-n-grams-(1,2)-images-climate-tf-idf.pdf" [render-text]="true" [original-size]="false" style="width: 800px; height: 700px;">
-                  </pdf-viewer>
-                </mat-menu>
               </div>
             </div>
             

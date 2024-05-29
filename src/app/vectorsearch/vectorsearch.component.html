@@ -2,31 +2,18 @@
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
 <div *ngIf="vectorString.length === 0">
-  <h6 style="padding: 10px;"><i>Currently there are no documents to show as the search string is empty.</i></h6>
+  <!-- <h6 style="padding: 10px;"><i>Currently there are no documents to show as the search string is empty.</i></h6>
   <h6 style="padding: 10px;">How vector search works?</h6>
   <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
     <div class="col-xl-3">
       <span>1. Select one or more corpus:</span>
     </div>
-    <!-- <div class="col-xl-9" style="display: inline-grid;">
-      <a tabindex>In free text search the search engine looks:</a>
-      <ul tabindex>
-        <li>For each token(s) as well as all the combination of tokens.</li>
-        <li>Exact token(s) and the lexical entry</li>
-        <li>Examples</li>
-        <ul tabindex>
-          <li><i>regering</i></li>
-          <li><i>rödgröna regering</i></li>
-          <li><i>ekonomisk utveckling</i></li>
-        </ul>
-      </ul>
-    </div> -->
   </div>
   <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
     <div class="col-xl-3">
       <span>2. Search for word, phrase or document:</span>
     </div>
-  </div>
+  </div> -->
 </div>
 <div class="mainBlock" *ngIf="vectorString.length > 0">
     <div class="leftBlock">

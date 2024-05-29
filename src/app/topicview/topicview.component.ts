@@ -252,6 +252,7 @@ export class TopicViewComponent implements OnChanges, OnInit {
       .style("fill", function (d, i: any) {
         return color(i);
       })
+      .style("cursor", "pointer")
       .on("click", function (d, i) { 
         me.showTopicHits(i.data['id'].split(" ").join("_"), i.data['id']);
       });
