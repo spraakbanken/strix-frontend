@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { AppState, MODE_SELECTED, INITIATE, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY } from '../searchreducer';
+import { AppState, MODE_SELECTED, INITIATE, OPENDOCUMENT_NOHISTORY, CLOSEDOCUMENT_NOHISTORY, HOMEVIEW } from '../searchreducer';
 import { RoutingService } from 'app/routing.service';
 import { filter } from 'rxjs/operators';
 
@@ -62,6 +62,11 @@ export class ModeselectionComponent implements OnInit {
     });
 
     this.searchRedux = this.store.select('searchRedux');
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === HOMEVIEW)).subscribe((data) => {
+      this.preSelectCorpora = [data.corpusItem];
+      this.chooseMode(data.modeItem, 'continue');
+    });
   }
   
 

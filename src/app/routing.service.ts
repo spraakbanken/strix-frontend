@@ -23,6 +23,7 @@ export class RoutingService {
   private readonly urlFields: {tag: string, type: FragmentType, default: any}[] = [
     {tag : "type", type : FragmentType.STRING, default : QueryType.Normal}, // TODO: Not in SearchRedux.
     {tag : "query", type : FragmentType.URI, default : ""},
+    {tag : "vectorQuery", type : FragmentType.URI, default : ""},
     {tag : "localQuery", type : FragmentType.STRING, default : ""},
     {tag : "page", type : FragmentType.NUMBER, default : 0},
     {tag : "documentsPerPage", type : FragmentType.NUMBER, default : 10},
@@ -33,7 +34,8 @@ export class RoutingService {
     {tag : "documentID", type : FragmentType.STRING, default : ""},
     {tag : "sentenceID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
-    {tag : "lang", type : FragmentType.STRING, default : "swe"} // TODO: Get default from some config
+    {tag : "lang", type : FragmentType.STRING, default : "swe"}, // TODO: Get default from some config
+    {tag : "search_type", type : FragmentType.STRING, default : "simple"},
   ];
 
   constructor(private store: Store<AppState>) {

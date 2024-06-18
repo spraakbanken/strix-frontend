@@ -62,6 +62,104 @@
   <div class="statDiv" [hidden]="openDocument">
     <statcolumn class="statColumn"></statcolumn>
   </div>
+  <div [hidden]="hideHome" style="font: 400 14px / 20px Roboto, Helvetica Neue, sans-serif;">
+    <div style="height: 50px; background-color: #d9eaeb;"></div>
+    <div class="row" style="height: 350px; padding: 40px;">
+      <div class="col-xl-6" style="padding-right: 100px;">
+        <span *ngIf="selectedLanguage === 'eng'"><b>Strix</b> is Språkbanken's text research platform.<br><br>
+          With Strix you can:<br><br>
+          <ul>
+            <li>Visualize a full document with <a href="https://spraakbanken.gu.se/sparv" target="_blank" style="color: chocolate;">Sparv</a> analysis on word, sentence and text level.</li>
+            <li>Search from a diverse collection of corpora and narrow down the documents using filters.</li>
+            <li>View statistics and graphs for selected corpora and documents.</li>
+            <li>Explore related documents using document vector search built on KBLab's KB-SBERT sentence transformers.</li>
+          </ul>
+          Technical report and user manual will be available soon.
+          <br><br>
+          For any questions or comments, contact us at <a style="color: chocolate;">sb-info@svenska.gu.se</a>
+        </span>
+        <span *ngIf="selectedLanguage === 'swe'"><b>Strix</b> är Språkbankens textforskningsplattform.<br><br>
+          Med Strix kan du:<br><br>
+          <ul>
+            <li>Visualisera hela dokument med vår analysplattform <a href="https://spraakbanken.gu.se/sparv" target="_blank" style="color: chocolate;">Sparv</a> på ord-, menings- och textnivå.</li>
+            <li>Söka i en bred samling av korpusar och begränsa dina träffar med hjälp av filter.</li>
+            <li>Se statistik och grafer för valda korpusar och dokument. </li>
+            <li>Utforska liknande dokument genom vektorsökning byggd på KB-Labbs KB-SBERT meningstransformatorer</li>
+          </ul>
+          Tekniskt dokumentation och användarmanual kommer snart att finnas.
+          <br><br>
+          För frågor och kommentarer, kontakta <a style="color: chocolate;">sb-info@svenska.gu.se</a>
+        </span>
+      </div>
+      <div class="col-xl-6">
+        <h4><b>{{ 'search_examples' | loc }}</b></h4>
+        <ul>
+          <li>{{ 'simple_search' | loc }}
+            <ul>
+              <li style="padding-bottom: 4px;">{{ 'word' | loc }}: <a (click)="gotoQuery('klimat', 'single', 'simple')" style="color: chocolate;"><i>klimat</i></a> {{ '_in' | loc }} {{ availableCorpora['vivill'] | loc }}</li>
+              <li style="padding-bottom: 4px;">{{ 'exact_w_p' | loc }}: <a  (click)="gotoQuery('rödgröna partier', 'quotes', 'simple')" style="color: chocolate;"><i>"rödgröna partier"</i></a> {{ '_in' | loc }} {{ availableCorpora['vivill'] | loc }}</li>
+              <li style="padding-bottom: 4px;">{{ 'multi_word' | loc }}: <a (click)="gotoQuery('klimat politik', 'multiple', 'simple')" style="color: chocolate;"><i>klimat politik</i></a> {{ '_in' | loc }} {{ availableCorpora['vivill'] | loc }}</li>
+            </ul>
+          </li>
+          <li style="padding-top: 10px;">{{ 'vector_search' | loc }}
+            <ul>
+              <li style="padding-bottom: 4px;">{{ 'word' | loc }}: <a href="https://spraakbanken.gu.se/strixlabb/?vectorQuery=klimat&filters=corpus_id:vivill&search_type=vector" target="_blank" style="color: chocolate;"><i>klimat</i></a> {{ '_in' | loc }} {{ availableCorpora['vivill'] | loc }}</li>
+              <li style="padding-bottom: 4px;">{{ 'Sentence' | loc }}: <a href="https://spraakbanken.gu.se/strixlabb/?vectorQuery=Våra%20barn%20kommer%20att%20fråga%20oss%20vad%20vi%20gjorde%20när%20vi%20insåg%20vidden%20av%20klimathot%20och%20miljöförstöring.&filters=corpus_id:vivill&search_type=vector" target="_blank" style="color: chocolate;"><i>Våra barn kommer att fråga oss vad vi gjorde när vi insåg vidden av klimathot och miljöförstöring.</i></a> {{ '_in' | loc }} {{ availableCorpora['vivill'] | loc }}</li>
+              <li style="padding-bottom: 4px;">{{ 'Document' | loc }}</li>
+            </ul>
+          </li>
+        </ul>
+        
+      </div>
+    </div>
+    <div class="row" style="height: 400px; padding: 40px;">
+      <div class="col-xl-6">
+        <h4><b>{{ 'recent_corpora' | loc }}</b></h4>
+        <ul>
+          <li style="padding-bottom: 4px;">
+            <a (click)="gotoCorpora('default', 'vivill')" style="color: chocolate;">{{ availableCorpora['vivill'] | loc }}</a>
+          </li>
+          <li style="padding-bottom: 4px;">
+            <a (click)="gotoCorpora('default', 'wikipedia-sv-demo')" style="color: chocolate;">{{ availableCorpora['wikipedia-sv-demo'] | loc }}</a>
+          </li>
+          <li style="padding-bottom: 4px;">
+            <a (click)="gotoCorpora('detektivaavdelningen', 'detektivaavdelningen')" style="color: chocolate;">{{ availableCorpora['detektivaavdelningen'] | loc }}</a>
+          </li>
+          <li style="padding-bottom: 4px;">
+            <a (click)="gotoCorpora('lb', 'lb-open-demo')" style="color: chocolate;">{{ availableCorpora['lb-open-demo'] | loc }}</a>
+          </li>
+        </ul>
+      </div>
+      <div class="col-xl-4">
+        <h4><b>{{ 'news' | loc }}</b></h4>
+        <ul>
+          <li *ngIf="selectedLanguage === 'eng'" style="padding-bottom: 4px;">Strix beta version is available for testing
+            <span style="font: 200 14px / 20px Roboto, Helvetica Neue, sans-serif; float: right; color: lightgray;">2024-06-12</span>
+            <div style="font: 400 14px / 20px Roboto, Helvetica Neue, sans-serif; padding-top: 10px;">
+              New features:
+              <ul>
+                <li><i>Maps</i></li>
+                <li><i>D3 bubble graphs</i></li>
+                <li><i>Document vector search</i></li>
+              </ul>
+            </div>
+          </li>
+          <li *ngIf="selectedLanguage === 'swe'" style="padding-bottom: 4px;">Strix betaversion är tillgänglig för testning
+            <span style="font: 200 14px / 20px Roboto, Helvetica Neue, sans-serif; float: right; color: lightgray;">2024-06-12</span>
+            <div style="font: 400 14px / 20px Roboto, Helvetica Neue, sans-serif; padding-top: 10px;">
+              Nya funktioner:
+              <ul>
+                <li><i>Kartor</i></li>
+                <li><i>D3 bubbelgraf</i></li>
+                <li><i>Dokument vektor sökning</i></li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div [hidden]="!hideHome">
   <mat-tab-group [selectedIndex]="selectedTab.value"
                (selectedIndexChange)="selectedTab.setValue($event)" [hidden]="openDocument" 
                [ngStyle]="{'display': !activeVectorSearch ? 'block' : 'none'}">
@@ -205,4 +303,5 @@
       </div>
     </div>
   </div>
+</div>
 </div>

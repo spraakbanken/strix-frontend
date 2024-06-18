@@ -10,7 +10,11 @@ import {FormControl} from '@angular/forms';
 import { RoutingService } from './routing.service';
 import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE, 
         AppState, SearchRedux, SELECTED_CORPORA, MODE_SELECTED, 
-        VECTOR_SEARCH_BOX} from './searchreducer';
+        VECTOR_SEARCH_BOX,
+        CHANGEQUERY,
+        VECTOR_SEARCH,
+        HOMEVIEW,
+        GOTOQUERY} from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -53,6 +57,14 @@ export class AppComponent {
   public selectedCorpus = [];
   public viewMap: string;
   public viewTopic: string;
+  public loadStatus = 0;
+  public hideHome = false;
+  public availableCorpora = { 
+    'vivill': {'swe': 'Svenska partiprogram och valmanifest', 'eng': 'Swedish party programs and election manifestos'},
+    'wikipedia-sv-demo':  {'swe': 'Svenska Wikipedia demo (april 2022)', 'eng': 'Swedish Wikipedia demo (april 2022)'},
+    'detektivaavdelningen':  {'swe': 'Detektiva avdelningen', 'eng': 'Detektiva avdelningen'},
+    'lb-open-demo':  {'swe': 'Litteraturbanken demo: fria verk', 'eng': 'The Swedish Literature Bank demo: Free Works'},
+  };
 
   public languages: string[];
   public selectedLanguage: string;
@@ -79,6 +91,9 @@ export class AppComponent {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
+      if (_.keys(data.filters).length > 0) {
+        this.hideHome = true
+      }
       this.triggerLoading = true;
     });
 
@@ -93,13 +108,39 @@ export class AppComponent {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+      if (this.loadStatus > 2) {
+        this.hideHome = true
+      } else {
+        this.loadStatus = this.loadStatus + 1
+      }
       this.selectedCorpus = data.selectedCorpora;
       if (this.selectedCorpus.length > 0) {
         this.triggerLoading = false;
       }
     })
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
+      if (this.loadStatus > 2) {
+        this.hideHome = true
+      } else {
+        this.loadStatus = this.loadStatus + 1
+      }
+    })
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH)).subscribe((data) => {
+      if (this.loadStatus > 2) {
+        this.hideHome = true
+      } else {
+        this.loadStatus = this.loadStatus + 1
+      }
+    })
+
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      if (this.loadStatus > 2) {
+        this.hideHome = true
+      } else {
+        this.loadStatus = this.loadStatus + 1
+      }
       this.currentMode = data.modeSelected[0];
       this.statParam = {};
       this.statParam['hello'] = 'world';
@@ -194,6 +235,14 @@ export class AppComponent {
   public showOverview() {
     this.viewTopic = this.listViewTabs[0];
     this.currentCount = this.currentCount + 1
+  }
+
+  public gotoCorpora(mode: string, corpora: string) {
+    this.store.dispatch({ type: HOMEVIEW, payload : {'mode': mode, 'corpus': corpora}});
+  }
+
+  public gotoQuery(query: string, query_type: string, type_search: string) {
+    this.store.dispatch({ type: GOTOQUERY, payload : [query, query_type, type_search]});
   }
 
   public moveTab() {

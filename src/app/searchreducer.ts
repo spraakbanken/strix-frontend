@@ -14,6 +14,8 @@ export const SEARCH = "SEARCH";
 export const RELOAD = "RELOAD";
 export const INITIATE = "INITIATE";
 export const CHANGELANG = "CHANGELANG";
+export const HOMEVIEW = "HOMEVIEW";
+export const GOTOQUERY = "GOTOQUERY";
 export const SEARCHINDOCUMENT = "SEARCHINDOCUMENT";
 export const CHANGE_IN_ORDER = "CHANGE_IN_ORDER";
 export const MODE_SELECTED = "MODE_SELECTED";
@@ -61,6 +63,7 @@ export interface SearchRedux {
   page?: number;
   documentsPerPage?: number;
   query?: string;
+  search_type?: string;
   type?: string;
   sentenceID?: number;
   modeSelected?: string[];
@@ -80,6 +83,9 @@ export interface SearchRedux {
   vectorSearch?;
   vectorQuery?: string;
   vectorSearchbox?;
+  modeItem?: string;
+  corpusItem?: string;
+  searchQuery?: string[];
 
   //
   highlightParallel ?: string[];
@@ -212,7 +218,8 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       nextState.vectorQuery = action.payload._query;
       break;
     case VECTOR_SEARCH_BOX:
-      nextState.vectorSearchbox = action.payload;
+      nextState.vectorSearchbox = action.payload.search_box;
+      nextState.search_type = action.payload.search_type;
       break;
     //
     case HIGHLIGHT_PARALLEL:
@@ -224,6 +231,13 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
     case REFERENCE_ID:
       nextState.reference_id = action.payload.id;
       nextState.reference_corpus = action.payload.corpus_ref;
+      break;
+    case HOMEVIEW:
+      nextState.modeItem = action.payload.mode;
+      nextState.corpusItem = action.payload.corpus;
+      break;
+    case GOTOQUERY:
+      nextState.searchQuery = action.payload;
       break;
     //
   }

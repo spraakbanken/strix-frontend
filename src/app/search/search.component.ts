@@ -8,7 +8,7 @@ import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX, GOTOQUERY } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -104,6 +104,16 @@ export class SearchComponent implements OnInit {
       this.selectedCorpora = data.corporaInMode;
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === GOTOQUERY)).subscribe((data) => {
+      if (data.searchQuery[1] === 'quotes' && data.searchQuery[2] === 'simple') {
+        this.asyncSelected = '"'+data.searchQuery[0]+'"'
+        this.simpleSearch();
+      } else if (data.searchQuery[1] !== 'quotes' && data.searchQuery[2] === 'simple') {
+        this.asyncSelected = data.searchQuery[0]
+        this.simpleSearch();
+      }
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH_BOX)).subscribe((data) => {
       this.asyncSelectedV = data.vectorQuery;
       this.vectorSearch = data.vectorSearchbox
@@ -191,6 +201,14 @@ export class SearchComponent implements OnInit {
       if(data.query) {
         this.asyncSelected = data.query
       }
+      if (data.search_type === "simple") {
+        this.vectorSearch = false;
+      };
+      if (data.search_type === "vector") {
+        this.asyncSelectedV = data.vectorQuery;
+        this.vectorSearch = true;
+        this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
+      };
     });
 
     /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {

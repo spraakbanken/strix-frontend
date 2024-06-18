@@ -1,19 +1,31 @@
 <div style="height: 10px;"  *ngIf="loadSimilar">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
-<div *ngIf="vectorString.length === 0">
-  <!-- <h6 style="padding: 10px;"><i>Currently there are no documents to show as the search string is empty.</i></h6>
-  <h6 style="padding: 10px;">How vector search works?</h6>
-  <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
-    <div class="col-xl-3">
-      <span>1. Select one or more corpus:</span>
+<div *ngIf="vectorString.length === 0 && selectedLanguage === 'eng'" style="padding: 20px;">
+  <span style="padding: 10px;"><b>How does the document search work?</b></span>
+  <div class="row" style="margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
+    <div class="col-xl-6" style="display: grid;">
+      <span style="padding-bottom: 20px;">Every document has a document vector. At search time, the query is also 
+        converted into a vector and compared to the documents’ vectors and the fifty closest documents are returned. 
+        The number of documents will at a later stage be choosable.</span>
+      <span>KBLab's KB-SBERT (<a href="https://huggingface.co/KBLab/sentence-bert-swedish-cased" target="_blank">https://huggingface.co/KBLab/sentence-bert-swedish-cased</a>) 
+        is used to create the vectors.
+      </span>
     </div>
   </div>
-  <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
-    <div class="col-xl-3">
-      <span>2. Search for word, phrase or document:</span>
+</div>
+<div *ngIf="vectorString.length === 0 && selectedLanguage === 'swe'" style="padding: 20px;">
+  <span style="padding: 10px;"><b>Hur fungerar dokumentsökningen?</b></span>
+  <div class="row" style="margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
+    <div class="col-xl-6" style="display: grid;">
+      <span style="padding-bottom: 20px;">Varje dokument har en dokumentvektor. Vid sökning så omvandlas även 
+        sökfrågan till en vektor som jämförs mot dokumentens vektorer och de femtio dokument som ligger närmast returneras. 
+        Antalet dokument kommer vid ett senare skede vara valbart.</span>
+      <span>KB-labbs KB-SBERT (<a href="https://huggingface.co/KBLab/sentence-bert-swedish-cased" target="_blank">https://huggingface.co/KBLab/sentence-bert-swedish-cased</a>) 
+        används för att skapa vektorerna.
+      </span>
     </div>
-  </div> -->
+  </div>
 </div>
 <div class="mainBlock" *ngIf="vectorString.length > 0">
     <div class="leftBlock">

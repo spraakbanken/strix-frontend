@@ -7,7 +7,7 @@ import { Store } from '@ngrx/store';
 import { QueryService } from '../query.service';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
-import { INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState, VECTOR_SEARCH_BOX } from '../searchreducer';
+import { INITIATE, OPENDOCUMENT, CLOSEDOCUMENT, AppState, VECTOR_SEARCH_BOX, MODE_SELECTED } from '../searchreducer';
 import { Aggregations, AggregationsResult } from "../strixresult.model";
 import { LocService } from '../loc.service';
 import { CallsService } from 'app/calls.service';
@@ -31,6 +31,8 @@ export class StatcolumnComponent implements OnInit {
   public selectType = 'searchView';
   public selectFilter = 'simpleFilter';
   public selectedTab = 'simpleSearch';
+  public simple_active = true;
+  public vector_active = false;
 
   private metadataSubscription: Subscription;
   private aggregatedResultSubscription: Subscription;
@@ -75,20 +77,24 @@ export class StatcolumnComponent implements OnInit {
     this.advanceSearch = false;
     this.vectorSearch = false;
     if (event === "simpleSearch") {
+      this.simple_active = true;
+      this.vector_active = false;
       this.simpleSearch = true;
       this.vectorSearchActive = false;
       this.selectedTab = "simpleSearch";
-      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: false});
+      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: {'search_type': 'simple', 'search_box': false}});
     }
     if (event === "advanceSearch") {
       this.advanceSearch = true;
       this.selectedTab = "advanceSearch";
     }
     if (event === "vectorSearch") {
+      this.simple_active = false;
+      this.vector_active = true;
       this.vectorSearch = true;
       this.vectorSearchActive = true;
       this.selectedTab = "vectorSearch";
-      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: true});
+      this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: {'search_type': 'vector', 'search_box': true}});
     }
     
   }
@@ -102,7 +108,19 @@ export class StatcolumnComponent implements OnInit {
 
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
     })
-    this.simpleSearch = true;
-    this.vectorSearchActive = false;
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      if (data.search_type === "simple") {
+        this.simple_active = true;
+        this.vector_active = false;
+        this.selectSearch("simpleSearch");
+      }
+      if (data.search_type === "vector") {
+        this.simple_active = false;
+        this.vector_active = true;
+        this.selectSearch("vectorSearch")
+      }
+    });
+    // this.simpleSearch = true;
+    // this.vectorSearchActive = false;
   }
 }

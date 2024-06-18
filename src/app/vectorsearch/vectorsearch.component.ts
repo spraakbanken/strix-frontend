@@ -11,7 +11,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from 'app/loc.service';
-import { OPENDOCUMENT, AppState, VECTOR_SEARCH } from '../searchreducer';
+import { OPENDOCUMENT, AppState, VECTOR_SEARCH, CHANGELANG, INITIATE } from '../searchreducer';
 import { Store } from '@ngrx/store';
 import { AppComponent } from '../app.component';
 import { SearchRedux } from '../searchreducer';
@@ -33,6 +33,7 @@ export class VectorSearchComponent implements OnInit{
   public filteredData: Observable<any>;
   public filteredDataNew: any;
   public loadSimilar = false;
+  public selectedLanguage: string;
 
   public authors : string[] = [];
   public authorC = new FormControl();
@@ -150,15 +151,19 @@ export class VectorSearchComponent implements OnInit{
 
     this.searchRedux = this.store.select('searchRedux');
 
+    this.selectedLanguage = this.locService.getCurrentLanguage();
+
+    this.searchRedux.pipe(filter((d) => [CHANGELANG, INITIATE].includes(d.latestAction))).subscribe((data) => {
+      this.selectedLanguage = data.lang; 
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH)).subscribe((data) => {
-      // console.log(data.vectorSearch)
       this.availableCorpora = this.metadataService.getAvailableCorpora();
-      if (data.vectorQuery !== undefined) {
+      if (data.vectorQuery !== undefined && data.vectorQuery !== null) {
         this.vectorString = data.vectorQuery;
       } else {
         this.vectorString = '';
       }
-      // console.log(data)
       if (this.vectorString.length > 0) {
         this.getSimilarDocuments(data.vectorQuery, data.selectedCorpora)
       }
@@ -298,6 +303,7 @@ export class VectorSearchComponent implements OnInit{
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
+    this.selectedLanguage = this.locService.getCurrentLanguage();
     // this.availableCorpora = this.metadataService.getAvailableCorpora();
     // this.getSimilarDocuments(this.vectorString, this.currentSelection);
   }

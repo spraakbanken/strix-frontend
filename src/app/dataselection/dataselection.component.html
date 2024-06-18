@@ -150,8 +150,14 @@
       <ng-template #wordRain>
         <h2 matDialogTitle style="display: flex; justify-content: center;">{{ this.showCorpusDetail.name | loc }}</h2>
         <pdf-viewer 
-          src="{{this.rainPicture}}" [render-text]="true" [original-size]="false" style="width: 900px; height: 700px;">
+          src="{{this.rainPicture}}" [render-text]="true" [original-size]="false" style="width: 900px; height: 520px;">
         </pdf-viewer>
+        <div style="margin-top: 20px;">
+          <span>Skeppstedt, M., Ahltorp, M., Kucher, K., & Lindström, M. (2024).  
+               <i> From word clouds to Word Rain: Revisiting the classic word cloud to visualize climate change texts. Information Visualization. </i> 
+          </span>
+               <a href="https://journals.sagepub.com/doi/10.1177/14738716241236188" target="_blank">https://journals.sagepub.com/doi/10.1177/14738716241236188</a>
+      </div>
        </ng-template>
     </div> 
 </div>

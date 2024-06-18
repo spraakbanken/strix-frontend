@@ -1,13 +1,13 @@
 <div class="left_column" *ngIf="!openDocument && gotMetadata"> <!--[style.height]="(selectedFilters.length !== 0)?'190px':'150px'"-->
   <ul class="nav nav-tabs bg-light" id="myTab" role="tablist" style="padding: 0px 10px 2px 10px; background-color: #d9eaeb">
     <li class="nav-item" style="padding: 4px 0px 0px 4px;">
-      <a class="nav-link active" id="simpleSearch-tab" data-toggle="tab" href="#simpleSearch" role="tab" aria-controls="simpleSearch" aria-selected="true" [active]="selectedTab" (click)="selectSearch('simpleSearch')">{{ 'simple_search' | loc }}</a>
+      <a class="nav-link" [ngClass]="{'active': simple_active}" id="simpleSearch-tab" data-toggle="tab" href="#simpleSearch" role="tab" aria-controls="simpleSearch" aria-selected="true" [active]="selectedTab" (click)="selectSearch('simpleSearch')">{{ 'simple_search' | loc }}</a>
     </li>
     <!-- <li class="nav-item" style="padding: 4px 0px 0px 10px;">
       <a class="nav-link" id="advanceSearch-tab" data-toggle="tab" href="#advanceSearch" role="tab" aria-controls="advanceSearch" aria-selected="false" [active]="selectedTab" (click)="selectSearch('advanceSearch')">{{ 'advance_search' | loc }}</a>
     </li> -->
     <li class="nav-item" style="padding: 4px 0px 0px 10px;">
-      <a class="nav-link" id="vectorSearch-tab" data-toggle="tab" href="#vectorSearch" role="tab" aria-controls="vectorSearch" aria-selected="false" [active]="selectedTab" (click)="selectSearch('vectorSearch')">{{ 'vector_search' | loc }}</a>
+      <a class="nav-link" [ngClass]="{'active': vector_active}" id="vectorSearch-tab" data-toggle="tab" href="#vectorSearch" role="tab" aria-controls="vectorSearch" aria-selected="false" [active]="selectedTab" (click)="selectSearch('vectorSearch')">{{ 'vector_search' | loc }}</a>
     </li>
     <!-- <li class="nav-item" style="padding: 4px 0px 0px 10px;">
       <a class="nav-link" id="basicFilter-tab" data-toggle="tab" href="#basicFilter" role="tab" aria-controls="basicFilter" aria-selected="false" [active]="selectedTab" (click)="selectSearch('basicFilter')">{{ 'text_attributes' | loc }}</a>
@@ -16,17 +16,17 @@
       <a class="nav-link" id="advanceFilter-tab" data-toggle="tab" href="#advanceFilter" role="tab" aria-controls="advanceFilter" aria-selected="false" (click)="selectSearch('advanceFilter')">Advance Filters</a>
     </li> -->
   </ul>   
-  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 0px; padding-right: 0px;" [style.height]="(!vectorSearchActive)?'90px':'160px'">
+  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 0px; padding-right: 0px;" [style.height]="(!vectorSearchActive)?'90px':'130px'">
     <div class="filters_area" *ngIf="!openDocument && gotMetadata" style="padding: 0px; border: 1px solid #ddd; border-bottom: 0px;">
       <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="simpleSearch" role="tabpanel" aria-labelledby="simpleSearch-tab" *ngIf="simpleSearch"
+        <div class="tab-pane fade show" [ngClass]="{'active': simple_active}" id="simpleSearch" role="tabpanel" aria-labelledby="simpleSearch-tab" *ngIf="simpleSearch"
         style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 25px 10px 10px 14px;">
           <search style="padding-left: 10px; width: 70%;" *ngIf="!openDocument"></search>
         </div>
         <!-- <div class="tab-pane fade" id="advanceSearch" role="tabpanel" aria-labelledby="advanceSearch-tab" *ngIf="advanceSearch"
         style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap;  padding: 15px 10px 10px 10px;">
         </div> -->
-        <div class="tab-pane fade" id="vectorSearch" role="tabpanel" aria-labelledby="vectorSearch-tab" *ngIf="vectorSearch"
+        <div class="tab-pane fade show" [ngClass]="{'active': vector_active}" id="vectorSearch" role="tabpanel" aria-labelledby="vectorSearch-tab" *ngIf="vectorSearch"
         style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap;  padding: 15px 10px 10px 10px;">
           <search style="padding-left: 10px; width: 70%;" *ngIf="!openDocument"></search>
       </div>
