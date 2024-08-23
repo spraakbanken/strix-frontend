@@ -91,13 +91,19 @@ export class AppComponent {
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === INITIATE)).subscribe((data) => {
-      if (_.keys(data.filters).length > 0) {
-        this.hideHome = true
+      if (_.keys(data.filters).length > 0 || data.query !== null || data.modeSelected[0] !== 'default') {
+        this.loadStatus = 3;
+        this.hideHome = true;
       }
       this.triggerLoading = true;
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH_BOX)).subscribe((data) => {
+      if (data.search_type === 'vector') {
+        this.hideHome = true;
+      } else if (data.search_type === 'simple' && this.loadStatus <= 3) {
+        this.hideHome = false;
+      }
       if (data.vectorQuery !== undefined) {
         this.vectorString = data.vectorQuery;
       } else {
@@ -110,6 +116,7 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       if (this.loadStatus > 2) {
         this.hideHome = true
+        this.loadStatus = this.loadStatus + 1
       } else {
         this.loadStatus = this.loadStatus + 1
       }
@@ -122,14 +129,7 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
       if (this.loadStatus > 2) {
         this.hideHome = true
-      } else {
         this.loadStatus = this.loadStatus + 1
-      }
-    })
-
-    this.searchRedux.pipe(filter((d) => d.latestAction === VECTOR_SEARCH)).subscribe((data) => {
-      if (this.loadStatus > 2) {
-        this.hideHome = true
       } else {
         this.loadStatus = this.loadStatus + 1
       }
@@ -138,6 +138,7 @@ export class AppComponent {
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
       if (this.loadStatus > 2) {
         this.hideHome = true
+        this.loadStatus = this.loadStatus + 1
       } else {
         this.loadStatus = this.loadStatus + 1
       }

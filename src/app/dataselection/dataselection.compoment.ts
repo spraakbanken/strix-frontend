@@ -287,7 +287,7 @@ export class DataselectionComponent implements OnInit {
       this.checklistSelection = new SelectionModel<TodoItemFlatNode>(true /* multiple */);
       this.yearData = [];
       this.callsService.getYearStatistics(this.corpusesInMode, data.modeSelected).subscribe((result) => {
-        this.folderData = result["folderData"];
+        this.folderData = result["folder_data"];
         if (result["aggregations"]['year']) {
           let yearRange = result["aggregations"]['year'].buckets.filter(item => item.doc_count != 0)
           let newYearRange = []

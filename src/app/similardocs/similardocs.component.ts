@@ -25,7 +25,7 @@ import { SearchRedux } from '../searchreducer';
 export class SimilarDocsComponent implements OnInit{
 
   @Input() data: any;
-  @Input() relatedDocSelection: string;
+  @Input() related_doc_selection: string;
   public similarDocs: StrixDocument[] = [];
   @Input() currentSelection: string[];
 
@@ -284,7 +284,7 @@ export class SimilarDocsComponent implements OnInit{
   @ViewChild(MatPaginator) paginator: MatPaginator;
   ngOnInit() {
     this.availableCorpora = this.metadataService.getAvailableCorpora();
-    this.getSimilarDocuments(this.data, this.relatedDocSelection, this.currentSelection);
+    this.getSimilarDocuments(this.data, this.related_doc_selection, this.currentSelection);
   }
 }
 

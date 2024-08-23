@@ -77,7 +77,7 @@ export class TopicViewComponent implements OnChanges, OnInit {
       this.searchString = data.query;
       this.currentC = [];
       this.currentC = data.selectedCorpora;
-      this.getFacetData(this.defaultTextAttr);
+      // this.getFacetData(this.defaultTextAttr);
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
@@ -108,24 +108,6 @@ export class TopicViewComponent implements OnChanges, OnInit {
           let x = ['corpus_id', 'mode_id', this.defaultTextAttr]
           this.selectedOptions = [];
           this.selectedOptions.push(this.defaultTextAttr)
-          this.callsService.getFacetStatistics(data.selectedCorpora, data.modeSelected, x, data.query, data.keyword_search, data.filters).subscribe((result) => {
-            this.dataFromFacet = result.aggregations[this.defaultTextAttr].buckets;
-            let tempObject = [];
-            let tempTable = [];
-            for (let i of this.dataFromFacet) {
-                tempObject.push({'group': 'Corpus', 'id': i.key.split("_").join(" "), 'title': i.key.split("_").join(" "), 'value': i.doc_count})
-                this.currentTopics.push({'id': i.key, 'key': i.key.split("_").join(" ")+ " (" + i.doc_count + ")", 'value': i.key.split("_").join(" ")})
-                tempTable.push({'key': i.key.split("_").join(" "), 'doc_count': i.doc_count})
-              }
-              this.dataSource = new MatTableDataSource(tempTable);
-              this.elementList = [];
-              this.elementList = _.map(tempTable, 'key')
-              this.countList = [{data: _.map(tempTable, 'doc_count'), label: ""}];
-              this.getDataLength = tempTable.length;
-              this.dataSource.paginator = this.paginator;
-              this.dataSource.sort = this.sort;
-            this.topicData = {'children' : [{'name': 'Corpus', 'children': tempObject}]}
-          });
         }
         
       });
@@ -287,11 +269,8 @@ export class TopicViewComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.appComponent.currentCount > 1) {
-      this.getFacetData(this.defaultTextAttr);
-    }
-    // if (changes.viewTopic.currentValue === 'Topics') {
-    //     this.buildChart();
+    // if (this.appComponent.currentCount > 1) {
+    //   this.getFacetData(this.defaultTextAttr);
     // }
   }
 }

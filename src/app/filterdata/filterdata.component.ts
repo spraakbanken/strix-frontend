@@ -148,7 +148,7 @@ export class FilterdataComponent implements OnInit {
           this.dataFromFacet = {};
           this.dataFromFacet  = result.aggregations;
           this.decorateWithParent(this.dataFromFacet);
-          this.runFilter();
+          // this.runFilter();
         });
       }
     });
@@ -184,7 +184,7 @@ export class FilterdataComponent implements OnInit {
           this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
           this.defaultFacetsNew();
         });
-        this.updatedData();
+        // this.updatedData();
         // setTimeout(() => {
         //   this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
         //   // this.selectSearch('basicFilter');
@@ -747,7 +747,7 @@ export class FilterdataComponent implements OnInit {
 
     ).subscribe(([result, {filters}, info] : [AggregationsResult, any, any]) => {
         this.parseSubAggStats(result);
-        this.updatedData();
+        // this.updatedData();
         let _filterData = filters || [];
         // Clear all filters first (could probably be optimized)
         for (let agg in this.aggregations) {

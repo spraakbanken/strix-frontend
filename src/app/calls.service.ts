@@ -78,10 +78,10 @@ export class CallsService {
           corpusData.name,
           corpusData.mode,
           corpusData.protected,
-          corpusData.folderName,
-          corpusData.tokenInCorpora,
-          corpusData.modeID,
-          corpusData.docInCorpora
+          corpusData.folder_name,
+          corpusData.token_in_corpora,
+          corpusData.mode_id,
+          corpusData.doc_in_corpora
         ));
 
       }),
@@ -197,7 +197,7 @@ export class CallsService {
     if(keyword_search) {
       params.in_order = (!keyword_search).toString();
     }
-    return this.get<SearchResult>('statDoc', params).pipe(
+    return this.get<SearchResult>('stat_doc', params).pipe(
       map((res: any) => ({...res, count : res.hits})),
       catchError(this.handleError)
     );
@@ -306,7 +306,7 @@ export class CallsService {
     if (modes) {
       params.modes = modes.join(",");
     }
-    return this.get<any>('facetData', params).pipe(
+    return this.get<any>('facet_data', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -332,7 +332,7 @@ export class CallsService {
     if (include_list.length) {
       params.include_facets = include_list.join(",");
     }
-    return this.get<any>('facetStats', params).pipe(
+    return this.get<any>('facet_stats', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -358,7 +358,7 @@ export class CallsService {
     if (include_list.length) {
       params.include_facets = include_list.join(",");
     }
-    return this.get<any>('geoStats', params).pipe(
+    return this.get<any>('geo_stats', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -380,7 +380,7 @@ export class CallsService {
     if (modes) {
       params.modes = modes.join(",");
     }
-    return this.get<any>('modeStats', params).pipe(
+    return this.get<any>('mode_stats', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -394,7 +394,7 @@ export class CallsService {
     if (modes) {
       params.modes = modes.join(",");
     }
-    return this.get<any>('yearStats', params).pipe(
+    return this.get<any>('year_stats', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -411,7 +411,7 @@ export class CallsService {
     if (yearInfo) {
       params.text_filter = JSON.stringify({'yearR': [yearInfo]});
     }
-    return this.get<any>('getCorpora', params).pipe(
+    return this.get<any>('get_corpora', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -481,7 +481,7 @@ export class CallsService {
       word_attr : `${word_attr}`,
       attr_element : `${attr_element}`,
     };
-    return this.get(`documentFull/${corpusID}/${documentID}`, params).pipe(
+    return this.get(`document_full/${corpusID}/${documentID}`, params).pipe(
       catchError(this.handleError)
     );
   }
@@ -536,7 +536,7 @@ export class CallsService {
     let params: any = {
       exclude : 'token_lookup,dump,lines',
     };
-    params.relatedDocSelection = relDoc;
+    params.related_doc_selection = relDoc;
     if (corpora) {
       params.corpora = corpora.join(",");
     }
