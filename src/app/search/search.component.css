@@ -29,7 +29,7 @@
   height: 100%;
 }
 .simple_searchbox {
-  width: 70%;
+  width: 60%;
   height: 50px;
   padding: 10px;
   border-radius: 4px;
@@ -120,6 +120,8 @@ textarea {
 
 ::ng-deep .cdk-overlay-pane{
   padding: 0px !important;
+  top: 230px !important;
+  left: 22px !important;
 }
 
 /* ::ng-deep .mat-menu-panel {
@@ -145,4 +147,41 @@ textarea {
 .vector_string {
   font-family: "Source Sans Pro", Helvetica, Arial, Verdana, sans-serif !important;
   font-size: .95rem !important;
+}
+
+.example-form {
+  height: 50px;
+  min-width: 150px;
+  max-width: 60%;
+  width: 100%;
+  margin-top: 0px;
+  border: 1px solid #ddd;
+}
+
+.example-full-width {
+  width: 100%;
+
+}
+
+#wrapper {
+  margin: 0 auto;
+}
+
+::ng-deep .mat-form-field-wrapper {
+  padding: 0px;
+}
+
+::ng-deep .mat-form-field-infix {
+  padding: 0.3em 0;
+  height: inherit;
+  border-top: 0.44375em solid transparent;
+}
+
+::ng-deep .mat-input-element {
+  height: 25px;
+  width: 100px;
+  margin-left: 10px;
+  border-radius: 8px;
+  /* background-color: lightgray; */
+  padding: 4px;
 }

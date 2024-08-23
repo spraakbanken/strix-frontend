@@ -1,18 +1,30 @@
 <div class="search_area">
   <div class="row" style="display: block">
-    <div class="search_widget col-md-12" *ngIf="searchType=='normal' && !vectorSearch">
-      <input type="text"
+    <div class="search_widget col-md-12 wrapper" *ngIf="searchType=='normal' && !vectorSearch">
+      <input type="text" id="inputText"
         class="form-control simple_searchbox"
         [(ngModel)]="asyncSelected"
         (keydown.Enter)="simpleSearch()"
-        placeholder="word or phrase"/>
-        <i class="d-none d-lg-block" *ngIf="asyncSelected" style="right: 34%; padding-top: 14px;" (click)="clearSimpleSearch()"><mat-icon style="height: 10px; width: 10px;">close</mat-icon></i>
+        (click)="onChangeEvent($event)"
+        (input)="onChangeEvent($event)"
+        [formControl]="myControl"
+        placeholder="word or phrase"
+        [matAutocomplete]="auto"
+        value="asyncSelected"
+        (focus)="focusinmethod()"
+      (focusout)="focusoutmethod()"/>
+        <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="getLemgram()">
+          <mat-option *ngFor="let option of filteredOptions" [value]="option">
+            {{option.split('..')[0].split('_').join(' ')}}<sup>{{option.slice(-1).replace('1', '')}}</sup>({{posLocalization[option.split('..')[1].split('.')[0]] | loc }})
+          </mat-option>
+      </mat-autocomplete>
+        <i class="d-none d-lg-block" *ngIf="asyncSelected" style="right: 43%; padding-top: 14px;" (click)="clearSimpleSearch()"><mat-icon style="height: 10px; width: 10px;">close</mat-icon></i>
         <button mat-button (click)="simpleSearch()" style="border: 1px solid #ddd; padding: 0px; min-width: 50px;">
           <i-bs name="search" width="20" height="20"></i-bs>
         </button>
-        <button mat-button [matMenuTriggerFor]="menu" style="border: 1px solid #ddd; padding: 0px; min-width: 50px;">
+        <!-- <button mat-button [matMenuTriggerFor]="menu" style="border: 1px solid #ddd; padding: 0px; min-width: 50px;">
           <i-bs name="info-circle" width="20" height="20"></i-bs>
-        </button>
+        </button> -->
         <mat-menu #menu="matMenu" xPosition="before">
           <h6 style="padding: 10px;">How simple search works?</h6>
           <div class="row" style="margin-left: 20px; margin-right: 20px; font-size: small; font-weight: 400; padding: 10px;">
@@ -91,14 +103,6 @@
         </button>
       </div> 
     </div> 
-    <!-- <div class="radioButton">
-      <label style="padding-right: 10px;">{{ 'vectorS' | loc }}:</label>
-      <mat-radio-group [(ngModel)]="vectorSearch" (change)="searchVectorMode($event.value)">
-        <mat-radio-button class="example-margin" [value]="true" style="padding-right: 10px;">Active</mat-radio-button>
-        <mat-radio-button class="example-margin" [value]="false">Inactive</mat-radio-button>
-      </mat-radio-group>
-      <!- <mat-checkbox class="example-margin" [(ngModel)]="vectorSearch">Activate vector search</mat-checkbox> ->
-    </div> -->
     <div class="search_widget" *ngIf="searchType=='lemgram'">
       <ng-template #lemgramItemTemplate let-model="item" let-index="index">
         <span>{{model | lemgram}}</span>

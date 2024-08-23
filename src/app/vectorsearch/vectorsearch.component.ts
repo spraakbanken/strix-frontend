@@ -130,6 +130,7 @@ export class VectorSearchComponent implements OnInit{
   public documentData = [];
   public documentLabels = [];
   public vectorString = '';
+  public storedString = '';
 
   private metadataSubscription: Subscription;
   public availableCorpora: { [key: string] : StrixCorpusConfig} = {};
@@ -164,7 +165,7 @@ export class VectorSearchComponent implements OnInit{
       } else {
         this.vectorString = '';
       }
-      if (this.vectorString.length > 0) {
+      if (this.vectorString.length > 0 && this.storedString !== this.vectorString) {
         this.getSimilarDocuments(data.vectorQuery, data.selectedCorpora)
       }
     });
@@ -172,6 +173,7 @@ export class VectorSearchComponent implements OnInit{
   
 
   public getSimilarDocuments(relatedDoc: string, currentS: string[]) {
+    this.storedString = relatedDoc;
     this.loadSimilar = true;
     this.callsService.getVectorSearch('default', currentS, relatedDoc).subscribe(
         answer => {
