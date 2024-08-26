@@ -29,6 +29,7 @@ export const YEAR_NA = "YEAR_NA";
 export const FACET_LIST = "FACET_LIST";
 export const VECTOR_SEARCH = "VECTOR_SEARCH";
 export const VECTOR_SEARCH_BOX = "VECTOR_SEARCH_BOX";
+export const SELECTEDTAB = "SELECTEDTAB";
 
 //
 export const HIGHLIGHT_PARALLEL = "HIGHLIGHT_PARALLEL";
@@ -85,6 +86,7 @@ export interface SearchRedux {
   vectorSearchbox?;
   modeItem?: string;
   corpusItem?: string;
+  currentTab?: string;
   searchQuery?: string[];
 
   //
@@ -238,6 +240,9 @@ export function searchReducer(state: SearchRedux = {}, action: Action): SearchRe
       break;
     case GOTOQUERY:
       nextState.searchQuery = action.payload;
+      break;
+    case SELECTEDTAB:
+      nextState.currentTab = action.payload;
       break;
     //
   }

@@ -4,7 +4,7 @@ import { filter } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { Store } from '@ngrx/store';
 
-import { FACET_LIST, AppState, SELECTED_CORPORA, CHANGEQUERY, MODE_SELECTED} from '../searchreducer';
+import { FACET_LIST, AppState, SELECTED_CORPORA, CHANGEQUERY, MODE_SELECTED, SELECTEDTAB} from '../searchreducer';
 
 import { CallsService } from 'app/calls.service';
 import { MatPaginator, MatPaginatorIntl } from '@angular/material/paginator';
@@ -38,7 +38,7 @@ export class DocstatisticComponent implements OnInit {
     public labelList: string[];
     public showMessage = '';
     public excludeList: string[];
-    public selectedOptions : string[];
+    public selectedOptions = [];
     public searchString = "";
     public loadFilterStatistic = false;
     public keywordSearch: boolean;
@@ -56,19 +56,31 @@ export class DocstatisticComponent implements OnInit {
         this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
             this.selectedCorpus = data.selectedCorpora;
             this.modeSelected = data.modeSelected[0];
-            // if (this.selectedCorpus.length > 0) {
-            //     this.getFacetData('year');
-            // }
+            if (data.currentTab === 'statistics' && this.selectedOptions.length > 0) {
+                this.getFacetData(this.selectedOptions[0])
+            }
         })
 
         this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
             this.indexRef = 0;
         })
 
+        this.searchRedux.pipe(filter((d) => d.latestAction === SELECTEDTAB)).subscribe((data) => {
+            if (data.currentTab === 'statistics') {
+                if (this.selectedOptions.length > 0) {
+                    this.getFacetData(this.selectedOptions[0])
+                } else {
+                    this.getFacetData('year')
+                }
+            }
+        })
+
         this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
             this.searchString = data.query;
             this.keywordSearch = data.keyword_search;
-            // this.getFacetData('year')
+            if (data.currentTab === 'statistics') {
+                this.getFacetData(this.selectedOptions[0])
+            }
         });
 
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {

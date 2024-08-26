@@ -167,9 +167,9 @@
                [ngStyle]="{'display': !activeVectorSearch ? 'block' : 'none'}">
     <mat-tab *ngFor="let tab of listTabs; let index = index" [label]="tab + index">
       <ng-template mat-tab-label>
-        <div class="col" *ngIf="tab === 'Hits'">{{'hits' | loc}}</div>
-        <div class="col" *ngIf="tab === 'Statistics'">{{'statSelection' | loc}}</div>
-        <div class="col" *ngIf="tab === 'Overview' && selectedCorpus.length > 0" (click)="showOverview()">{{'overview' | loc}}</div>
+        <div class="col" *ngIf="tab === 'Hits'" (click)="updateView('hits')">{{'hits' | loc}}</div>
+        <div class="col" *ngIf="tab === 'Statistics'" (click)="updateView('statistics')">{{'statSelection' | loc}}</div>
+        <div class="col" *ngIf="tab === 'Overview' && selectedCorpus.length > 0" (click)="showOverview(); updateView('overview')">{{'overview' | loc}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '++' && tab.slice(0,2) !== '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1)}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) !== '++' && tab.slice(0,2) !== '--'">{{tab}}</div>

@@ -1,5 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AppState, OPENDOCUMENT, CLOSEDOCUMENT, SearchRedux, CHANGE_INCLUDE_FACET, FACET_LIST, CHANGEQUERY, SELECTED_CORPORA } from 'app/searchreducer';
+import { AppState, OPENDOCUMENT, CLOSEDOCUMENT, SearchRedux, CHANGE_INCLUDE_FACET, FACET_LIST, CHANGEQUERY, SELECTED_CORPORA, SELECTEDTAB } from 'app/searchreducer';
 import * as d3 from 'd3';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -38,7 +38,7 @@ export class TopicViewComponent implements OnChanges, OnInit {
   public locationCorpora = {};
   public currentFacets: string[];
   public selectedOptions : string[];
-  public defaultTextAttr = 'swefn';
+  public defaultTextAttr = '';
 
   public elementList = [];
   public countList = [];
@@ -62,6 +62,16 @@ export class TopicViewComponent implements OnChanges, OnInit {
       d3.select('svg').remove();
     });
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTEDTAB)).subscribe((data) => {
+      if (data.currentTab === 'overview'){
+        if (this.defaultTextAttr.length === 0) {
+          this.getFacetData('year')
+        } else {
+          this.getFacetData(this.defaultTextAttr);
+        }
+      }
+    });
+
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       d3.select('svg').remove();
     });
@@ -69,7 +79,9 @@ export class TopicViewComponent implements OnChanges, OnInit {
     this.searchRedux.pipe(filter((d) => d.latestAction === CHANGEQUERY)).subscribe((data) => {
       this.searchString = '';
       this.searchString = data.query;
-      this.getFacetData(this.defaultTextAttr);
+      if (data.currentTab === 'overview') {
+        this.getFacetData(this.defaultTextAttr);
+      }
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
@@ -77,7 +89,9 @@ export class TopicViewComponent implements OnChanges, OnInit {
       this.searchString = data.query;
       this.currentC = [];
       this.currentC = data.selectedCorpora;
-      // this.getFacetData(this.defaultTextAttr);
+      if (this.defaultTextAttr.length !== 0) {
+        this.getFacetData(this.defaultTextAttr);
+      }
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {

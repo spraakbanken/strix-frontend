@@ -57,9 +57,9 @@
                                 [checked]="checklistSelection.isSelected(node)"
                                 [disabled]="disableList[node.item]"
                                 (change)="todoLeafItemSelectionToggle(node)">{{ availableCorpora[node.item].name | loc }}</mat-checkbox>
-                                <button class="d-none d-lg-block" mat-icon-button (click)="expandWordRain(node.item)" style="width: 24px; height: 24px; margin-left: auto; transform: rotate(90deg); background-image: linear-gradient( purple, #40e0d0);" title="word rain">
-                                  <mat-icon style="height: 40px; width: 20px; font-size: 16px;">format_align_center</mat-icon></button>
-                                <button class="corpusInfo d-none d-lg-block" mat-icon-button (click)="showDetails(node.item)"><mat-icon style="font-size: 28px;">info</mat-icon></button>
+                                <!-- <button class="d-none d-lg-block" mat-icon-button (click)="expandWordRain(node.item)" style="width: 24px; height: 24px; margin-left: auto; transform: rotate(90deg); background-image: linear-gradient( purple, #40e0d0);" title="word rain">
+                                  <mat-icon style="height: 40px; width: 20px; font-size: 16px;">format_align_center</mat-icon></button> -->
+                                <button class="corpusInfo d-none d-lg-block" mat-icon-button (click)="showDetails(node.item)" style="margin-left: auto"><mat-icon style="font-size: 28px;">info</mat-icon></button>
                 </mat-tree-node>    
                 <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
                   <button mat-icon-button matTreeNodeToggle

@@ -14,7 +14,8 @@ import { OPENDOCUMENT, CLOSEDOCUMENT, CHANGELANG, INITIATE,
         CHANGEQUERY,
         VECTOR_SEARCH,
         HOMEVIEW,
-        GOTOQUERY} from './searchreducer';
+        GOTOQUERY,
+        SELECTEDTAB} from './searchreducer';
 
 @Component({
   selector: 'app-root',
@@ -236,6 +237,10 @@ export class AppComponent {
   public showOverview() {
     this.viewTopic = this.listViewTabs[0];
     this.currentCount = this.currentCount + 1
+  }
+
+  public updateView(item) {
+    this.store.dispatch({ type: SELECTEDTAB, payload : item});
   }
 
   public gotoCorpora(mode: string, corpora: string) {

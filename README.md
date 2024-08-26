@@ -6,6 +6,17 @@
 
 The frontend is an Angular 6 web application which uses [strix-backend](https://github.com/spraakbanken/strix-backend) over HTTP.
 
+## Local development
+Run `npm install` to install the packages.
+
+Run `export NODE_OPTIONS=--openssl-legacy-provider` and then run the next command
+
+Run Strix locally using `ng serve` and check using `localhost:4200` or `strix.spraakbanken.gu.se:4200`
+
+## Build
+
+Run `ng build --configuration=<ENV> where you replace ENV with your environment file. 
+
 ## Tests
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
