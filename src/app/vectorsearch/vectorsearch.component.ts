@@ -11,7 +11,7 @@ import { ChartOptions, ChartType } from 'chart.js';
 import { MetadataService } from '../metadata.service';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from 'app/loc.service';
-import { OPENDOCUMENT, AppState, VECTOR_SEARCH, CHANGELANG, INITIATE } from '../searchreducer';
+import { OPENDOCUMENT, AppState, VECTOR_SEARCH, CHANGELANG, INITIATE, SELECTED_CORPORA } from '../searchreducer';
 import { Store } from '@ngrx/store';
 import { AppComponent } from '../app.component';
 import { SearchRedux } from '../searchreducer';
@@ -169,12 +169,28 @@ export class VectorSearchComponent implements OnInit{
         this.getSimilarDocuments(data.vectorQuery, data.selectedCorpora)
       }
     });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
+      this.storedString = '';
+    });
   }
   
 
   public getSimilarDocuments(relatedDoc: string, currentS: string[]) {
     this.storedString = relatedDoc;
     this.loadSimilar = true;
+    this.years = [];
+    this.yearLabels = [];
+    this.yearData = [];
+    this.authors = [];
+    this.authorData = [];
+    this.authorLabels = [];
+    this.corpusData = [];
+    this.corpusLabels = [];
+    this.corpuses = [];
+    this.documentData = [];
+    this.documentLabels = [];
+    this.tokens = [];
     this.callsService.getVectorSearch('default', currentS, relatedDoc).subscribe(
         answer => {
           this.similarDocs = answer["data"];

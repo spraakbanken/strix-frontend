@@ -114,12 +114,12 @@ export class SearchComponent implements OnInit {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpora = data.corporaInMode;
-      this.posLocalization = {};
-      for (let i of this.metadataService.getWordAnnotationsFor(data.selectedCorpora[0])) {
-        if (i['name'] === 'pos') {
-          this.posLocalization = i.translation_karp
-        }
-      }
+      // this.posLocalization = {};
+      // for (let i of this.metadataService.getWordAnnotationsFor(data.selectedCorpora[0])) {
+      //   if (i['name'] === 'pos') {
+      //     this.posLocalization = i.translation_karp
+      //   }
+      // }
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === GOTOQUERY)).subscribe((data) => {
@@ -143,8 +143,16 @@ export class SearchComponent implements OnInit {
       this.asyncCopy = '';
       this.asyncSelectedV = '';
       this.isPhraseSearch = true;
+      this.vectorSearch = false;
       this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
       this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
+      this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
+      if (data.search_type === 'simple') {
+        this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: {'search_type': 'simple', 'search_box': false}});
+      }
+      if (data.search_type === 'vector') {
+        this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: {'search_type': 'vector', 'search_box': true}});
+      }
       // this.store.dispatch({ type: SEARCH, payload : null});
         // this.simpleSearch();
     });
@@ -173,7 +181,7 @@ export class SearchComponent implements OnInit {
       .pipe(debounceTime(500), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue.replace('"', ''))))
       .subscribe(value => {
         this.karpResult = value;
-        this.filteredOptions = this.karpResult;
+        this.filteredOptions = this.karpResult.filter(item => !item.includes('...'));
         this.filteredOptions = this.filteredOptions.filter(item => (!item.includes("_")))
         this.filteredOptions.sort();
         // console.log(value);
