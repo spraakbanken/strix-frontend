@@ -216,10 +216,10 @@ reader {
   background-color: mintcream;
 }
 
-::ng-deep .cdk-overlay-pane {
+/* ::ng-deep .cdk-overlay-pane {
   width: 300px;
   padding: 42px 0px 0px 32px;
-}
+} */
 
 /* ::ng-deep .mat-select-panel {
   min-width: 18.5vw !important;

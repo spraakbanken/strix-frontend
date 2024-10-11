@@ -53,10 +53,10 @@
                       <div class="font-weight-ligh">Text:</div>
                     </div>
                     <div class="col-xl-10">
-                      <span>{{doc.text}}</span>
+                      <span>{{doc.preview}}</span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" *ngIf="modeID !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
                     </div>
@@ -72,7 +72,7 @@
                       <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
                     </div>
                     <div class="col-xl-9">
-                      <span>{{doc.tokens.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
+                      <span>{{doc.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
                     </div>
                   </div>
                   <div class="row" *ngIf="doc.authors">
@@ -95,7 +95,17 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row" *ngIf="doc.most_common_words">
+                  <div class="row">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'related_documents' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9" style="display: flex;">
+                      <button class="closeButton" mat-button (click)="addTabV(doc, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length > 3">{{ (availableCorpora[doc.corpus_id].name | loc).split(' ').splice(0,3).join(' ') }}...<mat-icon style="font-size: 20px;">tab</mat-icon></button>
+                      <button class="closeButton" mat-button (click)="addTabV(doc, 'currentCorpus')" style="margin-right: 10px;" *ngIf="(availableCorpora[doc.corpus_id].name | loc).split(' ').length <= 3">{{ (availableCorpora[doc.corpus_id].name | loc) }} <mat-icon style="font-size: 20px;">tab</mat-icon></button>
+                      <button class="closeButton" mat-button (click)="addTabV(doc, 'currentMode')">{{ 'selected_related' | loc }} <mat-icon style="font-size: 20px;">tab</mat-icon></button> <!--availableCorpora[doc.corpus_id].mode-->
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.most_common_words && modeID !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
                     </div>
@@ -107,7 +117,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row" *ngIf="doc.ner_tags">
+                  <div class="row" *ngIf="doc.ner_tags && modeID !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
                     </div>
@@ -127,6 +137,17 @@
                       <span>
                         <a [href]="doc.source_url" target="_blank" style="color: chocolate;">
                           {{doc.source_url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="modeID === 'so'">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>
+                        <a [href]="doc.link" target="_blank" style="color: chocolate;">
+                          {{doc.title.split(' ')[0]}} {{doc.title.split(' ')[1]}} <mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
                       </span>
                     </div>
                   </div>

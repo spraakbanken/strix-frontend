@@ -11,8 +11,7 @@
         placeholder="word or phrase"
         [matAutocomplete]="auto"
         value="asyncSelected"
-        (focus)="focusinmethod()"
-      (focusout)="focusoutmethod()"/>
+        />
         <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="getLemgram()">
           <mat-option *ngFor="let option of filteredOptions" [value]="option">
             {{option.split('..')[0].split('_').join(' ')}}<sup>{{option.slice(-1).replace('1', '')}}</sup>({{posLocalization[option.split('..')[1].split('.')[0]] | loc }})

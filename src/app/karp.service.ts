@@ -6,7 +6,8 @@ import { map, catchError } from 'rxjs/operators';
 @Injectable()
 export class KarpService {
 
-  private readonly KARPBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/karp/v4";
+  // private readonly KARPBACKEND_URL = "https://ws.spraakbanken.gu.se/ws/karp/v4";
+  private readonly KARPBACKEND_URL = "https://spraakbanken4.it.gu.se/karp/v7";
 
   // https://ws.spraakbanken.gu.se/ws/karp/v4/autocomplete?mode=external&multi=" + ",".join(terms) + "&resource=saldom
 
@@ -15,7 +16,7 @@ export class KarpService {
   public lemgramsFromWordform(wordform: string) : Observable<string[]> {
     if (wordform === "") return from([]);
     // console.log("Getting Karp lemgrams from the wordform", wordform);
-    let url = `${this.KARPBACKEND_URL}/autocomplete?q=${wordform}&resource=saldom`;
+    let url = `${this.KARPBACKEND_URL}/query/saldom?q=equals%7CinflectionTable.writtenForm%7C${wordform}&path=entry.lemgram`;
     // console.log('url', url);
     return this.http.get(url).pipe(
       map(this.extractDocumentData),
@@ -27,10 +28,7 @@ export class KarpService {
     let lemgrams: string[] = [];
 
     if (result.hits !== 0) {
-      for (let hit of result.hits.hits) {
-        let lemgram : string = hit._source.FormRepresentations[0].lemgram;
-        lemgrams.push(lemgram);
-      }
+      lemgrams = result.hits;
     }
 
     // console.log("found lemgrams", lemgrams);

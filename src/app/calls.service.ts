@@ -197,7 +197,7 @@ export class CallsService {
     if(keyword_search) {
       params.in_order = (!keyword_search).toString();
     }
-    return this.get<SearchResult>('stat_doc', params).pipe(
+    return this.get<SearchResult>('search', params).pipe(
       map((res: any) => ({...res, count : res.hits})),
       catchError(this.handleError)
     );
@@ -506,6 +506,7 @@ export class CallsService {
     strixDocument.highlight = data.highlight;
     strixDocument.mostCommonWords = data.most_common_words;
     strixDocument.mostCommonNames = data.ner_tags;
+    strixDocument.modeID = data.mode_id;
     return strixDocument;
   }
 

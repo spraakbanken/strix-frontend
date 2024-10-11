@@ -39,19 +39,19 @@
             <a>{{wordCount}} {{ 'token' | loc }}</a>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="modeID !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
           </div>
           <div class="col-xl-9" *ngIf="yearInfo !== '2050'">
-            <a>{{yearInfo}}</a>
+            <a>{{yearInfo}}</a> 
           </div>
           <div class="col-xl-9" *ngIf="yearInfo === '2050'">
             <a>{{'NA'}}</a>
           </div>
         </div>
         
-        <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonWords.length > 1">
+        <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonWords.length > 1 && modeID !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
           </div>
@@ -66,7 +66,7 @@
             </span> -->
           </div>
       </div>
-      <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonNames.length > 1">
+      <div class="row" style="padding: 10px 0px 4px 0px;" *ngIf="mostCommonNames.length > 1 && modeID !== 'so'">
         <div class="col-xl-2">
           <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
         </div>

@@ -16,6 +16,18 @@
     background-color : #F0C808;
     content: "";*/
   }
+
+  .closeButton {
+    padding: 0px 10px 0px 10px;
+    font-size: small;
+    font-weight: 400;
+    background-color: lightblue;
+    height: 29px;
+    align-items: center;
+    display: flex;
+    /* margin-right: 20px;
+    margin-left: 20px; */
+  }
   
   h3,h4,h5 {
     color : white;

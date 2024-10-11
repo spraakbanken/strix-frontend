@@ -233,6 +233,14 @@ export class DocselectionComponent implements OnInit {
       (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
+        if (this.documentsWithHits[0]['mode_id'] === 'so') {
+          for (let i in this.documentsWithHits) {
+            let word = this.documentsWithHits[i]['title'].split(' ')[0]
+            let pos = this.documentsWithHits[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+            this.documentsWithHits[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+          }
+        }
+        
         setTimeout(() => {
           this.docHits = false;
         }, 2000);
@@ -327,6 +335,16 @@ export class DocselectionComponent implements OnInit {
 
   public addTab(docIndex: number, docType: string) {
     let doc = this.documentsWithHits[docIndex];
+    if (doc['text_attributes']['year'].length > 0) {
+      doc['year'] = doc['text_attributes']['year']
+    } else {
+      doc['year'] = '';
+    }
+    if (_.keys(doc['text_attributes']).includes('author')) {
+      doc['authors'] = doc['text_attributes']['author']
+    } else {
+      doc['authors'] = '';
+    }
     this.appComponent.listTabs.push(doc.title.split(' ').slice(0,2).join(' ')+'...'); // ('DocSim-' + docIndex);
     this.appComponent.selectedTab.setValue(this.appComponent.listTabs.length - 1);
     this.appComponent.similarParam = doc;

@@ -34,6 +34,8 @@ export class VectorSearchComponent implements OnInit{
   public filteredDataNew: any;
   public loadSimilar = false;
   public selectedLanguage: string;
+  public modeID: string;
+  public selectedCorpora: string[];
 
   public authors : string[] = [];
   public authorC = new FormControl();
@@ -172,6 +174,8 @@ export class VectorSearchComponent implements OnInit{
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.storedString = '';
+      this.modeID = data.modeSelected[0];
+      this.selectedCorpora = data.selectedCorpora;
     });
   }
   
@@ -205,12 +209,31 @@ export class VectorSearchComponent implements OnInit{
                 this.years.push.apply(this.years, this.similarDocs[i]['text_attributes']['year'].split(', '));
             }
             this.tokens.push(this.similarDocs[i]['word_count']);
+            let authors = ''
+            if (_.keys(this.similarDocs[i]['text_attributes']).includes('author')) {
+              authors = this.similarDocs[i]['text_attributes']['author'];
+            } else {
+              authors = '';
+            }
+            let year = '';
+            if (_.keys(this.similarDocs[i]['text_attributes']).includes('year')) {
+              year = this.similarDocs[i]['text_attributes']['year'];
+            } else {
+              year = '';
+            }
             tempData.push({
-                'title': this.similarDocs[i]['title'], 'text': this.similarDocs[i]['preview'], 'corpus_id': this.similarDocs[i]['corpus_id'],
-                'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
-                'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
+                'title': this.similarDocs[i]['title'], 'preview': this.similarDocs[i]['preview'], 'corpus_id': this.similarDocs[i]['corpus_id'],
+                'docType': this.similarDocs[i]['doc_type'], 'word_count': this.similarDocs[i]['word_count'], 'authors': authors,
+                'year': year, 'most_common_words': this.similarDocs[i]['most_common_words'],
                 'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url']
             });
+            if (this.modeID === 'so') {
+              for (let i in tempData) {
+                let word = tempData[i]['title'].split(' ')[0]
+                let pos = tempData[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+                tempData[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+              }
+            }
         }
         this.similarDocs = tempData;
         // this.authors = _.uniq(this.authors);
@@ -317,6 +340,14 @@ export class VectorSearchComponent implements OnInit{
     let doc = this.similarDocs[docIndex];
     this.store.dispatch({type : OPENDOCUMENT, payload : doc});
     this.appComponent.selectedTabV.setValue(this.appComponent.listTabsV[0]);
+  }
+
+  public addTabV(doc: any, docType: string) {
+    this.appComponent.listTabsV.push(doc.title.split(' ').slice(0,2).join(' ')+'...'); // ('DocSim-' + docIndex);
+    this.appComponent.selectedTabV.setValue(this.appComponent.listTabsV.length - 1);
+    this.appComponent.similarParam = doc;
+    this.appComponent.relatedDocType = docType;
+    this.appComponent.currentSelection = this.selectedCorpora;
   }
 
   @ViewChild(MatPaginator) paginator: MatPaginator;

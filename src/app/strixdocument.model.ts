@@ -11,6 +11,7 @@ export class StrixDocument {
   preview: string;
   mostCommonWords: string;
   mostCommonNames: string;
+  modeID: string;
 
   // Internal index for the frontend to keep track of.
   // It never changes after it's loaded, but it may

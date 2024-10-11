@@ -253,16 +253,6 @@ export class SearchComponent implements OnInit {
     // this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
-  private focusinmethod(){
-    let b = document.body;
-    b.style.overflow = "hidden";
-  }
-
-  private focusoutmethod(){
-    let b = document.body;
-    b.style.overflow = "auto";
-  }
-
   public getLemgram() {
     // console.log("----", this.myControl.value, this.myControl.value.split('..')[0], this.stringInFocus, this.tempStore, this.asyncCopy)
     let startChar = '';

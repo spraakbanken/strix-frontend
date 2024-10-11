@@ -34,6 +34,7 @@ export class HeaderComponent implements OnInit {
   public corpusID: string;
   public documentTempData = {};
   public sourceUrl: string;
+  public modeID: string;
 
   public asyncSelected: string = "";
   private searchRedux: Observable<SearchRedux>;
@@ -52,6 +53,8 @@ export class HeaderComponent implements OnInit {
       this.corpusName = metadataService.getName(openedDocument.corpusID);
       this.corpusID = '';
       this.corpusID = openedDocument.corpusID;
+      this.modeID = '';
+      this.modeID = openedDocument.modeID;
       this.wordCount = 0;
       this.wordCount = openedDocument.word_count;
       this.yearInfo = '';

@@ -173,7 +173,7 @@
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) === '++' && tab.slice(0,2) !== '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1)}}</div>
         <div class="col" *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics' && tab.slice(0,2) !== '++' && tab.slice(0,2) !== '--'">{{tab}}</div>
-        <button *ngIf="tab !== 'Hits' && tab !== 'Overview'  && tab !== 'Semantic' && tab !== 'Statistics'" style="color:black" mat-icon-button (click)="removeTab(index)">
+        <button *ngIf="tab !== 'Hits' && tab !== 'Overview' && tab !== 'Statistics'" style="color:black" mat-icon-button (click)="removeTab(index)">
           <mat-icon>close</mat-icon>
         </button>
       </ng-template>
@@ -253,12 +253,17 @@
     <mat-tab *ngFor="let tabV of listTabsV; let index = index" [label]="tabV + index">
       <ng-template mat-tab-label>
         <div class="col" *ngIf="tabV === 'Semantic' && selectedCorpus.length > 0">{{'hits' | loc}}</div>
-        <!-- <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) === '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1) | loc}}</div>
-        <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) === '++' && tabV.slice(0,2) !== '--'">{{'hits' | loc}} - {{tab.slice(2).slice(0,-1)}}</div>
-        <div class="col" *ngIf="tabV !== 'Hits' && tabV !== 'Overview'  && tabV !== 'Semantic' && tabV !== 'Statistics' && tabV.slice(0,2) !== '++' && tabV.slice(0,2) !== '--'">{{tab}}</div> -->
+        <div class="col" *ngIf="tabV !== 'Semantic' && tabV.slice(0,2) === '++' && tabV.slice(0,2) !== '--'">{{'hits' | loc}} - {{tabV.slice(2).slice(0,-1)}}</div>
+        <div class="col" *ngIf="tabV !== 'Semantic' && tabV.slice(0,2) !== '++' && tabV.slice(0,2) !== '--'">{{tabV}}</div>
+        <button *ngIf="tabV !== 'Semantic'" style="color:black" mat-icon-button (click)="removeTabV(index)">
+          <mat-icon>close</mat-icon>
+        </button>
       </ng-template>
       <div class="mainContent" *ngIf="tabV === 'Semantic'">
         <vectorsearch style="padding: 4px 15px 0px 15px;"></vectorsearch>       
+      </div>
+      <div class="mainContent" *ngIf="tabV !== 'Semantic' && tabV.slice(0,2) !== '--' && tabV.slice(0,2) !== '++'">
+        <similardocs [data]="similarParam" [relatedDocSelection]="relatedDocType" [currentSelection]="currentSelection" style="padding: 4px 15px 0px 15px;"></similardocs>       
       </div>
     </mat-tab>
   </mat-tab-group>

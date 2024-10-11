@@ -27,14 +27,14 @@
             </div>
           </div>
         </div>
-        <div class="row">
+        <div class="row" *ngIf="data.mode_id !== 'so' && data.year.length > 0">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
           </div>
-          <div class="col-xl-9" *ngIf="data.text_attributes.year !== '2050'">
-            <span>{{data.text_attributes.year}}</span>
+          <div class="col-xl-9" *ngIf="data.year !== '2050'">
+            <span>{{data.year}}</span>
           </div>
-          <div class="col-xl-9" *ngIf="data.text_attributes.year === '2050'">
+          <div class="col-xl-9" *ngIf="data.year === '2050'">
             <span>{{'NA'}}</span>
           </div>
         </div>
@@ -46,12 +46,12 @@
             <span>{{data.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
           </div>
         </div>
-        <div class="row" *ngIf="data.text_attributes.author">
+        <div class="row" *ngIf="data.authors.length > 0">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <span>{{data.text_attributes.author}}</span>
+            <span>{{data.authors}}</span>
           </div>
         </div>
         <div class="row">
@@ -66,7 +66,7 @@
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="data.most_common_words">
+        <div class="row" *ngIf="data.most_common_words && data.mode_id !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
           </div>
@@ -78,7 +78,7 @@
             </span>
           </div>
         </div>
-        <div class="row" *ngIf="data.ner_tags">
+        <div class="row" *ngIf="data.ner_tags && data.mode_id !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
           </div>
@@ -98,6 +98,17 @@
             <span>
               <a [href]="data.text_attributes.url" target="_blank" style="color: chocolate;">
                 {{data.text_attributes.url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+            </span>
+          </div>
+        </div>
+        <div class="row" *ngIf="data.mode_id === 'so'">
+          <div class="col-xl-2">
+            <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+          </div>
+          <div class="col-xl-9">
+            <span>
+              <a [href]="data.link" target="_blank" style="color: chocolate;">
+                {{data.title.split(' ')[0]}} {{data.title.split(' ')[1]}} <mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
             </span>
           </div>
         </div>
@@ -132,7 +143,7 @@
                       <span>{{doc.text}}</span>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" *ngIf="doc.mode_id !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
                     </div>
@@ -171,7 +182,7 @@
                       </div>
                     </div>
                   </div>
-                  <div class="row" *ngIf="doc.most_common_words">
+                  <div class="row" *ngIf="doc.most_common_words && doc.mode_id !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
                     </div>
@@ -183,7 +194,7 @@
                       </span>
                     </div>
                   </div>
-                  <div class="row" *ngIf="doc.ner_tags">
+                  <div class="row" *ngIf="doc.ner_tags && doc.mode_id !== 'so'">
                     <div class="col-xl-2">
                       <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
                     </div>
@@ -203,6 +214,17 @@
                       <span>
                         <a [href]="doc.source_url" target="_blank" style="color: chocolate;">
                           {{doc.source_url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+                      </span>
+                    </div>
+                  </div>
+                  <div class="row" *ngIf="doc.mode_id === 'so'">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>
+                        <a [href]="doc.link" target="_blank" style="color: chocolate;">
+                          {{doc.title.split(' ')[0]}} {{doc.title.split(' ')[1]}} <mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
                       </span>
                     </div>
                   </div>

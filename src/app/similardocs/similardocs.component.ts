@@ -171,8 +171,16 @@ export class SimilarDocsComponent implements OnInit{
                 'title': this.similarDocs[i]['title'], 'text': this.similarDocs[i]['preview'], 'corpus_id': this.similarDocs[i]['corpus_id'],
                 'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
                 'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
-                'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url']
+                'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url'],
+                'mode_id': this.similarDocs[i]['mode_id']
             });
+            if (tempData[0]['mode_id'] === 'so') {
+              for (let i in tempData) {
+                let word = tempData[i]['title'].split(' ')[0]
+                let pos = tempData[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+                tempData[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+              }
+            }
         }
         this.similarDocs = tempData;
         // this.authors = _.uniq(this.authors);
