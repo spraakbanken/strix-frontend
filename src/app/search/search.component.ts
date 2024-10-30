@@ -7,9 +7,10 @@ import * as moment from "moment";
 import { QueryService } from '../query.service';
 import { CallsService } from '../calls.service';
 import { KarpService } from '../karp.service';
+import { LocService } from 'app/loc.service';
 import { MetadataService } from 'app/metadata.service';
 import { StrixEvent } from '../strix-event.enum';
-import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX, GOTOQUERY } from '../searchreducer';
+import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX, GOTOQUERY, CHANGELANG } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
 import { FormControl } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
@@ -44,6 +45,7 @@ export class SearchComponent implements OnInit {
   public tempStore = '';
   public stringInFocus: string;
   private errorMessage: string;
+  public currentLanguage: string;
 
   public currentFilters: Filter[] = [];
 
@@ -105,11 +107,16 @@ export class SearchComponent implements OnInit {
               private queryService: QueryService,
               private appComponent: AppComponent,
               private metadataService: MetadataService,
+              private locService: LocService,
               private store: Store<AppState>) {
     this.searchRedux = this.store.select('searchRedux');
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       this.isPhraseSearch = !data.keyword_search;
+    });
+
+    this.searchRedux.pipe(filter((d) => d.latestAction === CHANGELANG)).subscribe((data) => {
+      this.currentLanguage = data.lang;
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
@@ -178,7 +185,7 @@ export class SearchComponent implements OnInit {
     }).pipe(mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected)));
 
     this.valueChanged
-      .pipe(debounceTime(500), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue.replace('"', ''))))
+      .pipe(debounceTime(0), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue.replace('"', ''))))
       .subscribe(value => {
         this.karpResult = value;
         this.filteredOptions = this.karpResult.filter(item => !item.includes('...'));
@@ -193,24 +200,24 @@ export class SearchComponent implements OnInit {
       this.searchRedux.pipe(take(1)).subscribe(data => {
       // this.getHistogramData(data.corpora);
       this.isPhraseSearch = !data.keyword_search
-      this.posLocalization = {};
-      let wordAnno = this.availableCorpora['vivill']['wordAttributes'];
-      for (let i of wordAnno) {
-        if (i['name'] === 'pos') {
-          this.posLocalization = i.translation_karp
-        }
-      }
-      for (let i in this.posLocalization) {
-        this.posEng[this.posLocalization[i].eng] = i;
-      }
+      // this.posLocalization = {};
+      // let wordAnno = this.availableCorpora['vivill']['wordAttributes'];
+      // for (let i of wordAnno) {
+      //   if (i['name'] === 'pos') {
+      //     this.posLocalization = i.translation_karp
+      //   }
+      // }
+      // for (let i in this.posLocalization) {
+      //   this.posEng[this.posLocalization[i].eng] = i;
+      // }
       if(data.query) {
         this.asyncSelected = data.query.replace('§', ' ').replace(/lemgram:/g, '').replace(/word:/g, '');
         let y = [];
         for (let i of this.asyncSelected.split(' ')) {
           if (i.includes('..')) {
-            y.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')');
-            this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')'] = i;
-            this.saveLemgrams[i] = i.split('..')[0] + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')';
+            y.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')');
+            this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')'] = i;
+            this.saveLemgrams[i] = i.split('..')[0] + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')';
           } else {
             y.push(i)
           }
@@ -285,17 +292,17 @@ export class SearchComponent implements OnInit {
       for (let i of this.tempStore.split(' ')) {
         if (i.includes('..')) {
           i = i.replace(/ /g, '_')
-          middleString.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')');
-          this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')'] = i;
-          this.saveLemgrams[i] = i.split('..')[0] + '(' + this.posLocalization[i.split('..')[1].split('.')[0]]['eng'] + ')';
+          middleString.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')');
+          this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')'] = i;
+          this.saveLemgrams[i] = i.split('..')[0] + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')';
         } else {
           middleString.push(i)
         }
       }
     } else if (this.myControl.value.includes('..')) {
-      middleString.push(this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[this.myControl.value.split('..')[1].split('.')[0]]['eng'] + ')');
-      this.saveStrings[this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.posLocalization[this.myControl.value.split('..')[1].split('.')[0]]['eng'] + ')'] = this.myControl.value;
-      this.saveLemgrams[this.myControl.value] = this.myControl.value.split('..')[0] + '(' + this.posLocalization[this.myControl.value.split('..')[1].split('.')[0]]['eng'] + ')';
+      middleString.push(this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')');
+      this.saveStrings[this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')'] = this.myControl.value;
+      this.saveLemgrams[this.myControl.value] = this.myControl.value.split('..')[0] + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')';
     } else {
       middleString.push(newStore)
     }
@@ -499,11 +506,11 @@ export class SearchComponent implements OnInit {
             let numberString = '1';
             if (splitString[0].slice(-1) === '2') {
               numberString = '2';
-              tempData.push(splitString[0].slice(0,-1)+'..'+this.posEng[splitString[1]]+'.2')
+              tempData.push(splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.2')
             } else if (splitString[0].slice(-1) === '3') {
-              tempData.push(splitString[0].slice(0,-1)+'..'+this.posEng[splitString[1]]+'.3')
+              tempData.push(splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.3')
             } else {
-              tempData.push(splitString[0]+'..'+this.posEng[splitString[1]]+'.1')
+              tempData.push(splitString[0]+'..'+this.locService.getTranslationFor(splitString[1])+'.1')
             }
           } else {
             tempData.push(x)
@@ -541,11 +548,11 @@ export class SearchComponent implements OnInit {
             let numberString = '1';
             if (splitString[0].slice(-1) === '2') {
               numberString = '2';
-              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.posEng[splitString[1]]+'.2'+endChar)
+              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.2'+endChar)
             } else if (splitString[0].slice(-1) === '3') {
-              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.posEng[splitString[1]]+'.3'+endChar)
+              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.3'+endChar)
             } else {
-              tempData.push(startChar+splitString[0]+'..'+this.posEng[splitString[1]]+'.1'+endChar)
+              tempData.push(startChar+splitString[0]+'..'+this.locService.getTranslationFor(splitString[1])+'.1'+endChar)
             }
           } else {
             tempData.push(startChar+x+endChar)

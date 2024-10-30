@@ -63,14 +63,17 @@ export class DocstatisticComponent implements OnInit {
 
         this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
             this.indexRef = 0;
+            this.selectedOptions = [];
+            this.currentSelection = '';
+            this.dataSource = new MatTableDataSource([]);
+            this.dataSource.paginator = this.paginator;
+            this.displayedColumns = [];
         })
 
         this.searchRedux.pipe(filter((d) => d.latestAction === SELECTEDTAB)).subscribe((data) => {
             if (data.currentTab === 'statistics') {
                 if (this.selectedOptions.length > 0) {
                     this.getFacetData(this.selectedOptions[0])
-                } else {
-                    this.getFacetData('year')
                 }
             }
         })
@@ -88,9 +91,15 @@ export class DocstatisticComponent implements OnInit {
         this.currentFacets = _.pick(
             this.currentFacets, 
             ['year', 'party_name', 'blingbring', 'swefn', 'topic_topic_name', 'type', 'author', 
-            'topic_author_signature', 'newspaper', 'categories', 'month'])
-        let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-            'topic_author_signature', 'blingbring', 'categories', 'month']
+            'topic_author_signature', 'newspaper', 'categories', 'month', 'initial', 'pos'])
+        let tempOrder = [];
+        if (data.modeSelected[0] === 'so') {
+            tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']
+        } else {
+            tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+                'topic_author_signature', 'blingbring', 'categories', 'month', 'initial', 'pos']
+        }
+        
         let tempNew = []
         for (let i of tempOrder) {
           if (_.keys(this.currentFacets).includes(i)) {

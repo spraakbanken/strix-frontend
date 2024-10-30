@@ -239,7 +239,7 @@ export class VectorSearchComponent implements OnInit{
         // this.authors = _.uniq(this.authors);
         // this.corpuses = _.uniq(this.corpuses);
         this.filteredDataNew = new MatTableDataSource<StrixDocument>(this.similarDocs);
-        this.filteredDataNew.paginator = this.paginator;
+        this.filteredDataNew.paginator = this.paginatorTop;
         this.filteredData = this.filteredDataNew.connect();
         this.loadSimilar = false;
         let authorsData = _.groupBy(this.authors.map(i=>i));
@@ -318,7 +318,7 @@ export class VectorSearchComponent implements OnInit{
     this.yearLabels = _.keys(dataYear);
     this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS'), backgroundColor: ["#C4AB86"]}];
     this.filteredDataNew = new MatTableDataSource<StrixDocument>(tempData);
-    this.filteredDataNew.paginator = this.paginator;
+    this.filteredDataNew.paginator = this.paginatorTop;
     this.filteredData = this.filteredDataNew.connect();
   }
 
@@ -350,7 +350,30 @@ export class VectorSearchComponent implements OnInit{
     this.appComponent.currentSelection = this.selectedCorpora;
   }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  public handlePaginatorTop(e): void {
+    const { pageSize, pageIndex } = e;
+    this.paginatorTop.pageSize = pageSize
+    this.paginatorTop.pageIndex = pageIndex;
+    this.paginatorTop.page.emit(e);
+}
+
+  public handlePaginatorBottom(e): void {
+    const { pageSize, pageIndex } = e;
+    this.paginatorBottom.pageSize = pageSize
+    this.paginatorBottom.length = this.paginatorTop.length;
+    this.paginatorBottom.pageIndex = pageIndex;
+  }
+
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('paginatorTop', { static: false }) paginatorTop: MatPaginator;
+  @ViewChild('paginatorBottom', { static: false }) paginatorBottom: MatPaginator;
+  
+  ngAfterContentChecked(): void {
+    if (this.paginatorTop) {
+      this.paginatorBottom.length = this.paginatorTop.length;
+    }
+}
+
   ngOnInit() {
     this.selectedLanguage = this.locService.getCurrentLanguage();
     // this.availableCorpora = this.metadataService.getAvailableCorpora();

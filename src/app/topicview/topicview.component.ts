@@ -1,5 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy, OnChanges, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { AppState, OPENDOCUMENT, CLOSEDOCUMENT, SearchRedux, CHANGE_INCLUDE_FACET, FACET_LIST, CHANGEQUERY, SELECTED_CORPORA, SELECTEDTAB } from 'app/searchreducer';
+import { AppState, OPENDOCUMENT, CLOSEDOCUMENT, SearchRedux, CHANGE_INCLUDE_FACET, FACET_LIST, 
+  CHANGEQUERY, SELECTED_CORPORA, SELECTEDTAB, MODE_SELECTED } from 'app/searchreducer';
 import * as d3 from 'd3';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
@@ -65,7 +66,11 @@ export class TopicViewComponent implements OnChanges, OnInit {
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTEDTAB)).subscribe((data) => {
       if (data.currentTab === 'overview'){
         if (this.defaultTextAttr.length === 0) {
-          this.getFacetData('year')
+          if (data.modeSelected[0] === 'so') {
+            this.getFacetData('pos');
+          } else {
+            this.getFacetData('year');
+          } 
         } else {
           this.getFacetData(this.defaultTextAttr);
         }
@@ -94,14 +99,28 @@ export class TopicViewComponent implements OnChanges, OnInit {
       }
     })
 
+    this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+      this.indexRef = 0;
+      this.selectedOptions = [];
+      // this.dataSource = new MatTableDataSource([]);
+      // this.dataSource.paginator = this.paginator;
+      // this.displayedColumns = [];
+      this.defaultTextAttr = '';
+  })
+
     this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
       let _1 = data.facet_list;
       _1 = _.pick(
           _1, 
           ['year', 'party_name', 'blingbring', 'swefn', 'topic_topic_name', 'type', 'author', 
-          'topic_author_signature', 'newspaper', 'categories', 'month'])
-      let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-          'topic_author_signature', 'blingbring', 'categories', 'month']
+          'topic_author_signature', 'newspaper', 'categories', 'month', 'initial', 'pos'])
+          let tempOrder = [];
+          if (data.modeSelected[0] === 'so') {
+            tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']
+          } else {
+            tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+                'topic_author_signature', 'blingbring', 'categories', 'month', 'initial', 'pos']
+          }
       let tempNew = []
       for (let i of tempOrder) {
         if (_.keys(_1).includes(i)) {

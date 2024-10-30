@@ -23,7 +23,7 @@
           <mat-paginator 
           [length]="totalNumberOfDocuments" 
           [pageSize]="itemsPerPage" 
-          [pageSizeOptions]="[10, 15, 20, 25]"
+          [pageSizeOptions]="[10, 20, 50]"
           [pageIndex]="currentPaginatorPage"
           (page)="paginatorPageChanged($event)"
           showFirstLastButtons>
@@ -162,6 +162,21 @@
           </div> 
         </div>
       </div>
+    </div>
+    <div class="hits_header row flex-column">
+      <div class="docView">
+        <div class="paginatorClass">
+          <mat-paginator 
+          [length]="totalNumberOfDocuments" 
+          [pageSize]="itemsPerPage" 
+          [pageSizeOptions]="[10, 20, 50]"
+          [pageIndex]="currentPaginatorPage"
+          (page)="paginatorPageChanged($event)"
+          showFirstLastButtons>
+          </mat-paginator>
+        </div>
+      </div>
+      <!-- <li class="divider dropdown-divider" style="width: 98.5%;"></li> -->
     </div>
     <div class="hits_right_column col-md-3" *ngIf="textAttributes.length">
       <div *ngFor="let attribute of textAttributes">

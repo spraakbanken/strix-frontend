@@ -14,7 +14,7 @@
         />
         <mat-autocomplete requireSelection #auto="matAutocomplete" (optionSelected)="getLemgram()">
           <mat-option *ngFor="let option of filteredOptions" [value]="option">
-            {{option.split('..')[0].split('_').join(' ')}}<sup>{{option.slice(-1).replace('1', '')}}</sup>({{posLocalization[option.split('..')[1].split('.')[0]] | loc }})
+            {{option.split('..')[0].split('_').join(' ')}}<sup>{{option.slice(-1).replace('1', '')}}</sup>({{option.split('..')[1].split('.')[0] | loc }})
           </mat-option>
       </mat-autocomplete>
         <i class="d-none d-lg-block" *ngIf="asyncSelected" style="right: 43%; padding-top: 14px;" (click)="clearSimpleSearch()"><mat-icon style="height: 10px; width: 10px;">close</mat-icon></i>

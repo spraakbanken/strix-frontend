@@ -168,12 +168,18 @@ export class FilterdataComponent implements OnInit {
       this.holdFacets = [];
       this.collectControl = new FormArray([]);
       this.collectX = [];
+      this.resultFacet = [];
       if (this.selectedCorpus.length > 0) {
         this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
           let resultFacets = result.list_facet;
           this.facetList = result.list_facet;
-          let tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-          'topic_author_signature', 'blingbring', 'categories', 'month']
+          let tempOrder = [];
+          if (data.modeSelected[0] === 'so') {
+            tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']
+          } else {
+            tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+                'topic_author_signature', 'blingbring', 'categories', 'month', 'initial', 'pos']
+          }
           let tempNew = []
           for (let i of tempOrder) {
             if (_.keys(resultFacets).includes(i)) {

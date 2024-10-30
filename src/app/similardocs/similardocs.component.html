@@ -5,7 +5,7 @@
             <div class="font-weight-ligh">{{ 'title' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <a tabindex><b>{{data.title}}</b></a>
+            <a tabindex><b>{{focusDocument.title}}</b></a>
           </div>
         </div>
         <div class="row">
@@ -14,27 +14,27 @@
           </div>
           <div class="col-xl-9">
             <div class="hit_document_body">
-              <ng-template [ngIf]="data.highlight">
-                <span *ngFor="let highlight of data.highlight; let l = last" [innerHTML]="highlight+'&nbsp;'">
+              <ng-template [ngIf]="focusDocument.highlight">
+                <span *ngFor="let highlight of focusDocument.highlight; let l = last" [innerHTML]="highlight+'&nbsp;'">
                   <br *ngIf="last"/> <!-- ??? -->
                 </span>
               </ng-template>
-              <ng-template [ngIf]="data.preview">
+              <ng-template [ngIf]="focusDocument.preview">
                 <span>
-                  {{data.preview}} <span class="dots">...</span>
+                  {{focusDocument.preview}} <span class="dots">...</span>
                 </span>
               </ng-template>
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="data.mode_id !== 'so' && data.year.length > 0">
+        <div class="row" *ngIf="focusDocument.mode_id !== 'so' && focusDocument.year.length > 0">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'yearS' | loc }}:</div>
           </div>
-          <div class="col-xl-9" *ngIf="data.year !== '2050'">
-            <span>{{data.year}}</span>
+          <div class="col-xl-9" *ngIf="focusDocument.year !== '2050'">
+            <span>{{focusDocument.year}}</span>
           </div>
-          <div class="col-xl-9" *ngIf="data.year === '2050'">
+          <div class="col-xl-9" *ngIf="focusDocument.year === '2050'">
             <span>{{'NA'}}</span>
           </div>
         </div>
@@ -43,15 +43,15 @@
             <div class="font-weight-ligh">{{ 'tokens' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <span>{{data.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
+            <span>{{focusDocument.word_count.toLocaleString('number_format' | loc)}} {{ 'token' | loc }}</span>
           </div>
         </div>
-        <div class="row" *ngIf="data.authors.length > 0">
+        <div class="row" *ngIf="focusDocument.authors.length > 0">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'authorS' | loc }}:</div>
           </div>
           <div class="col-xl-9">
-            <span>{{data.authors}}</span>
+            <span>{{focusDocument.authors}}</span>
           </div>
         </div>
         <div class="row">
@@ -61,54 +61,54 @@
           <div class="col-xl-9">
             <div class="hit_appendix">
               <span class="hit_collection_title">
-                {{availableCorpora[data.corpus_id].name | loc}}
+                {{availableCorpora[focusDocument.corpus_id].name | loc}}
               </span>&nbsp;
             </div>
           </div>
         </div>
-        <div class="row" *ngIf="data.most_common_words && data.mode_id !== 'so'">
+        <div class="row" *ngIf="focusDocument.most_common_words && focusDocument.mode_id !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'mostCommonNoun' | loc }}:</div>
           </div>
           <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
-            <span *ngFor="let item of data.most_common_words.split(', ') | slice:0:10; let i = index;">
-              <i *ngIf="i < data.most_common_words.split(', ').length-1 && i < 9" style="padding-right: 10px;">{{item}},</i>
+            <span *ngFor="let item of focusDocument.most_common_words.split(', ') | slice:0:10; let i = index;">
+              <i *ngIf="i < focusDocument.most_common_words.split(', ').length-1 && i < 9" style="padding-right: 10px;">{{item}},</i>
               <i *ngIf="i == 9">{{item}}</i>
-              <i *ngIf="i == data.most_common_words.split(', ').length-1 && i < 10">{{item}}</i>
+              <i *ngIf="i == focusDocument.most_common_words.split(', ').length-1 && i < 10">{{item}}</i>
             </span>
           </div>
         </div>
-        <div class="row" *ngIf="data.ner_tags && data.mode_id !== 'so'">
+        <div class="row" *ngIf="focusDocument.ner_tags && focusDocument.mode_id !== 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'ners' | loc }}:</div>
           </div>
           <div class="col-xl-9" style="display: inline-flex; flex-wrap: wrap">
-            <span *ngFor="let item of data.ner_tags.split(', ') | slice:0:5; let i = index;">
-              <i *ngIf="i < data.ner_tags.split(', ').length-1 && i < 4" style="padding-right: 10px;">{{item}},</i>
+            <span *ngFor="let item of focusDocument.ner_tags.split(', ') | slice:0:5; let i = index;">
+              <i *ngIf="i < focusDocument.ner_tags.split(', ').length-1 && i < 4" style="padding-right: 10px;">{{item}},</i>
               <i *ngIf="i == 4">{{item}}</i>
-              <i *ngIf="i == data.ner_tags.split(', ').length-1 && i < 5">{{item}}</i>
+              <i *ngIf="i == focusDocument.ner_tags.split(', ').length-1 && i < 5">{{item}}</i>
             </span>
           </div>
         </div>
-        <div class="row" *ngIf="data.corpus_id === 'detektiva'">
+        <div class="row" *ngIf="focusDocument.corpus_id === 'detektiva'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
           </div>
           <div class="col-xl-9">
             <span>
-              <a [href]="data.text_attributes.url" target="_blank" style="color: chocolate;">
-                {{data.text_attributes.url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+              <a [href]="focusDocument.text_attributes.url" target="_blank" style="color: chocolate;">
+                {{focusDocument.text_attributes.url}}<mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
             </span>
           </div>
         </div>
-        <div class="row" *ngIf="data.mode_id === 'so'">
+        <div class="row" *ngIf="focusDocument.mode_id === 'so'">
           <div class="col-xl-2">
             <div class="font-weight-ligh">{{ 'source_link' | loc }}:</div>
           </div>
           <div class="col-xl-9">
             <span>
-              <a [href]="data.link" target="_blank" style="color: chocolate;">
-                {{data.title.split(' ')[0]}} {{data.title.split(' ')[1]}} <mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
+              <a [href]="focusDocument.link" target="_blank" style="color: chocolate;">
+                {{focusDocument.title.split(' ')[0]}} {{focusDocument.title.split(' ')[1]}} <mat-icon style="font-size: small; padding-left: 4px;">launch</mat-icon></a>
             </span>
           </div>
         </div>
@@ -118,8 +118,8 @@
     <div class="leftBlock">
         <div class="hits_left_column">
             <div class="hits_inner list-group">
-                <div class="paginatorClass">
-                    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+                <div class="paginatorClass" [style.display]="!loadSimilar?'block':'none'">
+                    <mat-paginator #paginatorTop [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons (page)="handlePaginatorBottom($event)"></mat-paginator>
                 </div>
                 <div style="height: 10px;"  *ngIf="loadSimilar">
                   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
@@ -228,9 +228,20 @@
                       </span>
                     </div>
                   </div>
+                  <div class="row" *ngIf="doc.mode_id === 'so'">
+                    <div class="col-xl-2">
+                      <div class="font-weight-ligh">{{ 'score' | loc }}:</div>
+                    </div>
+                    <div class="col-xl-9">
+                      <span>{{doc._score}}</span>
+                    </div>
+                  </div>
                 </div>
               </div>
               </div>
+              <div class="paginatorClass" [style.display]="!loadSimilar?'block':'none'">
+                <mat-paginator #paginatorBottom [pageSizeOptions]="[10, 20, 50]" showFirstLastButtons (page)="handlePaginatorTop($event)"></mat-paginator>
+            </div>
             </div>
           </div>
     </div>
@@ -275,7 +286,7 @@
               </div>
             </mat-expansion-panel>
           </mat-accordion>
-          <mat-accordion style="width: 100%; padding-bottom: 20px;">
+          <mat-accordion style="width: 100%; padding-bottom: 20px;" *ngIf="currentMode !== 'so'">
             <mat-expansion-panel hideToggle expanded>
               <mat-expansion-panel-header>
                 <mat-panel-title>

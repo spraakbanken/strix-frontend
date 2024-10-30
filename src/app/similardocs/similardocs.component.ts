@@ -38,6 +38,8 @@ export class SimilarDocsComponent implements OnInit{
   public authorC = new FormControl();
   public corpuses : string[] = [];
   public corpusC = new FormControl();
+  public focusDocument: any;
+  public currentMode: string;
 
   panelOpenState = false;
 
@@ -153,6 +155,7 @@ export class SimilarDocsComponent implements OnInit{
 
   public getSimilarDocuments(docIndex: any, relatedDoc: string, currentS: string[]) {
     this.loadSimilar = true;
+    this.focusDocument = docIndex; 
     this.callsService.getSimilarDocuments(docIndex.mode_id, docIndex.doc_id, docIndex.corpus_id, currentS, relatedDoc).subscribe(
         answer => {
           this.similarDocs = answer["data"];
@@ -172,7 +175,7 @@ export class SimilarDocsComponent implements OnInit{
                 'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
                 'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
                 'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url'],
-                'mode_id': this.similarDocs[i]['mode_id']
+                'mode_id': this.similarDocs[i]['mode_id'], '_score': this.similarDocs[i]['_score']
             });
             if (tempData[0]['mode_id'] === 'so') {
               for (let i in tempData) {
@@ -186,7 +189,7 @@ export class SimilarDocsComponent implements OnInit{
         // this.authors = _.uniq(this.authors);
         // this.corpuses = _.uniq(this.corpuses);
         this.filteredDataNew = new MatTableDataSource<StrixDocument>(this.similarDocs);
-        this.filteredDataNew.paginator = this.paginator;
+        this.filteredDataNew.paginator = this.paginatorTop;
         this.filteredData = this.filteredDataNew.connect();
         this.loadSimilar = false;
         let authorsData = _.groupBy(this.authors.map(i=>i));
@@ -247,7 +250,7 @@ export class SimilarDocsComponent implements OnInit{
     tempData = tempData.filter((x) => {if (typeof(x['year']) === 'string') {return x['year'].split(', ').map(i=>Number(i)).some(checkRange)}})
     }
     if (this.touchToken) {
-        tempData = tempData.filter((x) => {return _.inRange(x['tokens'], this.lowerLimit, this.upperLimit)})
+        tempData = tempData.filter((x) => {return _.inRange(x['tokens'], this.lowerLimit, this.upperLimit) || x['tokens'] === this.upperLimit})
     }
     this.tokens = _.map(tempData, 'tokens');
     for (let i = 0; i < this.tokens.length; i++) {
@@ -265,7 +268,7 @@ export class SimilarDocsComponent implements OnInit{
     this.yearLabels = _.keys(dataYear);
     this.yearData = [{data: _.values(dataYear).map(x => x.length), label: this.locService.getTranslationFor('yearS'), backgroundColor: ["#C4AB86"]}];
     this.filteredDataNew = new MatTableDataSource<StrixDocument>(tempData);
-    this.filteredDataNew.paginator = this.paginator;
+    this.filteredDataNew.paginator = this.paginatorTop;
     this.filteredData = this.filteredDataNew.connect();
   }
 
@@ -289,10 +292,33 @@ export class SimilarDocsComponent implements OnInit{
     this.appComponent.selectedTab.setValue(this.appComponent.listTabs[0]);
   }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  public handlePaginatorTop(e): void {
+    const { pageSize, pageIndex } = e;
+    this.paginatorTop.pageSize = pageSize
+    this.paginatorTop.pageIndex = pageIndex;
+    this.paginatorTop.page.emit(e);
+}
+
+  public handlePaginatorBottom(e): void {
+    const { pageSize, pageIndex } = e;
+    this.paginatorBottom.pageSize = pageSize
+    this.paginatorBottom.length = this.paginatorTop.length;
+    this.paginatorBottom.pageIndex = pageIndex;
+  }
+
+  // @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild('paginatorTop', { static: false }) paginatorTop: MatPaginator;
+  @ViewChild('paginatorBottom', { static: false }) paginatorBottom: MatPaginator;
+  
+  ngAfterContentChecked(): void {
+    if (this.paginatorTop) {
+      this.paginatorBottom.length = this.paginatorTop.length;
+    }
+}
   ngOnInit() {
     this.availableCorpora = this.metadataService.getAvailableCorpora();
     this.getSimilarDocuments(this.data, this.related_doc_selection, this.currentSelection);
+    this.currentMode = this.data.mode_id;
   }
 }
 

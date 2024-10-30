@@ -485,6 +485,26 @@ export class DataselectionComponent implements OnInit {
           }
         }
         this.updateFiltersX("default");
+      } else if (this.selectedMode === 'so') {
+        this.clearInputText();
+        for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+          if (this.treeControl.dataNodes[i].item === 'so-all') {
+            if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+              if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
+                this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+                this.checklistSelection.select(this.treeControl.dataNodes[i]);
+                this.treeControl.expand(this.treeControl.dataNodes[i])
+              }
+            }
+          } else {
+            if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item]) {
+              this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+              this.checklistSelection.deselect(this.treeControl.dataNodes[i])
+            this.treeControl.expand(this.treeControl.dataNodes[i])
+            } 
+          }
+        }
+        this.updateFiltersX("default");
       } else {
         this.checkAll();
       }
@@ -496,6 +516,26 @@ export class DataselectionComponent implements OnInit {
         this.clearInputText();
         for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
           if (this.treeControl.dataNodes[i].item === 'vivill') {
+            if (!this.disableList[this.treeControl.dataNodes[i].item]) {
+              if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
+                this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+                this.checklistSelection.select(this.treeControl.dataNodes[i]);
+                this.treeControl.expand(this.treeControl.dataNodes[i])
+              }
+            }
+          } else {
+            if(this.checklistSelection.isSelected(this.treeControl.dataNodes[i]) && !this.disableList[this.treeControl.dataNodes[i].item]) {
+              this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
+              this.checklistSelection.deselect(this.treeControl.dataNodes[i])
+            this.treeControl.expand(this.treeControl.dataNodes[i])
+            } 
+          }
+        }
+        this.updateFiltersX("default");
+      } if (this.selectedMode === 'so') {
+        this.clearInputText();
+        for (let i = 0; i < this.treeControl.dataNodes.length; i++) {
+          if (this.treeControl.dataNodes[i].item === 'so-all') {
             if (!this.disableList[this.treeControl.dataNodes[i].item]) {
               if(!this.checklistSelection.isSelected(this.treeControl.dataNodes[i])) {
                 this.checklistSelection.toggle(this.treeControl.dataNodes[i]);
