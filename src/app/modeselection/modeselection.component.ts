@@ -25,7 +25,7 @@ export class ModeselectionComponent implements OnInit {
   public filterData = {};
 
   //
-  public parallelMode = true;
+  public parallelMode = false;
   //
 
   private modeItem : { mode : string[], corpuses : string[], preSelect: string[], modeStatus: string };
@@ -78,6 +78,9 @@ export class ModeselectionComponent implements OnInit {
         if (this.availableCorpora[key]['modeID'] === 'mink') {
           this.minkMode = true;
         }
+        if (this.availableCorpora[key]['modeID'] === 'parallel') {
+          this.parallelMode = true;
+        }
         if (this.availableCorpora[key]['modeID'] in this.modeCollection) {
           this.modeCollection[this.availableCorpora[key]['modeID']].push(this.availableCorpora[key]['corpusID'])
         } else {
@@ -89,6 +92,7 @@ export class ModeselectionComponent implements OnInit {
       }
     } else {
       this.minkMode = false;
+      // this.parallelMode = true;
       for (let key in this.availableCorpora) {
         if (!this.availableCorpora[key]['protectedX']) {
           if (this.availableCorpora[key]['modeID'] in this.modeCollection) {

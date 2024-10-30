@@ -46,8 +46,8 @@
   </nav>
   <div class="topnav row">
     <div class="strixLogo col-2 col-md-2" title="Strix SB" (click)="reloadStrix()">
-      <a *ngIf="selectedLanguage === 'swe'" style="padding: 0px;"><img width="200" src="assets/strix_slogan.svg"/></a>
-      <a *ngIf="selectedLanguage === 'eng'" style="padding: 0px;"><img width="200" src="assets/strix_slogan_en.svg"/></a>
+      <a *ngIf="selectedLanguage === 'swe'" style="padding: 0px;"><img style="max-width: 100%; height: auto;" src="assets/strix_slogan.svg"/></a>
+      <a *ngIf="selectedLanguage === 'eng'" style="padding: 0px;"><img style="max-width: 100%; height: auto;" src="assets/strix_slogan_en.svg"/></a>
     </div>
     <div class="d-none d-md-block col-6 col-md-5" style="padding: 30px 30px 10px 80px; height: inherit;"> <!--width: 56%; margin-left: auto; margin-right: 25%;-->
       <dataselection [changeDisable]="listTabs[selectedTab.value] === 'Hits'?'false':'true'"></dataselection>
@@ -64,8 +64,8 @@
   </div>
   <div [hidden]="hideHome" style="font: 400 14px / 20px Roboto, Helvetica Neue, sans-serif;">
     <div style="height: 50px; background-color: #d9eaeb;"></div>
-    <div class="row" style="height: 350px; padding: 40px;">
-      <div class="col-xl-6" style="padding-right: 100px;">
+    <div class="row" style="padding: 40px;">
+      <div class="col-xl-6" style="padding-right: 100px; padding-bottom: 40px;">
         <span *ngIf="selectedLanguage === 'eng'"><b>Strix</b> is Språkbanken's text research platform. All documents in Strix have been annotated by our analysis platform <a href="https://spraakbanken.gu.se/sparv" target="_blank" style="color: chocolate;">Sparv</a> at word, sentence and text level.<br><br>
           With Strix you can:<br><br>
           <ul>
@@ -114,7 +114,7 @@
         
       </div>
     </div>
-    <div class="row" style="height: 400px; padding: 40px;">
+    <div class="row" style="padding: 40px;">
       <div class="col-xl-6">
         <h4><b>{{ 'recent_corpora' | loc }}</b></h4>
         <ul>
@@ -291,8 +291,8 @@
                 <reader [showReader]="showSource"></reader>
               </div>
               <div [hidden]="currentMode !== 'parallel'" style="display: flex;">
-                <reader [showReader]="showSource" style="width: 50%;"></reader>
-                <reader [showReader]="showTarget" style="width: 50%;"></reader>
+                <reader [showReader]="showSource"></reader>
+                <!-- <reader [showReader]="showTarget" style="width: 50%;"></reader> -->
               </div>
               <!---->
               <!-- <reader></reader> -->

@@ -7,13 +7,13 @@
             <a>{{ 'Mink' | loc }}</a>
         </li>
         <!---->
-        <!-- <li *ngIf="parallelMode" [style.color]="this.modeSelection['parallel'] ? 'blue' : 'black'" (click)="chooseMode('parallel', 'continue');"> <!-[style.color]="'gray'" style="cursor: default; pointer-events: none;" ->
+        <li *ngIf="parallelMode" [style.color]="this.modeSelection['parallel'] ? 'chocolate' : 'black'" (click)="chooseMode('parallel', 'continue');"> <!--[style.color]="'gray'" style="cursor: default; pointer-events: none;" -->
             {{ 'Parallel' | loc }}
-        </li> -->
-        <!---->
-        <li class="nav-item" [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
-            <a>{{ 'Parallel' | loc }}</a>
         </li>
+        <!---->
+        <!-- <li class="nav-item" [style.color]="'gray'" style="cursor: default; pointer-events: none;" (click)="chooseMode('parallel', 'continue');">
+            <a>{{ 'Parallel' | loc }}</a>
+        </li> -->
         <li class="nav-item" [style.color]="this.modeSelection[visibleMode] ? 'chocolate' : 'black'" *ngIf="visibleMode !== ''" (click)="chooseMode(visibleMode, 'continue');">
             <a>{{ listMode[visibleMode] | loc }}</a>
         </li>

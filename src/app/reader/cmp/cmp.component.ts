@@ -20,7 +20,7 @@ export class CmpComponent implements OnInit {
 
   @Input() index: number;
 
-  codeMirrorInstance: any;
+  codeMirrorInstanceP: any;
   
   constructor(private documentsService : DocumentsService) {}
 
@@ -28,9 +28,9 @@ export class CmpComponent implements OnInit {
 
   onInstanciated(cmInstance: any) {
     // console.log("got the cm instance", cmInstance);
-    this.codeMirrorInstance = cmInstance;
+    this.codeMirrorInstanceP = cmInstance;
     
-    this.codeMirrorInstance.on('beforeSelectionChange', (instance, obj) => {
+    this.codeMirrorInstanceP.on('beforeSelectionChange', (instance, obj) => {
       // This event is fired before the selection is moved. Its handler may inspect the set
       // of selection ranges, present as an array of {anchor, head} objects in the ranges
       // property of the obj argument, and optionally change them by calling the update method
@@ -40,18 +40,18 @@ export class CmpComponent implements OnInit {
       obj.update(newSelections);
     });
 
-    this.codeMirrorInstance.on('cut', () => {
+    this.codeMirrorInstanceP.on('cut', () => {
       this.trimSelections();
     });
-    this.codeMirrorInstance.on('copy', () => {
+    this.codeMirrorInstanceP.on('copy', () => {
       this.trimSelections();
     });
 
-    this.codeMirrorInstance.on('update', () => {
+    this.codeMirrorInstanceP.on('update', () => {
       // console.log("cm update", this.codeMirrorInstance);
     });
 
-    this.codeMirrorInstance.on('cursorActivity', (instance) => {
+    this.codeMirrorInstanceP.on('cursorActivity', (instance) => {
       const padding = 12;
       var selections = instance.listSelections();
       // console.log("cursorActivityS: " + selections.length + " selections.");
@@ -67,19 +67,19 @@ export class CmpComponent implements OnInit {
       }
     });
 
-    this.codeMirrorInstance.on('focus', (instance, event) => {
+    this.codeMirrorInstanceP.on('focus', (instance, event) => {
       this.onFocusP.emit(this.index);
     });
 
-    this.codeMirrorInstance.on('scroll', (instance, event) => {
-      this.onScrollP.emit(this.codeMirrorInstance.getViewport());
+    this.codeMirrorInstanceP.on('scroll', (instance, event) => {
+      this.onScrollP.emit(this.codeMirrorInstanceP.getViewport());
     });
 
-    this.codeMirrorInstance.on('keydown', (instance, event) => {
+    this.codeMirrorInstanceP.on('keydown', (instance, event) => {
       this.onKeydownP.emit({"index" : this.index, "event" : event});
     });
 
-    this.codeMirrorInstance.on('viewportChange', (instance, from, to) => {
+    this.codeMirrorInstanceP.on('viewportChange', (instance, from, to) => {
       this.onViewportChangeP.emit({"index" : this.index, from: from, to: to});
     });
 
@@ -98,7 +98,7 @@ export class CmpComponent implements OnInit {
     const padding = 12;
 
     var newSelections = [];
-    var oldSelections = this.codeMirrorInstance.listSelections();
+    var oldSelections = this.codeMirrorInstanceP.listSelections();
     for (var os of oldSelections) {
       var anchor = os.anchor;
       var head = os.head;
@@ -110,9 +110,9 @@ export class CmpComponent implements OnInit {
 
       if (numberOfLines === 1) {
         if (anchor.ch < padding) {
-          this.codeMirrorInstance.setSelection({line : anchor.line, ch : padding}, head);
+          this.codeMirrorInstanceP.setSelection({line : anchor.line, ch : padding}, head);
         } else if (head.ch < padding) {
-          this.codeMirrorInstance.setSelection(anchor, {line : anchor.line, ch : padding});
+          this.codeMirrorInstanceP.setSelection(anchor, {line : anchor.line, ch : padding});
         }
       } else {
         // If the selection is multi line, it needs to be separated to multiple selections.
@@ -142,7 +142,7 @@ export class CmpComponent implements OnInit {
         }
       }
     }
-    this.codeMirrorInstance.setSelections(newSelections);
+    this.codeMirrorInstanceP.setSelections(newSelections);
   }
 
   /* This makes sure that the user only can select whole tokens.
@@ -157,12 +157,12 @@ export class CmpComponent implements OnInit {
               ( (selection.anchor.line === selection.head.line)
               && selection.anchor.ch < selection.head.ch )) {
         // Normal
-        startingWordRange = this.codeMirrorInstance.findWordAt(selection.anchor);
-        endingWordRange = this.codeMirrorInstance.findWordAt(selection.head);
+        startingWordRange = this.codeMirrorInstanceP.findWordAt(selection.anchor);
+        endingWordRange = this.codeMirrorInstanceP.findWordAt(selection.head);
       } else {
         // Inverted
-        endingWordRange = this.codeMirrorInstance.findWordAt(selection.anchor);
-        startingWordRange = this.codeMirrorInstance.findWordAt(selection.head);
+        endingWordRange = this.codeMirrorInstanceP.findWordAt(selection.anchor);
+        startingWordRange = this.codeMirrorInstanceP.findWordAt(selection.head);
       }
 
       startingWordRange.anchor.ch = Math.max(startingWordRange.anchor.ch, padding);

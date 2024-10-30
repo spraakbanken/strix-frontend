@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, Observable } from 'rxjs';
+import { filter } from 'rxjs/operators';
+import { Store } from '@ngrx/store';
 import * as _ from 'lodash';
 
 import { DocumentsService } from '../documents.service';
@@ -9,6 +11,7 @@ import { CallsService } from '../calls.service';
 import { StrixDocument } from '../strixdocument.model';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
 import { LocService } from '../loc.service';
+import { AppState, CLOSEDOCUMENT, MODE_SELECTED } from '../searchreducer';
 
 @Component({
   selector: 'annotations-selector',
@@ -31,6 +34,9 @@ export class AnnotationsSelectorComponent implements OnInit {
   public structuralAnnotations = [];
   private currentCorpusID: string;
   private currentDocumentID: string;
+  public currentMode: string;
+
+  private searchRedux: Observable<any>;
 
   private errorMessage;
 
@@ -40,7 +46,21 @@ export class AnnotationsSelectorComponent implements OnInit {
               private metadataService: MetadataService,
               private callsService: CallsService,
               private readerCommunicationService: ReaderCommunicationService,
-              private locService: LocService) { }
+              private locService: LocService,
+              private store: Store<AppState>,) {
+
+  this.searchRedux = this.store.select('searchRedux');
+
+  this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
+    this.selectedAnnotation = undefined;
+    this.selectedAnnotationValue = '';
+    this.annotationValues = [];
+  });
+
+  this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
+    this.currentMode = data.modeSelected[0];
+  });
+  }
 
   ngOnInit() {
     this.subscription = this.documentsService.loadedDocument$.subscribe(
@@ -152,7 +172,12 @@ export class AnnotationsSelectorComponent implements OnInit {
   }
 
   private getAnnotationType(): string {
-    return this.getAnnotation()["type"];
+    if (this.getAnnotation()) {
+      return this.getAnnotation()["type"];
+    } else {
+      return ''
+    }
+    
   }
 
   public getAnnotationTranslation() {
@@ -172,10 +197,10 @@ export class AnnotationsSelectorComponent implements OnInit {
 
   private getTranslations() {
     let annotation = this.getAnnotation();
-    if (annotation.translation_value) {
+    if (annotation !== undefined && annotation.translation_value) {
       return annotation.translation_value;
     } else {
-      if (annotation.type_info && annotation.type_info.translation_value) {
+      if (annotation !== undefined && annotation.type_info && annotation.type_info.translation_value) {
         return annotation.type_info.translation_value;
       } else {
         return {};

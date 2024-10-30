@@ -20,21 +20,21 @@
       (onKeydown)="onKeydown($event)"
       [index]="0"></cm>
   </div>
-  <div class="readerArea" *ngIf="currentMode === 'parallel'" style="padding: 0px; max-width: 100%;">
-    <cm *ngIf="cmViews.length !== 0 && gotMetadata && showReader === 'source'"
+  <div class="readerAreaP" *ngIf="currentMode === 'parallel'" style="padding: 0px; max-width: 100%; display: flex;">
+    <cm *ngIf="cmViews.length !== 0 && gotMetadata"
       [style.width.px]="width"
       (onSelectionChange)="onSelectionChange($event)"
       (onFocus)="onFocus($event)"
       (onScroll)="onViewportChange($event)"
       (onKeydown)="onKeydown($event)"
       [index]="0"></cm>
-    <cmp *ngIf="cmViewsP.length !== 0 && gotMetadata && showReader === 'target'"
+    <cmp *ngIf="cmViewsP.length !== 0 && gotMetadata"
       [style.width.px]="width"
       (onSelectionChangeP)="onSelectionChangeP($event)"
       (onFocusP)="onFocusP($event)"
       (onScrollP)="onViewportChangeP($event)"
       (onKeydownP)="onKeydownP($event)"
-      [index]="1"></cmp>
+      [index]="0"></cmp>
   </div>
 
   <div class="attributeArea" *ngIf="currentMode !== 'parallel'" style="flex: 0 0 30%; max-width: 30%; width: 30%;">
