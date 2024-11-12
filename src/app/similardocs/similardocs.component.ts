@@ -15,6 +15,7 @@ import { OPENDOCUMENT, AppState } from '../searchreducer';
 import { Store } from '@ngrx/store';
 import { AppComponent } from '../app.component';
 import { SearchRedux } from '../searchreducer';
+import * as d3 from 'd3';
 
 @Component({
   selector: 'similardocs',
@@ -43,9 +44,20 @@ export class SimilarDocsComponent implements OnInit{
 
   panelOpenState = false;
 
+  public graph = {};
+  public currentColorCode = {};
+  public posExist = false;
+  public topEntries = [];
+  public focusWord: string;
   private touchYear = false;
   private touchToken = false;
   public finishLoading = false;
+  public showGraph = false;
+  public showWords = [10, 20, 25, 50];
+  public colorCode = {'substantiv' : '#edbf33', 'adjektiv': '#76c8c8', 'verb': '#d0f400', 'adverb': '#f46a9b',
+    'förled': '#ef9b20', 'interjektion': '#ede15b', 'preposition': '#bdcf32', 'pronomen': '#87bc45',
+    'räkneord': '#27aeef', 'subjunktion': '#b33dc6', 'konjuktion': '#54bebe', 'others': '#6cd4c5'
+  }
 
   public tokens: number[] = [];
   public lowerLimit: number = 0;
@@ -148,7 +160,7 @@ export class SimilarDocsComponent implements OnInit{
           this.availableCorpora = {}; // TODO: Show some error message
         }
     });
-
+    d3.select('svg').remove();
     this.searchRedux = this.store.select('searchRedux');
   }
   
@@ -178,11 +190,37 @@ export class SimilarDocsComponent implements OnInit{
                 'mode_id': this.similarDocs[i]['mode_id'], '_score': this.similarDocs[i]['_score']
             });
             if (tempData[0]['mode_id'] === 'so') {
-              for (let i in tempData) {
-                let word = tempData[i]['title'].split(' ')[0]
-                let pos = tempData[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
-                tempData[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+              let word = this.similarDocs[i]['title'].split(' ')[0]
+              let pos = this.similarDocs[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+              tempData[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+              if (this.topEntries.length < 5) {
+                this.topEntries.push({'key': word, 'value' : (tempData[i]['_score']*100).toFixed(1)});
               }
+              if (_.keys(this.colorCode).includes(pos)) {
+                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode[pos], 'value': (tempData[i]['_score']*100).toFixed(1)});
+                
+              } else {
+                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode['others'], 'value': (tempData[i]['_score']*100).toFixed(1)});
+                // if (!_.keys(this.currentColorCode).includes('others')) {
+                //   this.currentColorCode['others'] = this.colorCode['others'];
+                // }
+              }
+              
+              let tempScore = 0
+              if (1-tempData[i]['_score'] < 0.1) {
+                tempScore = (1-tempData[i]['_score'])*1000
+              } else if (1-tempData[i]['_score'] > 0.1 && 1-tempData[i]['_score'] < 0.2) {
+                tempScore = ((1-tempData[i]['_score'])+0.1)*1000
+              } else if (1-tempData[i]['_score'] > 0.2 && 1-tempData[i]['_score'] < 0.3) {
+                tempScore = ((1-tempData[i]['_score'])+0.15)*1000
+              } else if (1-tempData[i]['_score'] > 0.3 && 1-tempData[i]['_score'] < 0.4) {
+                tempScore = ((1-tempData[i]['_score'])+0.2)*1000
+              } else if (1-tempData[i]['_score'] > 0.4 && 1-tempData[i]['_score'] < 0.5) {
+                tempScore = ((1-tempData[i]['_score'])+0.25)*1000
+              } else {
+                tempScore = ((1-tempData[i]['_score'])+0.3)*1000
+              }
+              this.graph['links'].push({'source': this.focusWord, 'target': word, 'value': tempScore})
             }
         }
         this.similarDocs = tempData;
@@ -318,7 +356,147 @@ export class SimilarDocsComponent implements OnInit{
   ngOnInit() {
     this.availableCorpora = this.metadataService.getAvailableCorpora();
     this.getSimilarDocuments(this.data, this.related_doc_selection, this.currentSelection);
+    let word = this.data['title'].split(' ')[0]
+    let pos = this.data['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+    this.focusWord = word;
+    this.graph['nodes'] = [];
+    this.graph['links'] = [];
+    this.graph['nodes'].push({'id': this.focusWord, 'group': pos, 'colors': this.colorCode[pos], 'value': ''})
     this.currentMode = this.data.mode_id;
+    d3.select('svg').remove();
+  }
+
+  public showGraphData() {
+    if (this.showGraph) {
+      this.showGraph = false;
+    } else {
+      this.showGraph = true;
+      // this.buildChart(10);
+    }
+  }
+
+  public buildChart(itemRange) {
+    var graphX = {nodes: this.graph['nodes'].slice(0,itemRange), links: this.graph['links'].slice(0,itemRange-1)}
+    this.currentColorCode ={};
+    this.posExist = false;
+    for (let item of graphX.nodes) {
+      if (!_.keys(this.colorCode).includes(item['group'])) {
+        if (!_.keys(this.currentColorCode).includes('other')) {
+          this.posExist = true;
+          this.currentColorCode[item['group']] = this.colorCode['others'];
+        }
+      } else {
+        if (!_.keys(this.currentColorCode).includes(item['group'])) {
+          this.posExist = true;
+          this.currentColorCode[item['group']] = this.colorCode[item['group']];
+        } 
+      }
+    }
+    
+    var graph = graphX;
+    let height = 800;
+    let width = 1000;
+    d3.select('#chart').selectAll('svg').remove();
+
+    var svg = d3.select('#chart')
+      .append('svg')
+      .attr("width", width)
+      .attr("height", height)
+    
+    var color = d3.scaleOrdinal()
+
+    var simulation = d3.forceSimulation()
+      .force('link', d3.forceLink().id((d: any) => d.id))
+      .force('charge', d3.forceManyBody().strength(-10))
+      .force('collide', d3.forceCollide((d: any) => d.id === "j" ? 100 : 50))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+    
+    var link = svg.append('g')
+      .attr('class', 'links')
+      .selectAll('line')
+      .data(graph.links)
+      .join('line')
+      .attr('stroke', 'green');
+      
+    if (itemRange === 10 || itemRange === 20 || itemRange === 25){
+      var node = svg.append('g')
+        .attr('class', 'nodes')
+        .selectAll('g')
+        .data(graph.nodes)
+        .enter().append('g');
+
+      node.append('circle')
+        .attr('r', ((d:any) => d.id === this.focusWord ? 15 : 0))
+        .attr('border', '1px solid red')
+        .attr('fill', 'white')
+        .attr('stroke', 'black');
+
+      node.append('circle')
+        .attr('r', 5)
+        .attr('fill', (d: any) => d.colors);
+      
+      
+    
+    node.append("text")
+      .attr("dx", 8)
+      .attr("dy", ".35em")
+      .style("text-anchor", "start")
+      .text(function (d: any) {
+        return d.id;
+      })
+      .attr("font-family", "sans-serif")
+      .attr("font-size", ((d: any) => d.r/ 6))
+      .attr("fill", "black");
+
+    node.append("text")
+      .attr("dx", 8)
+      .attr("dy", "1.3em")
+      .style("text-anchor", "start")
+      .text(function (d: any) {
+        return d.value !== '' ? '(' + d.value+'%)': '';
+      })
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "small")
+      .attr("fill", "black");
+    } else {
+      var node = svg.append('g')
+        .attr('class', 'nodes')
+        .selectAll('g')
+        .data(graph.nodes)
+        .enter().append('g');
+
+      node.append('circle')
+        .attr('r', 5)
+        .attr('fill', (d: any) => d.colors);      
+  
+      node.append("text")
+        .attr("dx", 8)
+        .attr("dy", ".35em")
+        .style("text-anchor", "start")
+        .text(function (d: any) {
+          return d.value !== '' ? d.id + ' (' + d.value + '%)' : '';
+        })
+        .attr("font-family", "sans-serif")
+        .attr("font-size", ((d: any) => d.r/ 6))
+        .attr("fill", "black");
+      }
+
+    simulation
+      .nodes(graph.nodes)
+      .on('tick', ticked)
+    
+    simulation.force('link', d3.forceLink(graph.links).id((d: any) => d.id).distance((d: any) => d.value))
+    
+    function ticked() {
+      link
+        .attr('x1', (d: any) => d.source.x)
+        .attr('y1', (d: any) => d.source.y)
+        .attr('x2', (d: any) => d.target.x)
+        .attr('y2', (d: any) => d.target.y)
+    
+      node
+        .attr('transform', ((d: any) => `translate(${d.x},${d.y})`));
+    }
   }
 }
 

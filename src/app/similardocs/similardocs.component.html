@@ -112,9 +112,11 @@
             </span>
           </div>
         </div>
+        <button class="showGraph" (click)="showGraphData()" style="background-color: lightblue;" *ngIf="currentMode === 'so' && !loadSimilar && !showGraph">Show graph</button>
+        <button class="showGraph" (click)="showGraphData()" style="background-color: lightblue;" *ngIf="currentMode === 'so' && !loadSimilar && showGraph">Show documents</button>
       </div>
 </div>
-<div class="mainBlock">
+<div class="mainBlock" *ngIf="!showGraph">
     <div class="leftBlock">
         <div class="hits_left_column">
             <div class="hits_inner list-group">
@@ -329,4 +331,37 @@
           </mat-accordion>
         </div>
     </div>
+</div>
+<div class="mainBlock" *ngIf="currentMode === 'so' && showGraph">
+  <div class="row" style="min-height: inherit; width: 100%;">
+    <div class="col-md-3" style="padding-left: 20px; border-right: 1px solid #ddd; padding-top: 10px;">
+        <mat-selection-list #wordAnno [multiple]="false">
+            <mat-list-option *ngFor="let item of showWords" [selected]="item && i == 0" [value]="item" (click)="buildChart(item)" style="margin-bottom: 10px; border-radius: 10px !important;">
+                Top {{ item }}
+            </mat-list-option>
+        </mat-selection-list>
+        <div style="border-radius: 10px; border: 1px solid #ddd; padding: 8px;">
+          <div class="graphDetails">
+            <span style="font-weight: bold;">Graph Details</span>
+          </div>
+          <ol>
+            <caption style="min-width: max-content; margin-left: -25px; font-weight: bold;">Top 5 entries</caption>
+            <li *ngFor="let item of topEntries" style="padding: 5px 10px 5px 0px;">{{item.key}} ({{item.value}})</li>
+          </ol>
+          <ul style="list-style-type: none; padding-top: 10px;" *ngIf="posExist">
+            <caption style="min-width: max-content; margin-left: -25px; font-weight: bold;">Part of speech</caption>
+            <li *ngFor="let item of currentColorCode | keyvalue" style="padding: 5px 10px 5px 0px; margin-left: -20px">
+              <div style="display: inline-flex;">
+                <span class="dot" [style.background-color]="item.value"></span>
+                <span style="padding-left: 10px;">{{item.key}}</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+    </div>
+    
+    <div class="col-md-9" style="display: block; padding-top: 10px; padding-right: 4px;">
+      <div id="chart" class="d3-chart" #chart style="padding-top: 30px;"></div>
+    </div>
+  </div>
 </div>
