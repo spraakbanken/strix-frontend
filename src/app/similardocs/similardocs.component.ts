@@ -187,20 +187,20 @@ export class SimilarDocsComponent implements OnInit{
                 'docType': this.similarDocs[i]['doc_type'], 'tokens': this.similarDocs[i]['word_count'], 'authors': this.similarDocs[i]['text_attributes']['author'],
                 'year': this.similarDocs[i]['text_attributes']['year'], 'most_common_words': this.similarDocs[i]['most_common_words'],
                 'ner_tags': this.similarDocs[i]['ner_tags'], 'doc_id': this.similarDocs[i]['doc_id'], 'source_url': this.similarDocs[i]['text_attributes']['url'],
-                'mode_id': this.similarDocs[i]['mode_id'], '_score': this.similarDocs[i]['_score']
+                'mode_id': this.similarDocs[i]['mode_id'], '_score': this.similarDocs[i]['_score'].toFixed(3)
             });
             if (tempData[0]['mode_id'] === 'so') {
               let word = this.similarDocs[i]['title'].split(' ')[0]
               let pos = this.similarDocs[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
               tempData[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
               if (this.topEntries.length < 5) {
-                this.topEntries.push({'key': word, 'value' : (tempData[i]['_score']*100).toFixed(1)});
+                this.topEntries.push({'key': word, 'value' : tempData[i]['_score']});
               }
               if (_.keys(this.colorCode).includes(pos)) {
-                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode[pos], 'value': (tempData[i]['_score']*100).toFixed(1)});
+                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode[pos], 'value': tempData[i]['_score'], '_score': tempData[i]['_score']});
                 
               } else {
-                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode['others'], 'value': (tempData[i]['_score']*100).toFixed(1)});
+                this.graph['nodes'].push({'id': word, 'group': pos, 'colors': this.colorCode['others'], 'value': tempData[i]['_score'], '_score': tempData[i]['_score']});
                 // if (!_.keys(this.currentColorCode).includes('others')) {
                 //   this.currentColorCode['others'] = this.colorCode['others'];
                 // }
@@ -453,7 +453,7 @@ export class SimilarDocsComponent implements OnInit{
       .attr("dy", "1.3em")
       .style("text-anchor", "start")
       .text(function (d: any) {
-        return d.value !== '' ? '(' + d.value+'%)': '';
+        return d._score !== '' ? '(' + d._score+')': '';
       })
       .attr("font-family", "sans-serif")
       .attr("font-size", "small")
@@ -474,7 +474,7 @@ export class SimilarDocsComponent implements OnInit{
         .attr("dy", ".35em")
         .style("text-anchor", "start")
         .text(function (d: any) {
-          return d.value !== '' ? d.id + ' (' + d.value + '%)' : '';
+          return d._score !== '' ? d.id + ' (' + d._score + ')' : '';
         })
         .attr("font-family", "sans-serif")
         .attr("font-size", ((d: any) => d.r/ 6))
