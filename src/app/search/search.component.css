@@ -187,3 +187,12 @@ textarea {
   /* background-color: lightgray; */
   padding: 4px;
 }
+
+::ng-deep .mat-progress-spinner circle, .mat-spinner circle {
+  stroke: chocolate;
+}
+
+.mat-spinner {
+  width: 25px;
+  height: 25px;
+}

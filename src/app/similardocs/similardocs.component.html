@@ -116,7 +116,7 @@
         <button class="showGraph" (click)="showGraphData()" style="background-color: lightblue;" *ngIf="currentMode === 'so' && !loadSimilar && showGraph">Show documents</button>
       </div>
 </div>
-<div class="mainBlock" *ngIf="!showGraph">
+<div class="mainBlock" [hidden]="showGraph">
     <div class="leftBlock">
         <div class="hits_left_column">
             <div class="hits_inner list-group">
@@ -332,7 +332,7 @@
         </div>
     </div>
 </div>
-<div class="mainBlock" *ngIf="currentMode === 'so' && showGraph">
+<div class="mainBlock" [hidden]="currentMode === 'so' && !showGraph">
   <div class="row" style="min-height: inherit; width: 100%;">
     <div class="col-md-3" style="padding-left: 20px; border-right: 1px solid #ddd; padding-top: 10px;">
         <mat-selection-list #wordAnno [multiple]="false">
