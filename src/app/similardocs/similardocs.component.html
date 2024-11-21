@@ -333,7 +333,7 @@
     </div>
 </div>
 <div class="mainBlock" [hidden]="currentMode === 'so' && !showGraph">
-  <div class="row" style="min-height: inherit; width: 100%;">
+  <div class="row" style="min-height: inherit; width: 100%;" *ngIf="currentMode === 'so'">
     <div class="col-md-3" style="padding-left: 20px; border-right: 1px solid #ddd; padding-top: 10px;">
         <mat-selection-list #wordAnno [multiple]="false">
             <mat-list-option *ngFor="let item of showWords" [selected]="item && i == 0" [value]="item" (click)="buildChart(item)" style="margin-bottom: 10px; border-radius: 10px !important;">

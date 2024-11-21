@@ -1,6 +1,5 @@
 export const environment = {
   production: false,
-  // api: "https://ws.spraakbanken.gu.se/ws/strix/v2",
-  api: "https://spraakbanken1.it.gu.se/strixlabb",
+  api: "https://spraakbanken1.it.gu.se/strix/v1",
   auth: "https://sp.spraakbanken.gu.se/auth"
 };

@@ -174,7 +174,8 @@ export class LocService {
       'vb': 'verb',
       'vba': 'verb, förkortning',
       'vbm': 'verb, flerording',
-      'score': 'Score'
+      'score': 'Score',
+      'show_hits': 'Visa träffar'
     },
     'eng' : {
       'swe' : 'Swedish',
@@ -328,7 +329,8 @@ export class LocService {
       'vb': 'verb',
       'vba': 'verb, abbreviation',
       'vbm': 'multiword verb',
-      'score': 'Score'
+      'score': 'Score',
+      'show_hits': 'Show hits'
     }
   };
 
