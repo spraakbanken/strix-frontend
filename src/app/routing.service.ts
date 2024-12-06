@@ -32,6 +32,8 @@ export class RoutingService {
     {tag : "modeSelected", type : FragmentType.STRINGARRAY, default : ["default"]},
     {tag : "keyword_search", type : FragmentType.BOOLEAN, default : false},
     {tag : "documentID", type : FragmentType.STRING, default : ""},
+    {tag : "reference_id", type : FragmentType.STRING, default : ""},
+    {tag : "reference_corpus", type : FragmentType.STRING, default : ""},
     {tag : "sentenceID", type : FragmentType.STRING, default : ""},
     {tag : "documentCorpus", type : FragmentType.STRING, default : ""},
     {tag : "lang", type : FragmentType.STRING, default : "swe"}, // TODO: Get default from some config

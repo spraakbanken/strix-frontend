@@ -212,7 +212,7 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
           // }
 
           // if (this.highlightP2S) {
-          //   this.highlightSourceP(message.documentIndex, this.highlightP2S);
+          //   this.highlightSource(message.documentIndex, this.highlightP2S);
           // }
           // Show the highlights // TODO: Get rid of code doubling (use setTimeout for both cases probably anyway)
           // console.log("highlight data", openedDocument);
@@ -365,20 +365,11 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         let currentToken = activeDocument.token_lookup[this.selectionEndTokenID];
         this.currentAnnotations = currentToken.attrs;
 
-        this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
+        this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);        
         // console.log("currentAnnotations", this.currentAnnotations);
-        // if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('source_ref')) {
-        //   // ['sentence']['attrs']).includes('source_sentence_id')
-        //   // console.log("In here", this.currentAnnotations['source_ref'])
-        //   this.highlightP2S = '';
-        //   this.highlightP2P = '';
-        //   this.highlightS2P = this.currentAnnotations['target_ref']; // ['attrs']['target_sentence_id'];
-        //   this.highlightS2S = this.currentAnnotations['source_ref']; // ['attrs']['source_sentence_id'];
-        //   // this.highlightParallel(1, this.highlightS2P)
-        //   // this.store.dispatch( { type :  HIGHLIGHT_PARALLEL, payload : [this.highlightS2P, this.highlightS2S] });
-        //   // this.store.dispatch( { type :  HIGHLIGHT_SOURCE, payload: this.highlightS})
-        //   // if (_.keys(this.currentAnnotations).includes('tID') && this.currentAnnotations['tID'] !== 't1' && this.activateGo === false)
-        // }
+        if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('source_ref')) {
+          this.highlightParallel(0, this.currentAnnotations['source_ref']);
+        }
       }
 
     }
@@ -410,16 +401,9 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         this.currentAnnotations = currentToken.attrs;
 
         this.currentAnnotationsKeys = Object.keys(this.currentAnnotations);
-        // if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('target_ref')) {
-        //   // ['sentence']['attrs']).includes('target_sentence_id')
-        //   this.highlightS2P = '';
-        //   this.highlightS2S = '';
-        //   this.highlightP2S = this.currentAnnotations['target_ref']; // ['attrs']['target_sentence_id'];
-        //   this.highlightP2P = this.currentAnnotations['source_ref']; // ['attrs']['source_sentence_id']
-        //   this.store.dispatch( { type :  HIGHLIGHT_SOURCE, payload: [this.highlightP2S, this.highlightP2P]})
-        // }
-        // // console.log("currentAnnotations", this.currentAnnotations);
-        
+        if (this.currentMode === 'parallel' && _.keys(this.currentAnnotations).includes('target_ref')) {
+          this.highlightSource(0, this.currentAnnotations['target_ref']);
+        }        
       }
 
     }
@@ -695,15 +679,16 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
 
   private highlightParallel(index: number, targetID: string) {
+    // Clear previous highlights
+    this.clearPreviousHighlightsP();
+    this.clearPreviousHighlights();
+    this.bookmarksP = [];
     let doc = this.documentsService.getDocumentP(index);
-    // console.log("----", doc, index)
-    // let _1 = [];
-    // for (const key in doc.token_lookup) {
-    //   if (doc.token_lookup[key]['attrs']['correction_label'] === 'OCR') {
-    //     _1.push(doc.token_lookup[key]['attrs']['target_ref'])
-    //   }
-    // }
-    // targetID = _1.join(',')
+    if (!doc || !doc.token_lookup) {
+      doc = this.documentsService.getDocumentP(this.cmViewsP[index]);
+      return;
+    }
+
     for (const key in doc.token_lookup) {
       if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
         let mirrorsArrayP = this.mirrorsP.toArray();
@@ -717,21 +702,25 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         let tokenBounds = doc.getTokenBounds(_.toNumber(key));
         let fromCursor = tokenBounds.anchor;
         let toCursor = tokenBounds.head;
-        //let toCursor = tokenBounds.anchor;
-        //let fromCursor = tokenBounds.head;
-        //toCursor.char += 1;// not sure why +1
 
-        // console.log("addHighlight", fromCursor, toCursor);
-
-        cmpInstanceP.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
-        this.bookmarksP.push({
-          "from" : fromCursor,
-          "to" : toCursor,
-          "type" : "highlight",
-          "style" : "bgcolor",
-          "text" : text
-        });
+        // Add new highlight and store the marker
+        let marker = cmpInstanceP.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarksP.push(marker);
       }
+    }
+  }
+
+  private clearPreviousHighlightsP() {
+    if (this.bookmarksP && this.bookmarksP.length > 0) {
+      this.bookmarksP.forEach(marker => marker.clear());
+      this.bookmarksP = [];
+    }
+  }
+
+  private clearPreviousHighlights() {
+    if (this.bookmarks && this.bookmarks.length > 0) {
+      this.bookmarks.forEach(marker => marker.clear());
+      this.bookmarks = [];
     }
   }
 
@@ -769,15 +758,14 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
   }
 
   private highlightSource(index: number, targetID: string) {
+    this.clearPreviousHighlights();
+    this.clearPreviousHighlightsP();
     let doc = this.documentsService.getDocument(index);
-    // console.log("----", doc, index)
-    // let _1 = [];
-    // for (const key in doc.token_lookup) {
-    //   if (doc.token_lookup[key]['attrs']['correction_label'] === 'OCR') {
-    //     _1.push(doc.token_lookup[key]['attrs']['source_ref'])
-    //   }
-    // }
-    // targetID = _1.join(',')
+    if (!doc || !doc.token_lookup) {
+      doc = this.documentsService.getDocument(this.cmViews[index]);
+      return;
+    }
+
     for (const key in doc.token_lookup) {
       if (targetID.split(',').includes(doc.token_lookup[key]['attrs']['source_ref'])) {
         let mirrorsArray = this.mirrors.toArray();
@@ -791,20 +779,9 @@ export class ReaderComponent implements AfterViewInit, OnDestroy {
         let tokenBounds = doc.getTokenBounds(_.toNumber(key));
         let fromCursor = tokenBounds.anchor;
         let toCursor = tokenBounds.head;
-        //let toCursor = tokenBounds.anchor;
-        //let fromCursor = tokenBounds.head;
-        //toCursor.char += 1;// not sure why +1
-
-        // console.log("addHighlight", fromCursor, toCursor);
-
-        cmpInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
-        this.bookmarks.push({
-          "from" : fromCursor,
-          "to" : toCursor,
-          "type" : "highlight",
-          "style" : "bgcolor",
-          "text" : text
-        });
+        
+        let marker = cmpInstance.markText(fromCursor, toCursor, {"css" : "background-color: #d9edf7"});
+        this.bookmarks.push(marker);
       }
     }
   }
