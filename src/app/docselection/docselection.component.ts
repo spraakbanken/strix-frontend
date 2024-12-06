@@ -233,12 +233,15 @@ export class DocselectionComponent implements OnInit {
       (answer: SearchResult) => {
 
         this.documentsWithHits = answer.data;
-        if (this.documentsWithHits[0]['mode_id'] === 'so') {
-          for (let i in this.documentsWithHits) {
-            let word = this.documentsWithHits[i]['title'].split(' ')[0]
-            let pos = this.documentsWithHits[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
-            this.documentsWithHits[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+        if (this.documentsWithHits.length > 0) {
+          if (this.documentsWithHits[0]['mode_id'] === 'so') {
+            for (let i in this.documentsWithHits) {
+              let word = this.documentsWithHits[i]['title'].split(' ')[0]
+              let pos = this.documentsWithHits[i]['title'].split(' ')[1].replace('\)', '').replace('\(', '')
+              this.documentsWithHits[i]['link'] = "https://spraakbanken.gu.se/karp/?mode=salex&lexicon=salex&query=and(equals%7Cortografi%7C%22"+word+"%22%7C%7Cequals%7Cordklass%7C%22"+pos+"%22)";
+            }
           }
+          
         }
         
         setTimeout(() => {

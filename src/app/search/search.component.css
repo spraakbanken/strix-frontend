@@ -119,8 +119,10 @@ textarea {
 }
 
 ::ng-deep .cdk-overlay-container .cdk-overlay-pane{
-  margin-top: -20px !important;
-  margin-left: 10px !important;
+  margin-top: -12px !important;
+  /* margin-left: 10px !important; */
+  width: max-content !important;
+  /* left: 24px !important; */
   /* padding: 0px !important;
   top: 230px !important;
   left: 22px !important; */
@@ -195,4 +197,16 @@ textarea {
 .mat-spinner {
   width: 25px;
   height: 25px;
+}
+
+form {
+  min-width: 60%;
+  border: 1px solid #ddd;
+  border-radius: 10px 0px 0px 10px;
+  height: 60px;
+  display: inline-flex;
+}
+
+.mat-form-field-underline {
+  width: 0px !important;
 }

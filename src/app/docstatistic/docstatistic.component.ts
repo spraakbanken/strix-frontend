@@ -88,10 +88,7 @@ export class DocstatisticComponent implements OnInit {
 
         this.searchRedux.pipe(filter((d) => d.latestAction === FACET_LIST)).subscribe((data) => {
         this.currentFacets = data.facet_list;
-        this.currentFacets = _.pick(
-            this.currentFacets, 
-            ['year', 'party_name', 'blingbring', 'swefn', 'topic_topic_name', 'type', 'author', 
-            'topic_author_signature', 'newspaper', 'categories', 'month', 'initial', 'pos'])
+        
         let tempOrder = [];
         if (data.modeSelected[0] === 'so') {
             tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']

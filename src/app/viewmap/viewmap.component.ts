@@ -96,11 +96,17 @@ export class ViewMapComponent implements OnInit, OnChanges {
         this.callsService.getGeoStatistics(data.selectedCorpora, data.modeSelected, data.include_facets, data.query, data.keyword_search, data.filters).subscribe((result) => {
           let _1 = _.values(result.aggregations)
           let _2 = {};
+          let _3 = [];
           for (let x = 0; x < _1.length; x++) {
             _2[_1[x]['key'].split(';')[0]] = [_1[x]['value'],_1[x]['key']]
+            let count = 0
+            for (let y of _1[x]['value']) {
+              count = count + y.doc_count;
+            }
+            _3.push({'key': _1[x]['key'], 'doc_count': count})
           }
           this.locationCorpora = _2;
-          this.dataFromFacet = result.geo_context.geo_location.buckets
+          this.dataFromFacet = _3 // result.geo_context.geo_location.buckets
           // this.locationArray = _.map(this.dataFromFacet, 'key')
           // this.callsService.getDataforFacet(this.currentC, [this.modeS], 'geo_location', this.locationArray, this.searchString, this.keywordSearch).subscribe((result) => {
           //   let _1 = _.values(result.aggregations)

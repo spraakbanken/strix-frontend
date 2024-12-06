@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import { Observable, Observer, Subscription, Subject } from 'rxjs';
+import { Component, OnInit, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Observable, Observer, Subscription } from 'rxjs';
 import { take, mergeMap, switchMap, filter } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
 import * as moment from "moment";
@@ -12,7 +12,7 @@ import { MetadataService } from 'app/metadata.service';
 import { StrixEvent } from '../strix-event.enum';
 import { SEARCH, CHANGEQUERY, CHANGEFILTERS, CHANGE_IN_ORDER, AppState, SearchRedux, CLOSEDOCUMENT, MODE_SELECTED, VECTOR_SEARCH, SELECTED_CORPORA, VECTOR_SEARCH_BOX, GOTOQUERY, CHANGELANG } from '../searchreducer';
 import { Filter, QueryType } from '../strixquery.model';
-import { FormControl } from '@angular/forms';
+import { FormControl, FormGroup, Validators, FormBuilder, FormArray} from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { AppComponent } from 'app/app.component';
 import { StrixCorpusConfig } from '../strixcorpusconfig.model';
@@ -25,6 +25,13 @@ import * as _ from 'lodash';
 })
 export class SearchComponent implements OnInit {
 
+  @ViewChildren('textInput',{read:ElementRef}) inputs:QueryList<ElementRef>
+  public stringsForm = this.fb.group({
+    strings: new FormArray([])
+  });
+
+  public minWidth = 8;
+  public remainingSpace = 740;
   public myControl = new FormControl();
 
   private searchRedux: Observable<SearchRedux>;
@@ -35,7 +42,6 @@ export class SearchComponent implements OnInit {
 
   private asyncSelected: string = '';
   private asyncSelectedV: string = '';
-  private asyncCopy: string = '';
   private dataSource: Observable<any>;
   public filteredOptions = [];
   public posLocalization = {};
@@ -51,7 +57,7 @@ export class SearchComponent implements OnInit {
 
   public karpResult = [];
   public showHits = false;
-  public valueChanged: Subject<string> = new Subject<string>();
+  // public valueChanged: Subject<string> = new Subject<string>();
 
   public selectSearch = 'Search tokens';
   public selectedOption = 'Search phrase';
@@ -88,18 +94,9 @@ export class SearchComponent implements OnInit {
     this.updateFilters();
   }
 
-  /*
-    field : "fieldname",
-    values : ["value1", "value2"]
-  */
-
   private searchStatusSubscription: Subscription;
   public isSearching = false;
   public isPhraseSearch : boolean = false;
-  private isInitialPart : boolean = false;
-  private isMiddlePart : boolean = false;
-  private isFinalPart : boolean = false;
-  private isCaseSensitive : boolean = false;
   public selectedCorpora: string[];
 
   constructor(private callsService: CallsService,
@@ -108,8 +105,11 @@ export class SearchComponent implements OnInit {
               private appComponent: AppComponent,
               private metadataService: MetadataService,
               private locService: LocService,
-              private store: Store<AppState>) {
+              private store: Store<AppState>,
+              private fb: FormBuilder) {
     this.searchRedux = this.store.select('searchRedux');
+
+    this.strings.push(this.getInput(0))
 
     this.searchRedux.pipe(filter((d) => d.latestAction === CLOSEDOCUMENT)).subscribe((data) => {
       this.isPhraseSearch = !data.keyword_search;
@@ -121,12 +121,6 @@ export class SearchComponent implements OnInit {
 
     this.searchRedux.pipe(filter((d) => d.latestAction === SELECTED_CORPORA)).subscribe((data) => {
       this.selectedCorpora = data.corporaInMode;
-      // this.posLocalization = {};
-      // for (let i of this.metadataService.getWordAnnotationsFor(data.selectedCorpora[0])) {
-      //   if (i['name'] === 'pos') {
-      //     this.posLocalization = i.translation_karp
-      //   }
-      // }
     });
 
     this.searchRedux.pipe(filter((d) => d.latestAction === GOTOQUERY)).subscribe((data) => {
@@ -145,12 +139,12 @@ export class SearchComponent implements OnInit {
     })
 
     this.searchRedux.pipe(filter((d) => d.latestAction === MODE_SELECTED)).subscribe((data) => {
-      // this.isPhraseSearch = !data.keyword_search;
       this.asyncSelected = '';
-      this.asyncCopy = '';
       this.asyncSelectedV = '';
       this.isPhraseSearch = true;
       this.vectorSearch = false;
+      this.strings.clear();
+      this.addString(-1);
       this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
       this.store.dispatch({ type: CHANGEQUERY, payload : this.asyncSelected});
       this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
@@ -160,8 +154,6 @@ export class SearchComponent implements OnInit {
       if (data.search_type === 'vector') {
         this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: {'search_type': 'vector', 'search_box': true}});
       }
-      // this.store.dispatch({ type: SEARCH, payload : null});
-        // this.simpleSearch();
     });
 
     this.searchStatusSubscription = queryService.searchStatus$.subscribe(
@@ -184,45 +176,60 @@ export class SearchComponent implements OnInit {
       observer.next(this.asyncSelected);
     }).pipe(mergeMap((token: string) => this.karpService.lemgramsFromWordform(this.asyncSelected)));
 
-    this.valueChanged
-      .pipe(debounceTime(0), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue.replace('"', ''))))
-      .subscribe(value => {
-        this.karpResult = value;
-        this.filteredOptions = this.karpResult.filter(item => !item.includes('...'));
-        this.filteredOptions = this.filteredOptions.filter(item => (!item.includes("_")))
-        this.filteredOptions.sort();
-        // console.log(value);
-      })
+    // this.valueChanged
+    //   .pipe(debounceTime(0), switchMap(changedValue => this.karpService.lemgramsFromWordform(changedValue.replace('"', ''))))
+    //   .subscribe(value => {
+    //     this.karpResult = value;
+    //     this.filteredOptions = this.karpResult.filter(item => !item.includes('...'));
+    //     this.filteredOptions = this.filteredOptions.filter(item => (!item.includes("_")))
+    //     this.filteredOptions.sort();
+    //     // console.log(value);
+    //   })
   }
 
   ngOnInit() {
       this.availableCorpora = this.metadataService.getAvailableCorpora();
       this.searchRedux.pipe(take(1)).subscribe(data => {
-      // this.getHistogramData(data.corpora);
       this.isPhraseSearch = !data.keyword_search
-      // this.posLocalization = {};
-      // let wordAnno = this.availableCorpora['vivill']['wordAttributes'];
-      // for (let i of wordAnno) {
-      //   if (i['name'] === 'pos') {
-      //     this.posLocalization = i.translation_karp
-      //   }
-      // }
-      // for (let i in this.posLocalization) {
-      //   this.posEng[this.posLocalization[i].eng] = i;
-      // }
       if(data.query) {
-        this.asyncSelected = data.query.replace('§', ' ').replace(/lemgram:/g, '').replace(/word:/g, '');
-        let y = [];
-        for (let i of this.asyncSelected.split(' ')) {
-          if (i.includes('..')) {
-            y.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')');
-            this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')'] = i;
-            this.saveLemgrams[i] = i.split('..')[0] + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')';
-          } else {
-            y.push(i)
+        this.asyncSelected = '';
+        let storedQuery = data.query.split('§')
+        for (let item in storedQuery) {
+          if (storedQuery[item].split(':')[0] === 'word') {
+            this.strings.insert(Number(item), this.fb.group({
+              currentInput: this.fb.control(storedQuery[item].split(':')[1]),
+              currentWidth: this.fb.control((storedQuery[item].split(':')[1].length +1) * 7),
+              backgroundColor: this.fb.control('lightblue'),
+              savedLemgram: this.fb.control(''),
+              savedWord: this.fb.control(storedQuery[item].split(':')[1])
+            })
+            )
+          } else if (storedQuery[item].split(':')[0] === 'lemgram') {
+            this.strings.insert(Number(item), this.fb.group({
+              currentInput: this.fb.control(storedQuery[item].split(':')[1].split('..')[0].replace(/_/g, ' ') + ' (' 
+              + this.locService.getTranslationFor(storedQuery[item].split(':')[1].split('..')[1].split('.')[0]) + ')'),
+              currentWidth: this.fb.control((storedQuery[item].split(':')[1].split('..')[0].replace(/_/g, ' ') + ' (' 
+              + this.locService.getTranslationFor(storedQuery[item].split(':')[1].split('..')[1].split('.')[0]) + ')').length * 7),
+              backgroundColor: this.fb.control('bisque'),
+              savedLemgram: this.fb.control(storedQuery[item].split(':')[1]),
+              savedWord: this.fb.control('')
+            })
+            )
           }
         }
-        this.asyncSelected = y.join(' ')
+        for (let item in this.strings.controls) {
+          this.asyncSelected = this.asyncSelected + ' ' + this.strings.controls[item].value.currentInput;
+          if (this.strings.controls[item].value.currentInput.length === 0) {
+            let currentSpace = 0;
+            for (let item1 of this.strings.controls) {
+              currentSpace = currentSpace + item1.value.currentWidth;
+            }
+            this.strings.controls[item].patchValue({"currentWidth": this.remainingSpace - currentSpace});
+          }
+        }
+        setTimeout(()=>{
+          this.inputs.last.nativeElement.focus()
+        })
       }
       if (data.search_type === "simple") {
         this.vectorSearch = false;
@@ -233,227 +240,159 @@ export class SearchComponent implements OnInit {
         this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
       };
     });
+  }
 
-    /* this.searchRedux.filter((d) => d.latestAction === CHANGECORPORA).subscribe((data) => {
-      console.log("acting upon", data.latestAction);
-      this.getHistogramData(data.corpora);
-    }); */
+  get strings() {
+    return this.stringsForm.get('strings') as FormArray;
+  }
+
+  public addString(id) {
+    for (let item in this.strings.controls) {
+      if (this.strings.controls[item].value['currentInput'] === '') {
+        this.removeString(Number(item))
+      }
+    }
+    if (id === this.strings.controls.length) {
+      this.strings.push(this.getInput(id))
+    } else {
+      this.strings.insert(id+1, this.getInput(id+1))
+    }
+    
+    setTimeout(()=>{
+      let inputID = document.getElementById("id_"+(id+1).toString())
+      inputID.focus()
+  })
+  }
+
+  public getInput(item): FormGroup {
+    let currentSpace = 0
+    for (let item of this.strings.controls) {
+      if (item.value.currentWidth > 0) {
+        currentSpace = currentSpace + item.value.currentWidth;
+      }
+    }
+    let assignSpace = 0;
+    if (item === this.strings.controls.length) {
+      assignSpace = this.remainingSpace-currentSpace
+    } else {
+      assignSpace = this.minWidth
+    }
+    return this.fb.group({
+      currentInput: this.fb.control('', [Validators.required, Validators.pattern(/^[a-zA-Z()\s\u00E4\u00E5\u00F6\u00C4\u00C5\u00D6]+$/)]),
+      currentWidth: this.fb.control(assignSpace),
+      backgroundColor: this.fb.control('transparent'),
+      savedLemgram: this.fb.control(''),
+      savedWord: this.fb.control('')
+    })
+  }
+
+  public removeString(index: number) {
+    this.strings.removeAt(index);
+    for (let item in this.strings.controls) {
+      if (this.strings.controls[item].value.currentInput.length === 0 && Number(item) === this.strings.controls.length -1) {
+        let currentSpace = 0;
+        for (let item1 of this.strings.controls) {
+          currentSpace = currentSpace + item1.value.currentWidth;
+        }
+        this.strings.controls[item].patchValue({"currentWidth": this.remainingSpace - currentSpace});
+      }
+    }
+    this.simpleSearch();
+  }
+
+  public clearStrings() {
+    this.strings.clear();
+  }
+
+  public resize(event, controlID) {
+    this.filteredOptions = [];
+    if (event.target.value === '') {
+      if (controlID !== 0) {
+        setTimeout(() => {
+          let focusInput = document.getElementById("id_"+(controlID-1).toString())
+          focusInput.focus()
+        });
+      } else if (controlID === 0 && this.strings.controls.length > 1) {
+        this.removeString(Number(controlID))
+        setTimeout(() => {
+          let focusInput = document.getElementById("id_"+(controlID).toString())
+          focusInput.focus()
+        });
+      } 
+    } else {
+      for (let item in this.strings.controls) {
+        if (this.strings.controls[item].value['currentInput'] === '') {
+          this.removeString(Number(item))
+        }
+      }
+      if (event.data === " ") {
+        if (this.strings.controls[controlID].value['savedLemgram'] === '') {
+          this.strings.controls[controlID].patchValue({"savedWord": this.strings.controls[controlID].value['currentInput'].slice(0, -1)})
+          this.strings.controls[controlID].patchValue({"currentInput": this.strings.controls[controlID].value['currentInput'].slice(0, -1)})
+          this.strings.controls[controlID].patchValue({"backgroundColor": "lightblue"})
+        }
+        if (this.strings.controls[controlID].value['savedLemgram'].length > 0) {
+          this.strings.controls[controlID].patchValue({"currentInput": this.strings.controls[controlID].value['currentInput'].slice(0, -1)})
+          this.strings.controls[controlID].patchValue({"backgroundColor": "bisque"})
+        }
+        this.simpleSearch();
+        this.addString(controlID); 
+      } else {
+        if (this.strings.controls[controlID].value['savedLemgram'].length > 0) {
+          this.strings.controls[controlID].patchValue({"currentInput": event.target.value.split(' ')[0] })
+        }
+        this.strings.controls[controlID].patchValue({"savedLemgram": '' })
+        this.strings.controls[controlID].patchValue({'savedWord': ''})
+        this.strings.controls[controlID].patchValue({'backgroundColor': 'lightblue'})
+        this.karpService.getLemgramFromWordForm(event.target.value.split(' ')[0]).subscribe(data => {
+          this.karpResult = data;
+          this.filteredOptions = this.karpResult.filter(item => !item.includes('...'));
+          this.filteredOptions = this.filteredOptions.filter(item => (!item.includes("_")))
+          this.filteredOptions.sort();
+          this.filteredOptions = [this.filteredOptions, controlID];
+        });
+        this.strings.controls[controlID].patchValue({"currentWidth": Math.max(this.minWidth, (this.strings.controls[controlID].value['currentInput'].length+1) * 7)})
+      }
+    }    
   }
 
   public searchTypeChange(val) {
-    // console.log("searchTypeChange", val)
     this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
   public searchVectorMode(val) {
-    // console.log("searchVectorMode", val, this.vectorSearch)
     this.store.dispatch({type : VECTOR_SEARCH_BOX, payload: !val})
-    // if (!val) {
-    //   this.clearSimpleSearch();
-    // }
   }
 
   private clearSimpleSearch() {
     this.asyncSelected = '';
-    this.asyncCopy = '';
+    this.strings.clear();
+    this.remainingSpace = 740;
+    this.addString(-1);
     this.simpleSearch();
-    // this.store.dispatch({type : CHANGE_IN_ORDER, payload: !val})
   }
 
-  public getLemgram() {
-    // console.log("----", this.myControl.value, this.myControl.value.split('..')[0], this.stringInFocus, this.tempStore, this.asyncCopy)
-    let startChar = '';
-    let middleString = [];
-    let endChar = '';
-    if (this.tempStore.slice(0,1) === '"') {
-      this.tempStore = this.tempStore.substring(1)
-      startChar = '"'
-    }
-    if (this.tempStore.slice(-1) === '"') {
-      this.tempStore = this.tempStore.slice(0, -1)
-      endChar = '"'
-    }
-    let newStore = ''; 
-    if (this.myControl.value.includes('_') && this.myControl.value.split('..')[0] !== this.stringInFocus) {
-      this.asyncCopy = this.asyncCopy.replace(this.stringInFocus+'$', this.myControl.value)
-      newStore = this.tempStore.replace(this.stringInFocus+'$', this.myControl.value)
-    } else if (this.myControl.value.split('..')[0] === this.stringInFocus.replace('"', '')) {
-      this.asyncCopy = this.asyncCopy.replace(this.stringInFocus, this.myControl.value)
-      if (this.stringInFocus.includes('$')) {
-        newStore = this.tempStore.replace(this.stringInFocus+'$', this.myControl.value).replace('$', '')
-      } else {
-        newStore = this.tempStore.replace(this.stringInFocus.replace('"', ''), this.myControl.value).replace('$', '')
-      }
-    } else {
-      newStore = this.tempStore.replace(this.stringInFocus, this.myControl.value).replace('$', '')
-    }
-    this.tempStore = newStore;
-    if (this.tempStore.split(' ').length > 1) {
-      for (let i of this.tempStore.split(' ')) {
-        if (i.includes('..')) {
-          i = i.replace(/ /g, '_')
-          middleString.push(i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')');
-          this.saveStrings[i.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')'] = i;
-          this.saveLemgrams[i] = i.split('..')[0] + '(' + this.locService.getTranslationFor(i.split('..')[1].split('.')[0]) + ')';
-        } else {
-          middleString.push(i)
+  public selectLemgram(event, controlID) {
+    for (let item in this.strings.controls) {
+      if (item !== controlID) {
+        if (this.strings.controls[item].value['savedWord'].length > 0) {
+          this.strings.controls[item].patchValue({'currentInput': this.strings.controls[item].value['savedWord']})
         }
-      }
-    } else if (this.myControl.value.includes('..')) {
-      middleString.push(this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')');
-      this.saveStrings[this.myControl.value.split('..')[0].replace(/_/g, ' ') + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')'] = this.myControl.value;
-      this.saveLemgrams[this.myControl.value] = this.myControl.value.split('..')[0] + '(' + this.locService.getTranslationFor(this.myControl.value.split('..')[1].split('.')[0]) + ')';
-    } else {
-      middleString.push(newStore)
-    }
-    this.asyncSelected = startChar+middleString.join(' ')+endChar;
-    // console.log(this.saveLemgrams, this.saveStrings)
-  }
-
-  private onChangeEvent(event: any) {
-    if (event.inputType === 'deleteContentBackward') {
-      let x = event.target.value;
-      let y  = {};
-      let z1 = [];
-      let z2 = [];
-      for (let i in x) {
-        if (x[i] === ' ') {
-          y[z1.join('')] = z2
-          z1 = [];
-          z2 = [];
-        } else if (x.length-1 === Number(i)) {
-          z1.push(x[i]);
-          z2.push(i);
-          y[z1.join('')] = z2
-        } else {
-          z1.push(x[i]);
-          z2.push(i);
-        }
-      }
-      if (_.keys(y).length > 0) {
-        let keyFound = false
-        for (let key in y) {
-          if (y[key].includes(String(event.target.selectionStart-1)) && (key.includes("\(") || key.includes("\)")) && key.slice(-1) !== ")" && !keyFound) {
-            keyFound = true
-            if (key[0] === '"') {
-              this.asyncSelected = this.asyncSelected.replace(key.substring(1), '');
-              this.asyncCopy =  this.asyncCopy.replace(this.saveStrings[key.substring(1)+')'], '')
-              event.target.value = event.target.value.replace(key.substring(1), ' ')
-            } else if (key.slice(-1) === '"') {
-              this.asyncSelected = this.asyncSelected.replace(key.slice(0, -1), '');
-              this.asyncCopy =  this.asyncCopy.replace(this.saveStrings[key.slice(0, -1)+')'], '')
-              event.target.value = event.target.value.replace(key.slice(0, -1), '')
-            } else {
-              this.asyncSelected = this.asyncSelected.replace(key, '');
-              event.target.value = event.target.value.replace(key, '')
-              this.asyncCopy =  this.asyncCopy.replace(this.saveStrings[key+')'], '')
-            }
-          }
-          if (this.asyncSelected[0] === ' ') {
-            this.asyncSelected = this.asyncSelected.replace(' ', '')
-            event.target.value = event.target.value.replace(' ', '')
-          }
-          if (this.asyncSelected.slice[-1] === ' ') {
-            this.asyncSelected = this.asyncSelected.replace(' ', '')
-            event.target.value = event.target.value.replace(' ', '')
-          }
-          this.asyncSelected = this.asyncSelected.replace('  ', ' ')
-          this.asyncSelected = this.asyncSelected.replace('" ', '"')
-          this.asyncSelected = this.asyncSelected.replace(' "', '"')
-          this.asyncCopy = this.asyncCopy.replace('  ', ' ')
-          this.asyncCopy = this.asyncCopy.replace('" ', '"')
-          this.asyncCopy = this.asyncCopy.replace(' "', '"')
-          // this.simpleSearch();
+        if (this.strings.controls[item].value['savedLemgram'].length > 0) {
+          this.strings.controls[item].patchValue({'currentInput':  this.strings.controls[item].value['savedLemgram'].split('..')[0].replace(/_/g, ' ') + ' (' 
+            + this.locService.getTranslationFor(this.strings.controls[item].value['savedLemgram'].split('..')[1].split('.')[0]) + ')'})
         }
       }
     }
-    this.filteredOptions = [];
-    if (event.target.selectionStart === event.target.value.length || event.target.value[event.target.selectionStart] === '"') {
-      let currentString = '';
-      if (event.target.value.includes(' ')) {
-        this.asyncCopy = event.target.value;
-        for (let key in this.saveStrings) {
-          if (this.asyncCopy.includes(key)) {
-            this.asyncCopy = this.asyncCopy.replace(key, this.saveStrings[key])
-          }
-        }
-        let temp = this.asyncCopy.split(' ');
-        currentString = temp.splice(-1, 1)[0];
-        this.stringInFocus = currentString.replace('"', '');
-        this.tempStore = temp.join(' ') + ' ' + currentString+'$';
-        this.asyncCopy = this.asyncCopy+'$';
-        this.valueChanged.next(currentString);
-      } else {
-        currentString = event.target.value;
-        this.asyncCopy = event.target.value+'$';
-        this.tempStore = event.target.value+'$';
-        this.stringInFocus = currentString.replace('"', '');
-        this.valueChanged.next(currentString);
-      }
-    } else if (event.target.value[event.target.selectionStart] === ' ') {
-      let x = event.target.value;
-      let y  = {};
-      let z1 = [];
-      let z2 = [];
-      for (let i in x) {
-        if (x[i] === ' ') {
-          y[z1.join('')] = z2
-          z1 = [];
-          z2 = [];
-        } else if (x.length-1 === Number(i)) {
-          z1.push(x[i]);
-          z2.push(i);
-          y[z1.join('')] = z2
-        } else {
-          z1.push(x[i]);
-          z2.push(i);
-        }
-      }
-      if (_.keys(y).length > 1) {
-        let tempArray = [];
-        let currentString = '';
-        for (let key in y) {
-          if (y[key].includes(String(event.target.selectionStart-1))) {
-            currentString = key;
-            this.stringInFocus = currentString;
-            tempArray.push(key+'$');
-          } else {
-            tempArray.push(key)
-          }
-        }
-        this.asyncCopy = tempArray.join(' ');
-        for (let key in this.saveStrings) {
-          if (this.asyncCopy.includes(key)) {
-            this.asyncCopy = this.asyncCopy.replace(key, this.saveStrings[key])
-          }
-        }
-        this.tempStore = this.asyncCopy;
-        this.valueChanged.next(currentString);
-      }
-    } else {
-      // need to see if this condition will ever be used in search
-      // console.log("If this condition is executed then it will leads to nowhere, need to be rewritten in that case.")
-      if (event.target.value.includes(' ')) {
-        let x = event.target.value;
-        let y  = {};
-        let z1 = [];
-        let z2 = [];
-        for (let i in x) {
-          if (x[i] === ' ') {
-            y[z1.join('')] = z2
-            z1 = [];
-            z2 = [];
-          } else if (x.length-1 === Number(i)) {
-            z1.push(x[i]);
-            z2.push(i);
-            y[z1.join('')] = z2
-          } else {
-            z1.push(x[i]);
-            z2.push(i);
-          }
-        }
-      }
-    }
+    this.strings.controls[controlID].patchValue({"savedLemgram": event.option.value})
+    this.strings.controls[controlID].patchValue({"currentInput": event.option.value.split('..')[0].replace(/_/g, ' ') + ' (' + this.locService.getTranslationFor(event.option.value.split('..')[1].split('.')[0]) + ')'})
+    this.strings.controls[controlID].patchValue({"currentWidth": (this.strings.controls[controlID].value['currentInput'].length) * 7})
+    this.strings.controls[controlID].patchValue({"backgroundColor": "bisque"})
+    this.addString(controlID);
+    setTimeout(() => {
+      this.simpleSearch();
+    });
+   
   }
 
   public changeSearchType(item) {
@@ -480,6 +419,25 @@ export class SearchComponent implements OnInit {
       this.appComponent.selectedTabV.setValue(0);
       this.store.dispatch({type : VECTOR_SEARCH, payload: {'vc': this.vectorSearch, '_query': this.asyncSelectedV}})
     } else {
+      let tempAsync = [];
+      this.asyncSelected = '';
+      for (let item in this.strings.value) {
+        if (this.strings.value[item].savedLemgram.length > 0) {
+          tempAsync.push('lemgram:'+this.strings.value[item].savedLemgram)
+          this.asyncSelected = this.asyncSelected + ' ' + this.strings.value[item].savedLemgram;
+        } else if (this.strings.value[item].savedWord.length > 0) {
+          tempAsync.push('word:'+this.strings.value[item].savedWord) 
+          this.asyncSelected = this.asyncSelected + ' ' + this.strings.value[item].savedWord;
+        } else if (this.strings.value[item].currentInput.length > 0) {
+          this.strings.controls[item].patchValue({"savedWord": this.strings.controls[item].value['currentInput']})
+          this.strings.controls[item].patchValue({"currentInput": this.strings.controls[item].value['currentInput']})
+          this.strings.controls[item].patchValue({"backgroundColor": "lightblue"})
+          this.strings.controls[item].patchValue({"currentWidth": (this.strings.controls[item].value['currentInput'].length+1) * 7})
+          tempAsync.push('word:'+this.strings.value[item].currentInput) 
+          this.asyncSelected = this.asyncSelected + ' ' + this.strings.value[item].currentInput;
+          this.addString(Number(item));
+        }
+      }
       if (this.asyncSelected.includes('""') || this.asyncSelected.includes('" "')) {
         this.isPhraseSearch = true;
         this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
@@ -493,83 +451,8 @@ export class SearchComponent implements OnInit {
         this.isPhraseSearch = false;
         this.store.dispatch({ type: CHANGE_IN_ORDER, payload : !this.isPhraseSearch});
       }
-      // this.store.dispatch({type : VECTOR_SEARCH, payload: this.vectorSearch})
-      this.asyncCopy = this.asyncCopy.replace('$', '');
-      if (this.asyncSelected[this.asyncSelected.length-1] === ' ') {
-        let tempData = [];
-        for (let x of this.asyncCopy.split(' ')) {
-          if (_.keys(this.saveStrings).includes(x)) {
-            tempData.push(this.saveStrings[x])
-          } else if (x.includes('(') && x.includes(')')) {
-            let inString = x.replace(')', '');
-            let splitString = inString.split('(');
-            let numberString = '1';
-            if (splitString[0].slice(-1) === '2') {
-              numberString = '2';
-              tempData.push(splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.2')
-            } else if (splitString[0].slice(-1) === '3') {
-              tempData.push(splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.3')
-            } else {
-              tempData.push(splitString[0]+'..'+this.locService.getTranslationFor(splitString[1])+'.1')
-            }
-          } else {
-            tempData.push(x)
-          } 
-        }
-        let tempDataX = []
-        
-        for (let i of tempData) {
-          if (i.includes('..')) {
-            tempDataX.push('lemgram:'+i)
-          } else if (i.length > 0) {
-            tempDataX.push('word:'+i)
-          }
-        }
-        this.store.dispatch({ type: CHANGEQUERY, payload : tempDataX.join('§').replace(/"/g, '')});
-        this.store.dispatch({ type: SEARCH, payload : null});
-      } else {
-        let tempData = [];
-        for (let x of this.asyncCopy.split(' ')) {
-          let startChar = '';
-          let endChar = '';
-          if (x.slice(-1) === '"') {
-            x = x.slice(0, -1)
-            endChar = ''
-          }
-          if (x.slice(0,1) === '"') {
-            x = x.substring(1)
-            startChar = ''
-          }
-          if (_.keys(this.saveStrings).includes(x)) {
-            tempData.push(startChar+this.saveStrings[x]+endChar)
-          } else if (x.includes('(') && x.includes(')')) {
-            let inString = x.replace(')', '');
-            let splitString = inString.split('(');
-            let numberString = '1';
-            if (splitString[0].slice(-1) === '2') {
-              numberString = '2';
-              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.2'+endChar)
-            } else if (splitString[0].slice(-1) === '3') {
-              tempData.push(startChar+splitString[0].slice(0,-1)+'..'+this.locService.getTranslationFor(splitString[1])+'.3'+endChar)
-            } else {
-              tempData.push(startChar+splitString[0]+'..'+this.locService.getTranslationFor(splitString[1])+'.1'+endChar)
-            }
-          } else {
-            tempData.push(startChar+x+endChar)
-          } 
-        }
-        let tempDataX = []
-        
-        for (let i of tempData) {
-          if (i.includes('..')) {
-            tempDataX.push('lemgram:'+i)
-          } else if (i.length > 0) {
-            tempDataX.push('word:'+i)
-          }
-        }
-        this.store.dispatch({ type: CHANGEQUERY, payload : tempDataX.join('§').replace(/"/g, '')});
-        this.store.dispatch({ type: SEARCH, payload : null});
-      }
+      this.store.dispatch({ type: CHANGEQUERY, payload : tempAsync.join('§').replace(/"/g, '')});
+      this.store.dispatch({ type: SEARCH, payload : null});
     }
   }
 
@@ -601,5 +484,4 @@ export class SearchComponent implements OnInit {
     this.store.dispatch({ type: CHANGEFILTERS, payload : this.currentFilters});
     this.store.dispatch({ type: SEARCH, payload : null});
   }
-
 }

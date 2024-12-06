@@ -169,35 +169,34 @@ export class FilterdataComponent implements OnInit {
       this.collectControl = new FormArray([]);
       this.collectX = [];
       this.resultFacet = [];
-      if (this.selectedCorpus.length > 0) {
-        this.callsService.getModeStatistics(this.selectedCorpus, data.modeSelected).subscribe((result) => {
-          let resultFacets = result.list_facet;
-          this.facetList = result.list_facet;
-          let tempOrder = [];
-          if (data.modeSelected[0] === 'so') {
-            tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']
-          } else {
-            tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
-                'topic_author_signature', 'blingbring', 'categories', 'month', 'initial', 'pos']
-          }
-          let tempNew = []
-          for (let i of tempOrder) {
-            if (_.keys(resultFacets).includes(i)) {
-              tempNew.push({'key':i, 'value':resultFacets[i]})
+      this.availableCorpora = this.metadataService.getAvailableCorpora();
+      let resultFacets = {}
+      for (let item of this.selectedCorpus) {
+        if (_.keys(this.availableCorpora).includes(item)) {
+          for (let textAttr of this.availableCorpora[item].textAttributes) {
+            if (!_.keys(resultFacets).includes(textAttr.name)) {
+              resultFacets[textAttr.name] = textAttr.translation_name
             }
           }
-          this.resultFacet = tempNew;
-          this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
-          this.defaultFacetsNew();
-        });
-        // this.updatedData();
-        // setTimeout(() => {
-        //   this.store.dispatch( { type :  FACET_LIST, payload : this.facetList })
-        //   // this.selectSearch('basicFilter');
-        //   this.basicFacets["year"] = false;
-        //   this.defaultFacets();
-        // }, 4000);
+        }
       }
+
+      let tempOrder = []
+      if (data.modeSelected[0] === 'so') {
+        tempOrder =  ['initial', 'pos', 'swefn', 'blingbring']
+      } else {
+        tempOrder = ['year', 'newspaper', 'type', 'author', 'party_name', 'swefn', 'topic_topic_name', 
+            'topic_author_signature', 'blingbring', 'categories', 'month', 'initial', 'pos']
+      }
+      let tempNew = []
+      for (let i of tempOrder) {
+        if (_.keys(resultFacets).includes(i)) {
+          tempNew.push({'key':i, 'value':resultFacets[i]})
+        }
+      }
+      this.resultFacet = tempNew;
+      this.store.dispatch( { type :  FACET_LIST, payload : resultFacets })
+      this.defaultFacetsNew();
     });
 
     this.searchResultSubscription = queryService.searchResult$.subscribe(

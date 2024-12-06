@@ -13,6 +13,12 @@ export class KarpService {
 
   constructor(private http: HttpClient) { }
 
+  public getLemgramFromWordForm(wordform: string) : Observable<string[]> {
+    let url = `${this.KARPBACKEND_URL}/query/saldom?q=equals%7CinflectionTable.writtenForm%7C${wordform}&path=entry.lemgram`;
+    let result = this.http.get(url).pipe(
+      map(this.extractDocumentData),catchError(this.handleError));
+    return result;
+  }
   public lemgramsFromWordform(wordform: string) : Observable<string[]> {
     if (wordform === "") return from([]);
     // console.log("Getting Karp lemgrams from the wordform", wordform);

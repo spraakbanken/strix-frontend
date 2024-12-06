@@ -16,11 +16,11 @@
       <a class="nav-link" id="advanceFilter-tab" data-toggle="tab" href="#advanceFilter" role="tab" aria-controls="advanceFilter" aria-selected="false" (click)="selectSearch('advanceFilter')">Advance Filters</a>
     </li> -->
   </ul>   
-  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 0px; padding-right: 0px;" [style.height]="(!vectorSearchActive)?'90px':'130px'">
+  <div class="col-xl-12" id="searchView" *ngIf="selectType === 'searchView'" style="padding-left: 0px; padding-right: 0px;" [style.height]="(!vectorSearchActive)?'100px':'130px'">
     <div class="filters_area" *ngIf="!openDocument && gotMetadata" style="padding: 0px; border: 1px solid #ddd; border-bottom: 0px;">
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show" [ngClass]="{'active': simple_active}" id="simpleSearch" role="tabpanel" aria-labelledby="simpleSearch-tab" *ngIf="simpleSearch"
-        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 25px 10px 10px 14px;">
+        style="display: flex; align-items: baseline; justify-content: space-between; flex-wrap: wrap; padding: 16px 10px 10px 14px;">
           <search style="padding-left: 10px; width: 90%;" *ngIf="!openDocument"></search>
         </div>
         <!-- <div class="tab-pane fade" id="advanceSearch" role="tabpanel" aria-labelledby="advanceSearch-tab" *ngIf="advanceSearch"

@@ -332,7 +332,7 @@ export class CallsService {
     if (include_list.length) {
       params.include_facets = include_list.join(",");
     }
-    return this.get<any>('facet_stats', params).pipe(
+    return this.get<any>('aggs', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -380,7 +380,8 @@ export class CallsService {
     if (modes) {
       params.modes = modes.join(",");
     }
-    return this.get<any>('mode_stats', params).pipe(
+    params.facet_count = 0;
+    return this.get<any>('aggs', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -394,7 +395,8 @@ export class CallsService {
     if (modes) {
       params.modes = modes.join(",");
     }
-    return this.get<any>('year_stats', params).pipe(
+    params.include_facets = "year";
+    return this.get<any>('aggs', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -411,7 +413,8 @@ export class CallsService {
     if (yearInfo) {
       params.text_filter = JSON.stringify({'yearR': [yearInfo]});
     }
-    return this.get<any>('get_corpora', params).pipe(
+    params.include_facets = "corpus_id,year";
+    return this.get<any>('aggs', params).pipe(
       catchError(this.handleError)
     );
   }
@@ -537,12 +540,12 @@ export class CallsService {
     let params: any = {
       exclude : 'token_lookup,dump,lines',
     };
-    params.related_doc_selection = relDoc;
+    // params.related_doc_selection = relDoc;
     if (corpora) {
       params.corpora = corpora.join(",");
     }
     // params.text_filter = this.formatFilterObject([{field: "mode_id", value: modeID}]);
-    return this.get<StrixDocument>(`similar/${modeID}/${corpusID}/${documentID}`, params).pipe(
+    return this.get<StrixDocument>(`similar/${corpusID}/${documentID}`, params).pipe(
       catchError(this.handleError)
     );
   }
@@ -555,7 +558,7 @@ export class CallsService {
       params.corpora = corpora.join(",");
     }
     // params.text_filter = this.formatFilterObject([{field: "mode_id", value: modeID}]);
-    return this.get(`search_vector/${modeID}`, params).pipe(
+    return this.get('search_vector', params).pipe(
       catchError(this.handleError)
     );
   }
