@@ -210,17 +210,17 @@ export class SimilarDocsComponent implements OnInit{
               if (1-tempData[i]['_score'] < 0.1) {
                 tempScore = (1-tempData[i]['_score'])*1000
               } else if (1-tempData[i]['_score'] > 0.1 && 1-tempData[i]['_score'] < 0.2) {
-                tempScore = ((1-tempData[i]['_score'])+0.1)*1000
+                tempScore = ((1-tempData[i]['_score']))*1000
               } else if (1-tempData[i]['_score'] > 0.2 && 1-tempData[i]['_score'] < 0.3) {
-                tempScore = ((1-tempData[i]['_score'])+0.15)*1000
+                tempScore = ((1-tempData[i]['_score']))*1000
               } else if (1-tempData[i]['_score'] > 0.3 && 1-tempData[i]['_score'] < 0.4) {
-                tempScore = ((1-tempData[i]['_score'])+0.2)*1000
+                tempScore = ((1-tempData[i]['_score'])+0.1)*1000
               } else if (1-tempData[i]['_score'] > 0.4 && 1-tempData[i]['_score'] < 0.5) {
-                tempScore = ((1-tempData[i]['_score'])+0.25)*1000
+                tempScore = ((1-tempData[i]['_score'])+0.1)*1000
               } else {
-                tempScore = ((1-tempData[i]['_score'])+0.3)*1000
+                tempScore = ((1-tempData[i]['_score'])+0.15)*1000
               }
-              this.graph['links'].push({'source': this.focusWord, 'target': word, 'value': tempScore})
+              this.graph['links'].push({'source': this.focusWord, 'target': word, 'value': (1-tempData[i]['_score'])*1000})
             }
         }
         this.similarDocs = tempData;
@@ -361,7 +361,7 @@ export class SimilarDocsComponent implements OnInit{
     this.focusWord = word;
     this.graph['nodes'] = [];
     this.graph['links'] = [];
-    this.graph['nodes'].push({'id': this.focusWord, 'group': pos, 'colors': this.colorCode[pos], 'value': ''})
+    this.graph['nodes'].push({'id': this.focusWord, 'group': pos, 'colors': this.colorCode[pos], 'value': '', '_score': ''});
     this.currentMode = this.data.mode_id;
     d3.select('svg').remove();
   }
@@ -376,7 +376,7 @@ export class SimilarDocsComponent implements OnInit{
   }
 
   public buildChart(itemRange) {
-    var graphX = {nodes: this.graph['nodes'].slice(0,itemRange), links: this.graph['links'].slice(0,itemRange-1)}
+    var graphX = {nodes: this.graph['nodes'].slice(0,itemRange+1), links: this.graph['links'].slice(0,itemRange)}
     this.currentColorCode ={};
     this.posExist = false;
     for (let item of graphX.nodes) {
